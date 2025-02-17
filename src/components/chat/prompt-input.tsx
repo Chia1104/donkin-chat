@@ -8,7 +8,7 @@ import { useTranslations } from 'next-intl';
 
 import { cn } from '@/utils/cn';
 
-interface Props {
+export interface Props {
 	onSubmit: (e: React.FormEvent<HTMLFormElement>) => void;
 	value?: string;
 	onChange?: (e: React.ChangeEvent<HTMLInputElement>) => void;

@@ -5,16 +5,32 @@ import { useCallback } from 'react';
 import { Button } from '@heroui/button';
 import { Card, CardBody, CardFooter } from '@heroui/card';
 import { ScrollShadow } from '@heroui/scroll-shadow';
-import ArrowForwardIosIcon from '@mui/icons-material/ArrowForwardIos';
+import { ChevronLeftIcon, ChevronRightIcon } from 'lucide-react';
 import { useTranslations } from 'next-intl';
 
 import MessageCard from '@/components/chat/message-card';
-import PromptInput from '@/components/chat/prompt-input';
+import PromptInput, { Props as PromptInputProps } from '@/components/chat/prompt-input';
+import Drawer from '@/components/ui/drawer';
 import { useChatStore } from '@/contexts/chat-provider';
 import { useChat } from '@/features/ai/hooks/useChat';
 import { cn } from '@/utils/cn';
 
 import DefaultPrompt from './_components/default-prompt';
+
+const useUIChat = () => {
+	const { chatId, syncMessages, updateCurrentMessage, completed, messages } = useChatStore(state => state);
+	return useChat({
+		id: chatId,
+		onChatComplete: messages => {
+			syncMessages(messages);
+			completed();
+		},
+		onStreaming: updateCurrentMessage,
+		onSubmit: input => {
+			syncMessages(messages.concat(input));
+		},
+	});
+};
 
 const StreamingMessage = () => {
 	const { currentMessage, asyncStatus } = useChatStore(state => state);
@@ -75,24 +91,12 @@ const ChatBody = () => {
 	);
 };
 
-const ChatFooter = () => {
-	const { chatId, syncMessages, updateCurrentMessage, completed, messages } = useChatStore(state => state);
+const ChatFooter = (props: PromptInputProps) => {
 	const t = useTranslations('chat');
-	const { input, handleInputChange, handleSubmit } = useChat({
-		id: chatId,
-		onChatComplete: messages => {
-			syncMessages(messages);
-			completed();
-		},
-		onStreaming: updateCurrentMessage,
-		onSubmit: input => {
-			syncMessages(messages.concat(input));
-		},
-	});
 
 	return (
 		<CardFooter className="rounded-none flex flex-col items-center prose prose-invert mt-auto min-w-full p-0 sticky bottom-0">
-			<PromptInput value={input} onChange={handleInputChange} onSubmit={handleSubmit} />
+			<PromptInput {...props} />
 			<p className="text-xs">{t('donkin-warning')}</p>
 		</CardFooter>
 	);
@@ -101,30 +105,52 @@ const ChatFooter = () => {
 const PreviewAction = () => {
 	const { setIsPreviewOnly, isPreviewOnly } = useChatStore(state => state);
 
-	const _handleSetIsPreviewOnly = useCallback(() => {
+	const handleSetIsPreviewOnly = useCallback(() => {
 		setIsPreviewOnly(!isPreviewOnly);
 	}, [isPreviewOnly, setIsPreviewOnly]);
 
 	return (
-		<Button isIconOnly className="rounded-full absolute top-1/2 -left-5 z-30 border-1" variant="faded" color="default">
-			<ArrowForwardIosIcon sx={{ width: 16, height: 16 }} />
+		<Button
+			isIconOnly
+			className="rounded-full absolute top-1/2 -left-5 z-30 border-1"
+			variant="faded"
+			color="default"
+			onPress={handleSetIsPreviewOnly}
+		>
+			{!isPreviewOnly ? <ChevronRightIcon size={16} /> : <ChevronLeftIcon size={16} />}
 		</Button>
 	);
 };
 
 const Page = () => {
+	const { setIsPreviewOnly, isPreviewOnly } = useChatStore(state => state);
+	const { input, handleInputChange, handleSubmit } = useUIChat();
 	return (
-		<>
-			<Card
-				className={cn(
-					'bg-background/65 p-5 relative overflow-visible min-w-full border-1 border-divider min-h-[calc(100vh-120px)] max-h-[calc(100vh-120px)]',
-				)}
+		<section
+			className={cn('h-[calc(100vh-72px)] w-full p-5 md:pl-0 md:py-5', isPreviewOnly ? 'w-[70px]' : 'w-full lg:w-1/3')}
+		>
+			<Drawer
+				sidebarPlacement="right"
+				className={cn('overflow-visible', isPreviewOnly ? 'w-[50px]' : 'w-full')}
+				hideCloseButton={true}
+				onOpenChange={setIsPreviewOnly}
 			>
-				<PreviewAction />
-				<ChatBody />
-				<ChatFooter />
-			</Card>
-		</>
+				<Card
+					className={cn(
+						'bg-background/65 p-5 relative overflow-visible border-1 border-divider min-h-[calc(100vh-120px)] max-h-[calc(100vh-120px)]',
+						isPreviewOnly ? 'w-[50px]' : 'min-w-full',
+					)}
+				>
+					<PreviewAction />
+					{!isPreviewOnly && (
+						<>
+							<ChatBody />
+							<ChatFooter value={input} onChange={handleInputChange} onSubmit={handleSubmit} />
+						</>
+					)}
+				</Card>
+			</Drawer>
+		</section>
 	);
 };
 
