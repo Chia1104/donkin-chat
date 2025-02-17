@@ -10,7 +10,8 @@ const ActionCard = (props: CardProps) => {
 			isPressable
 			{...props}
 			className={cn(
-				'bg-gradient-to-b transition duration-300 from-background to-[#FFFFFF33] border-1 border-divider',
+				'transition duration-300 border-1 border-divider',
+				'bg-gradient-to-b from-black/10 via-black/5 to-white/15 from-[55%] via-[10%]',
 				props.className,
 			)}
 		/>
@@ -19,7 +20,12 @@ const ActionCard = (props: CardProps) => {
 
 const Icon = ({ children }: { children: React.ReactElement }) => {
 	return (
-		<div className="w-6 h-6 border-divider rounded-full gap-4 flex justify-center items-center bg-gradient-to-b from-background to-[#FFFFFF33] border-1">
+		<div
+			className={cn(
+				'w-6 h-6 border-divider rounded-full gap-4 flex justify-center items-center border-1',
+				'bg-gradient-to-b from-black/10 via-black/5 to-white/15 from-[55%] via-[10%]',
+			)}
+		>
 			{children}
 		</div>
 	);
@@ -28,7 +34,7 @@ const Icon = ({ children }: { children: React.ReactElement }) => {
 export const ActionBody = ({ icon, label }: { icon: React.ReactElement; label: React.ReactNode }) => {
 	return (
 		<CardBody className="flex flex-row items-center justify-between">
-			<span className="flex gap-2 items-center">
+			<span className="flex gap-2 items-center text-sm">
 				<Icon>{icon}</Icon>
 				{label}
 			</span>

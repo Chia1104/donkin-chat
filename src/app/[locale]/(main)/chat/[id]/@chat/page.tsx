@@ -63,11 +63,13 @@ const Messages = ({ children }: { children?: React.ReactNode }) => {
 
 const ChatBody = () => {
 	return (
-		<CardBody className="flex flex-col items-center justify-center">
-			<ScrollShadow className="w-full min-w-full h-[calc(100vh-192px)] flex justify-center items-center">
-				<Messages>
-					<StreamingMessage />
-				</Messages>
+		<CardBody className="flex flex-col items-center justify-start">
+			<ScrollShadow className="w-full min-w-full h-[calc(100vh-300px)] max-h-[calc(100vh-300px)] min-h-[calc(100vh-350px)]">
+				<div className="flex justify-center items-center">
+					<Messages>
+						<StreamingMessage />
+					</Messages>
+				</div>
 			</ScrollShadow>
 		</CardBody>
 	);
@@ -89,7 +91,7 @@ const ChatFooter = () => {
 	});
 
 	return (
-		<CardFooter className="flex flex-col items-center prose prose-invert gap-1 sticky bottom-0 min-w-full">
+		<CardFooter className="rounded-none flex flex-col items-center prose prose-invert mt-auto min-w-full p-0 sticky bottom-0">
 			<PromptInput value={input} onChange={handleInputChange} onSubmit={handleSubmit} />
 			<p className="text-xs">{t('donkin-warning')}</p>
 		</CardFooter>
@@ -105,22 +107,24 @@ const PreviewAction = () => {
 
 	return (
 		<Button isIconOnly className="rounded-full absolute top-1/2 -left-5 z-30 border-1" variant="faded" color="default">
-			<ArrowForwardIosIcon />
+			<ArrowForwardIosIcon sx={{ width: 16, height: 16 }} />
 		</Button>
 	);
 };
 
 const Page = () => {
 	return (
-		<Card
-			className={cn(
-				'h-[calc(100vh-72px)] bg-background rounded-none p-5 relative overflow-visible min-w-full bg-background/65 border-l-1 border-divider',
-			)}
-		>
-			<PreviewAction />
-			<ChatBody />
-			<ChatFooter />
-		</Card>
+		<>
+			<Card
+				className={cn(
+					'bg-background/65 p-5 relative overflow-visible min-w-full border-1 border-divider min-h-[calc(100vh-120px)] max-h-[calc(100vh-120px)]',
+				)}
+			>
+				<PreviewAction />
+				<ChatBody />
+				<ChatFooter />
+			</Card>
+		</>
 	);
 };
 

@@ -26,6 +26,10 @@
 			transparent 80%
 		);
 	}
+
+	.dc-bg-rainbow {
+		@apply bg-[linear-gradient(to_right,#98C188_0%,#ADB77C_10%,#C1BA70_20%,#D4B664_30%,#DEAB54_40%,#E5984A_50%,#E58946_60%,#E37B45_70%,#E04C45_80%,#DC5E45_100%)];
+	}
 }
 
 html,

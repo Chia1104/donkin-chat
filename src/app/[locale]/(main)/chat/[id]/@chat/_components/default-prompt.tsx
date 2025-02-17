@@ -1,3 +1,5 @@
+'use client';
+
 import { memo, useCallback } from 'react';
 
 import { Image } from '@heroui/image';
@@ -28,7 +30,7 @@ const DefaultPrompt = ({ currentCoin = 'XX', ...props }: Props) => {
 	);
 
 	return (
-		<section className="flex flex-col items-center justify-center w-full max-w-[350px] prose prose-invert">
+		<section className="flex flex-col items-center justify-center w-full h-full max-w-[350px] gap-2 prose prose-invert">
 			<div className="flex flex-col items-center justify-center w-full max-w-[285px]">
 				<Image
 					className="mb-2"
@@ -37,6 +39,7 @@ const DefaultPrompt = ({ currentCoin = 'XX', ...props }: Props) => {
 					src="/assets/images/sparkless.png"
 					width={96}
 					height={96}
+					removeWrapper
 				/>
 				<h2 className="mt-0 mb-2">{t('donkin-title')}</h2>
 				<p className="text-xs text-center">{t('donkin-subtitle')}</p>
