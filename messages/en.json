@@ -37,10 +37,31 @@
 		"donkin-warning": "Donkin may provide inaccurate information, please verify important information",
 		"default-prompt": {
 			"title": "Example：",
-			"latest-coins": "最近最火的代币有哪些",
-			"smart-wallet-recommendations": "聪明钱地址都在买什么",
-			"largest-whales": "最近巨鲸地址都在买什么",
-			"info-about": "我想了解 {item} 代币的信息"
+			"latest-coins": "What are the most popular tokens recently",
+			"smart-wallet-recommendations": "What are smart money addresses buying",
+			"largest-whales": "What are whale addresses buying recently",
+			"info-about": "I want to know the information of {item} token"
+		}
+	},
+	"preview": {
+		"ai-signal": {
+			"title": "AI Selected Signals",
+			"card": {
+				"x-hotspot": "X hotspot index",
+				"tg-hotspot": "TG Hotspot Index",
+				"stock": {
+					"marketCap": "Market Cap",
+					"price": "Price",
+					"pool": "Pool",
+					"change": "24h rise and fall"
+				}
+			},
+			"filter": {
+				"date": "Online time"
+			},
+			"action": {
+				"more": "Show more currencies"
+			}
 		}
 	}
 }

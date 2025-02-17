@@ -42,5 +42,26 @@
 			"largest-whales": "最近巨鲸地址都在买什么",
 			"info-about": "我想了解 {item} 代币的信息"
 		}
+	},
+	"preview": {
+		"ai-signal": {
+			"title": "AI 精選信號",
+			"card": {
+				"x-hotspot": "X 热点指数",
+				"tg-hotspot": "TG 热点指数",
+				"stock": {
+					"marketCap": "市值",
+					"price": "價格",
+					"pool": "池子",
+					"change": "24h漲跌"
+				}
+			},
+			"filter": {
+				"date": "上線時間"
+			},
+			"action": {
+				"more": "显示更多币种"
+			}
+		}
 	}
 }

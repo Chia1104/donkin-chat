@@ -25,25 +25,35 @@ const PromptInput = ({ onSubmit, value, onChange, props }: Props) => {
 			<Textarea
 				aria-label="Prompt"
 				minRows={1}
-				maxRows={8}
+				maxRows={3}
 				placeholder={t('prompt-placeholder')}
-				radius="lg"
-				variant="bordered"
+				radius="sm"
+				variant="underlined"
 				endContent={
-					<Button isIconOnly variant="light" type="submit">
-						<SendIcon />
-					</Button>
+					<>
+						<Button isIconOnly variant="light" type="submit">
+							<SendIcon
+								sx={{
+									width: 20,
+									height: 20,
+								}}
+							/>
+						</Button>
+					</>
 				}
 				{...props?.textarea}
 				className={cn('min-h-[60px] w-full', props?.textarea?.className)}
 				classNames={{
 					label: ['hidden', props?.textarea?.classNames?.label],
 					input: [
-						'py-0 text-medium data-[has-start-content=true]:ps-0 data-[has-start-content=true]:pe-0',
+						'py-0 text-medium data-[has-start-content=true]:ps-0 data-[has-start-content=true]:pe-0 ',
 						props?.textarea?.classNames?.input,
 					],
-					innerWrapper: ['items-center', props?.textarea?.classNames?.innerWrapper],
-					inputWrapper: ['min-h-[60px] border-1', props?.textarea?.classNames?.inputWrapper],
+					innerWrapper: ['items-center px-3', props?.textarea?.classNames?.innerWrapper],
+					inputWrapper: [
+						'min-h-[60px] border-1 !rounded-lg bg-black/25 after:bg-gradient-to-r after:from-transparent after:via-primary/50 after:to-transparent after:bg-transparent ',
+						props?.textarea?.classNames?.inputWrapper,
+					],
 				}}
 				value={value}
 				onChange={onChange}

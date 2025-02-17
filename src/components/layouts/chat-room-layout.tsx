@@ -6,12 +6,12 @@ import { Navbar, NavbarContent, NavbarItem } from '@heroui/navbar';
 import AccountBalanceWalletOutlinedIcon from '@mui/icons-material/AccountBalanceWalletOutlined';
 import SearchIcon from '@mui/icons-material/Search';
 import { useTranslations } from 'next-intl';
-import { useQueryState, parseAsStringEnum } from 'nuqs';
 
 import Footer from '@/components/commons/footer';
 import NetworkSelector from '@/components/commons/network-selector';
 import XICon from '@/components/icons/x-icon';
 import { QueryType } from '@/enums/queryType.enum';
+import { useQueryType } from '@/hooks/useQueryType';
 import { noto_sans } from '@/themes/fonts';
 import { cn } from '@/utils/cn';
 
@@ -24,14 +24,14 @@ interface Props {
 const ChatRoomLayout = (props: Props) => {
 	const t = useTranslations('nav');
 	const tAction = useTranslations('action');
-	const [q, setQ] = useQueryState('q', parseAsStringEnum(Object.values(QueryType)));
+	const [q, setQ] = useQueryType();
 
 	return (
 		<>
 			<Navbar
 				position="static"
 				isBordered
-				className="bg-background"
+				className="bg-black/90"
 				classNames={{
 					item: 'data-[active=true]:text-primary',
 					wrapper: 'min-w-full h-full',

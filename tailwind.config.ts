@@ -40,7 +40,7 @@ const config: Config = {
 					transparent: 'rgba(244,67,54,0.75)',
 				},
 				root: {
-					DEFAULT: '#343434',
+					DEFAULT: '#101010',
 				},
 				light: {
 					DEFAULT: '#fafafa',
@@ -69,7 +69,7 @@ const config: Config = {
 							DEFAULT: '#FF533D',
 						},
 						background: {
-							DEFAULT: '#202128',
+							DEFAULT: '#121213',
 						},
 					},
 				},
@@ -79,7 +79,7 @@ const config: Config = {
 							DEFAULT: '#FF533D',
 						},
 						background: {
-							DEFAULT: '#202128',
+							DEFAULT: '#121213',
 						},
 					},
 				},
