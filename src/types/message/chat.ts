@@ -1,3 +1,12 @@
+import type { ErrorType } from '@/types/fetch';
+import type { MessageRoleType, ModelReasoning } from '@/types/message/base';
+
+export interface ChatMessageError {
+	body?: any;
+	message: string;
+	type: ErrorType;
+}
+
 export interface ChatTTS {
 	contentMd5?: string;
 	file?: string;
@@ -55,13 +64,23 @@ export interface ChatMessage {
 	ragQueryId?: string | null;
 	ragRawQuery?: string | null;
 
-	// reasoning?: ModelReasoning | null;
+	reasoning?: ModelReasoning | null;
 
 	/**
 	 * message role type
 	 */
-	// role: MessageRoleType;
+	role: MessageRoleType;
 	sessionId?: string;
 	threadId?: string | null;
 	updatedAt: number;
+}
+
+export interface CreateMessageParams extends Partial<Omit<ChatMessage, 'content' | 'role' | 'topicId' | 'chunksList'>> {
+	content: string;
+	error?: ChatMessageError | null;
+	role: MessageRoleType;
+	sessionId: string;
+	threadId?: string | null;
+	topicId?: string;
+	traceId?: string;
 }

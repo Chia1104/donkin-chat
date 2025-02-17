@@ -1,9 +1,9 @@
-import type { ChatMessage } from '@/types/chat';
+import type { ChatMessage } from '@/types/message/chat';
 
 export interface ChatMessageState {
 	/**
-	 * @title 当前活动的会话
-	 * @description 当前正在编辑或查看的会话
+	 * @title 當前活動的對話
+	 * @description 當前正在編輯或查看的對話
 	 */
 	activeId: string;
 
