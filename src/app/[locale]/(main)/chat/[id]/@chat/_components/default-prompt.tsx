@@ -40,6 +40,7 @@ const DefaultPrompt = ({ currentCoin = 'XX', ...props }: Props) => {
 					width={96}
 					height={96}
 					removeWrapper
+					aria-label="sparkless"
 				/>
 				<h2 className="mt-0 mb-2">{t('donkin-title')}</h2>
 				<p className="text-xs text-center">{t('donkin-subtitle')}</p>

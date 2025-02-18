@@ -20,10 +20,11 @@ const LoginForm = ({ mode = 'sign-in' }: { mode?: 'sign-in' | 'sign-up' }) => {
 
 	return (
 		<Card
+			aria-label="login-form"
 			wrapperProps={{
 				className: 'w-full max-w-[500px]',
 			}}
-			className="prose dark:prose-invert flex w-full max-w-[500px] flex-col items-center justify-center px-1 py-12 sm:px-4"
+			className="prose prose-invert flex w-full max-w-[500px] flex-col items-center justify-center px-1 py-12 sm:px-4"
 		>
 			{mode === 'sign-in' ? (
 				<>
@@ -55,6 +56,7 @@ const LoginForm = ({ mode = 'sign-in' }: { mode?: 'sign-in' | 'sign-up' }) => {
 						}
 					>
 						<Input
+							aria-label="email"
 							isRequired
 							required
 							disabled={isPending}
@@ -64,6 +66,7 @@ const LoginForm = ({ mode = 'sign-in' }: { mode?: 'sign-in' | 'sign-up' }) => {
 							className="w-full"
 						/>
 						<Input
+							aria-label="password"
 							isRequired
 							required
 							disabled={isPending}
@@ -72,11 +75,11 @@ const LoginForm = ({ mode = 'sign-in' }: { mode?: 'sign-in' | 'sign-up' }) => {
 							name="password"
 							className="w-full"
 						/>
-						<SubmitForm variant="flat" color="primary" className="w-full mt-5" isLoading={isPending}>
+						<SubmitForm variant="flat" className="w-full mt-5" isLoading={isPending} color="secondary">
 							Sign in
 						</SubmitForm>
 					</form>
-					<Button onPress={() => router.push('/sign-up')} className="w-4/5 mt-10" variant="flat" color="primary">
+					<Button onPress={() => router.push('/sign-up')} className="w-4/5 mt-10" variant="light" color="default">
 						Dont have an account? Sign up
 					</Button>
 				</>
@@ -112,6 +115,7 @@ const LoginForm = ({ mode = 'sign-in' }: { mode?: 'sign-in' | 'sign-up' }) => {
 						}
 					>
 						<Input
+							aria-label="email"
 							isRequired
 							required
 							disabled={isPending}
@@ -121,6 +125,7 @@ const LoginForm = ({ mode = 'sign-in' }: { mode?: 'sign-in' | 'sign-up' }) => {
 							className="w-full"
 						/>
 						<Input
+							aria-label="name"
 							isRequired
 							required
 							disabled={isPending}
@@ -130,6 +135,7 @@ const LoginForm = ({ mode = 'sign-in' }: { mode?: 'sign-in' | 'sign-up' }) => {
 							className="w-full"
 						/>
 						<Input
+							aria-label="password"
 							isRequired
 							required
 							disabled={isPending}
@@ -138,11 +144,17 @@ const LoginForm = ({ mode = 'sign-in' }: { mode?: 'sign-in' | 'sign-up' }) => {
 							name="password"
 							className="w-full"
 						/>
-						<SubmitForm variant="flat" color="primary" className="w-full mt-5" isLoading={isPending}>
+						<SubmitForm variant="flat" color="secondary" className="w-full mt-5" isLoading={isPending}>
 							Sign up
 						</SubmitForm>
 					</form>
-					<Button onPress={() => router.push('/sign-in')} className="w-4/5 mt-10" variant="flat" color="primary">
+					<Button
+						aria-label="sign-in"
+						onPress={() => router.push('/sign-in')}
+						className="w-4/5 mt-10"
+						variant="light"
+						color="default"
+					>
 						Already have an account? Sign in
 					</Button>
 				</>

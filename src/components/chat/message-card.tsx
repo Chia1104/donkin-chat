@@ -8,7 +8,8 @@ import { CircularProgress } from '@heroui/progress';
 import { Badge, Button, Link } from '@heroui/react';
 import { cn } from '@heroui/react';
 import { useClipboard } from '@heroui/use-clipboard';
-import { Icon } from '@iconify/react';
+import CheckIcon from '@mui/icons-material/Check';
+import CircleIcon from '@mui/icons-material/Circle';
 import ContentCopyRoundedIcon from '@mui/icons-material/ContentCopyRounded';
 import RefreshIcon from '@mui/icons-material/Refresh';
 import ShareOutlinedIcon from '@mui/icons-material/ShareOutlined';
@@ -17,6 +18,7 @@ import { useTranslations } from 'next-intl';
 export type MessageCardProps = React.HTMLAttributes<HTMLDivElement> & {
 	showFeedback?: boolean;
 	message: UIMessage;
+	streamingContent?: string;
 	status?: 'success' | 'failed';
 	messageClassName?: string;
 	onMessageCopy?: (content: string | string[]) => void;
@@ -39,6 +41,7 @@ const MessageCard = ({
 	isRetrying,
 	isLoading,
 	isCurrent,
+	streamingContent,
 	...props
 }: MessageCardProps) => {
 	const messageRef = React.useRef<HTMLDivElement>(null);
@@ -81,12 +84,13 @@ const MessageCard = ({
 
 	return (
 		<div {...props} className={cn('flex flex-col gap-1 w-fit', classNames.wrapperClassName, className)}>
-			{message.role === 'assistant' && (
+			{(message.role === 'assistant' || streamingContent) && (
 				<div className="relative flex-none">
 					<Badge
+						aria-label="assistant-badge"
 						isOneChar
 						color="danger"
-						content={<Icon className="text-background" icon="gravity-ui:circle-exclamation-fill" />}
+						content={<CircleIcon />}
 						isInvisible={!hasFailed}
 						placement="bottom-right"
 						shape="circle"
@@ -106,11 +110,13 @@ const MessageCard = ({
 					)}
 				>
 					<div ref={messageRef} className={'text-small flex flex-col gap-2'}>
-						{isLoading && message.role === 'assistant' && isCurrent && <CircularProgress size="sm" />}
+						{((isLoading && message.role === 'assistant' && isCurrent) || (isLoading && streamingContent)) && (
+							<CircularProgress size="sm" />
+						)}
 						{hasFailed ? (
 							<p>
 								Something went wrong, if the issue persists please contact us through our help center at&nbsp;
-								<Link href="mailto:support@acmeai.com" size="sm">
+								<Link aria-label="support-email" href="mailto:support@acmeai.com" size="sm">
 									support@acmeai.com
 								</Link>
 							</p>
@@ -120,7 +126,7 @@ const MessageCard = ({
 					</div>
 					{showFeedback && !hasFailed && !isLoading && (
 						<div className="flex gap-2">
-							<Button isIconOnly size="sm" onPress={() => handleShare()}>
+							<Button aria-label="share-button" isIconOnly size="sm" onPress={() => handleShare()}>
 								<ShareOutlinedIcon
 									className="text-default-600"
 									sx={{
@@ -129,9 +135,15 @@ const MessageCard = ({
 									}}
 								/>
 							</Button>
-							<Button isIconOnly size="sm" onPress={handleCopy}>
+							<Button aria-label="copy-button" isIconOnly size="sm" onPress={handleCopy}>
 								{copied ? (
-									<Icon className="size-5 text-default-600" icon="gravity-ui:check" />
+									<CheckIcon
+										sx={{
+											width: 20,
+											height: 20,
+										}}
+										className="text-default-600"
+									/>
 								) : (
 									<ContentCopyRoundedIcon
 										sx={{
@@ -142,7 +154,13 @@ const MessageCard = ({
 									/>
 								)}
 							</Button>
-							<Button isIconOnly size="sm" onPress={() => handleRetry()} isLoading={isPending || isRetrying}>
+							<Button
+								aria-label="retry-button"
+								isIconOnly
+								size="sm"
+								onPress={() => handleRetry()}
+								isLoading={isPending || isRetrying}
+							>
 								<RefreshIcon
 									sx={{
 										width: 20,
@@ -165,6 +183,7 @@ export default React.memo(MessageCard, (prevProps, nextProps) => {
 		prevProps.status === nextProps.status &&
 		prevProps.isLoading === nextProps.isLoading &&
 		prevProps.isCurrent === nextProps.isCurrent &&
-		prevProps.isRetrying === nextProps.isRetrying
+		prevProps.isRetrying === nextProps.isRetrying &&
+		prevProps.streamingContent === nextProps.streamingContent
 	);
 });

@@ -1,6 +1,6 @@
 'use client';
 
-import { HeroUIProvider } from '@heroui/react';
+import { HeroUIProvider as _HeroUIProvider } from '@heroui/react';
 import { ThemeProvider as MuiThemeProvider } from '@mui/material';
 import type { QueryClient } from '@tanstack/react-query';
 import { QueryClientProvider } from '@tanstack/react-query';
@@ -32,8 +32,12 @@ const getQueryClient = () => {
 	}
 };
 
-const AppProviders = (props: Props) => {
+const HeroUIProvider = (props: { children: React.ReactNode }) => {
 	const router = useRouter();
+	return <_HeroUIProvider navigate={void router.push}>{props.children}</_HeroUIProvider>;
+};
+
+const AppProviders = (props: Props) => {
 	const queryClient = getQueryClient();
 	return (
 		<NextIntlClientProvider messages={props.messages} timeZone={props.timeZone} locale={props.locale}>
@@ -41,7 +45,7 @@ const AppProviders = (props: Props) => {
 				<NuqsAdapter>
 					<NextThemeProvider defaultTheme="system" enableSystem attribute="class">
 						<MuiThemeProvider theme={defaultTheme}>
-							<HeroUIProvider navigate={void router.push}>{props.children}</HeroUIProvider>
+							<HeroUIProvider>{props.children}</HeroUIProvider>
 						</MuiThemeProvider>
 					</NextThemeProvider>
 				</NuqsAdapter>

@@ -23,3 +23,13 @@ export const roundDecimal = (
 		},
 	);
 };
+
+export function formatLargeNumber(num: number): string {
+	if (num >= 1_000_000) {
+		return (num / 1_000_000).toFixed(1) + 'm'; // 轉換為百萬，保留一位小數
+	} else if (num >= 1_000) {
+		return (num / 1_000).toFixed(1) + 'k'; // 轉換為千，保留一位小數
+	} else {
+		return num.toString(); // 小於千的數字直接返回
+	}
+}

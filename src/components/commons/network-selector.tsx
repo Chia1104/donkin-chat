@@ -26,6 +26,7 @@ export const networks: Network[] = [
 const NetworkSelector = () => {
 	return (
 		<Select
+			aria-label="Network Selector"
 			classNames={{
 				trigger: 'border-1 p-2',
 			}}
@@ -42,7 +43,14 @@ const NetworkSelector = () => {
 					item.data ? (
 						<div key={item.key} className="flex items-center gap-2">
 							{typeof item.data.image === 'string' ? (
-								<Image alt={item.data.name} className="flex-shrink-0" width={24} height={24} src={item.data.image} />
+								<Image
+									aria-label={item.data.name}
+									alt={item.data.name}
+									className="flex-shrink-0"
+									width={24}
+									height={24}
+									src={item.data.image}
+								/>
 							) : (
 								item.data.image
 							)}
@@ -55,10 +63,17 @@ const NetworkSelector = () => {
 			}}
 		>
 			{network => (
-				<SelectItem key={network.value} textValue={network.name}>
+				<SelectItem aria-label={network.name} key={network.value} textValue={network.name}>
 					<div className="flex gap-2 items-center">
 						{typeof network.image === 'string' ? (
-							<Image alt={network.name} className="flex-shrink-0" width={24} height={24} src={network.image} />
+							<Image
+								aria-label={network.name}
+								alt={network.name}
+								className="flex-shrink-0"
+								width={24}
+								height={24}
+								src={network.image}
+							/>
 						) : (
 							network.image
 						)}
