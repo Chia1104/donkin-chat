@@ -85,7 +85,7 @@ const AiSignal = () => {
 	const { isLgWidth, isMdWidth, isSmWidth } = useMediaQuery();
 
 	const getItemDisplay = useCallback(
-		(index: number, length: number) => {
+		(index: number, length: number): ('all' | 'meta' | 'stock' | 'hotspots')[] => {
 			const itemsPerRow = isPreviewOnly
 				? isLgWidth
 					? 4
@@ -193,7 +193,7 @@ const AiSignal = () => {
 							const length = 9;
 							return (
 								<motion.li className="w-full" key={index} exit={{ opacity: 1 }} layout>
-									<InfoCard {...MOCK_DATA} display={getItemDisplay(index, length) as any} />
+									<InfoCard {...MOCK_DATA} display={getItemDisplay(index, length)} />
 								</motion.li>
 							);
 						})}
