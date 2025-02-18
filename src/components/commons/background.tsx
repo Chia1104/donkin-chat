@@ -18,6 +18,8 @@ const Background = () => {
 					fill
 					radius="none"
 					removeWrapper
+					priority
+					sizes="(max-width: 768px) 100vw, 50vw"
 				/>
 			</div>
 			<div className="absolute top-[70px] z-0 !max-w-[650px] !w-full h-full max-h-[calc(100vh-72px)] overflow-hidden">
@@ -30,6 +32,8 @@ const Background = () => {
 					fill
 					radius="none"
 					removeWrapper
+					priority
+					sizes="(max-width: 768px) 100vw, 50vw"
 				/>
 			</div>
 			<div className="fixed -bottom-[120px] z-0 !max-w-[800px] right-10 !w-full h-full max-h-[510px] overflow-hidden">
@@ -42,6 +46,8 @@ const Background = () => {
 					fill
 					radius="none"
 					removeWrapper
+					priority
+					sizes="(max-width: 768px) 100vw, 50vw"
 				/>
 			</div>
 		</>

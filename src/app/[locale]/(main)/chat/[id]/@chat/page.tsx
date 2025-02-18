@@ -44,6 +44,7 @@ const Messages = ({ children }: { children?: React.ReactNode }) => {
 						status={status === 'error' && isLast ? 'failed' : 'success'}
 						isCurrent={isLast}
 						onRetry={reload}
+						streamingContent={status === 'streaming' && isLast ? message.content : undefined}
 					/>
 				);
 			})}
@@ -59,7 +60,7 @@ const ChatBody = () => {
 				aria-label="chat-scroll-shadow"
 				className="w-full min-w-full h-[calc(100vh-300px)] max-h-[calc(100vh-300px)] min-h-[calc(100vh-350px)]"
 			>
-				<div className="flex justify-center items-center">
+				<div className="flex h-full justify-center items-center">
 					<Messages />
 				</div>
 			</ScrollShadow>
@@ -92,11 +93,15 @@ const PreviewAction = () => {
 		<Button
 			aria-label="preview-action"
 			isIconOnly
-			className="rounded-full absolute top-1/2 -left-5 z-30 border-1"
+			className={cn(
+				'rounded-full absolute top-1/2 -left-5 z-30 border-1 overflow-visible bg-background',
+				isPreviewOnly && 'border-primary border-2',
+			)}
 			variant="faded"
-			color="default"
+			color={isPreviewOnly ? 'primary' : 'default'}
 			onPress={handleSetIsPreviewOnly}
 		>
+			{/* {isPreviewOnly && <span className="rounded-full absolute inset-[0.15rem] bg-primary size-8 animate-ping" />} */}
 			{!isPreviewOnly ? <ChevronRightIcon size={16} /> : <ChevronLeftIcon size={16} />}
 		</Button>
 	);
@@ -115,7 +120,7 @@ const Page = () => {
 			<Card
 				className={cn(
 					'bg-background/65 p-5 relative overflow-visible border-1 border-divider transition-width ease-in-out duration-1000 h-full min-h-[calc(100vh-120px)] max-h-[calc(100vh-120px)]',
-					isPreviewOnly ? 'w-[50px]' : 'min-w-full',
+					isPreviewOnly ? 'w-[30px] rounded-full' : 'min-w-full',
 				)}
 			>
 				<PreviewAction />

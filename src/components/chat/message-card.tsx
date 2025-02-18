@@ -18,6 +18,7 @@ import { useTranslations } from 'next-intl';
 export type MessageCardProps = React.HTMLAttributes<HTMLDivElement> & {
 	showFeedback?: boolean;
 	message: UIMessage;
+	streamingContent?: string;
 	status?: 'success' | 'failed';
 	messageClassName?: string;
 	onMessageCopy?: (content: string | string[]) => void;
@@ -40,6 +41,7 @@ const MessageCard = ({
 	isRetrying,
 	isLoading,
 	isCurrent,
+	streamingContent,
 	...props
 }: MessageCardProps) => {
 	const messageRef = React.useRef<HTMLDivElement>(null);
@@ -82,7 +84,7 @@ const MessageCard = ({
 
 	return (
 		<div {...props} className={cn('flex flex-col gap-1 w-fit', classNames.wrapperClassName, className)}>
-			{message.role === 'assistant' && (
+			{(message.role === 'assistant' || streamingContent) && (
 				<div className="relative flex-none">
 					<Badge
 						aria-label="assistant-badge"
@@ -108,7 +110,9 @@ const MessageCard = ({
 					)}
 				>
 					<div ref={messageRef} className={'text-small flex flex-col gap-2'}>
-						{isLoading && message.role === 'assistant' && isCurrent && <CircularProgress size="sm" />}
+						{((isLoading && message.role === 'assistant' && isCurrent) || (isLoading && streamingContent)) && (
+							<CircularProgress size="sm" />
+						)}
 						{hasFailed ? (
 							<p>
 								Something went wrong, if the issue persists please contact us through our help center at&nbsp;
@@ -179,6 +183,7 @@ export default React.memo(MessageCard, (prevProps, nextProps) => {
 		prevProps.status === nextProps.status &&
 		prevProps.isLoading === nextProps.isLoading &&
 		prevProps.isCurrent === nextProps.isCurrent &&
-		prevProps.isRetrying === nextProps.isRetrying
+		prevProps.isRetrying === nextProps.isRetrying &&
+		prevProps.streamingContent === nextProps.streamingContent
 	);
 });
