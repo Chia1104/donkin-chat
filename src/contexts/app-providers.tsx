@@ -8,7 +8,10 @@ import type { AbstractIntlMessages } from 'next-intl';
 import { NextIntlClientProvider } from 'next-intl';
 import { ThemeProvider as NextThemeProvider } from 'next-themes';
 import { NuqsAdapter } from 'nuqs/adapters/next/app';
+import { WagmiProvider } from 'wagmi';
+import type { State as WagmiSessionState } from 'wagmi';
 
+import { wagmiConfig } from '@/config/wagmi';
 import { useRouter } from '@/i18n/routing';
 import defaultTheme from '@/themes/default';
 import { createQueryClient } from '@/utils/query-client';
@@ -18,6 +21,7 @@ interface Props {
 	messages: AbstractIntlMessages;
 	timeZone?: string;
 	locale: Locale;
+	wagmiSessionState?: WagmiSessionState;
 }
 
 let clientQueryClientSingleton: QueryClient | undefined = undefined;
@@ -41,15 +45,17 @@ const AppProviders = (props: Props) => {
 	const queryClient = getQueryClient();
 	return (
 		<NextIntlClientProvider messages={props.messages} timeZone={props.timeZone} locale={props.locale}>
-			<QueryClientProvider client={queryClient}>
-				<NuqsAdapter>
-					<NextThemeProvider defaultTheme="system" enableSystem attribute="class">
-						<MuiThemeProvider theme={defaultTheme}>
-							<HeroUIProvider>{props.children}</HeroUIProvider>
-						</MuiThemeProvider>
-					</NextThemeProvider>
-				</NuqsAdapter>
-			</QueryClientProvider>
+			<WagmiProvider config={wagmiConfig} initialState={props.wagmiSessionState}>
+				<QueryClientProvider client={queryClient}>
+					<NuqsAdapter>
+						<NextThemeProvider defaultTheme="system" enableSystem attribute="class">
+							<MuiThemeProvider theme={defaultTheme}>
+								<HeroUIProvider>{props.children}</HeroUIProvider>
+							</MuiThemeProvider>
+						</NextThemeProvider>
+					</NuqsAdapter>
+				</QueryClientProvider>
+			</WagmiProvider>
 		</NextIntlClientProvider>
 	);
 };

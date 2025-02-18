@@ -3,13 +3,15 @@ import type { ReactNode } from 'react';
 import type { Metadata, Viewport } from 'next';
 import { getMessages, getTimeZone } from 'next-intl/server';
 import { setRequestLocale } from 'next-intl/server';
+import { headers } from 'next/headers';
 import { notFound } from 'next/navigation';
+import { cookieToInitialState } from 'wagmi';
 
 import AppPlugins from '@/components/commons/app-plugins';
 import AppLayout from '@/components/layouts/app-layout';
+import { wagmiConfig } from '@/config/wagmi';
 import AppProviders from '@/contexts/app-providers';
 import { routing } from '@/i18n/routing';
-import '@/themes/globals.css';
 import { initDayjs } from '@/utils/dayjs';
 import { env } from '@/utils/env';
 
@@ -51,9 +53,13 @@ const Layout = async ({
 	}
 
 	setRequestLocale(locale);
+
 	const messages = await getMessages();
 	const timeZone = await getTimeZone();
 	initDayjs(locale, timeZone);
+
+	const wagmiSessionState = cookieToInitialState(wagmiConfig, (await headers()).get('cookie'));
+
 	return (
 		<AppLayout
 			locale={locale}
@@ -61,7 +67,7 @@ const Layout = async ({
 				className: 'bg-root min-h-screen',
 			}}
 		>
-			<AppProviders messages={messages} timeZone={timeZone} locale={locale}>
+			<AppProviders messages={messages} timeZone={timeZone} locale={locale} wagmiSessionState={wagmiSessionState}>
 				{children}
 				{modal}
 				<AppPlugins />
