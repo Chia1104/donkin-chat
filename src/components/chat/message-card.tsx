@@ -8,7 +8,8 @@ import { CircularProgress } from '@heroui/progress';
 import { Badge, Button, Link } from '@heroui/react';
 import { cn } from '@heroui/react';
 import { useClipboard } from '@heroui/use-clipboard';
-import { Icon } from '@iconify/react';
+import CheckIcon from '@mui/icons-material/Check';
+import CircleIcon from '@mui/icons-material/Circle';
 import ContentCopyRoundedIcon from '@mui/icons-material/ContentCopyRounded';
 import RefreshIcon from '@mui/icons-material/Refresh';
 import ShareOutlinedIcon from '@mui/icons-material/ShareOutlined';
@@ -86,7 +87,7 @@ const MessageCard = ({
 					<Badge
 						isOneChar
 						color="danger"
-						content={<Icon className="text-background" icon="gravity-ui:circle-exclamation-fill" />}
+						content={<CircleIcon />}
 						isInvisible={!hasFailed}
 						placement="bottom-right"
 						shape="circle"
@@ -131,7 +132,13 @@ const MessageCard = ({
 							</Button>
 							<Button isIconOnly size="sm" onPress={handleCopy}>
 								{copied ? (
-									<Icon className="size-5 text-default-600" icon="gravity-ui:check" />
+									<CheckIcon
+										sx={{
+											width: 20,
+											height: 20,
+										}}
+										className="text-default-600"
+									/>
 								) : (
 									<ContentCopyRoundedIcon
 										sx={{
