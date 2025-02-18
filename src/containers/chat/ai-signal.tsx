@@ -12,6 +12,7 @@ import { useTranslations } from 'next-intl';
 
 import InfoCard, { MOCK_DATA } from '@/components/chat/preview/ai-signal/info-card';
 import { useChatStore } from '@/contexts/chat-provider';
+import { useMediaQuery } from '@/hooks/useMediaQuery';
 import { cn } from '@/utils/cn';
 
 interface FilterDate {
@@ -72,6 +73,7 @@ const AiSignal = () => {
 	const [display, setDisplay] = useState<'group' | 'single'>('group');
 	const t = useTranslations('preview.ai-signal');
 	const { isPreviewOnly } = useChatStore(state => state);
+
 	const filterDates: FilterDate[] = [
 		{
 			id: 1,
@@ -80,26 +82,46 @@ const AiSignal = () => {
 		},
 	];
 
+	const { isLgWidth, isMdWidth, isSmWidth } = useMediaQuery();
+
 	const getItemDisplay = useCallback(
 		(index: number, length: number) => {
-			if (isPreviewOnly) {
-				return display === 'group'
-					? length > 4 && index < length - 4 && index > length - 9
-						? ['meta', 'hotspots']
-						: index > length - 5 && length > 8
-							? ['meta']
-							: ['all']
-					: ['all'];
+			const itemsPerRow = isPreviewOnly
+				? isLgWidth
+					? 4
+					: isMdWidth
+						? 3
+						: isSmWidth
+							? 2
+							: 1
+				: isLgWidth
+					? 3
+					: isMdWidth
+						? 2
+						: 1;
+
+			const lastRowStartIndex = Math.floor((length - 1) / itemsPerRow) * itemsPerRow;
+			const secondLastRowStartIndex = Math.floor((length - itemsPerRow - 1) / itemsPerRow) * itemsPerRow;
+
+			if (display === 'group') {
+				if (length <= itemsPerRow && index >= lastRowStartIndex) {
+					return ['all'];
+				} else if (length <= itemsPerRow * 2 && index < lastRowStartIndex) {
+					return ['all'];
+				} else if (length <= itemsPerRow * 2 && index >= lastRowStartIndex) {
+					return ['meta', 'hotspots'];
+				} else if (index >= lastRowStartIndex) {
+					return ['meta'];
+				} else if (index >= secondLastRowStartIndex) {
+					return ['meta', 'hotspots'];
+				} else {
+					return ['all'];
+				}
+			} else {
+				return ['all'];
 			}
-			return display === 'group'
-				? length > 3 && index < length - 3 && index > length - 7
-					? ['meta', 'hotspots']
-					: index > length - 4 && length > 6
-						? ['meta']
-						: ['all']
-				: ['all'];
 		},
-		[display, isPreviewOnly],
+		[isPreviewOnly, isLgWidth, isMdWidth, isSmWidth, display],
 	);
 
 	return (
@@ -162,13 +184,13 @@ const AiSignal = () => {
 			<ScrollShadow className="w-full h-[calc(100vh-156px)]">
 				<ul
 					className={cn(
-						'grid grid-cols-1 md:grid-cols-2   gap-4 mb-4 w-full',
-						isPreviewOnly ? 'lg:grid-cols-4' : 'lg:grid-cols-3',
+						'grid grid-cols-1 gap-4 mb-4 w-full',
+						isPreviewOnly ? 'lg:grid-cols-4 md:grid-cols-3 sm:grid-cols-2' : 'lg:grid-cols-3 md:grid-cols-2',
 					)}
 				>
 					<AnimatePresence>
-						{Array.from({ length: 16 }).map((_, index) => {
-							const length = 16;
+						{Array.from({ length: 9 }).map((_, index) => {
+							const length = 9;
 							return (
 								<motion.li className="w-full" key={index} exit={{ opacity: 1 }} layout>
 									<InfoCard {...MOCK_DATA} display={getItemDisplay(index, length) as any} />
