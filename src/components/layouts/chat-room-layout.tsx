@@ -3,19 +3,20 @@
 import { Avatar } from '@heroui/avatar';
 import { Button } from '@heroui/button';
 import { Navbar, NavbarContent, NavbarItem } from '@heroui/navbar';
-import AccountBalanceWalletOutlinedIcon from '@mui/icons-material/AccountBalanceWalletOutlined';
 import SearchIcon from '@mui/icons-material/Search';
 import { useTranslations } from 'next-intl';
 
 import Footer from '@/components/commons/footer';
-import NetworkSelector from '@/components/commons/network-selector';
 import XICon from '@/components/icons/x-icon';
+import ChainSelector from '@/components/web3/chain-selector';
 import { QueryType } from '@/enums/queryType.enum';
 import { useQueryType } from '@/hooks/useQueryType';
 import { noto_sans } from '@/themes/fonts';
 import { cn } from '@/utils/cn';
 
 import Donkin from '../commons/donkin';
+import EnsGuard from '../web3/ens-guard';
+import WalletConnect from '../web3/wallet-connect';
 
 interface Props {
 	children: React.ReactNode;
@@ -23,7 +24,7 @@ interface Props {
 
 const ChatRoomLayout = (props: Props) => {
 	const t = useTranslations('nav');
-	const tAction = useTranslations('action');
+
 	const [q, setQ] = useQueryType();
 
 	return (
@@ -96,20 +97,15 @@ const ChatRoomLayout = (props: Props) => {
 						</Button>
 					</NavbarItem>
 					<NavbarItem aria-label="Network Selector">
-						<NetworkSelector />
+						<ChainSelector />
 					</NavbarItem>
 					<NavbarItem aria-label="Connect Wallet">
-						<Button
-							aria-label="Connect Wallet"
-							color="primary"
-							className="rounded-full"
-							startContent={<AccountBalanceWalletOutlinedIcon />}
-						>
-							{tAction('connect-wallet')}
-						</Button>
+						<WalletConnect />
 					</NavbarItem>
 					<NavbarItem aria-label="Avatar">
-						<Avatar aria-label="Avatar" />
+						<EnsGuard pendingFallback={<Avatar aria-label="Avatar" />}>
+							<Avatar aria-label="Avatar" />
+						</EnsGuard>
 					</NavbarItem>
 				</NavbarContent>
 			</Navbar>
