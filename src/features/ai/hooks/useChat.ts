@@ -497,11 +497,12 @@ export function useChat({
 		[controlledInput, generateId, onSubmit, triggerRequest],
 	);
 
-	const handleInputChange = (
-		e: React.ChangeEvent<HTMLInputElement> | React.ChangeEvent<HTMLTextAreaElement> | string,
-	) => {
-		setControlledInput(typeof e === 'string' ? e : e.target.value);
-	};
+	const handleInputChange = useCallback(
+		(e: React.ChangeEvent<HTMLInputElement> | React.ChangeEvent<HTMLTextAreaElement> | string) => {
+			setControlledInput(typeof e === 'string' ? e : e.target.value);
+		},
+		[],
+	);
 
 	const addToolResult = useCallback(
 		({ toolCallId, result }: { toolCallId: string; result: unknown }) => {

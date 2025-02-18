@@ -6,7 +6,7 @@ import { Button, ButtonGroup } from '@heroui/button';
 import { Divider } from '@heroui/divider';
 import { ScrollShadow } from '@heroui/scroll-shadow';
 import { Select, SelectItem } from '@heroui/select';
-import { motion } from 'framer-motion';
+import { AnimatePresence, motion } from 'framer-motion';
 import { ChevronDown } from 'lucide-react';
 import { useTranslations } from 'next-intl';
 
@@ -110,7 +110,7 @@ const AiSignal = () => {
 			className="w-full h-full flex flex-col"
 		>
 			<header className="flex items-center justify-between p-4">
-				<h2 className="text-2xl font-bold">AI Signal</h2>
+				<h2 className="text-2xl font-bold">{t('title')}</h2>
 				<div className="flex gap-4">
 					<ButtonGroup variant="bordered" radius="full" size="sm" className="relative">
 						<Button className="border-1 border-r-0" onPress={() => setDisplay('group')}>
@@ -159,17 +159,23 @@ const AiSignal = () => {
 				</div>
 			</header>
 			<ScrollShadow className="w-full h-[calc(100vh-156px)]">
-				<div
+				<ul
 					className={cn(
 						'grid grid-cols-1 md:grid-cols-2   gap-4 mb-4 w-full',
 						isPreviewOnly ? 'lg:grid-cols-4' : 'lg:grid-cols-3',
 					)}
 				>
-					{Array.from({ length: 16 }).map((_, index) => {
-						const length = 16;
-						return <InfoCard key={index} {...MOCK_DATA} display={getItemDisplay(index, length) as any} />;
-					})}
-				</div>
+					<AnimatePresence>
+						{Array.from({ length: 16 }).map((_, index) => {
+							const length = 16;
+							return (
+								<motion.li className="w-full" key={index} exit={{ opacity: 1 }} layout>
+									<InfoCard {...MOCK_DATA} display={getItemDisplay(index, length) as any} />
+								</motion.li>
+							);
+						})}
+					</AnimatePresence>
+				</ul>
 				<div className="flex justify-center">
 					<Button size="sm" variant="light" endContent={<ChevronDown className="size-3" />}>
 						{t('action.more')}
