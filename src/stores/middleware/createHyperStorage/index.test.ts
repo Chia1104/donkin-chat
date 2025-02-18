@@ -33,7 +33,7 @@ afterEach(() => {
 });
 
 describe('createHyperStorage', () => {
-	it('should create storage with default configuration if no options provided', async () => {
+	it('should create storage with default configuration if no options provided', () => {
 		const storage = createHyperStorage({});
 		expect(storage).toBeDefined();
 		// Add more assertions to verify default behavior
@@ -84,7 +84,7 @@ describe('createHyperStorage', () => {
 		expect(indexDBSetItemMock).toHaveBeenCalled();
 	});
 
-	it('should use the provided dbName for indexedDB', async () => {
+	it('should use the provided dbName for indexedDB', () => {
 		const dbName = 'customDB';
 		createHyperStorage({ localStorage: { mode: 'indexedDB', dbName, selectors: [] } });
 

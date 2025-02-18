@@ -1,11 +1,12 @@
 'use client';
 
-import { useCallback } from 'react';
+import { useCallback, memo } from 'react';
 
 import { Button } from '@heroui/button';
 import { Card, CardBody, CardFooter } from '@heroui/card';
 import { ScrollShadow } from '@heroui/scroll-shadow';
-import ArrowForwardIosIcon from '@mui/icons-material/ArrowForwardIos';
+import { AnimatePresence, motion } from 'framer-motion';
+import { ChevronLeftIcon, ChevronRightIcon } from 'lucide-react';
 import { useTranslations } from 'next-intl';
 
 import MessageCard from '@/components/chat/message-card';
@@ -16,26 +17,15 @@ import { cn } from '@/utils/cn';
 
 import DefaultPrompt from './_components/default-prompt';
 
-const StreamingMessage = () => {
-	const { currentMessage, asyncStatus } = useChatStore(state => state);
-
-	if (!currentMessage || currentMessage.role !== 'assistant' || !asyncStatus.isLoading) {
-		return null;
-	}
-
-	return (
-		<MessageCard
-			key={currentMessage.id}
-			message={currentMessage}
-			isLoading={asyncStatus.isLoading}
-			status={asyncStatus.error ? 'failed' : 'success'}
-			isCurrent
-		/>
-	);
+const useUIChat = () => {
+	const chatId = useChatStore(state => state.chatId);
+	return useChat({
+		id: chatId,
+	});
 };
 
 const Messages = ({ children }: { children?: React.ReactNode }) => {
-	const { messages, asyncStatus } = useChatStore(state => state);
+	const { messages, status, reload } = useUIChat();
 
 	if (!messages || messages.length === 0) {
 		return <DefaultPrompt />;
@@ -50,9 +40,10 @@ const Messages = ({ children }: { children?: React.ReactNode }) => {
 						key={message.id}
 						message={message}
 						showFeedback={message.role === 'assistant' && isLast}
-						isLoading={asyncStatus.isLoading}
-						status={asyncStatus.error && isLast ? 'failed' : 'success'}
+						isLoading={status === 'streaming'}
+						status={status === 'error' && isLast ? 'failed' : 'success'}
 						isCurrent={isLast}
+						onRetry={reload}
 					/>
 				);
 			})}
@@ -63,68 +54,83 @@ const Messages = ({ children }: { children?: React.ReactNode }) => {
 
 const ChatBody = () => {
 	return (
-		<CardBody className="flex flex-col items-center justify-start">
+		<CardBody className="flex flex-col items-center justify-start w-full">
 			<ScrollShadow className="w-full min-w-full h-[calc(100vh-300px)] max-h-[calc(100vh-300px)] min-h-[calc(100vh-350px)]">
 				<div className="flex justify-center items-center">
-					<Messages>
-						<StreamingMessage />
-					</Messages>
+					<Messages />
 				</div>
 			</ScrollShadow>
 		</CardBody>
 	);
 };
 
-const ChatFooter = () => {
-	const { chatId, syncMessages, updateCurrentMessage, completed, messages } = useChatStore(state => state);
+const ChatFooter = memo(() => {
 	const t = useTranslations('chat');
-	const { input, handleInputChange, handleSubmit } = useChat({
-		id: chatId,
-		onChatComplete: messages => {
-			syncMessages(messages);
-			completed();
-		},
-		onStreaming: updateCurrentMessage,
-		onSubmit: input => {
-			syncMessages(messages.concat(input));
-		},
-	});
-
+	const { input, handleInputChange, handleSubmit } = useUIChat();
 	return (
 		<CardFooter className="rounded-none flex flex-col items-center prose prose-invert mt-auto min-w-full p-0 sticky bottom-0">
 			<PromptInput value={input} onChange={handleInputChange} onSubmit={handleSubmit} />
 			<p className="text-xs">{t('donkin-warning')}</p>
 		</CardFooter>
 	);
-};
+});
 
 const PreviewAction = () => {
 	const { setIsPreviewOnly, isPreviewOnly } = useChatStore(state => state);
 
-	const _handleSetIsPreviewOnly = useCallback(() => {
+	const handleSetIsPreviewOnly = useCallback(() => {
 		setIsPreviewOnly(!isPreviewOnly);
 	}, [isPreviewOnly, setIsPreviewOnly]);
 
 	return (
-		<Button isIconOnly className="rounded-full absolute top-1/2 -left-5 z-30 border-1" variant="faded" color="default">
-			<ArrowForwardIosIcon sx={{ width: 16, height: 16 }} />
+		<Button
+			isIconOnly
+			className="rounded-full absolute top-1/2 -left-5 z-30 border-1"
+			variant="faded"
+			color="default"
+			onPress={handleSetIsPreviewOnly}
+		>
+			{!isPreviewOnly ? <ChevronRightIcon size={16} /> : <ChevronLeftIcon size={16} />}
 		</Button>
 	);
 };
 
 const Page = () => {
+	const isPreviewOnly = useChatStore(state => state.isPreviewOnly);
+
 	return (
-		<>
+		<section
+			className={cn(
+				'h-[calc(100vh-72px)] w-full p-5 md:pl-0 md:py-5 transition-width ease-in-out duration-1000',
+				isPreviewOnly ? 'w-[70px]' : 'w-full lg:w-1/3',
+			)}
+		>
 			<Card
 				className={cn(
-					'bg-background/65 p-5 relative overflow-visible min-w-full border-1 border-divider min-h-[calc(100vh-120px)] max-h-[calc(100vh-120px)]',
+					'bg-background/65 p-5 relative overflow-visible border-1 border-divider transition-width ease-in-out duration-1000 h-full min-h-[calc(100vh-120px)] max-h-[calc(100vh-120px)]',
+					isPreviewOnly ? 'w-[50px]' : 'min-w-full',
 				)}
 			>
 				<PreviewAction />
-				<ChatBody />
-				<ChatFooter />
+				<AnimatePresence mode="popLayout">
+					{!isPreviewOnly && (
+						<motion.div
+							className="flex flex-col w-full h-full"
+							initial={{ opacity: 0 }}
+							animate={{ opacity: 1 }}
+							exit={{ opacity: 0 }}
+							transition={{
+								type: 'spring',
+								duration: 1,
+							}}
+						>
+							<ChatBody />
+							<ChatFooter />
+						</motion.div>
+					)}
+				</AnimatePresence>
 			</Card>
-		</>
+		</section>
 	);
 };
 

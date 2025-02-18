@@ -194,7 +194,7 @@ const Stock = memo(
 
 const InfoCard = ({ display = ['all'], ...props }: CardProps) => {
 	return (
-		<HCard isPressable className="bg-gradient-to-b from-[#FFFFFF1A] to-[#FFFFFF04] p-4 gap-5 relative">
+		<HCard isPressable className="bg-gradient-to-b from-[#FFFFFF1A] to-[#FFFFFF04] p-4 gap-5 relative w-full">
 			{(display.includes('meta') || display.includes('all')) && <CardHeader {...props} />}
 			{(display.includes('hotspots') || display.includes('all')) && <Hotspots {...props} />}
 			{(display.includes('stock') || display.includes('all')) && <Stock {...props} />}

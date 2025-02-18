@@ -1,3 +1,8 @@
+/**
+ * TODO: WORK IN PROGRESS
+ */
+/* eslint-disable */
+// @ts-nocheck
 import isEqual from 'fast-deep-equal';
 import type { SWRResponse } from 'swr';
 import { mutate } from 'swr';
