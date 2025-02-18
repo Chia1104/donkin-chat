@@ -11,7 +11,7 @@ import EthereumIcon from '@/components/icons/ethereum-icon';
 import SolanaIcon from '@/components/icons/solana-icon';
 
 interface Chain {
-	id: number;
+	id: string;
 	name: string;
 	value: number | string;
 	image: string | React.ReactElement;
@@ -38,14 +38,14 @@ const ChainSelector = () => {
 	const chains: Chain[] = React.useMemo(() => {
 		return [
 			{
-				id: 900,
+				id: '900',
 				name: 'SOL',
 				value: 900,
 				image: <ChainIcon symbol="SOL" />,
 			},
 		].concat(
 			wagmiChains.map(chain => ({
-				id: chain.id,
+				id: `${chain.id}`,
 				name: chain.nativeCurrency.symbol,
 				value: chain.id,
 				image: <ChainIcon symbol={chain.nativeCurrency.symbol} />,
@@ -61,7 +61,7 @@ const ChainSelector = () => {
 			selectionMode="single"
 			variant="bordered"
 			radius="full"
-			defaultSelectedKeys={[currentChainId]}
+			defaultSelectedKeys={[`${currentChainId}`]}
 			className="min-w-32"
 			items={chains}
 			placeholder="Select a network"
