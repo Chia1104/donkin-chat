@@ -85,6 +85,7 @@ const MessageCard = ({
 			{message.role === 'assistant' && (
 				<div className="relative flex-none">
 					<Badge
+						aria-label="assistant-badge"
 						isOneChar
 						color="danger"
 						content={<CircleIcon />}
@@ -111,7 +112,7 @@ const MessageCard = ({
 						{hasFailed ? (
 							<p>
 								Something went wrong, if the issue persists please contact us through our help center at&nbsp;
-								<Link href="mailto:support@acmeai.com" size="sm">
+								<Link aria-label="support-email" href="mailto:support@acmeai.com" size="sm">
 									support@acmeai.com
 								</Link>
 							</p>
@@ -121,7 +122,7 @@ const MessageCard = ({
 					</div>
 					{showFeedback && !hasFailed && !isLoading && (
 						<div className="flex gap-2">
-							<Button isIconOnly size="sm" onPress={() => handleShare()}>
+							<Button aria-label="share-button" isIconOnly size="sm" onPress={() => handleShare()}>
 								<ShareOutlinedIcon
 									className="text-default-600"
 									sx={{
@@ -130,7 +131,7 @@ const MessageCard = ({
 									}}
 								/>
 							</Button>
-							<Button isIconOnly size="sm" onPress={handleCopy}>
+							<Button aria-label="copy-button" isIconOnly size="sm" onPress={handleCopy}>
 								{copied ? (
 									<CheckIcon
 										sx={{
@@ -149,7 +150,13 @@ const MessageCard = ({
 									/>
 								)}
 							</Button>
-							<Button isIconOnly size="sm" onPress={() => handleRetry()} isLoading={isPending || isRetrying}>
+							<Button
+								aria-label="retry-button"
+								isIconOnly
+								size="sm"
+								onPress={() => handleRetry()}
+								isLoading={isPending || isRetrying}
+							>
 								<RefreshIcon
 									sx={{
 										width: 20,

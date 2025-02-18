@@ -54,8 +54,11 @@ const Messages = ({ children }: { children?: React.ReactNode }) => {
 
 const ChatBody = () => {
 	return (
-		<CardBody className="flex flex-col items-center justify-start w-full">
-			<ScrollShadow className="w-full min-w-full h-[calc(100vh-300px)] max-h-[calc(100vh-300px)] min-h-[calc(100vh-350px)]">
+		<CardBody aria-label="chat-body" className="flex flex-col items-center justify-start w-full">
+			<ScrollShadow
+				aria-label="chat-scroll-shadow"
+				className="w-full min-w-full h-[calc(100vh-300px)] max-h-[calc(100vh-300px)] min-h-[calc(100vh-350px)]"
+			>
 				<div className="flex justify-center items-center">
 					<Messages />
 				</div>
@@ -68,7 +71,10 @@ const ChatFooter = memo(() => {
 	const t = useTranslations('chat');
 	const { input, handleInputChange, handleSubmit } = useUIChat();
 	return (
-		<CardFooter className="rounded-none flex flex-col items-center prose prose-invert mt-auto min-w-full p-0 sticky bottom-0">
+		<CardFooter
+			aria-label="chat-footer"
+			className="rounded-none flex flex-col items-center prose prose-invert mt-auto min-w-full p-0 sticky bottom-0"
+		>
 			<PromptInput value={input} onChange={handleInputChange} onSubmit={handleSubmit} />
 			<p className="text-xs">{t('donkin-warning')}</p>
 		</CardFooter>
@@ -84,6 +90,7 @@ const PreviewAction = () => {
 
 	return (
 		<Button
+			aria-label="preview-action"
 			isIconOnly
 			className="rounded-full absolute top-1/2 -left-5 z-30 border-1"
 			variant="faded"

@@ -94,12 +94,13 @@ const LinkIcon = (props: LinkIconProps) => {
 const CardHeader = memo((props: MetaProps) => {
 	const [, copy] = useCopyToClipboard();
 	return (
-		<HCardHeader className="flex items-center gap-2 p-0 z-20">
-			<Avatar src={props.meta.avatar} size="sm" className="w-6 h-6" />
+		<HCardHeader aria-label="card-header" className="flex items-center gap-2 p-0 z-20">
+			<Avatar aria-label="avatar" src={props.meta.avatar} size="sm" className="w-6 h-6" />
 			<h3 className="text-lg font-semibold">{props.meta.name}</h3>
 			<div className="flex items-center gap-1 z-20">
 				{Object.entries(props.link ?? {}).map(([key, value]) => (
 					<Button
+						aria-label={key}
 						as={key === 'copy' ? 'span' : 'a'}
 						href={value}
 						onPress={() => key === 'copy' && value && copy(value)}
@@ -121,10 +122,11 @@ const Hotspots = memo(
 	({ hotspots }: HotspotProps) => {
 		const t = useTranslations('preview.ai-signal');
 		return (
-			<CardBody className="border-1 border-divider rounded-lg prose prose-invert gap-4">
+			<CardBody aria-label="Hotspots" className="border-1 border-divider rounded-lg prose prose-invert gap-4">
 				<div>
 					<h4 className="mt-0 text-sm font-normal">{t('card.x-hotspot')}</h4>
 					<Progress
+						aria-label="x-hotspot"
 						classNames={{
 							base: '',
 							track: '',
@@ -139,6 +141,7 @@ const Hotspots = memo(
 				<div>
 					<h4 className="mt-0 text-sm font-normal">{t('card.tg-hotspot')}</h4>
 					<Progress
+						aria-label="tg-hotspot"
 						classNames={{
 							base: '',
 							track: '',
@@ -159,7 +162,7 @@ const Stock = memo(
 	({ stock }: StockProps) => {
 		const t = useTranslations('preview.ai-signal');
 		return (
-			<CardBody className="border-1 border-divider rounded-lg gap-4 prose prose-invert">
+			<CardBody aria-label="Stock" className="border-1 border-divider rounded-lg gap-4 prose prose-invert">
 				<div className="flex justify-between w-full gap-2">
 					<div className="w-1/2">
 						<h4 className="mt-0 text-sm font-normal">{t('card.stock.marketCap')}</h4>${' '}
@@ -194,7 +197,11 @@ const Stock = memo(
 
 const InfoCard = ({ display = ['all'], ...props }: CardProps) => {
 	return (
-		<HCard isPressable className="bg-gradient-to-b from-[#FFFFFF1A] to-[#FFFFFF04] p-4 gap-5 relative w-full">
+		<HCard
+			aria-label="info-card"
+			isPressable
+			className="bg-gradient-to-b from-[#FFFFFF1A] to-[#FFFFFF04] p-4 gap-5 relative w-full"
+		>
 			{(display.includes('meta') || display.includes('all')) && <CardHeader {...props} />}
 			{(display.includes('hotspots') || display.includes('all')) && <Hotspots {...props} />}
 			{(display.includes('stock') || display.includes('all')) && <Stock {...props} />}

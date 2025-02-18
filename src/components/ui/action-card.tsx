@@ -7,6 +7,7 @@ import { cn } from '@/utils/cn';
 const ActionCard = (props: CardProps) => {
 	return (
 		<Card
+			aria-label="Action Card"
 			isPressable
 			{...props}
 			className={cn(
@@ -33,7 +34,7 @@ const Icon = ({ children }: { children: React.ReactElement }) => {
 
 export const ActionBody = ({ icon, label }: { icon: React.ReactElement; label: React.ReactNode }) => {
 	return (
-		<CardBody className="flex flex-row items-center justify-between">
+		<CardBody aria-label="Action Body" className="flex flex-row items-center justify-between">
 			<span className="flex gap-2 items-center text-sm">
 				<Icon>{icon}</Icon>
 				{label}

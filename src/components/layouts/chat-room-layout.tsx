@@ -29,6 +29,7 @@ const ChatRoomLayout = (props: Props) => {
 	return (
 		<>
 			<Navbar
+				aria-label="Main Navigation"
 				position="static"
 				isBordered
 				className="bg-black/90"
@@ -38,11 +39,16 @@ const ChatRoomLayout = (props: Props) => {
 					base: 'h-[72px]',
 				}}
 			>
-				<NavbarContent className={cn('hidden sm:flex gap-4', noto_sans.className)} justify="start">
-					<NavbarItem>
+				<NavbarContent
+					aria-label="Main Navigation Content"
+					className={cn('hidden sm:flex gap-4', noto_sans.className)}
+					justify="start"
+				>
+					<NavbarItem aria-label="Donkin">
 						<Donkin />
 					</NavbarItem>
 					<NavbarItem
+						aria-label="AI Signal"
 						className="cursor-pointer"
 						isActive={q === QueryType.AiSignal}
 						onClick={() => setQ(QueryType.AiSignal)}
@@ -50,6 +56,7 @@ const ChatRoomLayout = (props: Props) => {
 						{t('ai-signal')}
 					</NavbarItem>
 					<NavbarItem
+						aria-label="Whale Ranking"
 						className="cursor-pointer"
 						isActive={q === QueryType.WhaleRanking}
 						onClick={() => setQ(QueryType.WhaleRanking)}
@@ -57,16 +64,18 @@ const ChatRoomLayout = (props: Props) => {
 						{t('whale-ranking')}
 					</NavbarItem>
 					<NavbarItem
+						aria-label="Smart Rankings"
 						className="cursor-pointer"
 						isActive={q === QueryType.SmartRankings}
 						onClick={() => setQ(QueryType.SmartRankings)}
 					>
 						{t('smart-rankings')}
 					</NavbarItem>
-					<NavbarItem>
+					<NavbarItem aria-label="Market">
 						<Button
+							aria-label="Search"
 							variant="bordered"
-							className="rounded-full border-1 w-[200px] justify-between"
+							className="rounded-full border-1 min-w-[200px] justify-between"
 							endContent={
 								<SearchIcon
 									sx={{
@@ -80,22 +89,27 @@ const ChatRoomLayout = (props: Props) => {
 						</Button>
 					</NavbarItem>
 				</NavbarContent>
-				<NavbarContent justify="end">
-					<NavbarItem>
-						<Button isIconOnly className="border-1" variant="bordered" radius="full">
+				<NavbarContent aria-label="Main Navigation Content" justify="end">
+					<NavbarItem aria-label="X">
+						<Button aria-label="X" isIconOnly className="border-1" variant="bordered" radius="full">
 							<XICon className="text-white" />
 						</Button>
 					</NavbarItem>
-					<NavbarItem>
+					<NavbarItem aria-label="Network Selector">
 						<NetworkSelector />
 					</NavbarItem>
-					<NavbarItem>
-						<Button color="primary" className="rounded-full" startContent={<AccountBalanceWalletOutlinedIcon />}>
+					<NavbarItem aria-label="Connect Wallet">
+						<Button
+							aria-label="Connect Wallet"
+							color="primary"
+							className="rounded-full"
+							startContent={<AccountBalanceWalletOutlinedIcon />}
+						>
 							{tAction('connect-wallet')}
 						</Button>
 					</NavbarItem>
-					<NavbarItem>
-						<Avatar />
+					<NavbarItem aria-label="Avatar">
+						<Avatar aria-label="Avatar" />
 					</NavbarItem>
 				</NavbarContent>
 			</Navbar>

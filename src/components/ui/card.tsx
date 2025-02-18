@@ -29,7 +29,7 @@ const Card: FC<Props> = ({ className, children, wrapperProps, ...props }) => {
 		<motion.div
 			{...wrapperProps}
 			className={cn(
-				'animated-feature-cards relative w-full drop-shadow-[0_0_15px_rgba(49,49,49,0.2)] dark:drop-shadow-[0_0_15px_rgba(49,49,49,0.2)]',
+				'animated-feature-cards relative w-full drop-shadow-[0_0_15px_rgba(49,49,49,0.2)]',
 				wrapperProps?.className,
 			)}
 			style={
@@ -43,7 +43,7 @@ const Card: FC<Props> = ({ className, children, wrapperProps, ...props }) => {
 		>
 			<motion.div
 				className={cn(
-					'dark:border-dark group relative w-full overflow-hidden rounded-3xl border bg-gradient-to-b from-neutral-50/90 to-neutral-100/90 transition duration-300 dark:from-neutral-950/90 dark:to-neutral-800/90',
+					'border-dark group relative w-full overflow-hidden rounded-3xl border bg-gradient-to-b transition duration-300 from-neutral-950/90 to-neutral-800/90',
 					'md:hover:border-transparent',
 					className,
 				)}

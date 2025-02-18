@@ -24,7 +24,12 @@ const PromptInput = memo(
 	({ onSubmit, value, onChange, props }: Props) => {
 		const t = useTranslations('chat');
 		return (
-			<Form {...props?.form} className={cn('w-full', props?.form?.className)} onSubmit={onSubmit}>
+			<Form
+				aria-label="Prompt Form"
+				{...props?.form}
+				className={cn('w-full', props?.form?.className)}
+				onSubmit={onSubmit}
+			>
 				<Textarea
 					aria-label="Prompt"
 					minRows={1}
@@ -34,7 +39,7 @@ const PromptInput = memo(
 					variant="underlined"
 					endContent={
 						<>
-							<Button isIconOnly variant="light" type="submit">
+							<Button aria-label="Send" isIconOnly variant="light" type="submit">
 								<SendIcon
 									sx={{
 										width: 20,

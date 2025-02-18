@@ -112,16 +112,17 @@ const AiSignal = () => {
 			<header className="flex items-center justify-between p-4">
 				<h2 className="text-2xl font-bold">{t('title')}</h2>
 				<div className="flex gap-4">
-					<ButtonGroup variant="bordered" radius="full" size="sm" className="relative">
-						<Button className="border-1 border-r-0" onPress={() => setDisplay('group')}>
+					<ButtonGroup aria-label="display" variant="bordered" radius="full" size="sm" className="relative">
+						<Button aria-label="group" className="border-1 border-r-0" onPress={() => setDisplay('group')}>
 							{display === 'group' ? <TileFieldIcon /> : <TileOutlineIcon />}
 						</Button>
 						<Divider className="absolute top-1/4 h-1/2" orientation="vertical" />
-						<Button className="border-1 border-l-0" onPress={() => setDisplay('single')}>
+						<Button aria-label="single" className="border-1 border-l-0" onPress={() => setDisplay('single')}>
 							{display === 'single' ? <SingleFieldIcon /> : <SingleOutlineIcon />}
 						</Button>
 					</ButtonGroup>
 					<Select
+						aria-label="Filter Date"
 						size="sm"
 						classNames={{
 							trigger: 'border-1',
@@ -147,7 +148,7 @@ const AiSignal = () => {
 						}}
 					>
 						{filterDate => (
-							<SelectItem key={filterDate.value} textValue={filterDate.name}>
+							<SelectItem aria-label="Select a filter" key={filterDate.value} textValue={filterDate.name}>
 								<div className="flex gap-2 items-center">
 									<div className="flex flex-col">
 										<span className="text-small">{filterDate.name}</span>
@@ -177,7 +178,7 @@ const AiSignal = () => {
 					</AnimatePresence>
 				</ul>
 				<div className="flex justify-center">
-					<Button size="sm" variant="light" endContent={<ChevronDown className="size-3" />}>
+					<Button aria-label="More" size="sm" variant="light" endContent={<ChevronDown className="size-3" />}>
 						{t('action.more')}
 					</Button>
 				</div>
