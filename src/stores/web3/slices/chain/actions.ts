@@ -30,24 +30,18 @@ export const web3ChainActions: StateCreator<Web3Store, [['zustand/devtools', nev
 			set({ ...evm, vm: 'EVM' }, false, nameSpace('switchChain', evm));
 			return;
 		} else if (isSVMChainID(chainId)) {
-			/**
-			 * TODO: implement switchChain for SVM
-			 */
 			const svm = get().supportedSVM.find(svm => svm.chainId === chainId);
 			if (!svm) return;
 			set({ ...svm, vm: 'SVM' }, false, nameSpace('switchChain', svm));
 			return;
 		}
 	},
-	/**
-	 * TODO: implement switchChain for SVM
-	 */
 	getCurrentChain: () => {
 		const { chainId, supportedSVM, supportedEVM } = get();
-		const currentChain = getChainId(get().wagmiConfig);
-		if (chainId !== currentChain) {
+		const currentEVMChainID = getChainId(get().wagmiConfig);
+		if (chainId !== currentEVMChainID) {
 			return supportedSVM.find(svm => svm.chainId === ChainID.SOL) ?? initialSOLChain;
 		}
-		return supportedEVM.find(evm => evm.chainId === currentChain) ?? initialSOLChain;
+		return supportedEVM.find(evm => evm.chainId === currentEVMChainID) ?? initialSOLChain;
 	},
 });
