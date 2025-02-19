@@ -3,12 +3,13 @@
 import { Avatar } from '@heroui/avatar';
 import { Button } from '@heroui/button';
 import { Navbar, NavbarContent, NavbarItem } from '@heroui/navbar';
+import { Skeleton } from '@heroui/skeleton';
 import SearchIcon from '@mui/icons-material/Search';
 import { useTranslations } from 'next-intl';
+import dynamic from 'next/dynamic';
 
 import Footer from '@/components/commons/footer';
 import XICon from '@/components/icons/x-icon';
-import ChainSelector from '@/components/web3/chain-selector';
 import { QueryType } from '@/enums/queryType.enum';
 import { useQueryType } from '@/hooks/useQueryType';
 import { noto_sans } from '@/themes/fonts';
@@ -17,6 +18,11 @@ import { cn } from '@/utils/cn';
 import Donkin from '../commons/donkin';
 import EnsGuard from '../web3/ens-guard';
 import WalletConnect from '../web3/wallet-connect';
+
+const ChainSelector = dynamic(() => import('@/components/web3/chain-selector'), {
+	ssr: false,
+	loading: () => <Skeleton className="w-32 rounded-full h-10" />,
+});
 
 interface Props {
 	children: React.ReactNode;
