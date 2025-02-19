@@ -4,11 +4,13 @@ import React from 'react';
 
 import { Image } from '@heroui/image';
 import { Select, SelectItem } from '@heroui/select';
-import { useSwitchChain, useChainId } from 'wagmi';
 
 import BNBIcon from '@/components/icons/bnb-icon';
 import EthereumIcon from '@/components/icons/ethereum-icon';
 import SolanaIcon from '@/components/icons/solana-icon';
+import type { EVMChainID } from '@/enums/web3/chain.enum';
+import { ChainSymbol } from '@/enums/web3/chain.enum';
+import { useWeb3Store } from '@/stores/web3/store';
 
 interface Chain {
 	id: string;
@@ -17,15 +19,13 @@ interface Chain {
 	image: string | React.ReactElement;
 }
 
-type WagmiChainId = 1 | 56;
-
-const ChainIcon = ({ symbol }: { symbol: 'ETH' | 'BNB' | 'SOL' }) => {
+const ChainIcon = ({ symbol }: { symbol: ChainSymbol }) => {
 	switch (symbol) {
-		case 'ETH':
+		case ChainSymbol.ETH:
 			return <EthereumIcon className="size-6" />;
-		case 'BNB':
+		case ChainSymbol.BNB:
 			return <BNBIcon className="size-6" />;
-		case 'SOL':
+		case ChainSymbol.SOL:
 			return <SolanaIcon className="size-6" />;
 		default:
 			return null;
@@ -33,25 +33,17 @@ const ChainIcon = ({ symbol }: { symbol: 'ETH' | 'BNB' | 'SOL' }) => {
 };
 
 const ChainSelector = () => {
-	const currentChainId = useChainId();
-	const { chains: wagmiChains, switchChain } = useSwitchChain();
+	const { supportedVM, getCurrentChain, switchChain } = useWeb3Store();
+
 	const chains: Chain[] = React.useMemo(() => {
-		return [
-			{
-				id: '900',
-				name: 'SOL',
-				value: 900,
-				image: <ChainIcon symbol="SOL" />,
-			},
-		].concat(
-			wagmiChains.map(chain => ({
-				id: `${chain.id}`,
-				name: chain.nativeCurrency.symbol,
-				value: chain.id,
-				image: <ChainIcon symbol={chain.nativeCurrency.symbol} />,
-			})),
-		);
-	}, [wagmiChains]);
+		return supportedVM.map(vm => ({
+			id: `${vm.chainId}`,
+			name: vm.chainName,
+			value: vm.chainId,
+			image: <ChainIcon symbol={vm.symbol} />,
+			data: vm,
+		}));
+	}, [supportedVM]);
 	return (
 		<Select
 			aria-label="Network Selector"
@@ -61,7 +53,7 @@ const ChainSelector = () => {
 			selectionMode="single"
 			variant="bordered"
 			radius="full"
-			defaultSelectedKeys={[`${currentChainId}`]}
+			defaultSelectedKeys={[`${getCurrentChain().chainId}`]}
 			className="min-w-32"
 			items={chains}
 			placeholder="Select a network"
@@ -88,7 +80,7 @@ const ChainSelector = () => {
 					) : null,
 				);
 			}}
-			onSelectionChange={key => switchChain({ chainId: key as unknown as WagmiChainId })}
+			onChange={e => switchChain(Number(e.target.value) as unknown as EVMChainID)}
 		>
 			{network => (
 				<SelectItem
