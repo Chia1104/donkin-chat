@@ -16,6 +16,8 @@ import { useRouter } from '@/i18n/routing';
 import defaultTheme from '@/themes/default';
 import { createQueryClient } from '@/utils/query-client';
 
+import SolanaWalletProvider from './solana-wallet-provider';
+
 interface Props {
 	children?: React.ReactNode;
 	messages: AbstractIntlMessages;
@@ -46,15 +48,17 @@ const AppProviders = (props: Props) => {
 	return (
 		<NextIntlClientProvider messages={props.messages} timeZone={props.timeZone} locale={props.locale}>
 			<WagmiProvider config={wagmiConfig} initialState={props.wagmiSessionState}>
-				<QueryClientProvider client={queryClient}>
-					<NuqsAdapter>
-						<NextThemeProvider defaultTheme="system" enableSystem attribute="class">
-							<MuiThemeProvider theme={defaultTheme}>
-								<HeroUIProvider>{props.children}</HeroUIProvider>
-							</MuiThemeProvider>
-						</NextThemeProvider>
-					</NuqsAdapter>
-				</QueryClientProvider>
+				<SolanaWalletProvider>
+					<QueryClientProvider client={queryClient}>
+						<NuqsAdapter>
+							<NextThemeProvider defaultTheme="system" enableSystem attribute="class">
+								<MuiThemeProvider theme={defaultTheme}>
+									<HeroUIProvider>{props.children}</HeroUIProvider>
+								</MuiThemeProvider>
+							</NextThemeProvider>
+						</NuqsAdapter>
+					</QueryClientProvider>
+				</SolanaWalletProvider>
 			</WagmiProvider>
 		</NextIntlClientProvider>
 	);

@@ -6,16 +6,18 @@ import { useTranslations } from 'next-intl';
 import NextImage from 'next/image';
 import { useConnect } from 'wagmi';
 
+import { ConnectorID } from '@/enums/web3/wallet.enum';
+
 import CoinbaseIcon from '../icons/coin-base-icon';
 import MetaMaskIcon from '../icons/meta-mask-icon';
 
 const Icon = ({ id }: { id: string }) => {
 	switch (id) {
-		case 'coinbaseWalletSDK':
+		case ConnectorID.Coinbase:
 			return <CoinbaseIcon className="size-5" />;
-		case 'metaMaskSDK':
+		case ConnectorID.MetaMask:
 			return <MetaMaskIcon className="size-5" />;
-		case 'com.bitget.web3':
+		case ConnectorID.Bitget:
 			return (
 				<Image
 					as={NextImage}
