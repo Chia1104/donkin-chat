@@ -27,6 +27,8 @@ interface MetaProps {
 	meta: {
 		name: string;
 		avatar?: string;
+		chain: string;
+		token: string;
 	};
 	link?: Record<LinkProvider, string | undefined>;
 }
@@ -53,7 +55,7 @@ interface StockProps {
 
 interface CardProps extends MetaProps, StockProps, HotspotProps {
 	display?: ('all' | 'meta' | 'stock' | 'hotspots')[];
-	onPress?: () => void;
+	onPress?: (meta: MetaProps) => void;
 }
 
 interface LinkIconProps {
@@ -65,6 +67,8 @@ export const MOCK_DATA: CardProps = {
 	meta: {
 		name: 'Solana',
 		avatar: 'https://solana.com/favicon.ico',
+		chain: 'sol',
+		token: '0x1234567890',
 	},
 	link: {
 		website: 'https://solana.com',
@@ -261,7 +265,7 @@ const InfoCard = ({ display = ['all'], onPress, ...props }: CardProps) => {
 			aria-label="info-card"
 			isPressable
 			className="bg-gradient-to-t from-[#FFFFFF1A] to-[#FFFFFF04] p-4 gap-5 relative w-full"
-			onPress={onPress}
+			onPress={() => onPress && onPress(props)}
 		>
 			{(display.includes('meta') || display.includes('all')) && <CardHeader {...props} />}
 			{(display.includes('hotspots') || display.includes('all')) && <Hotspots {...props} />}

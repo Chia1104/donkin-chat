@@ -1,12 +1,14 @@
 'use client';
 
 import { AnimatePresence } from 'framer-motion';
+import dynamic from 'next/dynamic';
 
-import AiSignal from '@/containers/chat/ai-signal';
 import { useChatStore } from '@/contexts/chat-provider';
 import { QueryType } from '@/enums/queryType.enum';
 import { useAISearchParams } from '@/features/ai/hooks/useAISearchParams';
 import { cn } from '@/utils/cn';
+
+const AiSignal = dynamic(() => import('@/containers/chat/ai-signal'), { ssr: false });
 
 const Content = () => {
 	const preview = useChatStore(state => state.preview);

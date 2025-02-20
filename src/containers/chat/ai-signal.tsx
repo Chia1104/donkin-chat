@@ -14,7 +14,6 @@ import InfoCard, { MOCK_DATA } from '@/components/chat/preview/ai-signal/info-ca
 import { useChatStore } from '@/contexts/chat-provider';
 import { useMediaQuery } from '@/hooks/useMediaQuery';
 import { useRouter } from '@/i18n/routing';
-import { useWeb3Store } from '@/stores/web3/store';
 import { cn } from '@/utils/cn';
 
 interface FilterDate {
@@ -76,7 +75,6 @@ const AiSignal = () => {
 	const t = useTranslations('preview.ai-signal');
 	const isPreviewOnly = useChatStore(state => state.isPreviewOnly);
 	const router = useRouter();
-	const { chainName } = useWeb3Store();
 
 	const filterDates: FilterDate[] = [
 		{
@@ -200,8 +198,8 @@ const AiSignal = () => {
 									<InfoCard
 										{...MOCK_DATA}
 										display={getItemDisplay(index, length)}
-										onPress={() => {
-											router.push(`/${chainName}/token/0x0`);
+										onPress={data => {
+											router.push(`/${data.meta.chain}/token/${data.meta.token}`);
 										}}
 									/>
 								</motion.li>
