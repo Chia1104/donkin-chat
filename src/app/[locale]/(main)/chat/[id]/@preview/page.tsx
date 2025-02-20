@@ -9,7 +9,7 @@ import { useQueryType } from '@/hooks/useQueryType';
 import { cn } from '@/utils/cn';
 
 const Content = () => {
-	const { preview } = useChatStore(state => state);
+	const preview = useChatStore(state => state.preview);
 	const [q] = useQueryType();
 
 	if (preview) {
@@ -25,7 +25,7 @@ const Content = () => {
 };
 
 const Page = () => {
-	const { isPreviewOnly } = useChatStore(state => state);
+	const isPreviewOnly = useChatStore(state => state.isPreviewOnly);
 
 	return (
 		<section
