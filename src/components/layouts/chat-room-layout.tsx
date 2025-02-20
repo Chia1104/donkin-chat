@@ -12,6 +12,7 @@ import Footer from '@/components/commons/footer';
 import XICon from '@/components/icons/x-icon';
 import { QueryType } from '@/enums/queryType.enum';
 import { useAISearchParams } from '@/features/ai/hooks/useAISearchParams';
+import { useRouter } from '@/i18n/routing';
 import { noto_sans } from '@/themes/fonts';
 import { cn } from '@/utils/cn';
 
@@ -30,6 +31,7 @@ interface Props {
 
 const ChatRoomLayout = (props: Props) => {
 	const t = useTranslations('nav');
+	const router = useRouter();
 	const [searchParams, setSearchParams] = useAISearchParams();
 
 	return (
@@ -50,7 +52,13 @@ const ChatRoomLayout = (props: Props) => {
 					className={cn('hidden sm:flex gap-4', noto_sans.className)}
 					justify="start"
 				>
-					<NavbarItem aria-label="Donkin">
+					<NavbarItem
+						className="cursor-pointer"
+						aria-label="Donkin"
+						onClick={() => {
+							void router.push('/');
+						}}
+					>
 						<Donkin />
 					</NavbarItem>
 					<NavbarItem
