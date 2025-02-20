@@ -11,7 +11,7 @@ import dynamic from 'next/dynamic';
 import Footer from '@/components/commons/footer';
 import XICon from '@/components/icons/x-icon';
 import { QueryType } from '@/enums/queryType.enum';
-import { useQueryType } from '@/hooks/useQueryType';
+import { useQueryType } from '@/features/ai/hooks/useQueryType';
 import { noto_sans } from '@/themes/fonts';
 import { cn } from '@/utils/cn';
 

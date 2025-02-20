@@ -13,6 +13,8 @@ import { useTranslations } from 'next-intl';
 import InfoCard, { MOCK_DATA } from '@/components/chat/preview/ai-signal/info-card';
 import { useChatStore } from '@/contexts/chat-provider';
 import { useMediaQuery } from '@/hooks/useMediaQuery';
+import { useRouter } from '@/i18n/routing';
+import { useWeb3Store } from '@/stores/web3/store';
 import { cn } from '@/utils/cn';
 
 interface FilterDate {
@@ -72,7 +74,9 @@ const SingleFieldIcon = () => (
 const AiSignal = () => {
 	const [display, setDisplay] = useState<'group' | 'single'>('group');
 	const t = useTranslations('preview.ai-signal');
-	const { isPreviewOnly } = useChatStore(state => state);
+	const isPreviewOnly = useChatStore(state => state.isPreviewOnly);
+	const router = useRouter();
+	const { chainName } = useWeb3Store();
 
 	const filterDates: FilterDate[] = [
 		{
@@ -193,7 +197,13 @@ const AiSignal = () => {
 							const length = 9;
 							return (
 								<motion.li className="w-full" key={index} exit={{ opacity: 1 }} layout>
-									<InfoCard {...MOCK_DATA} display={getItemDisplay(index, length)} />
+									<InfoCard
+										{...MOCK_DATA}
+										display={getItemDisplay(index, length)}
+										onPress={() => {
+											router.push(`/${chainName}/token/0x0`);
+										}}
+									/>
 								</motion.li>
 							);
 						})}

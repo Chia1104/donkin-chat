@@ -53,6 +53,7 @@ interface StockProps {
 
 interface CardProps extends MetaProps, StockProps, HotspotProps {
 	display?: ('all' | 'meta' | 'stock' | 'hotspots')[];
+	onPress?: () => void;
 }
 
 interface LinkIconProps {
@@ -254,12 +255,13 @@ const Stock = memo(
 	},
 );
 
-const InfoCard = ({ display = ['all'], ...props }: CardProps) => {
+const InfoCard = ({ display = ['all'], onPress, ...props }: CardProps) => {
 	return (
 		<HCard
 			aria-label="info-card"
 			isPressable
 			className="bg-gradient-to-t from-[#FFFFFF1A] to-[#FFFFFF04] p-4 gap-5 relative w-full"
+			onPress={onPress}
 		>
 			{(display.includes('meta') || display.includes('all')) && <CardHeader {...props} />}
 			{(display.includes('hotspots') || display.includes('all')) && <Hotspots {...props} />}
