@@ -5,18 +5,21 @@ export interface Chain {
 	chainId: ChainID;
 	chainName: string;
 	symbol: ChainSymbol;
+	vm: SupportedVM;
 }
 
 export interface EVMChain {
 	chainId: EVMChainID;
 	chainName: string;
 	symbol: EVMChainSymbol;
+	vm: typeof SupportedVM.EVM;
 }
 
 export interface SVMChain {
 	chainId: SVMChainID;
 	chainName: string;
 	symbol: SVMChainSymbol;
+	vm: typeof SupportedVM.SVM;
 }
 
 export interface Web3ChainState extends Chain {
@@ -30,45 +33,51 @@ export const initialSOLChain: Chain = {
 	chainId: ChainID.SOL,
 	chainName: ChainSymbol.SOL,
 	symbol: ChainSymbol.SOL,
+	vm: SupportedVM.SVM,
 };
 
 export const initialWeb3ChainState: Web3ChainState = {
 	...initialSOLChain,
-	vm: SupportedVM.SVM,
 	supportedEVM: [
 		{
 			chainId: EVMChainID.ETH,
 			chainName: EVMChainSymbol.ETH,
 			symbol: EVMChainSymbol.ETH,
+			vm: SupportedVM.EVM,
 		},
-		{
-			chainId: EVMChainID.BNB,
-			chainName: EVMChainSymbol.BNB,
-			symbol: EVMChainSymbol.BNB,
-		},
+		// {
+		// 	chainId: EVMChainID.BNB,
+		// 	chainName: EVMChainSymbol.BNB,
+		// 	symbol: EVMChainSymbol.BNB,
+		// 	vm: SupportedVM.EVM,
+		// },
 	],
 	supportedSVM: [
 		{
 			chainId: SVMChainID.SOL,
 			chainName: SVMChainSymbol.SOL,
 			symbol: SVMChainSymbol.SOL,
+			vm: SupportedVM.SVM,
 		},
 	],
 	supportedVM: [
 		{
-			chainId: EVMChainID.ETH,
-			chainName: EVMChainSymbol.ETH,
-			symbol: EVMChainSymbol.ETH,
-		},
-		{
-			chainId: EVMChainID.BNB,
-			chainName: EVMChainSymbol.BNB,
-			symbol: EVMChainSymbol.BNB,
-		},
-		{
 			chainId: SVMChainID.SOL,
 			chainName: SVMChainSymbol.SOL,
 			symbol: SVMChainSymbol.SOL,
+			vm: SupportedVM.SVM,
 		},
+		{
+			chainId: EVMChainID.ETH,
+			chainName: EVMChainSymbol.ETH,
+			symbol: EVMChainSymbol.ETH,
+			vm: SupportedVM.EVM,
+		},
+		// {
+		// 	chainId: EVMChainID.BNB,
+		// 	chainName: EVMChainSymbol.BNB,
+		// 	symbol: EVMChainSymbol.BNB,
+		// 	vm: SupportedVM.EVM,
+		// },
 	],
 };

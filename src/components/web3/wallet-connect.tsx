@@ -1,15 +1,24 @@
+import { useMemo } from 'react';
+
 import { Button } from '@heroui/button';
 import { Image } from '@heroui/image';
 import { Modal, useDisclosure, ModalContent, ModalBody } from '@heroui/modal';
 import AccountBalanceWalletOutlinedIcon from '@mui/icons-material/AccountBalanceWalletOutlined';
+import { useWallet } from '@solana/wallet-adapter-react';
 import { useTranslations } from 'next-intl';
 import NextImage from 'next/image';
 import { useConnect } from 'wagmi';
 
+import { SupportedVM } from '@/enums/web3/supportedVM.enum';
 import { ConnectorID } from '@/enums/web3/wallet.enum';
+import { useWeb3Store } from '@/stores/web3/store';
 
 import CoinbaseIcon from '../icons/coin-base-icon';
 import MetaMaskIcon from '../icons/meta-mask-icon';
+
+interface Props {
+	vm?: SupportedVM;
+}
 
 const Icon = ({ id }: { id: string }) => {
 	switch (id) {
@@ -29,14 +38,63 @@ const Icon = ({ id }: { id: string }) => {
 				/>
 			);
 		default:
-			return null;
+			return <Image as={NextImage} src={id} width={20} height={20} alt="wallet" aria-label="wallet" />;
 	}
 };
 
-const WalletConnect = () => {
+const WalletConnect = (props: Props) => {
+	const { vm: currentVM } = useWeb3Store();
+
+	const { vm = currentVM } = props;
+
 	const tAction = useTranslations('action');
 	const { isOpen, onOpen, onOpenChange } = useDisclosure();
 	const { connectors, connect } = useConnect();
+	// eslint-disable-next-line @typescript-eslint/unbound-method
+	const { wallets, select: solanaSelect } = useWallet();
+
+	const walletList = useMemo(() => {
+		switch (vm) {
+			case SupportedVM.EVM:
+				return (
+					<>
+						{connectors.map(connector => (
+							<Button
+								key={connector.id}
+								onPress={() => connect({ connector })}
+								aria-label={connector.name}
+								startContent={<Icon id={connector.icon ?? connector.id} />}
+							>
+								{connector.name}
+							</Button>
+						))}
+					</>
+				);
+			case SupportedVM.SVM:
+				return (
+					<>
+						{wallets.map(wallet => (
+							<Button
+								key={wallet.adapter.name}
+								onPress={() => {
+									/**
+									 * TODO: implement solana connect function
+									 */
+									solanaSelect(wallet.adapter.name);
+								}}
+								aria-label={wallet.adapter.name}
+								startContent={<Icon id={wallet.adapter.icon} />}
+							>
+								{wallet.adapter.name}
+							</Button>
+						))}
+					</>
+				);
+			default:
+				return null;
+		}
+	}, [connect, connectors, solanaSelect, vm, wallets]);
+
 	return (
 		<>
 			<Button
@@ -50,18 +108,7 @@ const WalletConnect = () => {
 			</Button>
 			<Modal isOpen={isOpen} onOpenChange={onOpenChange}>
 				<ModalContent className="p-5">
-					<ModalBody>
-						{connectors.map(connector => (
-							<Button
-								key={connector.id}
-								onPress={() => connect({ connector })}
-								aria-label={connector.name}
-								startContent={<Icon id={connector.id} />}
-							>
-								{connector.name}
-							</Button>
-						))}
-					</ModalBody>
+					<ModalBody>{walletList}</ModalBody>
 				</ModalContent>
 			</Modal>
 		</>

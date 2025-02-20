@@ -33,7 +33,7 @@ const ChainIcon = ({ symbol }: { symbol: ChainSymbol }) => {
 };
 
 const ChainSelector = () => {
-	const { supportedVM, getCurrentChain, switchChain } = useWeb3Store();
+	const { supportedVM, chainId, switchChain } = useWeb3Store();
 
 	const chains: Chain[] = React.useMemo(() => {
 		return supportedVM.map(vm => ({
@@ -53,7 +53,7 @@ const ChainSelector = () => {
 			selectionMode="single"
 			variant="bordered"
 			radius="full"
-			defaultSelectedKeys={[`${getCurrentChain().chainId}`]}
+			defaultSelectedKeys={[`${chainId}`]}
 			className="min-w-32"
 			items={chains}
 			placeholder="Select a network"

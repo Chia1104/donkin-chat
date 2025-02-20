@@ -11,7 +11,7 @@ import dynamic from 'next/dynamic';
 import Footer from '@/components/commons/footer';
 import XICon from '@/components/icons/x-icon';
 import { QueryType } from '@/enums/queryType.enum';
-import { useQueryType } from '@/hooks/useQueryType';
+import { useAISearchParams } from '@/features/ai/hooks/useAISearchParams';
 import { noto_sans } from '@/themes/fonts';
 import { cn } from '@/utils/cn';
 
@@ -30,8 +30,7 @@ interface Props {
 
 const ChatRoomLayout = (props: Props) => {
 	const t = useTranslations('nav');
-
-	const [q, setQ] = useQueryType();
+	const [searchParams, setSearchParams] = useAISearchParams();
 
 	return (
 		<>
@@ -57,24 +56,30 @@ const ChatRoomLayout = (props: Props) => {
 					<NavbarItem
 						aria-label="AI Signal"
 						className="cursor-pointer"
-						isActive={q === QueryType.AiSignal}
-						onClick={() => setQ(QueryType.AiSignal)}
+						isActive={searchParams.q === QueryType.AiSignal}
+						onClick={() => {
+							void setSearchParams({ q: QueryType.AiSignal });
+						}}
 					>
 						{t('ai-signal')}
 					</NavbarItem>
 					<NavbarItem
 						aria-label="Whale Ranking"
 						className="cursor-pointer"
-						isActive={q === QueryType.WhaleRanking}
-						onClick={() => setQ(QueryType.WhaleRanking)}
+						isActive={searchParams.q === QueryType.WhaleRanking}
+						onClick={() => {
+							void setSearchParams({ q: QueryType.WhaleRanking });
+						}}
 					>
 						{t('whale-ranking')}
 					</NavbarItem>
 					<NavbarItem
 						aria-label="Smart Rankings"
 						className="cursor-pointer"
-						isActive={q === QueryType.SmartRankings}
-						onClick={() => setQ(QueryType.SmartRankings)}
+						isActive={searchParams.q === QueryType.SmartRankings}
+						onClick={() => {
+							void setSearchParams({ q: QueryType.SmartRankings });
+						}}
 					>
 						{t('smart-rankings')}
 					</NavbarItem>

@@ -4,7 +4,7 @@ type PropsWithLocale<T = unknown> = T & { locale?: Locale };
 
 type PageParamsWithLocale<T = unknown> = Promise<T & { locale: Locale }>;
 
-type PageSearchParams = Record<string, string | string[] | undefined>;
+type PageSearchParams = import('nuqs/server').SearchParams;
 
 interface PagePropsWithLocale<TParams = unknown, TSearchParams extends PageSearchParams = PageSearchParams> {
 	params: PageParamsWithLocale<TParams>;

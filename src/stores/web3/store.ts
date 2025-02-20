@@ -22,7 +22,7 @@ const createStore: StateCreator<Web3Store, [['zustand/devtools', never]], [['zus
 	}),
 	{
 		name: 'donkin-chat.web3.store',
-		partialize: state => ({ chainId: state.chainId, chainName: state.chainName, symbol: state.symbol }),
+		partialize: state => ({ chainId: state.chainId, chainName: state.chainName, symbol: state.symbol, vm: state.vm }),
 		skipHydration: true,
 	},
 );

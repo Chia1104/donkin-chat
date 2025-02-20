@@ -9,13 +9,12 @@ import { AnimatePresence, motion } from 'framer-motion';
 import { ChevronLeftIcon, ChevronRightIcon } from 'lucide-react';
 import { useTranslations } from 'next-intl';
 
+import DefaultPrompt from '@/components/chat/default-prompt';
 import MessageCard from '@/components/chat/message-card';
 import PromptInput from '@/components/chat/prompt-input';
 import { useChatStore } from '@/contexts/chat-provider';
 import { useChat } from '@/features/ai/hooks/useChat';
 import { cn } from '@/utils/cn';
-
-import DefaultPrompt from './_components/default-prompt';
 
 const useUIChat = () => {
 	const chatId = useChatStore(state => state.chatId);
@@ -107,7 +106,7 @@ const PreviewAction = () => {
 	);
 };
 
-const Page = () => {
+const Chat = () => {
 	const isPreviewOnly = useChatStore(state => state.isPreviewOnly);
 
 	return (
@@ -146,4 +145,4 @@ const Page = () => {
 	);
 };
 
-export default Page;
+export default Chat;
