@@ -227,35 +227,69 @@ func Web3Login(w http.ResponseWriter, r *http.Request) error {
 
 ## SVM (Solana)
 
-Solana 的 sign message 格式跟 EVM 不同，前端同樣也可以先透過 siwe 來生成 message，再去做 encode
-
 ```ts
-import {
-  generateKeyPair,
-  signBytes,
-  verifySignature,
-  getUtf8Encoder,
-  getBase58Decoder,
-} from "@solana/web3.js";
+import { SolanaSignInInput } from "@solana/wallet-standard-features";
+import { useWallet } from '@solana/wallet-adapter-react';
 
-const keys = await generateKeyPair();
+export const createSignInData = async (): Promise<SolanaSignInInput> => {
+  const now: Date = new Date();
+  const uri = window.location.href
+  const currentUrl = new URL(uri);
+  const domain = currentUrl.host;
 
-const siweMessage = new SiweMessage({
-  domain: window.location.host,
-  address,
-  statement: 'Sign in with Solana to the app.',
-  uri: window.location.origin,
-  version: '1',
-  chainId,
-  nonce: state.nonce,
-})
+  // Convert the Date object to a string
+  const currentDateTime = now.toISOString();
+  const signInData: SolanaSignInInput = {
+    domain,
+    statement: "Sign in with Solana to the app.",
+    version: "1",
+    nonce: "", // get from api
+    chainId: "mainnet",
+    issuedAt: currentDateTime,
+    resources: ["https://donkin.ai"],
+  };
 
-const message = getUtf8Encoder().encode(siweMessage.prepareMessage());
-const signedBytes = await signBytes(keys.privateKey, message);
+  return signInData;
+};
 
-const decoded = getBase58Decoder().decode(signedBytes);
-console.log("Signature:", decoded);
+const SignButton = () => {
+  const { wallet, publicKey, connect, disconnect, signMessage, signIn } = useWallet();
 
-const verified = await verifySignature(keys.publicKey, signedBytes, message);
-console.log("Verified:", verified);
+  const handleSignIn = useCallback(async () => {
+    if (!publicKey || !wallet) return;
+    const signInData = await createSignInData();
+
+    try {
+      const {account, signedMessage, signature} = await signIn(signInData);
+      createLog({
+        status: 'success',
+        method: 'signIn',
+        message: `Message signed: ${JSON.stringify(signedMessage)} by ${account.address} with signature ${JSON.stringify(signature)}`,
+      });
+    } catch (error) {
+      createLog({
+        status: 'error',
+        method: 'signIn',
+        message: error.message,
+      });
+    }
+  }, [createLog, publicKey, signIn, wallet]);
+
+  /** Connect */
+  const handleConnect = useCallback(async () => {
+    if (!publicKey || !wallet) return;
+
+    try {
+      await connect();
+    } catch (error) {
+      createLog({
+        status: 'error',
+        method: 'connect',
+        message: error.message,
+      });
+    }
+  }, [connect, createLog, publicKey, wallet]);
+
+  return ...
+}
 ```
