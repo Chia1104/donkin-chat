@@ -2,6 +2,7 @@
 
 import { useEffect } from 'react';
 
+import { ToastProvider } from '@heroui/toast';
 import { Toaster } from 'sonner';
 
 import type { Theme } from '@/enums/theme.enum';
@@ -25,6 +26,7 @@ const AppPlugins = () => {
 		<>
 			<Wb3StoreConsumer />
 			<ToasterPlugin />
+			<ToastProvider />
 		</>
 	);
 };

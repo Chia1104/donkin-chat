@@ -6,6 +6,7 @@
 import type { UseQueryResult, UseQueryOptions } from '@tanstack/react-query';
 import { useQuery } from '@tanstack/react-query';
 import isEqual from 'fast-deep-equal';
+import { produce } from 'immer';
 import type { StateCreator } from 'zustand/vanilla';
 
 import type { ChatStore } from '@/stores/chat/store';
@@ -21,6 +22,18 @@ import type { MessageDispatch } from './reducers';
 import { messagesReducer } from './reducers';
 
 const namespace = setNamespace('chat/message');
+
+const toggleBooleanList = (ids: string[], id: string, loading: boolean) => {
+	return produce(ids, draft => {
+		if (loading) {
+			if (!draft.includes(id)) draft.push(id);
+		} else {
+			const index = draft.indexOf(id);
+
+			if (index >= 0) draft.splice(index, 1);
+		}
+	});
+};
 
 export interface ChatMessageAction {
 	// create
@@ -72,7 +85,7 @@ export interface ChatMessageAction {
 	internal_toggleMessageLoading: (loading: boolean, id: string) => void;
 }
 
-export const chatMessage: StateCreator<ChatStore, [['zustand/devtools', never]], [], Partial<ChatMessageAction>> = (
+export const chatMessage: StateCreator<ChatStore, [['zustand/devtools', never]], [], ChatMessageAction> = (
 	set,
 	get,
 ) => ({
@@ -187,5 +200,15 @@ export const chatMessage: StateCreator<ChatStore, [['zustand/devtools', never]],
 
 		internal_toggleMessageLoading(false, tempId);
 		return id;
+	},
+
+	internal_toggleMessageLoading: (loading, id) => {
+		set(
+			{
+				messageLoadingIds: toggleBooleanList(get().messageLoadingIds, id, loading),
+			},
+			false,
+			'internal_toggleMessageLoading',
+		);
 	},
 });
