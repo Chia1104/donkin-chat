@@ -62,7 +62,7 @@ export interface UseChatHelpers {
 	/** setState-powered method to update the input value */
 	setInput: React.Dispatch<React.SetStateAction<string>>;
 	/** An input/textarea-ready onChange handler to control the value of the input */
-	handleInputChange: (e: React.ChangeEvent<HTMLInputElement> | React.ChangeEvent<HTMLTextAreaElement>) => void;
+	handleInputChange: (e: React.ChangeEvent<HTMLInputElement> | React.ChangeEvent<HTMLTextAreaElement> | string) => void;
 	/** Form submission handler to automatically reset input and append a user message */
 	handleSubmit: (
 		event?: { preventDefault?: () => void },

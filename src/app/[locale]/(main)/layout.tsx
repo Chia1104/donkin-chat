@@ -3,9 +3,9 @@ import { unauthorized, forbidden } from 'next/navigation';
 
 import ChatRoomLayout from '@/components/layouts/chat-room-layout';
 import { ChatStoreProvider } from '@/contexts/chat-provider';
-import { Role } from '@/enums/role.enum';
-import { loadAISearchParams } from '@/features/ai/services/loadAISearchParams';
-import { auth } from '@/features/auth/server';
+import { loadAISearchParams } from '@/libs/ai/services/loadAISearchParams';
+import { Role } from '@/libs/auth/enums/role.enum';
+import { auth } from '@/libs/auth/server';
 
 interface Props {
 	children: React.ReactNode;

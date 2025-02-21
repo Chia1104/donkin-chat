@@ -10,9 +10,9 @@ import dynamic from 'next/dynamic';
 
 import Footer from '@/components/commons/footer';
 import XICon from '@/components/icons/x-icon';
-import { QueryType } from '@/enums/queryType.enum';
-import { useAISearchParams } from '@/features/ai/hooks/useAISearchParams';
 import { useRouter } from '@/i18n/routing';
+import { QueryType } from '@/libs/ai/enums/queryType.enum';
+import { useAISearchParams } from '@/libs/ai/hooks/useAISearchParams';
 import { noto_sans } from '@/themes/fonts';
 import { cn } from '@/utils/cn';
 

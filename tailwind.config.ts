@@ -1,6 +1,7 @@
 import { heroui } from '@heroui/react';
 import typography from '@tailwindcss/typography';
 import type { Config } from 'tailwindcss';
+import animate from 'tailwindcss-animate';
 
 const config: Config = {
 	content: [
@@ -55,9 +56,14 @@ const config: Config = {
 					transparent: 'rgba(33,33,33,0.75)',
 				},
 			},
+			borderRadius: {
+				lg: 'var(--radius)',
+				md: 'calc(var(--radius) - 2px)',
+				sm: 'calc(var(--radius) - 4px)',
+			},
 		},
 	},
-	darkMode: 'class',
+	darkMode: ['class', 'class'],
 	plugins: [
 		heroui({
 			defaultTheme: 'dark',
@@ -86,6 +92,7 @@ const config: Config = {
 			},
 		}),
 		typography,
+		animate,
 	],
 };
 

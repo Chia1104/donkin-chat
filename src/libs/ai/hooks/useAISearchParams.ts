@@ -1,6 +1,6 @@
 import { useQueryStates, parseAsStringEnum, parseAsString } from 'nuqs';
 
-import { QueryType } from '@/enums/queryType.enum';
+import { QueryType } from '@/libs/ai/enums/queryType.enum';
 
 export const aiQueryStates = {
 	q: parseAsStringEnum(Object.values(QueryType)).withDefault(QueryType.AiSignal),

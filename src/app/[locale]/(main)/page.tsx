@@ -4,8 +4,8 @@ import { AnimatePresence } from 'framer-motion';
 import dynamic from 'next/dynamic';
 
 import { useChatStore } from '@/contexts/chat-provider';
-import { QueryType } from '@/enums/queryType.enum';
-import { useAISearchParams } from '@/features/ai/hooks/useAISearchParams';
+import { QueryType } from '@/libs/ai/enums/queryType.enum';
+import { useAISearchParams } from '@/libs/ai/hooks/useAISearchParams';
 import { cn } from '@/utils/cn';
 
 const AiSignal = dynamic(() => import('@/containers/chat/ai-signal'), { ssr: false });

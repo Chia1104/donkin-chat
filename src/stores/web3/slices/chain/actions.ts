@@ -2,8 +2,8 @@ import { Connection, clusterApiUrl, Keypair } from '@solana/web3.js';
 import { switchChain, getAccount } from '@wagmi/core';
 import type { StateCreator } from 'zustand/vanilla';
 
-import type { ChainID } from '@/enums/web3/chain.enum';
-import { isEVMChainID, isSVMChainID } from '@/enums/web3/chain.enum';
+import type { ChainID } from '@/libs/web3/enums/chain.enum';
+import { isEVMChainID, isSVMChainID } from '@/libs/web3/enums/chain.enum';
 import { setNamespace } from '@/utils/storeDebug';
 
 import type { Web3Store } from '../../store';
