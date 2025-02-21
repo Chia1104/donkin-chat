@@ -8,8 +8,8 @@ import { Select, SelectItem } from '@heroui/select';
 import BNBIcon from '@/components/icons/bnb-icon';
 import EthereumIcon from '@/components/icons/ethereum-icon';
 import SolanaIcon from '@/components/icons/solana-icon';
-import type { EVMChainID } from '@/enums/web3/chain.enum';
-import { ChainSymbol } from '@/enums/web3/chain.enum';
+import type { EVMChainID } from '@/libs/web3/enums/chain.enum';
+import { ChainSymbol } from '@/libs/web3/enums/chain.enum';
 import { useWeb3Store } from '@/stores/web3/store';
 
 interface Chain {

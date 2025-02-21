@@ -9,8 +9,8 @@ import { useTranslations } from 'next-intl';
 import NextImage from 'next/image';
 import { useConnect } from 'wagmi';
 
-import { SupportedVM } from '@/enums/web3/supportedVM.enum';
-import { ConnectorID } from '@/enums/web3/wallet.enum';
+import { SupportedVM } from '@/libs/web3/enums/supportedVM.enum';
+import { ConnectorID } from '@/libs/web3/enums/wallet.enum';
 import { useWeb3Store } from '@/stores/web3/store';
 
 import CoinbaseIcon from '../icons/coin-base-icon';

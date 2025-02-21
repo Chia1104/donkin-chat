@@ -1,47 +1,55 @@
 /**
- * TODO: WORK IN PROGRESS
+ * TODO: implement local first storage - (indexedDB, PGlite or SQLite ?) & API implementation
+ *
+ * @description the action only handle api synchronization or local first storage
  */
-/* eslint-disable */
-// @ts-nocheck
+import type { UseQueryResult, UseQueryOptions } from '@tanstack/react-query';
+import { useQuery } from '@tanstack/react-query';
 import isEqual from 'fast-deep-equal';
-import type { SWRResponse } from 'swr';
-import { mutate } from 'swr';
+import { produce } from 'immer';
 import type { StateCreator } from 'zustand/vanilla';
 
 import type { ChatStore } from '@/stores/chat/store';
-import type { ModelReasoning } from '@/types/message/base';
-import type { ChatMessage, ChatMessageError, CreateMessageParams } from '@/types/message/chat';
+import type { ChatMessage, CreateMessageParams } from '@/types/message/chat';
+import { getQueryClient } from '@/utils/query-client';
+import { request } from '@/utils/request';
 import { setNamespace } from '@/utils/storeDebug';
 import { copyToClipboard } from '@/utils/ui';
 import { nanoid } from '@/utils/uuid';
 
-import type { ChatStoreState } from '../../initialState';
 import { ChatSelectors } from '../../selectors';
-import { preventLeavingFn, toggleBooleanList } from '../../utils';
 import type { MessageDispatch } from './reducers';
 import { messagesReducer } from './reducers';
 
-const nameSpace = setNamespace('chat/message');
+const namespace = setNamespace('chat/message');
+
+const toggleBooleanList = (ids: string[], id: string, loading: boolean) => {
+	return produce(ids, draft => {
+		if (loading) {
+			if (!draft.includes(id)) draft.push(id);
+		} else {
+			const index = draft.indexOf(id);
+
+			if (index >= 0) draft.splice(index, 1);
+		}
+	});
+};
 
 export interface ChatMessageAction {
 	// create
 	addAIMessage: () => Promise<void>;
-	// delete
-	/**
-	 * clear message on the active session
-	 */
-	clearMessage: () => Promise<void>;
-	deleteMessage: (id: string) => Promise<void>;
-
-	clearAllMessages: () => Promise<void>;
-	// update
-	updateInputMessage: (message: string) => void;
-	modifyMessageContent: (id: string, content: string) => Promise<void>;
 
 	// query
-	useFetchMessages: (enable: boolean, sessionId: string, topicId?: string) => SWRResponse<ChatMessage[]>;
-	copyMessage: (id: string, content: string) => Promise<void>;
+	useQueryMessages: (
+		options?: UseQueryOptions<ChatMessage[], Error, ChatMessage[]>,
+	) => UseQueryResult<ChatMessage[], Error>;
 	refreshMessages: () => Promise<void>;
+
+	// update
+	updateInputMessage: (message: string) => void;
+
+	// utils
+	copyMessage: (content: string) => Promise<void>;
 
 	// =========  ↓ Internal Method ↓  ========== //
 	// ========================================== //
@@ -54,30 +62,18 @@ export interface ChatMessageAction {
 	internal_dispatchMessage: (payload: MessageDispatch) => void;
 
 	/**
-	 * update the message content with optimistic update
-	 * a method used by other action
-	 */
-	internal_updateMessageContent: (id: string, content: string, reasoning?: ModelReasoning) => Promise<void>;
-	/**
-	 * update the message error with optimistic update
-	 */
-	internal_updateMessageError: (id: string, error: ChatMessageError | null) => Promise<void>;
-	/**
 	 * create a message with optimistic update
 	 */
 	internal_createMessage: (
 		params: CreateMessageParams,
 		context?: { tempMessageId?: string; skipRefresh?: boolean },
 	) => Promise<string>;
+
 	/**
 	 * create a temp message for optimistic update
 	 * otherwise the message will be too slow to show
 	 */
 	internal_createTmpMessage: (params: CreateMessageParams) => string;
-	/**
-	 * delete the message content with optimistic update
-	 */
-	internal_deleteMessage: (id: string) => Promise<void>;
 
 	internal_fetchMessages: () => Promise<void>;
 
@@ -87,42 +83,12 @@ export interface ChatMessageAction {
 	 * other message role like user and tool , only this method need to be called
 	 */
 	internal_toggleMessageLoading: (loading: boolean, id: string) => void;
-
-	/**
-	 * helper to toggle the loading state of the array,used by these three toggleXXXLoading
-	 */
-	internal_toggleLoadingArrays: (
-		key: keyof ChatStoreState,
-		loading: boolean,
-		id?: string,
-		action?: string,
-	) => AbortController | undefined;
 }
 
 export const chatMessage: StateCreator<ChatStore, [['zustand/devtools', never]], [], ChatMessageAction> = (
 	set,
 	get,
 ) => ({
-	deleteMessage: async id => {
-		const message = ChatSelectors.getMessageById(id)(get());
-		if (!message) return;
-
-		const ids = [message.id];
-
-		get().internal_dispatchMessage({ type: 'deleteMessages', ids });
-		await get().refreshMessages();
-	},
-
-	clearMessage: async () => {
-		const { refreshMessages } = get();
-		await refreshMessages();
-	},
-
-	clearAllMessages: async () => {
-		const { refreshMessages } = get();
-		await refreshMessages();
-	},
-
 	addAIMessage: async () => {
 		const { internal_createMessage, updateInputMessage, activeId, inputMessage } = get();
 		if (!activeId) return;
@@ -130,56 +96,43 @@ export const chatMessage: StateCreator<ChatStore, [['zustand/devtools', never]],
 		await internal_createMessage({
 			content: inputMessage,
 			role: 'assistant',
-			sessionId: activeId,
+			threadId: activeId,
 		});
 
 		updateInputMessage('');
 	},
+	useQueryMessages: options => {
+		const { activeId } = get();
+		return useQuery<ChatMessage[], Error, ChatMessage[]>({
+			queryKey: ['messages', activeId],
+			queryFn: async () => {
+				await get().internal_fetchMessages();
 
-	copyMessage: async (id, content) => {
-		await copyToClipboard(content);
+				return ChatSelectors.activeBaseChats(get());
+			},
+			...options,
+		});
 	},
+	refreshMessages: async () => {
+		const queryClient = getQueryClient();
+		const { activeId } = get();
 
-	// toggleMessageEditing: (id, editing) => {
-	// 	set({ messageEditingIds: toggleBooleanList(get().messageEditingIds, id, editing) }, false, 'toggleMessageEditing');
-	// },
+		if (!activeId) return;
+
+		await queryClient.invalidateQueries({
+			queryKey: ['messages', activeId],
+		});
+	},
 
 	updateInputMessage: message => {
 		if (isEqual(message, get().inputMessage)) return;
 
-		set({ inputMessage: message }, false, nameSpace('updateInputMessage', message));
+		set({ inputMessage: message }, false, namespace('updateInputMessage', message));
 	},
 
-	modifyMessageContent: async (id, content) => {
-		await get().internal_updateMessageContent(id, content);
+	copyMessage: async content => {
+		await copyToClipboard(content);
 	},
-
-	// useFetchMessages: (enable, sessionId, activeTopicId) =>
-	// 	useClientDataSWR<ChatMessage[]>(
-	// 		enable ? [SWR_USE_FETCH_MESSAGES, sessionId, activeTopicId] : null,
-	// 		async ([, sessionId, topicId]: [string, string, string | undefined]) =>
-	// 			messageService.getMessages(sessionId, topicId),
-	// 		{
-	// 			onSuccess: (messages, key) => {
-	// 				const nextMap = {
-	// 					...get().messagesMap,
-	// 					[messageMapKey(sessionId, activeTopicId)]: messages,
-	// 				};
-	// 				// no need to update map if the messages have been init and the map is the same
-	// 				if (get().messagesInit && isEqual(nextMap, get().messagesMap)) return;
-
-	// 				set(
-	// 					{ messagesInit: true, messagesMap: nextMap },
-	// 					false,
-	// 					nameSpace('useFetchMessages', { messages, queryKey: key }),
-	// 				);
-	// 			},
-	// 		},
-	// 	),
-
-	// refreshMessages: async () => {
-	// 	await mutate([SWR_USE_FETCH_MESSAGES, get().activeId]);
-	// },
 
 	// the internal process method of the AI message
 	internal_dispatchMessage: payload => {
@@ -189,64 +142,28 @@ export const chatMessage: StateCreator<ChatStore, [['zustand/devtools', never]],
 
 		const messages = messagesReducer(ChatSelectors.activeBaseChats(get()), payload);
 
-		const nextMap = { ...get().messagesMap, [ChatSelectors.currentChatKey(get())]: messages };
+		const nextMap = { ...get().messagesMap, [activeId]: messages };
 
 		if (isEqual(nextMap, get().messagesMap)) return;
 
 		set({ messagesMap: nextMap }, false, { type: `dispatchMessage/${payload.type}`, payload });
 	},
+	internal_fetchMessages: async () => {
+		const { activeId } = get();
 
-	// internal_updateMessageError: async (id, error) => {
-	// 	get().internal_dispatchMessage({ id, type: 'updateMessage', value: { error } });
-	// 	await messageService.updateMessage(id, { error });
-	// 	await get().refreshMessages();
-	// },
+		if (!activeId) return;
 
-	// internal_updateMessageContent: async (id, content, toolCalls, reasoning) => {
-	// 	const { internal_dispatchMessage, refreshMessages, internal_transformToolCalls } = get();
+		/**
+		 * TODO: api implementation
+		 */
+		const messages = await request().get<ChatMessage[]>(`/api/messages/${activeId}`).json();
 
-	// 	// Due to the async update method and refresh need about 100ms
-	// 	// we need to update the message content at the frontend to avoid the update flick
-	// 	// refs: https://medium.com/@kyledeguzmanx/what-are-optimistic-updates-483662c3e171
-	// 	internal_dispatchMessage({ id, type: 'updateMessage', value: { content } });
+		const nextMap = { ...get().messagesMap, [activeId]: messages };
+		// no need to update map if the messages have been init and the map is the same
+		if (get().messagesInit && isEqual(nextMap, get().messagesMap)) return;
 
-	// 	await messageService.updateMessage(id, {
-	// 		content,
-	// 		tools: toolCalls ? internal_transformToolCalls(toolCalls) : undefined,
-	// 		reasoning,
-	// 	});
-	// 	await refreshMessages();
-	// },
-
-	// internal_createMessage: async (message, context) => {
-	// 	const { internal_createTmpMessage, refreshMessages, internal_toggleMessageLoading } = get();
-	// 	let tempId = context?.tempMessageId;
-	// 	if (!tempId) {
-	// 		// use optimistic update to avoid the slow waiting
-	// 		tempId = internal_createTmpMessage(message);
-
-	// 		internal_toggleMessageLoading(true, tempId);
-	// 	}
-
-	// 	const id = await messageService.createMessage(message);
-	// 	if (!context?.skipRefresh) {
-	// 		internal_toggleMessageLoading(true, tempId);
-	// 		await refreshMessages();
-	// 	}
-
-	// 	internal_toggleMessageLoading(false, tempId);
-	// 	return id;
-	// },
-
-	// internal_fetchMessages: async () => {
-	// 	const messages = await messageService.getMessages(get().activeId, get().activeTopicId);
-	// 	const nextMap = { ...get().messagesMap, [ChatSelectors.currentChatKey(get())]: messages };
-	// 	// no need to update map if the messages have been init and the map is the same
-	// 	if (get().messagesInit && isEqual(nextMap, get().messagesMap)) return;
-
-	// 	set({ messagesInit: true, messagesMap: nextMap }, false, nameSpace('internal_fetchMessages', { messages }));
-	// },
-
+		set({ messagesInit: true, messagesMap: nextMap }, false, namespace('internal_fetchMessages', { messages }));
+	},
 	internal_createTmpMessage: message => {
 		const { internal_dispatchMessage } = get();
 
@@ -256,14 +173,35 @@ export const chatMessage: StateCreator<ChatStore, [['zustand/devtools', never]],
 
 		return tempId;
 	},
+	internal_createMessage: async (message, context) => {
+		const { internal_createTmpMessage, refreshMessages, internal_toggleMessageLoading } = get();
+		let tempId = context?.tempMessageId;
+		if (!tempId) {
+			// use optimistic update to avoid the slow waiting
+			tempId = internal_createTmpMessage(message);
 
-	// internal_deleteMessage: async (id: string) => {
-	// 	get().internal_dispatchMessage({ type: 'deleteMessage', id });
-	// 	await messageService.removeMessage(id);
-	// 	await get().refreshMessages();
-	// },
+			internal_toggleMessageLoading(true, tempId);
+		}
 
-	// ----- Loading ------- //
+		/**
+		 * TODO: api implementation
+		 */
+		const id = await request()
+			.post<ChatMessage>('/api/messages', {
+				json: message,
+			})
+			.json()
+			.then(res => res.id);
+
+		if (!context?.skipRefresh) {
+			internal_toggleMessageLoading(true, tempId);
+			await refreshMessages();
+		}
+
+		internal_toggleMessageLoading(false, tempId);
+		return id;
+	},
+
 	internal_toggleMessageLoading: (loading, id) => {
 		set(
 			{
@@ -272,37 +210,5 @@ export const chatMessage: StateCreator<ChatStore, [['zustand/devtools', never]],
 			false,
 			'internal_toggleMessageLoading',
 		);
-	},
-	internal_toggleLoadingArrays: (key, loading, id, action) => {
-		const abortControllerKey = `${key}AbortController`;
-		if (loading) {
-			window.addEventListener('beforeunload', preventLeavingFn);
-
-			const abortController = new AbortController();
-			set(
-				{
-					[abortControllerKey]: abortController,
-					[key]: toggleBooleanList(get()[key] as string[], id!, loading),
-				},
-				false,
-				action,
-			);
-
-			return abortController;
-		} else {
-			if (!id) {
-				set({ [abortControllerKey]: undefined, [key]: [] }, false, action);
-			} else
-				set(
-					{
-						[abortControllerKey]: undefined,
-						[key]: toggleBooleanList(get()[key] as string[], id, loading),
-					},
-					false,
-					action,
-				);
-
-			window.removeEventListener('beforeunload', preventLeavingFn);
-		}
 	},
 });

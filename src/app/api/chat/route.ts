@@ -3,9 +3,9 @@ import { streamText } from 'ai';
 import { NextResponse } from 'next/server';
 import { z } from 'zod';
 
-import { Role } from '@/enums/role.enum';
-import { ChatDTOSchema } from '@/features/ai/validators/chat';
-import { auth } from '@/features/auth/server';
+import { ChatDTOSchema } from '@/libs/ai/validators/chat';
+import { Role } from '@/libs/auth/enums/role.enum';
+import { auth } from '@/libs/auth/server';
 import { ParseJSONError } from '@/utils/error';
 
 export const maxDuration = 60;

@@ -46,23 +46,10 @@ export interface ChatMessage {
 
 	id: string;
 	imageList?: ChatImageItem[];
-
-	/**
-	 * observation id
-	 */
-	observationId?: string;
 	/**
 	 * parent message id
 	 */
 	parentId?: string;
-
-	/**
-	 * quoted other message's id
-	 */
-	quotaId?: string;
-	ragQuery?: string | null;
-	ragQueryId?: string | null;
-	ragRawQuery?: string | null;
 
 	reasoning?: ModelReasoning | null;
 
@@ -70,7 +57,6 @@ export interface ChatMessage {
 	 * message role type
 	 */
 	role: MessageRoleType;
-	sessionId?: string;
 	threadId?: string | null;
 	updatedAt: number;
 }
@@ -79,8 +65,5 @@ export interface CreateMessageParams extends Partial<Omit<ChatMessage, 'content'
 	content: string;
 	error?: ChatMessageError | null;
 	role: MessageRoleType;
-	sessionId: string;
 	threadId?: string | null;
-	topicId?: string;
-	traceId?: string;
 }

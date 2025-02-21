@@ -3,12 +3,12 @@
 import { useTransition } from 'react';
 
 import { Input, Button } from '@heroui/react';
-import { toast } from 'sonner';
+import { addToast } from '@heroui/toast';
 
-import Card from '@/components/ui/card';
+import FeatureCard from '@/components/ui/feature-card';
 import SubmitForm from '@/components/ui/submit-form';
-import { authClient } from '@/features/auth/client';
 import { useRouter } from '@/i18n/routing';
+import { authClient } from '@/libs/auth/client';
 
 const LoginForm = ({ mode = 'sign-in' }: { mode?: 'sign-in' | 'sign-up' }) => {
 	const [isPending, startTransition] = useTransition();
@@ -19,7 +19,7 @@ const LoginForm = ({ mode = 'sign-in' }: { mode?: 'sign-in' | 'sign-up' }) => {
 	};
 
 	return (
-		<Card
+		<FeatureCard
 			aria-label="login-form"
 			wrapperProps={{
 				className: 'w-full max-w-[500px]',
@@ -45,10 +45,18 @@ const LoginForm = ({ mode = 'sign-in' }: { mode?: 'sign-in' | 'sign-up' }) => {
 									},
 									{
 										onSuccess: () => {
-											toast.success('Sign in successful');
+											addToast({
+												title: 'Sign in successful',
+												severity: 'success',
+												color: 'success',
+											});
 										},
-										onError: () => {
-											toast.error('An error occurred, please try again');
+										onError: error => {
+											addToast({
+												title: error.error.message,
+												severity: 'danger',
+												color: 'danger',
+											});
 										},
 									},
 								);
@@ -104,10 +112,18 @@ const LoginForm = ({ mode = 'sign-in' }: { mode?: 'sign-in' | 'sign-up' }) => {
 									},
 									{
 										onSuccess: () => {
-											toast.success('Sign up successful');
+											addToast({
+												title: 'Sign up successful',
+												severity: 'success',
+												color: 'success',
+											});
 										},
-										onError: () => {
-											toast.error('An error occurred, please try again');
+										onError: error => {
+											addToast({
+												title: error.error.message,
+												severity: 'danger',
+												color: 'danger',
+											});
 										},
 									},
 								);
@@ -159,7 +175,7 @@ const LoginForm = ({ mode = 'sign-in' }: { mode?: 'sign-in' | 'sign-up' }) => {
 					</Button>
 				</>
 			)}
-		</Card>
+		</FeatureCard>
 	);
 };
 

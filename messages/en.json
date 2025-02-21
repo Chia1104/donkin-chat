@@ -16,7 +16,20 @@
 	"action": {
 		"confirm": "Confirm",
 		"cancel": "Cancel",
-		"connect-wallet": "Connect Wallet"
+		"connect-wallet": "Connect Wallet",
+		"reset": "Reset",
+		"active": "Active"
+	},
+	"validation": {
+		"required": "This field is required",
+		"invalid-type": "Invalid type",
+		"pattern": {
+			"email": "Invalid email format",
+			"url": "Invalid URL format",
+			"wallet-address": "Invalid wallet address",
+			"number": "Invalid number format",
+			"more-than-0": "Must be greater than 0"
+		}
 	},
 	"nav": {
 		"ai-signal": "AI-Signal",
@@ -61,6 +74,22 @@
 			},
 			"action": {
 				"more": "Show more currencies"
+			}
+		}
+	},
+	"token": {
+		"ranking": {
+			"title": "Ranking",
+			"mark-smart": "Mark Smart Wallet",
+			"filter": {
+				"total-title": "Total amount ($)",
+				"total-5k": "> 5,000",
+				"total-10k": "> 10k",
+				"total-50k": "> 50k",
+				"transaction-title-by-day": "{day} of transactions",
+				"transaction-less-100": "0 - 100",
+				"transaction-more-100": "> 100",
+				"favorite-only": "Only show my favorites"
 			}
 		}
 	}

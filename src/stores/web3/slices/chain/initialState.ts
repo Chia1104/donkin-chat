@@ -1,5 +1,12 @@
-import { ChainID, ChainSymbol, EVMChainID, EVMChainSymbol, SVMChainID, SVMChainSymbol } from '@/enums/web3/chain.enum';
-import { SupportedVM } from '@/enums/web3/supportedVM.enum';
+import {
+	ChainID,
+	ChainSymbol,
+	EVMChainID,
+	EVMChainSymbol,
+	SVMChainID,
+	SVMChainSymbol,
+} from '@/libs/web3/enums/chain.enum';
+import { SupportedVM } from '@/libs/web3/enums/supportedVM.enum';
 
 export interface Chain {
 	chainId: ChainID;

@@ -13,7 +13,7 @@ import DefaultPrompt from '@/components/chat/default-prompt';
 import MessageCard from '@/components/chat/message-card';
 import PromptInput from '@/components/chat/prompt-input';
 import { useChatStore } from '@/contexts/chat-provider';
-import { useChat } from '@/features/ai/hooks/useChat';
+import { useChat } from '@/libs/ai/hooks/useChat';
 import { cn } from '@/utils/cn';
 
 const useUIChat = () => {

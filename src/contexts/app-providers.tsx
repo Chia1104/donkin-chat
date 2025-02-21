@@ -2,7 +2,6 @@
 
 import { HeroUIProvider as _HeroUIProvider } from '@heroui/react';
 import { ThemeProvider as MuiThemeProvider } from '@mui/material';
-import type { QueryClient } from '@tanstack/react-query';
 import { QueryClientProvider } from '@tanstack/react-query';
 import type { AbstractIntlMessages } from 'next-intl';
 import { NextIntlClientProvider } from 'next-intl';
@@ -14,7 +13,7 @@ import type { State as WagmiSessionState } from 'wagmi';
 import { wagmiConfig } from '@/config/wagmi';
 import { useRouter } from '@/i18n/routing';
 import defaultTheme from '@/themes/default';
-import { createQueryClient } from '@/utils/query-client';
+import { getQueryClient } from '@/utils/query-client';
 
 import SolanaWalletProvider from './solana-wallet-provider';
 
@@ -25,18 +24,6 @@ interface Props {
 	locale: Locale;
 	wagmiSessionState?: WagmiSessionState;
 }
-
-let clientQueryClientSingleton: QueryClient | undefined = undefined;
-
-const getQueryClient = () => {
-	if (typeof window === 'undefined') {
-		// Server: always make a new query client
-		return createQueryClient();
-	} else {
-		// Browser: use singleton pattern to keep the same query client
-		return (clientQueryClientSingleton ??= createQueryClient());
-	}
-};
 
 const HeroUIProvider = (props: { children: React.ReactNode }) => {
 	const router = useRouter();
