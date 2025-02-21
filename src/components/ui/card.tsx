@@ -1,4 +1,5 @@
-import { Card as HCard, CardProps } from '@heroui/card';
+import type { CardProps } from '@heroui/card';
+import { Card as HCard } from '@heroui/card';
 
 import { cn } from '@/utils/cn';
 
