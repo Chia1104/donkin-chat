@@ -91,6 +91,8 @@
 				"transaction-more-100": "> 100",
 				"favorite-only": "Only show my favorites"
 			}
-		}
+		},
+		"holder": "holder",
+		"wallets": "Number of wallets"
 	}
 }

@@ -1,10 +1,10 @@
 'use client';
 
-import { HeroUIProvider as _HeroUIProvider } from '@heroui/react';
-import { ThemeProvider as MuiThemeProvider } from '@mui/material';
+import { HeroUIProvider as _HeroUIProvider } from '@heroui/system';
+import { ThemeProvider as MuiThemeProvider } from '@mui/material/styles';
 import { QueryClientProvider } from '@tanstack/react-query';
 import type { AbstractIntlMessages } from 'next-intl';
-import { NextIntlClientProvider } from 'next-intl';
+import { NextIntlClientProvider, useLocale } from 'next-intl';
 import { ThemeProvider as NextThemeProvider } from 'next-themes';
 import { NuqsAdapter } from 'nuqs/adapters/next/app';
 import { WagmiProvider } from 'wagmi';
@@ -27,7 +27,12 @@ interface Props {
 
 const HeroUIProvider = (props: { children: React.ReactNode }) => {
 	const router = useRouter();
-	return <_HeroUIProvider navigate={void router.push}>{props.children}</_HeroUIProvider>;
+	const locale = useLocale();
+	return (
+		<_HeroUIProvider locale={locale} navigate={void router.push}>
+			{props.children}
+		</_HeroUIProvider>
+	);
 };
 
 const AppProviders = (props: Props) => {
@@ -38,7 +43,7 @@ const AppProviders = (props: Props) => {
 				<SolanaWalletProvider>
 					<QueryClientProvider client={queryClient}>
 						<NuqsAdapter>
-							<NextThemeProvider defaultTheme="system" enableSystem attribute="class">
+							<NextThemeProvider defaultTheme="dark" enableSystem attribute="class">
 								<MuiThemeProvider theme={defaultTheme}>
 									<HeroUIProvider>{props.children}</HeroUIProvider>
 								</MuiThemeProvider>

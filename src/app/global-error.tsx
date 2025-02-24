@@ -3,9 +3,10 @@
 import Error from 'next/error';
 
 import AppLayout from '@/components/layouts/app-layout';
+import { withError } from '@/hocs/with-error';
 import { Locale } from '@/types/locale';
 
-const Forbidden = () => {
+const NotFound = withError(() => {
 	return (
 		<AppLayout
 			locale={Locale.EN_US}
@@ -14,7 +15,7 @@ const Forbidden = () => {
 				className: 'bg-root min-h-screen text-white',
 			}}
 		>
-			<Error statusCode={403} withDarkMode title="Sorry, you are not allowed to access this page" />
+			<Error statusCode={500} withDarkMode />
 			<style>
 				{`.next-error-h1 {
 					border-right:1px solid white
@@ -22,6 +23,6 @@ const Forbidden = () => {
 			</style>
 		</AppLayout>
 	);
-};
+});
 
-export default Forbidden;
+export default NotFound;

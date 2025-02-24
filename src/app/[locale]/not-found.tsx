@@ -3,7 +3,16 @@
 import Error from 'next/error';
 
 const NotFound = () => {
-	return <Error statusCode={404} withDarkMode />;
+	return (
+		<main className="text-white">
+			<Error statusCode={404} withDarkMode />
+			<style>
+				{`.next-error-h1 {
+					border-right:1px solid white
+				}`}
+			</style>
+		</main>
+	);
 };
 
 export default NotFound;

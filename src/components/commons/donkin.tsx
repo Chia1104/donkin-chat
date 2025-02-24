@@ -1,6 +1,6 @@
 import { useTranslations } from 'next-intl';
 
-import { michroma } from '@/themes/fonts';
+import { michroma } from '@/app/fonts';
 import { cn } from '@/utils/cn';
 
 const Donkin = () => {
