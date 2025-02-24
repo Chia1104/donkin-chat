@@ -1,4 +1,4 @@
 export const Locale = {
-	EN: 'en',
-	ZH_TW: 'zh-tw',
+	EN_US: 'en-US',
+	ZH_TW: 'zh-TW',
 } as const;

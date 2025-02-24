@@ -1,6 +1,5 @@
 import type { ReactNode } from 'react';
 
-import '@solana/wallet-adapter-react-ui/styles.css';
 import type { Metadata, Viewport } from 'next';
 import { getMessages, getTimeZone } from 'next-intl/server';
 import { setRequestLocale } from 'next-intl/server';
@@ -13,7 +12,6 @@ import AppLayout from '@/components/layouts/app-layout';
 import { wagmiConfig } from '@/config/wagmi';
 import AppProviders from '@/contexts/app-providers';
 import { routing } from '@/i18n/routing';
-import '@/themes/globals.css';
 import { initDayjs } from '@/utils/dayjs';
 import { env } from '@/utils/env';
 

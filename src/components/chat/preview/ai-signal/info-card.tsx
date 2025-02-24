@@ -1,6 +1,6 @@
 'use client';
 
-import { memo } from 'react';
+import { memo, ReactNode } from 'react';
 
 import { Avatar } from '@heroui/avatar';
 import { Button } from '@heroui/button';
@@ -88,7 +88,7 @@ export const MOCK_DATA: CardProps = {
 	},
 };
 
-const LinkIcon = (props: LinkIconProps) => {
+export const LinkIcon = (props: LinkIconProps) => {
 	switch (props.provider) {
 		case 'website':
 			return <LanguageIcon sx={{ width: 12, height: 12 }} />;
@@ -101,7 +101,7 @@ const LinkIcon = (props: LinkIconProps) => {
 	}
 };
 
-const CardHeader = memo((props: MetaProps) => {
+export const CardHeader = memo((props: MetaProps) => {
 	const [, copy] = useCopyToClipboard();
 	return (
 		<HCardHeader aria-label="card-header" className="flex items-center gap-2 p-0 z-20">
@@ -128,95 +128,82 @@ const CardHeader = memo((props: MetaProps) => {
 	);
 });
 
-const Hotspots = memo(
+export const HotspotProgress = ({
+	label,
+	value,
+	className,
+	classNames,
+}: {
+	label: ReactNode;
+	value: number;
+	className?: string;
+	classNames?: {
+		labelWrapper?: string;
+		label?: string;
+		progressWrapper?: string;
+	};
+}) => {
+	const convert = (value: number) => {
+		if (!isNumber(value)) {
+			return 0;
+		}
+		// 若是 value 以 10 為單位，則轉換為 100 為單位, 並四捨五入至小數點, 9 -> 90 or 90 -> 90
+		return value % 10 === 0 ? value : Math.round(value * 10);
+	};
+	const isHot = (value: number) => convert(value) >= 90;
+	return (
+		<div className={cn('w-full', className)}>
+			<div className={cn('flex items-center mb-2 gap-1', classNames?.labelWrapper)}>
+				<h4 className={cn('m-0 text-sm font-normal', classNames?.label)}>{label}</h4>
+				{isHot(value) ? (
+					<Image
+						aria-label="hot"
+						as={NextImage}
+						width={24}
+						height={24}
+						removeWrapper
+						src="/assets/images/hot.svg"
+						alt="hot"
+						className="m-0"
+					/>
+				) : null}
+				<InfoOutlinedIcon sx={{ width: 14, height: 14 }} />
+			</div>
+			<div className={cn('w-full flex items-center justify-between gap-1', classNames?.progressWrapper)}>
+				<div className="w-[90%]">
+					<Progress
+						aria-label="tg-hotspot"
+						classNames={{
+							base: '',
+							track: '',
+							indicator: 'dc-bg-rainbow',
+						}}
+						value={convert(value)}
+						className="h-[6px]"
+						radius="none"
+					/>
+				</div>
+				<span>{roundDecimal(convert(value) / 10, 0)}</span>
+			</div>
+		</div>
+	);
+};
+
+export const Hotspots = memo(
 	({ hotspots }: HotspotProps) => {
 		const t = useTranslations('preview.ai-signal');
-		const convert = (value: number) => {
-			if (!isNumber(value)) {
-				return 0;
-			}
-			// 若是 value 以 10 為單位，則轉換為 100 為單位, 並四捨五入至小數點, 9 -> 90 or 90 -> 90
-			return value % 10 === 0 ? value : Math.round(value * 10);
-		};
-		const isHot = (value: number) => convert(value) >= 90;
 		return (
 			<CardBody aria-label="Hotspots" className="border-1 border-divider rounded-lg prose prose-invert gap-4 px-4 py-5">
-				<div className="w-full">
-					<div className="flex items-center mb-2 gap-1">
-						<h4 className="m-0 text-sm font-normal">{t('card.x-hotspot')}</h4>
-						{isHot(hotspots.x) ? (
-							<Image
-								aria-label="hot"
-								as={NextImage}
-								width={24}
-								height={24}
-								removeWrapper
-								src="/assets/images/hot.svg"
-								alt="hot"
-								className="m-0"
-							/>
-						) : null}
-						<InfoOutlinedIcon sx={{ width: 14, height: 14 }} />
-					</div>
-					<div className="w-full flex items-center justify-between gap-1">
-						<div className="w-[90%]">
-							<Progress
-								aria-label="x-hotspot"
-								classNames={{
-									base: '',
-									track: '',
-									indicator: 'dc-bg-rainbow',
-								}}
-								value={convert(hotspots.x)}
-								className="h-[6px]"
-								radius="none"
-							/>
-						</div>
-						<span>{roundDecimal(convert(hotspots.x) / 10, 0)}</span>
-					</div>
-				</div>
+				<HotspotProgress label={t('card.x-hotspot')} value={hotspots.x} />
 				<Divider className="my-0" />
-				<div className="w-full">
-					<div className="flex items-center mb-2 gap-1">
-						<h4 className="m-0 text-sm font-normal">{t('card.tg-hotspot')}</h4>
-						{isHot(hotspots.telegram) ? (
-							<Image
-								aria-label="hot"
-								as={NextImage}
-								width={24}
-								height={24}
-								removeWrapper
-								src="/assets/images/hot.svg"
-								alt="hot"
-								className="m-0"
-							/>
-						) : null}
-						<InfoOutlinedIcon sx={{ width: 14, height: 14 }} />
-					</div>
-					<div className="w-full flex items-center justify-between gap-1">
-						<div className="w-[90%]">
-							<Progress
-								aria-label="tg-hotspot"
-								classNames={{
-									base: '',
-									track: '',
-									indicator: 'dc-bg-rainbow',
-								}}
-								value={convert(hotspots.telegram)}
-								className="h-[6px]"
-								radius="none"
-							/>
-						</div>
-						<span>{roundDecimal(convert(hotspots.telegram) / 10, 0)}</span>
-					</div>
-				</div>
+				<HotspotProgress label={t('card.tg-hotspot')} value={hotspots.telegram} />
 			</CardBody>
 		);
 	},
 	(prev, next) => prev.hotspots.x === next.hotspots.x && prev.hotspots.telegram === next.hotspots.telegram,
 );
 
-const Stock = memo(
+export const Stock = memo(
 	({ stock }: StockProps) => {
 		const t = useTranslations('preview.ai-signal');
 		const isPositiveChange = isPositiveNumber(stock.change) || stock.change.startsWith('+');

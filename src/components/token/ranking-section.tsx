@@ -31,7 +31,7 @@ const Filter = () => {
 			className="before:bg-[#292828]"
 		>
 			<PopoverTrigger>
-				<Button isIconOnly variant="light" aria-label="Filter" radius="full">
+				<Button isIconOnly variant="light" aria-label="Filter" radius="full" isDisabled={!searchParams.mark}>
 					<FilterAltOutlinedIcon />
 				</Button>
 			</PopoverTrigger>

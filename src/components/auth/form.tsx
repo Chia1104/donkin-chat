@@ -2,7 +2,8 @@
 
 import { useTransition } from 'react';
 
-import { Input, Button } from '@heroui/react';
+import { Button } from '@heroui/button';
+import { Input } from '@heroui/input';
 import { addToast } from '@heroui/toast';
 
 import FeatureCard from '@/components/ui/feature-card';

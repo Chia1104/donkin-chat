@@ -17,5 +17,5 @@ export const config = {
 	/**
 	 * localePrefix: 'always'
 	 */
-	// matcher: ['/', '/(zh-tw|en)/:path*'],
+	// matcher: ['/', '/(zh-TW|en-US)/:path*'],
 };

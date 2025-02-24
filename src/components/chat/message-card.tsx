@@ -3,10 +3,12 @@
 import React from 'react';
 
 import type { UIMessage } from '@ai-sdk/ui-utils';
+import { Badge } from '@heroui/badge';
+import { Button } from '@heroui/button';
 import { Chip } from '@heroui/chip';
+import { Link } from '@heroui/link';
 import { CircularProgress } from '@heroui/progress';
-import { Badge, Button, Link } from '@heroui/react';
-import { cn } from '@heroui/react';
+import { cn } from '@heroui/theme';
 import { useClipboard } from '@heroui/use-clipboard';
 import CheckIcon from '@mui/icons-material/Check';
 import CircleIcon from '@mui/icons-material/Circle';

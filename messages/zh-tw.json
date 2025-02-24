@@ -91,6 +91,8 @@
 				"transaction-more-100": "> 100",
 				"favorite-only": "僅顯示我的收藏"
 			}
-		}
+		},
+		"holder": "持有人",
+		"wallets": "錢包數"
 	}
 }
