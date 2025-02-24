@@ -20,13 +20,22 @@ const Filter = () => {
 	const [searchParams, setSearchParams] = useTokenSearchParams();
 
 	return (
-		<Popover placement="top" isOpen={isOpen} onOpenChange={setIsOpen} showArrow>
+		<Popover
+			placement="top"
+			isOpen={isOpen}
+			onOpenChange={setIsOpen}
+			showArrow
+			classNames={{
+				arrow: 'bg-[#292828]',
+			}}
+			className="before:bg-[#292828]"
+		>
 			<PopoverTrigger>
-				<Button isIconOnly variant="light" aria-label="Filter">
+				<Button isIconOnly variant="light" aria-label="Filter" radius="full">
 					<FilterAltOutlinedIcon />
 				</Button>
 			</PopoverTrigger>
-			<PopoverContent className="w-[200px] overflow-hidden">
+			<PopoverContent className="w-[200px] overflow-hidden bg-[#292828]">
 				<FilterForm
 					defaultValues={searchParams}
 					onSubmit={value => {

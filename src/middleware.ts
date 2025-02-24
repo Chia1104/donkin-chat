@@ -8,9 +8,14 @@ export const config = {
 	/**
 	 * localePrefix: 'never'
 	 */
-	// matcher: ['/((?!api|proxy-api|_next|_vercel|assets|robots.txt|favicon.ico|sitemap.xml|sitemap-0.xml).*)'],
+	matcher: [
+		// Match all pathnames except for
+		// - … if they start with `/api`, `/_next` or `/_vercel`
+		// - … the ones containing a dot (e.g. `favicon.ico`)
+		'/((?!api|_next|_vercel|.*\\..*).*)',
+	],
 	/**
 	 * localePrefix: 'always'
 	 */
-	matcher: ['/', '/(zh-tw|en)/:path*'],
+	// matcher: ['/', '/(zh-tw|en)/:path*'],
 };
