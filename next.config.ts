@@ -39,9 +39,9 @@ const securityHeaders = [
 const nextConfig: NextConfig = {
 	output: 'standalone',
 	reactStrictMode: true,
-	transpilePackages: ['@t3-oss/env-nextjs', '@t3-oss/env-core'],
+	transpilePackages: ['@t3-oss/env-nextjs', '@t3-oss/env-core', 'wagmi', '@solana/*'],
 	experimental: {
-		optimizePackageImports: ['@heroui/react'],
+		optimizePackageImports: ['lodash-es'],
 		reactCompiler: true,
 		webpackBuildWorker: true,
 		authInterrupts: true,
