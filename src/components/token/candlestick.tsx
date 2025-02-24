@@ -54,7 +54,7 @@ const DateFilter = memo(() => {
 	);
 });
 
-const Header = () => {
+const MetaInfo = () => {
 	return (
 		<div className="flex items-center gap-2">
 			<h3 className="text-xl font-normal">$0.3168105</h3>
@@ -127,7 +127,7 @@ const Candlestick = () => {
 	return (
 		<section className="border-1 border-divider p-5 w-full h-[490px] rounded-lg flex flex-col gap-10">
 			<header className="flex items-center justify-between">
-				<Header />
+				<MetaInfo />
 				<DateFilter />
 			</header>
 			<Chart />
