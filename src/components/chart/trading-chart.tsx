@@ -26,7 +26,7 @@ const TradingChart = (props: Props) => {
 		const chart = createChart(chartContainerRef.current, {
 			...props.initOptions,
 			width: chartContainerRef.current?.clientWidth ?? 0,
-			height: 300,
+			height: props.height,
 		});
 		chart.timeScale().fitContent();
 
