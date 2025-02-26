@@ -4,13 +4,14 @@ import { memo } from 'react';
 
 import { Chip } from '@heroui/chip';
 import { Tabs, Tab } from '@heroui/tabs';
-import { CandlestickSeries, ColorType, createSeriesMarkers as _createSeriesMarkers } from 'lightweight-charts';
+import { CandlestickSeries, ColorType } from 'lightweight-charts';
 import { useLocale } from 'next-intl';
 
 import { IntervalFilter } from '@/libs/token/enums/interval-filter.enum';
 import { useTokenSearchParams } from '@/libs/token/hooks/useTokenSearchParams';
 import dayjs from '@/utils/dayjs';
 
+import { createSeriesMarkers } from '../chart/plugins/series-marker';
 import TradingChart from '../chart/trading-chart';
 
 const _MOCK_DATA = [
@@ -97,14 +98,22 @@ const Chart = () => {
 					{ open: 10.47, high: 11.39, low: 10.4, close: 10.81, time: dayjs().add(6, 'day').format('YYYY-MM-DD') },
 				]);
 				chart.timeScale().fitContent();
-				// createSeriesMarkers(series, [
-				// 	{
-				// 		time: dayjs().format('YYYY-MM-DD'),
-				// 		position: 'belowBar',
-				// 		color: searchParams.mark ? '#542029' : '#AE3241',
-				// 		shape: 'circle',
-				// 	},
-				// ]);
+				createSeriesMarkers(series, [
+					{
+						time: dayjs().format('YYYY-MM-DD'),
+						position: 'belowBar',
+						color: searchParams.mark ? '#542029' : '#AE3241',
+						src: 'https://avatars.githubusercontent.com/u/38397958?v=4',
+						size: 1,
+					},
+					{
+						time: dayjs().format('YYYY-MM-DD'),
+						position: 'belowBar',
+						color: searchParams.mark ? '#542029' : '#AE3241',
+						src: 'https://avatars.githubusercontent.com/u/38397958?v=4',
+						size: 1,
+					},
+				]);
 			}}
 			initOptions={{
 				autoSize: true,

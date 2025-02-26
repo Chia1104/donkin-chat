@@ -8,7 +8,7 @@ import { createChart } from 'lightweight-charts';
 interface Props {
 	height?: number;
 	initOptions?: DeepPartial<ChartOptions>;
-	onInit?: (chart: IChartApi) => void;
+	onInit?: (chart: IChartApi, container: HTMLDivElement) => void;
 }
 
 const TradingChart = (props: Props) => {
@@ -31,7 +31,7 @@ const TradingChart = (props: Props) => {
 		chart.timeScale().fitContent();
 
 		if (props.onInit) {
-			props.onInit(chart);
+			props.onInit(chart, chartContainerRef.current);
 		}
 
 		window.addEventListener('resize', handleResize);
