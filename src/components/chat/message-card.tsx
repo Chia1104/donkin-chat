@@ -15,15 +15,18 @@ import CircleIcon from '@mui/icons-material/Circle';
 import ContentCopyRoundedIcon from '@mui/icons-material/ContentCopyRounded';
 import RefreshIcon from '@mui/icons-material/Refresh';
 import ShareOutlinedIcon from '@mui/icons-material/ShareOutlined';
-// import rehypeShiki from '@shikijs/rehype';
+import rehypeShiki from '@shikijs/rehype';
 import { useTranslations } from 'next-intl';
-import ReactMarkdown from 'react-markdown';
-import rehypeHighlight from 'rehype-highlight';
+import dynamic from 'next/dynamic';
 import rehypeKatex from 'rehype-katex';
 import rehypeRaw from 'rehype-raw';
 import rehypeSanitize from 'rehype-sanitize';
 import remarkGfm from 'remark-gfm';
 import remarkMath from 'remark-math';
+
+const MarkdownHooks = dynamic(() => import('react-markdown').then(mod => mod.MarkdownHooks), { ssr: false });
+
+const Markdown = dynamic(() => import('react-markdown'), { ssr: false });
 
 export type MessageCardProps = React.HTMLAttributes<HTMLDivElement> & {
 	showFeedback?: boolean;
@@ -37,6 +40,9 @@ export type MessageCardProps = React.HTMLAttributes<HTMLDivElement> & {
 	isRetrying?: boolean;
 	isLoading?: boolean;
 	isCurrent?: boolean;
+	experimental?: {
+		shiki?: boolean;
+	};
 };
 
 const MessageCard = ({
@@ -52,6 +58,7 @@ const MessageCard = ({
 	isLoading,
 	isCurrent,
 	streamingContent,
+	experimental,
 	...props
 }: MessageCardProps) => {
 	const messageRef = React.useRef<HTMLDivElement>(null);
@@ -119,7 +126,7 @@ const MessageCard = ({
 						messageClassName,
 					)}
 				>
-					<div ref={messageRef} className={'text-small flex flex-col gap-2 max-w-[300px]'}>
+					<div ref={messageRef} className={'text-small flex flex-col gap-2 max-w-[300px] prose prose-invert'}>
 						{((isLoading && message.role === 'assistant' && isCurrent) || (isLoading && streamingContent)) && (
 							<CircularProgress size="sm" />
 						)}
@@ -131,27 +138,31 @@ const MessageCard = ({
 								</Link>
 							</p>
 						) : (
-							<div className="prose-invert first:mt-0">
-								<ReactMarkdown
-									remarkPlugins={[[remarkGfm], [remarkMath]]}
-									rehypePlugins={[
-										// [
-										// 	rehypeShiki,
-										// 	{
-										// 		themes: {
-										// 			light: 'vitesse-light',
-										// 			dark: 'vitesse-dark',
-										// 		},
-										// 	},
-										// ],
-										[rehypeRaw],
-										[rehypeSanitize],
-										[rehypeHighlight],
-										[rehypeKatex],
-									]}
-								>
-									{message.content}
-								</ReactMarkdown>
+							<div className="">
+								{experimental?.shiki ? (
+									<MarkdownHooks
+										remarkPlugins={[[remarkGfm], [remarkMath]]}
+										rehypePlugins={[
+											[
+												rehypeShiki,
+												{
+													theme: 'one-dark-pro',
+												},
+											],
+											[rehypeRaw],
+											[rehypeKatex],
+										]}
+									>
+										{message.content}
+									</MarkdownHooks>
+								) : (
+									<Markdown
+										remarkPlugins={[[remarkGfm], [remarkMath]]}
+										rehypePlugins={[[rehypeSanitize], [rehypeRaw], [rehypeKatex]]}
+									>
+										{message.content}
+									</Markdown>
+								)}
 							</div>
 						)}
 					</div>

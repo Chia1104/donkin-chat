@@ -31,7 +31,7 @@ const Messages = ({ children }: { children?: React.ReactNode }) => {
 	}
 
 	return (
-		<section className="flex flex-col gap-5 w-full prose prose-invert justify-start h-full min-w-full">
+		<section className="flex flex-col gap-5 w-full justify-start h-full min-w-full">
 			{messages.map((message, index) => {
 				const isLast = index === messages.length - 1;
 				return (
