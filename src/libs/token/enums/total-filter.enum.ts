@@ -1,3 +1,6 @@
+/**
+ * @deprecated
+ */
 export const TotalFilter = {
 	// > 5,000
 	MoreThan5000: '5000',
@@ -7,4 +10,7 @@ export const TotalFilter = {
 	MoreThan50K: '50000',
 } as const;
 
+/**
+ * @deprecated
+ */
 export type TotalFilter = (typeof TotalFilter)[keyof typeof TotalFilter];

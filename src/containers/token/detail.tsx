@@ -39,7 +39,7 @@ const Hotspot = () => {
 
 const Stock = ({ label, value }: { label: ReactNode; value: string }) => {
 	return (
-		<Card className="flex flex-col items-start justify-center gap-4 text-start">
+		<Card className="flex flex-col items-start justify-center gap-4 text-start bg-transparent">
 			<h5 className="text-foreground-500">{label}</h5>
 			<span>{value}</span>
 		</Card>
