@@ -7,7 +7,6 @@ import { Card, CardBody, CardFooter } from '@heroui/card';
 import { ScrollShadow } from '@heroui/scroll-shadow';
 import { AnimatePresence, motion } from 'framer-motion';
 import { ChevronLeftIcon, ChevronRightIcon } from 'lucide-react';
-import { useTranslations } from 'next-intl';
 
 import DefaultPrompt from '@/components/chat/default-prompt';
 import MessageCard from '@/components/chat/message-card';
@@ -57,7 +56,7 @@ const ChatBody = () => {
 		<CardBody aria-label="chat-body" className="flex flex-col items-center justify-start w-full">
 			<ScrollShadow
 				aria-label="chat-scroll-shadow"
-				className="w-full min-w-full h-[calc(100vh-300px)] max-h-[calc(100vh-300px)] min-h-[calc(100vh-350px)]"
+				className="w-full min-w-full h-[calc(100vh-290px)] max-h-[calc(100vh-290px)] min-h-[calc(100vh-330px)]"
 			>
 				<div className="flex h-full justify-center items-center">
 					<Messages />
@@ -68,7 +67,6 @@ const ChatBody = () => {
 };
 
 const ChatFooter = memo(() => {
-	const t = useTranslations('chat');
 	const { input, handleInputChange, handleSubmit } = useUIChat();
 	return (
 		<CardFooter
@@ -76,7 +74,6 @@ const ChatFooter = memo(() => {
 			className="rounded-none flex flex-col items-center prose prose-invert mt-auto min-w-full p-0 sticky bottom-0"
 		>
 			<PromptInput value={input} onChange={handleInputChange} onSubmit={handleSubmit} />
-			<p className="text-xs">{t('donkin-warning')}</p>
 		</CardFooter>
 	);
 });
@@ -93,10 +90,10 @@ const PreviewAction = () => {
 			aria-label="preview-action"
 			isIconOnly
 			className={cn(
-				'rounded-full absolute top-1/2 -left-5 z-30 border-1 overflow-visible bg-background',
+				'rounded-full absolute top-1/2 -left-5 z-30 border-1 overflow-visible',
 				isPreviewOnly && 'border-primary border-2',
 			)}
-			variant="faded"
+			variant="bordered"
 			color={isPreviewOnly ? 'primary' : 'default'}
 			onPress={handleSetIsPreviewOnly}
 		>
@@ -118,7 +115,7 @@ const Chat = () => {
 		>
 			<Card
 				className={cn(
-					'bg-background/65 p-5 relative overflow-visible border-1 border-divider transition-width ease-in-out duration-1000 h-full min-h-[calc(100vh-120px)] max-h-[calc(100vh-120px)]',
+					'bg-transparent shadow-none p-3 relative overflow-visible transition-width ease-in-out duration-1000 h-full min-h-[calc(100vh-120px)] max-h-[calc(100vh-120px)]',
 					isPreviewOnly ? 'w-[30px] rounded-full' : 'min-w-full',
 				)}
 			>

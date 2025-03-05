@@ -4,11 +4,7 @@ import { Card as HCard } from '@heroui/card';
 import { cn } from '@/utils/cn';
 
 const Card = (props: CardProps) => (
-	<HCard
-		aria-label="card"
-		{...props}
-		className={cn('bg-gradient-to-t from-[#FFFFFF1A] to-[#FFFFFF04] p-4', props.className)}
-	/>
+	<HCard aria-label="card" {...props} className={cn('shadow-none p-4 bg-content1-300', props.className)} />
 );
 
 export default Card;

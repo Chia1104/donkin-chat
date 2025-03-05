@@ -44,7 +44,7 @@
 		"copyright": "Copyright © {year} Donkin. • All Rights Reserved"
 	},
 	"chat": {
-		"prompt-placeholder": "输入任何问题...",
+		"prompt-placeholder": "你想知道什么",
 		"donkin-title": "币圈最专业AI投顾",
 		"donkin-subtitle": "你好！我是 Donkin。你可以随时查询币圈即時信息。请告诉我你感兴趣的内容吧！",
 		"donkin-warning": "Donkin 可能提供不精確的資訊，請查證重要訊息",
@@ -79,7 +79,7 @@
 	},
 	"token": {
 		"ranking": {
-			"title": "Ranking",
+			"title": "排名",
 			"mark-smart": "標記聰明錢包",
 			"filter": {
 				"total-title": "總額($)",

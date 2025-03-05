@@ -14,10 +14,10 @@ import Card from '@/components/ui/card';
 const Hotspot = () => {
 	const t = useTranslations('preview.ai-signal');
 	return (
-		<Card className="col-span-2 flex flex-col gap-4">
+		<Card className="col-span-2 flex flex-col gap-4 justify-center">
 			<HotspotProgress
 				classNames={{
-					labelWrapper: 'min-w-[48%]',
+					labelWrapper: 'min-w-[48%] mb-0',
 					progressWrapper: 'min-w-[52%] max-w-[52%]',
 				}}
 				className="flex flex-row items-center justify-between"
@@ -26,7 +26,7 @@ const Hotspot = () => {
 			/>
 			<HotspotProgress
 				classNames={{
-					labelWrapper: 'min-w-[48%]',
+					labelWrapper: 'min-w-[48%] mb-0',
 					progressWrapper: 'min-w-[52%] max-w-[52%]',
 				}}
 				className="flex flex-row items-center justify-between"
@@ -39,7 +39,7 @@ const Hotspot = () => {
 
 const Stock = ({ label, value }: { label: ReactNode; value: string }) => {
 	return (
-		<Card className="flex flex-col items-center justify-center gap-4 text-center">
+		<Card className="flex flex-col items-start justify-center gap-4 text-start">
 			<h5 className="text-foreground-500">{label}</h5>
 			<span>{value}</span>
 		</Card>
@@ -62,10 +62,12 @@ const Detail = () => {
 					<RankingSection />
 					<div className="grid grid-cols-6 gap-2">
 						<Hotspot />
-						<Stock label={t('card.stock.marketCap')} value="$326.4M" />
-						<Stock label={t('card.stock.pool')} value="$120.1M" />
-						<Stock label={tToken('holder')} value="36.36K" />
-						<Stock label={tToken('wallets')} value="982.1K" />
+						<Card className="col-span-4 grid grid-cols-4 gap-2">
+							<Stock label={t('card.stock.marketCap')} value="$326.4M" />
+							<Stock label={t('card.stock.pool')} value="$120.1M" />
+							<Stock label={tToken('holder')} value="36.36K" />
+							<Stock label={tToken('wallets')} value="982.1K" />
+						</Card>
 					</div>
 				</div>
 			</ScrollShadow>

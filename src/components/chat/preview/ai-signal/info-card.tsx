@@ -1,11 +1,11 @@
 'use client';
 
-import { memo, ReactNode } from 'react';
+import type { ReactNode } from 'react';
+import { memo } from 'react';
 
 import { Avatar } from '@heroui/avatar';
 import { Button } from '@heroui/button';
 import { Card as HCard, CardBody, CardHeader as HCardHeader } from '@heroui/card';
-import { Divider } from '@heroui/divider';
 import { Image } from '@heroui/image';
 import { Progress } from '@heroui/progress';
 import ContentCopyRoundedIcon from '@mui/icons-material/ContentCopyRounded';
@@ -193,9 +193,8 @@ export const Hotspots = memo(
 	({ hotspots }: HotspotProps) => {
 		const t = useTranslations('preview.ai-signal');
 		return (
-			<CardBody aria-label="Hotspots" className="border-1 border-divider rounded-lg prose prose-invert gap-4 px-4 py-5">
+			<CardBody aria-label="Hotspots" className="rounded-lg prose prose-invert gap-4 p-0">
 				<HotspotProgress label={t('card.x-hotspot')} value={hotspots.x} />
-				<Divider className="my-0" />
 				<HotspotProgress label={t('card.tg-hotspot')} value={hotspots.telegram} />
 			</CardBody>
 		);
@@ -209,7 +208,7 @@ export const Stock = memo(
 		const isPositiveChange = isPositiveNumber(stock.change) || stock.change.startsWith('+');
 		const isNegativeChange = isNegativeNumber(stock.change) || stock.change.startsWith('-');
 		return (
-			<CardBody aria-label="Stock" className="border-1 border-divider rounded-lg gap-4 prose prose-invert px-4 py-5">
+			<CardBody aria-label="Stock" className="rounded-lg gap-4 prose prose-invert p-0">
 				<div className="flex justify-between w-full gap-2">
 					<div className="w-1/2">
 						<h4 className="mt-0 text-sm font-normal">{t('card.stock.marketCap')}</h4>
@@ -220,7 +219,6 @@ export const Stock = memo(
 						<span className="text-lg">{`$ ${formatLargeNumber(stock.price)}`}</span>
 					</div>
 				</div>
-				<Divider className="my-0" />
 				<div className="flex justify-between w-full gap-2">
 					<div className="w-1/2">
 						<h4 className="mt-0 text-sm font-normal">{t('card.stock.pool')}</h4>
@@ -251,7 +249,7 @@ const InfoCard = ({ display = ['all'], onPress, ...props }: CardProps) => {
 		<HCard
 			aria-label="info-card"
 			isPressable
-			className="bg-gradient-to-t from-[#FFFFFF1A] to-[#FFFFFF04] p-4 gap-5 relative w-full"
+			className="shadow-none p-4 gap-5 relative w-full border-none"
 			onPress={() => onPress && onPress(props)}
 		>
 			{(display.includes('meta') || display.includes('all')) && <CardHeader {...props} />}

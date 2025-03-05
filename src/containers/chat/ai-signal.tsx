@@ -2,7 +2,7 @@
 
 import { useState, useCallback } from 'react';
 
-import { Button, ButtonGroup } from '@heroui/button';
+import { ButtonGroup } from '@heroui/button';
 import { Divider } from '@heroui/divider';
 import { ScrollShadow } from '@heroui/scroll-shadow';
 import { Select, SelectItem } from '@heroui/select';
@@ -11,6 +11,7 @@ import { ChevronDown } from 'lucide-react';
 import { useTranslations } from 'next-intl';
 
 import InfoCard, { MOCK_DATA } from '@/components/chat/preview/ai-signal/info-card';
+import { HeroButton } from '@/components/ui/hero-button';
 import { useChatStore } from '@/contexts/chat-provider';
 import { useMediaQuery } from '@/hooks/useMediaQuery';
 import { useRouter } from '@/i18n/routing';
@@ -137,19 +138,19 @@ const AiSignal = () => {
 				<h2 className="text-2xl font-bold">{t('title')}</h2>
 				<div className="flex gap-4">
 					<ButtonGroup aria-label="display" variant="bordered" radius="full" size="sm" className="relative">
-						<Button aria-label="group" className="border-1 border-r-0" onPress={() => setDisplay('group')}>
+						<HeroButton aria-label="group" className="border-1 border-r-0" onPress={() => setDisplay('group')}>
 							{display === 'group' ? <TileFieldIcon /> : <TileOutlineIcon />}
-						</Button>
+						</HeroButton>
 						<Divider className="absolute top-1/4 h-1/2" orientation="vertical" />
-						<Button aria-label="single" className="border-1 border-l-0" onPress={() => setDisplay('single')}>
+						<HeroButton aria-label="single" className="border-1 border-l-0" onPress={() => setDisplay('single')}>
 							{display === 'single' ? <SingleFieldIcon /> : <SingleOutlineIcon />}
-						</Button>
+						</HeroButton>
 					</ButtonGroup>
 					<Select
 						aria-label="Filter Date"
 						size="sm"
 						classNames={{
-							trigger: 'border-1',
+							trigger: 'border-1 border-default',
 						}}
 						selectionMode="single"
 						variant="bordered"
@@ -208,9 +209,9 @@ const AiSignal = () => {
 					</AnimatePresence>
 				</ul>
 				<div className="flex justify-center">
-					<Button aria-label="More" size="sm" variant="light" endContent={<ChevronDown className="size-3" />}>
+					<HeroButton aria-label="More" size="sm" variant="light" endContent={<ChevronDown className="size-3" />}>
 						{t('action.more')}
-					</Button>
+					</HeroButton>
 				</div>
 			</ScrollShadow>
 		</motion.div>

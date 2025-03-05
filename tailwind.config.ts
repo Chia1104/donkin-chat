@@ -14,7 +14,7 @@ const config: Config = {
 		extend: {
 			colors: {
 				primary: {
-					DEFAULT: '#FF533D',
+					DEFAULT: '#2A68F8',
 				},
 				success: {
 					DEFAULT: '#4caf50',
@@ -41,7 +41,7 @@ const config: Config = {
 					transparent: 'rgba(244,67,54,0.75)',
 				},
 				root: {
-					DEFAULT: '#101010',
+					DEFAULT: '#030514',
 				},
 				light: {
 					DEFAULT: '#fafafa',
@@ -61,6 +61,15 @@ const config: Config = {
 				md: 'calc(var(--radius) - 2px)',
 				sm: 'calc(var(--radius) - 4px)',
 			},
+			typography: {
+				DEFAULT: {
+					css: {
+						p: {
+							color: '#FFFFFF73',
+						},
+					},
+				},
+			},
 		},
 	},
 	darkMode: ['class', 'class'],
@@ -72,33 +81,59 @@ const config: Config = {
 				dark: {
 					colors: {
 						primary: {
-							DEFAULT: '#FF533D',
+							DEFAULT: '#2A68F8',
 						},
 						danger: {
 							DEFAULT: '#FF4056',
 						},
 						background: {
-							DEFAULT: '#121213',
+							DEFAULT: '#FFFFFF1F',
 						},
-						// content1: {
-						// 	DEFAULT: '#292828',
-						// },
+						default: {
+							DEFAULT: '#FFFFFF1F',
+							400: '#FFFFFF14',
+						},
+						content1: {
+							DEFAULT: 'rgba(11,13,26)',
+							300: 'rgba(255, 255, 255, 0.03)',
+						},
+					},
+					layout: {
+						borderWidth: {
+							medium: '1px',
+						},
+						radius: {
+							small: '4px',
+						},
 					},
 				},
 				light: {
 					colors: {
 						primary: {
-							DEFAULT: '#FF533D',
+							DEFAULT: '#2A68F8',
 						},
 						danger: {
 							DEFAULT: '#FF4056',
 						},
 						background: {
-							DEFAULT: '#121213',
+							DEFAULT: '#FFFFFF1F',
 						},
-						// content1: {
-						// 	DEFAULT: '#292828',
-						// },
+						default: {
+							DEFAULT: '#FFFFFF1F',
+							400: '#FFFFFF14',
+						},
+						content1: {
+							DEFAULT: 'rgba(11,13,26)',
+							300: 'rgba(255, 255, 255, 0.03)',
+						},
+					},
+					layout: {
+						borderWidth: {
+							medium: '1px',
+						},
+						radius: {
+							small: '4px',
+						},
 					},
 				},
 			},

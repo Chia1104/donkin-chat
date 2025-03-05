@@ -30,8 +30,8 @@ const DefaultPrompt = ({ currentCoin = 'XX', ...props }: Props) => {
 	);
 
 	return (
-		<section className="flex flex-col items-center justify-center w-full h-full max-w-[350px] gap-2 prose prose-invert">
-			<div className="flex flex-col items-center justify-center w-full max-w-[285px]">
+		<section className="flex flex-col items-center justify-center w-full h-full max-w-[350px] gap-5 prose prose-invert">
+			<div className="flex flex-col items-center justify-center w-full max-w-[285px] gap-3">
 				<Image
 					className="mb-2"
 					as={NextImage}
@@ -45,8 +45,7 @@ const DefaultPrompt = ({ currentCoin = 'XX', ...props }: Props) => {
 				<h2 className="mt-0 mb-2">{t('donkin-title')}</h2>
 				<p className="text-xs text-center">{t('donkin-subtitle')}</p>
 			</div>
-			<div className="border-1 border-divider flex flex-col gap-2 rounded-lg p-3 w-full not-prose">
-				<p className="text-xs">{t('default-prompt.title')}</p>
+			<div className="flex flex-col gap-4 rounded-lg p-3 w-full not-prose">
 				<ActionCard onPress={() => handleAction(t('default-prompt.latest-coins'))}>
 					<ActionBody icon={<HotIcon />} label={t('default-prompt.latest-coins')} />
 				</ActionCard>

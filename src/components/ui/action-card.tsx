@@ -1,7 +1,8 @@
 import type { CardProps } from '@heroui/card';
-import { Card, CardBody } from '@heroui/card';
+import { CardBody } from '@heroui/card';
 import ChevronRightIcon from '@mui/icons-material/ChevronRight';
 
+import Card from '@/components/ui/card';
 import { cn } from '@/utils/cn';
 
 const ActionCard = (props: CardProps) => {
@@ -10,11 +11,7 @@ const ActionCard = (props: CardProps) => {
 			aria-label="Action Card"
 			isPressable
 			{...props}
-			className={cn(
-				'transition duration-300 border-1 border-divider',
-				'bg-gradient-to-b from-black/10 via-black/5 to-white/15 from-[55%] via-[10%]',
-				props.className,
-			)}
+			className={cn('transition duration-300', 'from-[55%] via-[10%] p-0', props.className)}
 		/>
 	);
 };
