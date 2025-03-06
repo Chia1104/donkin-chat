@@ -48,7 +48,7 @@ const ChainSelector = () => {
 		<Select
 			aria-label="Network Selector"
 			classNames={{
-				trigger: 'border-1 p-2',
+				trigger: 'border-1 p-2 border-default',
 			}}
 			selectionMode="single"
 			variant="bordered"

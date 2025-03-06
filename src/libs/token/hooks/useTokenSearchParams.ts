@@ -1,18 +1,22 @@
 import 'client-only';
-import { useQueryStates, parseAsStringEnum, parseAsBoolean } from 'nuqs';
+import { useQueryStates, parseAsStringEnum, parseAsBoolean, parseAsJson, parseAsNumberLiteral } from 'nuqs';
 
 import { FilterColumn } from '@/libs/token/enums/filter-column.enum';
-import { TotalFilter } from '@/libs/token/enums/total-filter.enum';
-import { TransactionsFilter } from '@/libs/token/enums/transactions-filter.enum';
+import { TransactionsLiteral } from '@/libs/token/enums/transactions-filter.enum';
 
+import { Filter } from '../enums/filter-filter.enum';
 import { IntervalFilter } from '../enums/interval-filter.enum';
+import { ProfitLiteral } from '../enums/profit-filter.enum';
+import { filterFormSchemaPrimitive } from './useFilterFormSchema';
 
 export const tokenQueryStates = {
-	[FilterColumn.Total]: parseAsStringEnum(Object.values(TotalFilter)),
-	[FilterColumn.Transactions]: parseAsStringEnum(Object.values(TransactionsFilter)),
-	[FilterColumn.Favorite]: parseAsBoolean,
+	[FilterColumn.Transactions]: parseAsNumberLiteral(TransactionsLiteral),
 	[FilterColumn.Mark]: parseAsBoolean.withDefault(true),
 	[FilterColumn.Interval]: parseAsStringEnum(Object.values(IntervalFilter)).withDefault(IntervalFilter.OneDay),
+	[FilterColumn.Filter]: parseAsStringEnum(Object.values(Filter)),
+	// eslint-disable-next-line @typescript-eslint/unbound-method
+	[FilterColumn.Type]: parseAsJson(filterFormSchemaPrimitive.shape[FilterColumn.Type].parse),
+	[FilterColumn.Profit]: parseAsNumberLiteral(ProfitLiteral),
 };
 
 export const useTokenSearchParams = () => {

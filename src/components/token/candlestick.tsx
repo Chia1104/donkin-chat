@@ -31,13 +31,6 @@ const DateFilter = memo(() => {
 			aria-label="filter time"
 			size="sm"
 			variant="light"
-			color="primary"
-			classNames={{
-				tabList: 'gap-1',
-				tab: 'py-1 px-2',
-				cursor: 'bg-transparent border-1 border-primary/25 text-primary',
-				tabContent: 'group-data-[selected=true]:text-primary',
-			}}
 			selectedKey={searchParams.interval}
 			onSelectionChange={key => {
 				void setSearchParams({
@@ -140,7 +133,7 @@ const Chart = () => {
 
 const Candlestick = () => {
 	return (
-		<section className="border-1 border-divider p-5 w-full h-[490px] rounded-lg flex flex-col gap-10">
+		<section className="p-5 w-full h-[490px] rounded-lg flex flex-col gap-10">
 			<header className="flex items-center justify-between">
 				<MetaInfo />
 				<DateFilter />

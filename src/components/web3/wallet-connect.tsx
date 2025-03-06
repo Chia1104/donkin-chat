@@ -5,7 +5,6 @@ import { Image } from '@heroui/image';
 import { Modal, useDisclosure, ModalContent, ModalBody } from '@heroui/modal';
 import AccountBalanceWalletOutlinedIcon from '@mui/icons-material/AccountBalanceWalletOutlined';
 import { useWallet } from '@solana/wallet-adapter-react';
-import { useTranslations } from 'next-intl';
 import NextImage from 'next/image';
 import { useConnect } from 'wagmi';
 
@@ -47,7 +46,6 @@ const WalletConnect = (props: Props) => {
 
 	const { vm = currentVM } = props;
 
-	const tAction = useTranslations('action');
 	const { isOpen, onOpen, onOpenChange } = useDisclosure();
 	const { connectors, connect } = useConnect();
 	// eslint-disable-next-line @typescript-eslint/unbound-method
@@ -97,14 +95,13 @@ const WalletConnect = (props: Props) => {
 
 	return (
 		<>
-			<Button
-				onPress={onOpen}
-				aria-label="Connect Wallet"
-				color="primary"
-				className="rounded-full"
-				startContent={<AccountBalanceWalletOutlinedIcon />}
-			>
-				{tAction('connect-wallet')}
+			<Button onPress={onOpen} aria-label="Connect Wallet" className="rounded-full" isIconOnly variant="bordered">
+				<AccountBalanceWalletOutlinedIcon
+					sx={{
+						width: 20,
+						height: 20,
+					}}
+				/>
 			</Button>
 			<Modal isOpen={isOpen} onOpenChange={onOpenChange}>
 				<ModalContent className="p-5">

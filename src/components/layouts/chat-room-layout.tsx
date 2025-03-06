@@ -1,6 +1,5 @@
 'use client';
 
-import { Avatar } from '@heroui/avatar';
 import { Button } from '@heroui/button';
 import { Navbar, NavbarContent, NavbarItem } from '@heroui/navbar';
 import { Skeleton } from '@heroui/skeleton';
@@ -17,7 +16,6 @@ import { useAISearchParams } from '@/libs/ai/hooks/useAISearchParams';
 import { cn } from '@/utils/cn';
 
 import Donkin from '../commons/donkin';
-import EnsGuard from '../web3/ens-guard';
 import WalletConnect from '../web3/wallet-connect';
 
 const ChainSelector = dynamic(() => import('@/components/web3/chain-selector'), {
@@ -39,8 +37,7 @@ const ChatRoomLayout = (props: Props) => {
 			<Navbar
 				aria-label="Main Navigation"
 				position="static"
-				isBordered
-				className="bg-black/90"
+				className="bg-root backdrop-saturate-0"
 				classNames={{
 					item: 'data-[active=true]:text-primary',
 					wrapper: 'min-w-full h-full',
@@ -75,21 +72,8 @@ const ChatRoomLayout = (props: Props) => {
 						aria-label="Whale Ranking"
 						className="cursor-pointer"
 						isActive={searchParams.q === QueryType.WhaleRanking}
-						onClick={() => {
-							void setSearchParams({ q: QueryType.WhaleRanking });
-						}}
 					>
 						{t('whale-ranking')}
-					</NavbarItem>
-					<NavbarItem
-						aria-label="Smart Rankings"
-						className="cursor-pointer"
-						isActive={searchParams.q === QueryType.SmartRankings}
-						onClick={() => {
-							void setSearchParams({ q: QueryType.SmartRankings });
-						}}
-					>
-						{t('smart-rankings')}
 					</NavbarItem>
 					<NavbarItem aria-label="Market">
 						<Button
@@ -115,16 +99,11 @@ const ChatRoomLayout = (props: Props) => {
 							<XICon className="text-white" />
 						</Button>
 					</NavbarItem>
-					<NavbarItem aria-label="Network Selector">
-						<ChainSelector />
-					</NavbarItem>
 					<NavbarItem aria-label="Connect Wallet">
 						<WalletConnect />
 					</NavbarItem>
-					<NavbarItem aria-label="Avatar">
-						<EnsGuard pendingFallback={<Avatar aria-label="Avatar" />}>
-							<Avatar aria-label="Avatar" />
-						</EnsGuard>
+					<NavbarItem aria-label="Network Selector">
+						<ChainSelector />
 					</NavbarItem>
 				</NavbarContent>
 			</Navbar>

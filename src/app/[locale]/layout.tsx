@@ -16,10 +16,10 @@ import { initDayjs } from '@/utils/dayjs';
 import { env } from '@/utils/env';
 
 export const viewport: Viewport = {
-	// themeColor: [
-	// 	{ media: '(prefers-color-scheme: light)', color: '#FF533D' },
-	// 	{ media: '(prefers-color-scheme: dark)', color: '#FF533D' },
-	// ],
+	themeColor: [
+		{ media: '(prefers-color-scheme: light)', color: '#030514' },
+		{ media: '(prefers-color-scheme: dark)', color: '#030514' },
+	],
 	colorScheme: 'dark',
 	width: 'device-width',
 };

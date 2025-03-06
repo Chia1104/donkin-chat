@@ -18,7 +18,8 @@
 		"cancel": "Cancel",
 		"connect-wallet": "Connect Wallet",
 		"reset": "Reset",
-		"active": "Active"
+		"active": "Active",
+		"clear": "Clear"
 	},
 	"validation": {
 		"required": "This field is required",
@@ -30,6 +31,9 @@
 			"number": "Invalid number format",
 			"more-than-0": "Must be greater than 0"
 		}
+	},
+	"utils": {
+		"more-then-item": "more then {item}"
 	},
 	"nav": {
 		"ai-signal": "AI-Signal",
@@ -44,7 +48,7 @@
 		"copyright": "Copyright © {year} Donkin. • All Rights Reserved"
 	},
 	"chat": {
-		"prompt-placeholder": "Enter any question...",
+		"prompt-placeholder": "What do you want to know",
 		"donkin-title": "The most professional AI investment consultant in the cryptocurrency circle",
 		"donkin-subtitle": "Hello! I am Donkin. You can check the real-time information of the cryptocurrency circle at any time. Please tell me what you are interested in!",
 		"donkin-warning": "Donkin may provide inaccurate information, please verify important information",
@@ -89,7 +93,16 @@
 				"transaction-title-by-day": "{day} of transactions",
 				"transaction-less-100": "0 - 100",
 				"transaction-more-100": "> 100",
-				"favorite-only": "Only show my favorites"
+				"favorite-only": "Only show my favorites",
+				"filter-title": "Filter display",
+				"filter-recommend": "Recommend",
+				"filter-manual": "Self-select",
+				"type-title": "Smart money type",
+				"type-smart-money": "Smart money",
+				"type-whale": "Whale",
+				"type-kol": "KOL",
+				"transaction-title": "Transaction amount",
+				"profit-title": "Profit"
 			}
 		},
 		"holder": "holder",

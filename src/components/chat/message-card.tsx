@@ -4,7 +4,6 @@ import React from 'react';
 
 import type { UIMessage } from '@ai-sdk/ui-utils';
 import { Badge } from '@heroui/badge';
-import { Button } from '@heroui/button';
 import { Chip } from '@heroui/chip';
 import { Link } from '@heroui/link';
 import { CircularProgress } from '@heroui/progress';
@@ -15,7 +14,20 @@ import CircleIcon from '@mui/icons-material/Circle';
 import ContentCopyRoundedIcon from '@mui/icons-material/ContentCopyRounded';
 import RefreshIcon from '@mui/icons-material/Refresh';
 import ShareOutlinedIcon from '@mui/icons-material/ShareOutlined';
+import rehypeShiki from '@shikijs/rehype';
 import { useTranslations } from 'next-intl';
+import dynamic from 'next/dynamic';
+import rehypeKatex from 'rehype-katex';
+import rehypeRaw from 'rehype-raw';
+import rehypeSanitize from 'rehype-sanitize';
+import remarkGfm from 'remark-gfm';
+import remarkMath from 'remark-math';
+
+import { HeroButton } from '../ui/hero-button';
+
+const MarkdownHooks = dynamic(() => import('react-markdown').then(mod => mod.MarkdownHooks), { ssr: false });
+
+const Markdown = dynamic(() => import('react-markdown'), { ssr: false });
 
 export type MessageCardProps = React.HTMLAttributes<HTMLDivElement> & {
 	showFeedback?: boolean;
@@ -29,6 +41,9 @@ export type MessageCardProps = React.HTMLAttributes<HTMLDivElement> & {
 	isRetrying?: boolean;
 	isLoading?: boolean;
 	isCurrent?: boolean;
+	experimental?: {
+		shiki?: boolean;
+	};
 };
 
 const MessageCard = ({
@@ -44,6 +59,7 @@ const MessageCard = ({
 	isLoading,
 	isCurrent,
 	streamingContent,
+	experimental,
 	...props
 }: MessageCardProps) => {
 	const messageRef = React.useRef<HTMLDivElement>(null);
@@ -75,7 +91,7 @@ const MessageCard = ({
 			status === 'failed'
 				? 'bg-danger-100/50 border border-danger-100 text-foreground'
 				: message.role === 'user'
-					? 'bg-content2'
+					? 'bg-content1'
 					: '';
 
 		return {
@@ -106,12 +122,12 @@ const MessageCard = ({
 			<div className="flex w-full flex-col gap-4">
 				<div
 					className={cn(
-						'relative w-full rounded-medium px-4 py-3 text-default-600 flex flex-col gap-6',
+						'relative w-full rounded-medium px-4 text-default-600 flex flex-col gap-6',
 						classNames.failedMessageClassName,
 						messageClassName,
 					)}
 				>
-					<div ref={messageRef} className={'text-small flex flex-col gap-2'}>
+					<div ref={messageRef} className={'text-small flex flex-col max-w-[300px] prose prose-invert'}>
 						{((isLoading && message.role === 'assistant' && isCurrent) || (isLoading && streamingContent)) && (
 							<CircularProgress size="sm" />
 						)}
@@ -123,56 +139,88 @@ const MessageCard = ({
 								</Link>
 							</p>
 						) : (
-							message.content
+							<div className="">
+								{experimental?.shiki ? (
+									<MarkdownHooks
+										remarkPlugins={[[remarkGfm], [remarkMath]]}
+										rehypePlugins={[
+											[
+												rehypeShiki,
+												{
+													theme: 'one-dark-pro',
+												},
+											],
+											[rehypeRaw],
+											[rehypeKatex],
+										]}
+									>
+										{message.content}
+									</MarkdownHooks>
+								) : (
+									<Markdown
+										remarkPlugins={[[remarkGfm], [remarkMath]]}
+										rehypePlugins={[[rehypeSanitize], [rehypeRaw], [rehypeKatex]]}
+									>
+										{message.content}
+									</Markdown>
+								)}
+							</div>
+						)}
+						{showFeedback && !hasFailed && !isLoading && (
+							<div className="flex">
+								<HeroButton
+									variant="light"
+									aria-label="share-button"
+									isIconOnly
+									size="sm"
+									onPress={() => handleShare()}
+								>
+									<ShareOutlinedIcon
+										className="text-default-600"
+										sx={{
+											width: 16,
+											height: 16,
+										}}
+									/>
+								</HeroButton>
+								<HeroButton variant="light" aria-label="copy-button" isIconOnly size="sm" onPress={handleCopy}>
+									{copied ? (
+										<CheckIcon
+											sx={{
+												width: 16,
+												height: 16,
+											}}
+											className="text-default-600"
+										/>
+									) : (
+										<ContentCopyRoundedIcon
+											sx={{
+												width: 16,
+												height: 16,
+											}}
+											className="text-default-600"
+										/>
+									)}
+								</HeroButton>
+								<HeroButton
+									variant="light"
+									aria-label="retry-button"
+									isIconOnly
+									size="sm"
+									onPress={() => handleRetry()}
+									isLoading={isPending || isRetrying}
+								>
+									<RefreshIcon
+										sx={{
+											width: 20,
+											height: 20,
+										}}
+										className="text-default-600"
+									/>
+								</HeroButton>
+							</div>
 						)}
 					</div>
-					{showFeedback && !hasFailed && !isLoading && (
-						<div className="flex gap-2">
-							<Button aria-label="share-button" isIconOnly size="sm" onPress={() => handleShare()}>
-								<ShareOutlinedIcon
-									className="text-default-600"
-									sx={{
-										width: 20,
-										height: 20,
-									}}
-								/>
-							</Button>
-							<Button aria-label="copy-button" isIconOnly size="sm" onPress={handleCopy}>
-								{copied ? (
-									<CheckIcon
-										sx={{
-											width: 20,
-											height: 20,
-										}}
-										className="text-default-600"
-									/>
-								) : (
-									<ContentCopyRoundedIcon
-										sx={{
-											width: 20,
-											height: 20,
-										}}
-										className="text-default-600"
-									/>
-								)}
-							</Button>
-							<Button
-								aria-label="retry-button"
-								isIconOnly
-								size="sm"
-								onPress={() => handleRetry()}
-								isLoading={isPending || isRetrying}
-							>
-								<RefreshIcon
-									sx={{
-										width: 20,
-										height: 20,
-									}}
-									className="text-default-600"
-								/>
-							</Button>
-						</div>
-					)}
 				</div>
 			</div>
 		</div>

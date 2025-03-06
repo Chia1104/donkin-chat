@@ -3,39 +3,35 @@
 import { useState } from 'react';
 
 import { Avatar, AvatarGroup } from '@heroui/avatar';
-import { Button } from '@heroui/button';
 import { Divider } from '@heroui/divider';
 import { Popover, PopoverContent, PopoverTrigger } from '@heroui/popover';
 import { Switch } from '@heroui/switch';
 import FilterAltOutlinedIcon from '@mui/icons-material/FilterAltOutlined';
 import { useTranslations } from 'next-intl';
+import { useLocale } from 'next-intl';
 
 import FilterForm from '@/components/token/filter-form';
 import Card from '@/components/ui/card';
 import { DEFAULT_FILTER_FORM_DATA } from '@/libs/token/hooks/useFilterFormSchema';
 import { useTokenSearchParams } from '@/libs/token/hooks/useTokenSearchParams';
+import { Locale } from '@/types/locale';
+import { cn } from '@/utils/cn';
+
+import { HeroButton } from '../ui/hero-button';
 
 const Filter = () => {
 	const [isOpen, setIsOpen] = useState(false);
 	const [searchParams, setSearchParams] = useTokenSearchParams();
+	const locale = useLocale() as Locale;
 
 	return (
-		<Popover
-			placement="top"
-			isOpen={isOpen}
-			onOpenChange={setIsOpen}
-			showArrow
-			classNames={{
-				arrow: 'bg-[#292828]',
-			}}
-			className="before:bg-[#292828]"
-		>
+		<Popover placement="top" isOpen={isOpen} onOpenChange={setIsOpen} showArrow>
 			<PopoverTrigger>
-				<Button isIconOnly variant="light" aria-label="Filter" radius="full" isDisabled={!searchParams.mark}>
+				<HeroButton isIconOnly variant="light" aria-label="Filter" radius="full" isDisabled={!searchParams.mark}>
 					<FilterAltOutlinedIcon />
-				</Button>
+				</HeroButton>
 			</PopoverTrigger>
-			<PopoverContent className="w-[200px] overflow-hidden bg-[#292828]">
+			<PopoverContent className={cn('w-[200px] overflow-hidden', locale === Locale.EN_US && 'w-[250px] max-w-[250px]')}>
 				<FilterForm
 					defaultValues={searchParams}
 					onSubmit={value => {
@@ -61,6 +57,7 @@ const RankingSection = () => {
 				aria-label={t('ranking.mark-smart')}
 				classNames={{
 					base: 'flex-row-reverse gap-6',
+					thumb: 'bg-[rgba(255,_255,_255,_0.45)]',
 				}}
 				className="text-sm font-normal"
 				isSelected={!!searchParams.mark}
