@@ -43,11 +43,20 @@ export interface FetchSSEOptions {
 	smoothing?: SmoothingParams | boolean;
 }
 
+export type RequestMode = 'proxy' | 'self-api' | 'external';
+
 const START_ANIMATION_SPEED = 4;
 
 const END_ANIMATION_SPEED = 15;
 
-export const getPrefixedUrl = (requestMode?: 'proxy' | 'self-api' | 'external') => {
+/**
+ * @deprecated
+ *
+ * INTERNAL USE ONLY !!!
+ *
+ * please use `withPrefixedUrl` instead
+ */
+export const getPrefixedUrl = (requestMode?: RequestMode) => {
 	switch (requestMode) {
 		case 'proxy':
 			return '/proxy-api';
@@ -58,6 +67,14 @@ export const getPrefixedUrl = (requestMode?: 'proxy' | 'self-api' | 'external') 
 		default:
 			return '/';
 	}
+};
+
+export const withPrefixedUrl = (url: string, requestMode?: RequestMode) => {
+	// remove trailing slash
+	const prefixedUrl = getPrefixedUrl(requestMode).replace(/\/$/, '');
+	// remove leading slash
+	const _url = url.replace(/^\//, '');
+	return `${prefixedUrl}/${_url}`;
 };
 
 export const request = (defaultOptions?: RequestOptions) => {
