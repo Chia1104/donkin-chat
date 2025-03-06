@@ -18,7 +18,8 @@
 		"cancel": "取消",
 		"connect-wallet": "连接钱包",
 		"reset": "重置",
-		"active": "應用"
+		"active": "應用",
+		"clear": "清除"
 	},
 	"validation": {
 		"required": "此欄位為必填",
@@ -30,6 +31,9 @@
 			"number": "無效的數字格式",
 			"more-than-0": "必須大於 0"
 		}
+	},
+	"utils": {
+		"more-then-item": "大於 {item}"
 	},
 	"nav": {
 		"ai-signal": "AI 信號",
@@ -89,7 +93,16 @@
 				"transaction-title-by-day": "{day} 交易次數",
 				"transaction-less-100": "0 - 100",
 				"transaction-more-100": "> 100",
-				"favorite-only": "僅顯示我的收藏"
+				"favorite-only": "僅顯示我的收藏",
+				"filter-title": "篩選顯示",
+				"filter-recommend": "推荐",
+				"filter-manual": "自选",
+				"type-title": "聰明錢類型",
+				"type-smart-money": "聰明錢",
+				"type-whale": "巨鲸",
+				"type-kol": "KOL",
+				"transaction-title": "交易金额",
+				"profit-title": "利潤"
 			}
 		},
 		"holder": "持有人",

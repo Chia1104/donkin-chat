@@ -1,11 +1,13 @@
 'use client';
 
-import { Button } from '@heroui/button';
+import { useMemo } from 'react';
+
 import { CheckboxGroup, Checkbox } from '@heroui/checkbox';
 import { RadioGroup, Radio } from '@heroui/radio';
 import { Slider } from '@heroui/slider';
 import { zodResolver } from '@hookform/resolvers/zod';
 import { useTranslations } from 'next-intl';
+import Image from 'next/image';
 import { useForm } from 'react-hook-form';
 
 import { Form, FormControl, FormItem, FormLabel, FormField } from '@/components/ui/form';
@@ -19,15 +21,20 @@ import type { FilterFormData } from '@/libs/token/hooks/useFilterFormSchema';
 import { DEFAULT_FILTER_FORM_DATA } from '@/libs/token/hooks/useFilterFormSchema';
 import { useFilterFormSchema } from '@/libs/token/hooks/useFilterFormSchema';
 
+import { HeroButton as Button } from '../ui/hero-button';
+
 interface Props {
 	defaultValues?: FilterFormData;
 	onSubmit?: (data: FilterFormData) => void;
 	onReset?: () => void;
+	onTransactionsClear?: () => void;
+	onProfitClear?: () => void;
 }
 
 const FilterForm = (props: Props) => {
 	const t = useTranslations('token');
 	const tAction = useTranslations('action');
+	const tUtils = useTranslations('utils');
 	const schema = useFilterFormSchema();
 	const form = useForm<FilterFormData>({
 		defaultValues: props.defaultValues,
@@ -47,6 +54,57 @@ const FilterForm = (props: Props) => {
 		}
 	};
 
+	const handleClearTransactions = () => {
+		form.setValue('transactions', null);
+		if (props.onTransactionsClear) {
+			props.onTransactionsClear();
+		}
+	};
+
+	const handleClearProfit = () => {
+		form.setValue('profit', null);
+		if (props.onProfitClear) {
+			props.onProfitClear();
+		}
+	};
+
+	const transactionsLabel = useMemo(() => {
+		const transaction = form.watch('transactions');
+
+		switch (transaction) {
+			case TransactionsFilter['5K']:
+				return tUtils('more-then-item', { item: '5K' });
+			case TransactionsFilter['25K']:
+				return tUtils('more-then-item', { item: '25K' });
+			case TransactionsFilter['50K']:
+				return tUtils('more-then-item', { item: '50K' });
+			case TransactionsFilter['75K']:
+				return tUtils('more-then-item', { item: '75K' });
+			case TransactionsFilter['100K']:
+				return tUtils('more-then-item', { item: '100K' });
+			default:
+				return null;
+		}
+	}, [form, tUtils]);
+
+	const profitLabel = useMemo(() => {
+		const profit = form.watch('profit');
+		switch (profit) {
+			case ProfitFilter['5%']:
+				return tUtils('more-then-item', { item: '5%' });
+			case ProfitFilter['25%']:
+				return tUtils('more-then-item', { item: '25%' });
+			case ProfitFilter['50%']:
+				return tUtils('more-then-item', { item: '50%' });
+			case ProfitFilter['75%']:
+				return tUtils('more-then-item', { item: '75%' });
+			case ProfitFilter['100%']:
+				return tUtils('more-then-item', { item: '100%' });
+			default:
+				return null;
+		}
+	}, [form, tUtils]);
+
 	return (
 		<Form {...form}>
 			<form onSubmit={onSubmit} className="w-full">
@@ -56,7 +114,7 @@ const FilterForm = (props: Props) => {
 						name={FilterColumn.Filter}
 						render={({ field }) => (
 							<FormItem className="w-full">
-								<FormLabel className='className="text-small font-bold'>篩選顯示</FormLabel>
+								<FormLabel className="text-small font-bold">{t('ranking.filter.filter-title')}</FormLabel>
 								<FormControl className="w-full">
 									<RadioGroup
 										aria-label="filter"
@@ -75,7 +133,7 @@ const FilterForm = (props: Props) => {
 												label: 'text-xs',
 											}}
 										>
-											推荐
+											{t('ranking.filter.filter-recommend')}
 										</Radio>
 										<Radio
 											size="sm"
@@ -85,7 +143,7 @@ const FilterForm = (props: Props) => {
 												label: 'text-xs',
 											}}
 										>
-											自选
+											{t('ranking.filter.filter-manual')}
 										</Radio>
 									</RadioGroup>
 								</FormControl>
@@ -97,7 +155,7 @@ const FilterForm = (props: Props) => {
 						name={FilterColumn.Type}
 						render={({ field }) => (
 							<FormItem className="w-full">
-								<FormLabel className='className="text-small font-bold'>聪明钱類型</FormLabel>
+								<FormLabel className="text-small font-bold">{t('ranking.filter.type-title')}</FormLabel>
 								<FormControl className="w-full">
 									<CheckboxGroup
 										className="w-full"
@@ -115,7 +173,10 @@ const FilterForm = (props: Props) => {
 											size="sm"
 											value={TypeFilter.SmartMoney}
 										>
-											聰明錢
+											<span className="flex items-center gap-2">
+												{t('ranking.filter.type-smart-money')}{' '}
+												<Image src="/assets/images/smart-money.svg" width={16} height={16} alt="smart-money" />
+											</span>
 										</Checkbox>
 										<Checkbox
 											classNames={{
@@ -124,7 +185,10 @@ const FilterForm = (props: Props) => {
 											size="sm"
 											value={TypeFilter.Whale}
 										>
-											巨鲸
+											<span className="flex items-center gap-2">
+												{t('ranking.filter.type-whale')}{' '}
+												<Image src="/assets/images/whale.svg" width={16} height={16} alt="smart-money" />
+											</span>
 										</Checkbox>
 										<Checkbox
 											classNames={{
@@ -133,7 +197,10 @@ const FilterForm = (props: Props) => {
 											size="sm"
 											value={TypeFilter.Kol}
 										>
-											KOL
+											<span className="flex items-center gap-2">
+												{t('ranking.filter.type-kol')}{' '}
+												<Image src="/assets/images/kol.svg" width={16} height={16} alt="smart-money" />
+											</span>
 										</Checkbox>
 									</CheckboxGroup>
 								</FormControl>
@@ -145,12 +212,28 @@ const FilterForm = (props: Props) => {
 						name={FilterColumn.Transactions}
 						render={({ field }) => (
 							<FormItem className="w-full">
-								<FormLabel className='className="text-small font-bold'>交易金额</FormLabel>
+								<FormLabel className="text-small font-bold flex justify-between gap-2 items-center">
+									<span>
+										{t('ranking.filter.transaction-title')}
+										{transactionsLabel && (
+											<Button
+												onPress={handleClearTransactions}
+												variant="light"
+												size="sm"
+												color="primary"
+												className="px-2 min-w-fit h-fit py-1"
+											>
+												{tAction('clear')}
+											</Button>
+										)}
+									</span>
+									<span className="text-xs">{transactionsLabel}</span>
+								</FormLabel>
 								<FormControl>
 									<Slider
 										className="max-w-full"
 										color="foreground"
-										defaultValue={field.value ?? 0}
+										value={field.value ?? 0}
 										maxValue={TransactionsFilter['100K']}
 										minValue={TransactionsFilter['5K']}
 										showSteps
@@ -172,12 +255,28 @@ const FilterForm = (props: Props) => {
 						control={form.control}
 						render={({ field }) => (
 							<FormItem className="w-full my-2">
-								<FormLabel className='className="text-small font-bold'>利潤</FormLabel>
+								<FormLabel className="text-small font-bold flex justify-between gap-2 items-center">
+									<span>
+										{t('ranking.filter.profit-title')}
+										{profitLabel && (
+											<Button
+												onPress={handleClearProfit}
+												variant="light"
+												size="sm"
+												color="primary"
+												className="px-2 min-w-fit h-fit py-1"
+											>
+												{tAction('clear')}
+											</Button>
+										)}
+									</span>
+									<span className="text-xs">{profitLabel}</span>
+								</FormLabel>
 								<FormControl>
 									<Slider
 										className="max-w-full"
 										color="foreground"
-										defaultValue={field.value ?? 0}
+										value={field.value ?? 0}
 										maxValue={ProfitFilter['100%']}
 										minValue={ProfitFilter['5%']}
 										showSteps

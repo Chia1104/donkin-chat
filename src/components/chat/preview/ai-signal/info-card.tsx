@@ -3,6 +3,7 @@
 import type { ReactNode } from 'react';
 import { memo } from 'react';
 
+import type { AvatarProps } from '@heroui/avatar';
 import { Avatar } from '@heroui/avatar';
 import { Button } from '@heroui/button';
 import { Card as HCard, CardBody, CardHeader as HCardHeader } from '@heroui/card';
@@ -31,6 +32,17 @@ interface MetaProps {
 		token: string;
 	};
 	link?: Record<LinkProvider, string | undefined>;
+}
+
+export interface HeaderPrimitiveProps extends MetaProps {
+	avatarProps?: AvatarProps;
+	classNames?: {
+		linkWrapper?: string;
+		label?: string;
+	};
+	injects?: {
+		afterLabel?: ReactNode;
+	};
 }
 
 interface HotspotProps {
@@ -101,13 +113,21 @@ export const LinkIcon = (props: LinkIconProps) => {
 	}
 };
 
-export const CardHeader = memo((props: MetaProps) => {
+export const HeaderPrimitive = (props: HeaderPrimitiveProps) => {
 	const [, copy] = useCopyToClipboard();
+
 	return (
-		<HCardHeader aria-label="card-header" className="flex items-center gap-2 p-0 z-20">
-			<Avatar aria-label="avatar" src={props.meta.avatar} size="sm" className="w-6 h-6" />
-			<h3 className="text-lg font-semibold">{props.meta.name}</h3>
-			<div className="flex items-center gap-1 z-20">
+		<>
+			<Avatar
+				aria-label="avatar"
+				size="sm"
+				{...props.avatarProps}
+				className={cn('w-6 h-6', props.avatarProps?.className)}
+				src={props.meta.avatar}
+			/>
+			<h3 className={cn('text-lg font-semibold', props.classNames?.label)}>{props.meta.name}</h3>
+			{props.injects?.afterLabel}
+			<div className={cn('flex items-center gap-1 z-20', props.classNames?.linkWrapper)}>
 				{Object.entries(props.link ?? {}).map(([key, value]) => (
 					<Button
 						aria-label={key}
@@ -124,6 +144,14 @@ export const CardHeader = memo((props: MetaProps) => {
 					</Button>
 				))}
 			</div>
+		</>
+	);
+};
+
+export const CardHeader = memo((props: MetaProps) => {
+	return (
+		<HCardHeader aria-label="card-header" className="flex items-center gap-2 p-0 z-20">
+			<HeaderPrimitive {...props} />
 		</HCardHeader>
 	);
 });

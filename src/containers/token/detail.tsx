@@ -2,14 +2,17 @@
 
 import type { ReactNode } from 'react';
 
+import { Divider } from '@heroui/divider';
 import { ScrollShadow } from '@heroui/scroll-shadow';
 import { motion } from 'framer-motion';
 import { useTranslations } from 'next-intl';
 
+import { HeaderPrimitive, MOCK_DATA } from '@/components/chat/preview/ai-signal/info-card';
 import { HotspotProgress } from '@/components/chat/preview/ai-signal/info-card';
 import Candlestick from '@/components/token/candlestick';
 import RankingSection from '@/components/token/ranking-section';
 import Card from '@/components/ui/card';
+import { truncateMiddle } from '@/utils/format';
 
 const Hotspot = () => {
 	const t = useTranslations('preview.ai-signal');
@@ -58,6 +61,27 @@ const Detail = () => {
 		>
 			<ScrollShadow className="w-full h-[calc(100vh-72px)]">
 				<div className="flex flex-col gap-5 w-full">
+					<header className="flex items-center gap-5">
+						<HeaderPrimitive
+							avatarProps={{
+								size: 'lg',
+								className: 'w-8 h-8',
+							}}
+							classNames={{
+								label: 'text-2xl',
+							}}
+							injects={{
+								afterLabel: (
+									<span className="flex items-center gap-5">
+										<Divider orientation="vertical" className="h-3" />
+										<p className="text-success text-xs">2h</p>
+										<p>{truncateMiddle(MOCK_DATA.meta.token, 7)}</p>
+									</span>
+								),
+							}}
+							{...MOCK_DATA}
+						/>
+					</header>
 					<Candlestick />
 					<RankingSection />
 					<div className="grid grid-cols-6 gap-2">
