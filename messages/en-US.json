@@ -79,6 +79,12 @@
 			"action": {
 				"more": "Show more currencies"
 			}
+		},
+		"tree-map": {
+			"title": "Heat map",
+			"action": {
+				"more": "Show more currencies"
+			}
 		}
 	},
 	"token": {

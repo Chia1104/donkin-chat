@@ -8,7 +8,8 @@ import { QueryType } from '@/libs/ai/enums/queryType.enum';
 import { useAISearchParams } from '@/libs/ai/hooks/useAISearchParams';
 import { cn } from '@/utils/cn';
 
-const AiSignal = dynamic(() => import('@/containers/chat/ai-signal'), { ssr: false });
+const AiSignal = dynamic(() => import('@/containers/chat/ai-signal'));
+const Heatmap = dynamic(() => import('@/containers/chat/heatmap'));
 
 const Content = () => {
 	const preview = useChatStore(state => state.preview);
@@ -21,6 +22,8 @@ const Content = () => {
 	switch (searchParams.q) {
 		case QueryType.AiSignal:
 			return <AiSignal />;
+		case QueryType.Heatmap:
+			return <Heatmap />;
 		default:
 			return null;
 	}

@@ -28,7 +28,6 @@ body {
 	--y: 0;
 	scroll-behavior: smooth;
 	scroll-padding-top: 10px;
-	overscroll-behavior: none;
 }
 
 ::selection {

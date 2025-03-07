@@ -6,7 +6,7 @@ import * as d3 from 'd3';
 
 import { cn } from '@/utils/cn';
 
-import styles from './treemap.module.css';
+import styles from './d3-treemap.module.css';
 
 export interface TreeNode {
 	type: 'node';
@@ -35,7 +35,7 @@ interface TreemapProps {
 
 const colors = ['#e0ac2b', '#6689c6', '#a4c969', '#e85252', '#9a6fb0', '#a53253', '#7f7f7f'];
 
-export const Treemap = ({ width, height, data, classNames }: TreemapProps) => {
+export const D3Treemap = ({ width, height, data, classNames }: TreemapProps) => {
 	const hierarchy = useMemo(() => {
 		return d3.hierarchy(data).sum(d => d.value);
 	}, [data]);
@@ -48,14 +48,14 @@ export const Treemap = ({ width, height, data, classNames }: TreemapProps) => {
 		.range(colors);
 
 	const root = useMemo(() => {
-		const treeGenerator = d3.treemap<Tree>().size([width, height]).padding(4);
+		const treeGenerator = d3.treemap<Tree>().tile(d3.treemapSquarify).size([width, height]).padding(2);
 		return treeGenerator(hierarchy);
 	}, [hierarchy, width, height]);
 
-	const allShapes = root.leaves().map(leaf => {
+	const allShapes = root.leaves().map((leaf, i) => {
 		const parentName = leaf.parent?.data.name;
 		return (
-			<g key={leaf.id} className={cn(styles.rectangle, classNames?.rectangle)}>
+			<g key={`${leaf.id}-${i}`} className={cn(styles.rectangle, classNames?.rectangle)}>
 				<rect
 					x={leaf.x0}
 					y={leaf.y0}
@@ -92,8 +92,13 @@ export const Treemap = ({ width, height, data, classNames }: TreemapProps) => {
 	});
 
 	return (
-		<div className={cn(classNames?.wrapper)}>
-			<svg width={width} height={height} className={cn(styles.container, classNames?.container)}>
+		<div className={cn('w-full', classNames?.wrapper)}>
+			<svg
+				viewBox="[0, 0, width, height]"
+				width={width}
+				height={height}
+				className={cn('max-w-full h-auto', styles.container, classNames?.container)}
+			>
 				{allShapes}
 			</svg>
 		</div>
