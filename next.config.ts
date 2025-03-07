@@ -72,7 +72,7 @@ const nextConfig: NextConfig = {
 		},
 		{
 			source: '/proxy-api/:path*',
-			destination: `${env.NEXT_PUBLIC_APP_AIP_HOST}/:path*`,
+			destination: `${env.NEXT_PUBLIC_APP_API_HOST}/:path*`,
 		},
 	],
 };

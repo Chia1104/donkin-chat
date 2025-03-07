@@ -63,7 +63,7 @@ export const getPrefixedUrl = (requestMode?: RequestMode) => {
 		case 'self-api':
 			return '/';
 		case 'external':
-			return env.NEXT_PUBLIC_APP_AIP_HOST;
+			return env.NEXT_PUBLIC_APP_API_HOST;
 		default:
 			return '/';
 	}
