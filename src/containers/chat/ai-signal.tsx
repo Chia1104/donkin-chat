@@ -128,12 +128,7 @@ const AiSignal = () => {
 	);
 
 	return (
-		<motion.div
-			initial={{ opacity: 0 }}
-			animate={{ opacity: 1 }}
-			exit={{ opacity: 0 }}
-			className="w-full h-full flex flex-col"
-		>
+		<div className="w-full h-full flex flex-col">
 			<header className="flex items-center justify-between p-4">
 				<h2 className="text-2xl font-bold">{t('title')}</h2>
 				<div className="flex gap-4">
@@ -214,7 +209,7 @@ const AiSignal = () => {
 					</HeroButton>
 				</div>
 			</ScrollShadow>
-		</motion.div>
+		</div>
 	);
 };
 

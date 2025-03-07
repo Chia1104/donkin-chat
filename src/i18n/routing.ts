@@ -1,5 +1,6 @@
 import { createNavigation } from 'next-intl/navigation';
 import { defineRouting } from 'next-intl/routing';
+import { useTransitionRouter } from 'next-view-transitions';
 
 import { Locale } from '@/types/locale';
 
@@ -15,4 +16,5 @@ export const routing = defineRouting({
 
 // Lightweight wrappers around Next.js' navigation APIs
 // that will consider the routing configuration
-export const { Link, redirect, usePathname, useRouter, getPathname } = createNavigation(routing);
+export const { Link, redirect, usePathname, /* useRouter, */ getPathname } = createNavigation(routing);
+export const useRouter = useTransitionRouter;
