@@ -10,11 +10,12 @@ import { AnimatePresence, motion } from 'framer-motion';
 import { ChevronDown } from 'lucide-react';
 import { useTranslations } from 'next-intl';
 
-import InfoCard, { MOCK_DATA } from '@/components/chat/preview/ai-signal/info-card';
+import InfoCard from '@/components/chat/preview/ai-signal/info-card';
 import { HeroButton } from '@/components/ui/hero-button';
 import { useChatStore } from '@/contexts/chat-provider';
 import { useMediaQuery } from '@/hooks/useMediaQuery';
 import { useRouter } from '@/i18n/routing';
+import { useQueryTokensHot } from '@/libs/token/hooks/useQueryToken';
 import { cn } from '@/utils/cn';
 
 interface FilterDate {
@@ -71,19 +72,11 @@ const SingleFieldIcon = () => (
 	</svg>
 );
 
-const AiSignal = () => {
-	const [display, setDisplay] = useState<'group' | 'single'>('group');
+const List = ({ display }: { display: 'group' | 'single' }) => {
 	const t = useTranslations('preview.ai-signal');
+	const queryResult = useQueryTokensHot();
 	const isPreviewOnly = useChatStore(state => state.isPreviewOnly);
 	const router = useRouter();
-
-	const filterDates: FilterDate[] = [
-		{
-			id: 1,
-			name: t('filter.date'),
-			value: 'online',
-		},
-	];
 
 	const { isLgWidth, isMdWidth, isSmWidth } = useMediaQuery();
 
@@ -126,6 +119,73 @@ const AiSignal = () => {
 		},
 		[isPreviewOnly, isLgWidth, isMdWidth, isSmWidth, display],
 	);
+
+	if (queryResult.isLoading) {
+		return <div>Loading...</div>;
+	} else if (queryResult.isError) {
+		return <div>Error: {queryResult.error.message}</div>;
+	}
+
+	return (
+		<>
+			<ul
+				className={cn(
+					'grid grid-cols-1 gap-4 mb-4 w-full',
+					isPreviewOnly ? 'lg:grid-cols-4 md:grid-cols-3 sm:grid-cols-2' : 'lg:grid-cols-3 md:grid-cols-2',
+				)}
+			>
+				<AnimatePresence>
+					{queryResult.data?.map((_, index) => {
+						const length = queryResult.data.length;
+						return (
+							<motion.li className="w-full" key={index} exit={{ opacity: 1 }} layout>
+								<InfoCard
+									meta={{
+										name: _.name,
+										avatar: _.logo_uri ?? '',
+										chain: _.symbol,
+										token: _.address,
+									}}
+									stock={{
+										marketCap: _.market_cap,
+										price: _.price,
+										pool: _.volume_24h,
+										change: _.price_change_24h,
+									}}
+									hotspots={{
+										x: 0,
+										telegram: 0,
+									}}
+									display={getItemDisplay(index, length)}
+									onPress={data => {
+										router.push(`/${data.meta.chain}/token/${data.meta.token}`);
+									}}
+								/>
+							</motion.li>
+						);
+					})}
+				</AnimatePresence>
+			</ul>
+			<div className="flex justify-center">
+				<HeroButton aria-label="More" size="sm" variant="light" endContent={<ChevronDown className="size-3" />}>
+					{t('action.more')}
+				</HeroButton>
+			</div>
+		</>
+	);
+};
+
+const AiSignal = () => {
+	const [display, setDisplay] = useState<'group' | 'single'>('group');
+	const t = useTranslations('preview.ai-signal');
+
+	const filterDates: FilterDate[] = [
+		{
+			id: 1,
+			name: t('filter.date'),
+			value: 'online',
+		},
+	];
 
 	return (
 		<div className="w-full h-full flex flex-col">
@@ -180,34 +240,7 @@ const AiSignal = () => {
 				</div>
 			</header>
 			<ScrollShadow className="w-full h-[calc(100vh-156px)]">
-				<ul
-					className={cn(
-						'grid grid-cols-1 gap-4 mb-4 w-full',
-						isPreviewOnly ? 'lg:grid-cols-4 md:grid-cols-3 sm:grid-cols-2' : 'lg:grid-cols-3 md:grid-cols-2',
-					)}
-				>
-					<AnimatePresence>
-						{Array.from({ length: 9 }).map((_, index) => {
-							const length = 9;
-							return (
-								<motion.li className="w-full" key={index} exit={{ opacity: 1 }} layout>
-									<InfoCard
-										{...MOCK_DATA}
-										display={getItemDisplay(index, length)}
-										onPress={data => {
-											router.push(`/${data.meta.chain}/token/${data.meta.token}`);
-										}}
-									/>
-								</motion.li>
-							);
-						})}
-					</AnimatePresence>
-				</ul>
-				<div className="flex justify-center">
-					<HeroButton aria-label="More" size="sm" variant="light" endContent={<ChevronDown className="size-3" />}>
-						{t('action.more')}
-					</HeroButton>
-				</div>
+				<List display={display} />
 			</ScrollShadow>
 		</div>
 	);

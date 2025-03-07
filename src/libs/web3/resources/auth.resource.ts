@@ -1,12 +1,12 @@
 import type { ResponseData } from '@/types/request';
-import { withPrefixedUrl, request } from '@/utils/request';
+import { request } from '@/utils/request';
 
 import type { LoginNonceResponse, LoginResponse, LoginRequest } from '../pipes/auth.pipe';
 import { loginNonceResponseValidator, loginResponseValidator } from '../pipes/auth.pipe';
 
 export const getLoginNonce = async (address: string) => {
 	const response = await request()
-		.post(withPrefixedUrl('/api/v1/login_nonce'), {
+		.post('api/v1/login_nonce', {
 			json: {
 				address,
 			},
@@ -18,7 +18,7 @@ export const getLoginNonce = async (address: string) => {
 
 export const login = async (loginRequest: LoginRequest) => {
 	const response = await request()
-		.post(withPrefixedUrl('/api/v1/login'), {
+		.post('api/v1/login', {
 			json: {
 				message: loginRequest.message,
 				signature: loginRequest.signature,

@@ -71,10 +71,10 @@ export const withPrefixedUrl = (url: string, requestMode?: RequestMode) => {
 };
 
 export const request = (defaultOptions?: RequestOptions) => {
-	const { requestMode = 'self-api' } = defaultOptions || {};
+	const { requestMode = 'proxy' } = defaultOptions || {};
 
 	return ky.extend({
-		timeout: 60_000,
+		timeout: 10_000,
 		credentials: 'include',
 		hooks: {
 			beforeRequest: [
