@@ -49,14 +49,7 @@ const START_ANIMATION_SPEED = 4;
 
 const END_ANIMATION_SPEED = 15;
 
-/**
- * @deprecated
- *
- * INTERNAL USE ONLY !!!
- *
- * please use `withPrefixedUrl` instead
- */
-export const getPrefixedUrl = (requestMode?: RequestMode) => {
+const getPrefixedUrl = (requestMode?: RequestMode) => {
 	switch (requestMode) {
 		case 'proxy':
 			return '/proxy-api';
