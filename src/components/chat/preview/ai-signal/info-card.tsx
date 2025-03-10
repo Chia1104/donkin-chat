@@ -257,7 +257,11 @@ export const Stock = memo(
 					<div className="w-1/2">
 						<h4 className="mt-0 text-sm font-normal">{t('card.stock.change')}</h4>
 						<span className={cn('text-lg', isPositiveChange && 'text-success', isNegativeChange && 'text-danger')}>
-							{isNumber(stock.change) ? roundDecimal(stock.change, 2) : stock.change}
+							{isNumber(stock.change)
+								? isPositiveChange
+									? `+${roundDecimal(stock.change, 2)}`
+									: roundDecimal(stock.change, 2)
+								: stock.change}
 						</span>
 					</div>
 				</div>

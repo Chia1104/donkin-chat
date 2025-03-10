@@ -55,7 +55,13 @@ export const D3Treemap = ({ width, height, data, classNames }: TreemapProps) => 
 	const allShapes = root.leaves().map((leaf, i) => {
 		const parentName = leaf.parent?.data.name;
 		return (
-			<g key={`${leaf.id}-${i}`} className={cn(styles.rectangle, classNames?.rectangle)}>
+			<g
+				key={`${leaf.id}-${i}`}
+				className={cn(styles.rectangle, classNames?.rectangle)}
+				onClick={() => {
+					console.log(leaf);
+				}}
+			>
 				<rect
 					x={leaf.x0}
 					y={leaf.y0}
