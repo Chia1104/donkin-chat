@@ -31,7 +31,6 @@
 		"@mui/icons-material": "^6.4.6",
 		"@mui/material": "^6.4.6",
 		"@mui/utils": "^6.4.6",
-		"@neondatabase/serverless": "^0.10.4",
 		"@next/third-parties": "^15.2.1",
 		"@radix-ui/react-label": "^2.1.2",
 		"@radix-ui/react-slot": "^1.1.2",
@@ -47,16 +46,18 @@
 		"@wagmi/core": "^2.16.5",
 		"ai": "^4.1.51",
 		"babel-plugin-react-compiler": "19.0.0-beta-e1e972c-20250221",
-		"better-auth": "^1.2.3",
 		"class-variance-authority": "^0.7.1",
 		"client-only": "^0.0.1",
 		"clsx": "^2.1.1",
+		"d3": "^7.9.0",
 		"dayjs": "^1.11.13",
 		"drizzle-orm": "^0.40.0",
+		"echarts-for-react": "^3.0.3",
 		"fancy-canvas": "^2.1.0",
 		"fast-deep-equal": "^3.1.3",
 		"framer-motion": "^12.4.10",
 		"highlight.js": "^11.11.1",
+		"hono": "^4.7.4",
 		"idb-keyval": "^6.2.1",
 		"immer": "^10.1.1",
 		"katex": "^0.16.21",
@@ -107,6 +108,7 @@
 		"@testing-library/react": "^16.2.0",
 		"@testing-library/user-event": "^14.6.1",
 		"@trivago/prettier-plugin-sort-imports": "^5.2.2",
+		"@types/d3": "^7.4.3",
 		"@types/jest": "^29.5.14",
 		"@types/loadable__component": "^5.13.9",
 		"@types/lodash-es": "^4.17.12",
@@ -141,5 +143,5 @@
 	"lint-staged": {
 		"src/**/*.{js,jsx,ts,tsx,css,scss,md}": "prettier --write --ignore-unknown"
 	},
-	"packageManager": "pnpm@10.5.2"
+	"packageManager": "pnpm@10.6.1"
 }

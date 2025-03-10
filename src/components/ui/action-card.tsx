@@ -1,6 +1,5 @@
 import type { CardProps } from '@heroui/card';
 import { CardBody } from '@heroui/card';
-import ChevronRightIcon from '@mui/icons-material/ChevronRight';
 
 import Card from '@/components/ui/card';
 import { cn } from '@/utils/cn';
@@ -11,7 +10,7 @@ const ActionCard = (props: CardProps) => {
 			aria-label="Action Card"
 			isPressable
 			{...props}
-			className={cn('transition duration-300', 'from-[55%] via-[10%] p-0', props.className)}
+			className={cn('transition duration-300 rounded-sm', 'from-[55%] via-[10%] p-0', props.className)}
 		/>
 	);
 };
@@ -29,14 +28,22 @@ const Icon = ({ children }: { children: React.ReactElement }) => {
 	);
 };
 
-export const ActionBody = ({ icon, label }: { icon: React.ReactElement; label: React.ReactNode }) => {
+export const ActionBody = ({
+	icon,
+	label,
+	className,
+}: {
+	icon?: React.ReactElement;
+	label: React.ReactNode;
+	className?: string;
+}) => {
 	return (
-		<CardBody aria-label="Action Body" className="flex flex-row items-center justify-between">
-			<span className="flex gap-2 items-center text-sm">
-				<Icon>{icon}</Icon>
-				{label}
-			</span>
-			<ChevronRightIcon />
+		<CardBody
+			aria-label="Action Body"
+			className={cn('flex flex-row items-center justify-between gap-2 text-sm', className)}
+		>
+			{icon ? <Icon>{icon}</Icon> : null}
+			{label}
 		</CardBody>
 	);
 };

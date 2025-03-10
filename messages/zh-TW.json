@@ -79,6 +79,12 @@
 			"action": {
 				"more": "显示更多币种"
 			}
+		},
+		"tree-map": {
+			"title": "熱力圖",
+			"action": {
+				"more": "显示更多币种"
+			}
 		}
 	},
 	"token": {

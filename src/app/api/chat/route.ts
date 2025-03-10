@@ -4,22 +4,15 @@ import { NextResponse } from 'next/server';
 import { z } from 'zod';
 
 import { ChatDTOSchema } from '@/libs/ai/validators/chat';
-import { Role } from '@/libs/auth/enums/role.enum';
-import { auth } from '@/libs/auth/server';
+import { env } from '@/utils/env';
 import { ParseJSONError } from '@/utils/error';
 
 export const maxDuration = 60;
 
 export async function POST(req: Request) {
 	try {
-		const session = await auth.api.getSession({
-			headers: req.headers,
-		});
-
-		if (!session) {
-			return NextResponse.json({ error: 'Unauthorized' }, { status: 401 });
-		} else if (session.user.role !== Role.Admin) {
-			return NextResponse.json({ error: 'Forbidden' }, { status: 403 });
+		if (!env.OPENAI_API_KEY) {
+			return NextResponse.json({ error: 'Not implemented' }, { status: 501 });
 		}
 
 		let dto: unknown;

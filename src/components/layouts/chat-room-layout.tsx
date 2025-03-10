@@ -9,7 +9,6 @@ import dynamic from 'next/dynamic';
 
 import { noto_sans } from '@/app/fonts';
 import Footer from '@/components/commons/footer';
-import XICon from '@/components/icons/x-icon';
 import { useRouter } from '@/i18n/routing';
 import { QueryType } from '@/libs/ai/enums/queryType.enum';
 import { useAISearchParams } from '@/libs/ai/hooks/useAISearchParams';
@@ -46,7 +45,7 @@ const ChatRoomLayout = (props: Props) => {
 			>
 				<NavbarContent
 					aria-label="Main Navigation Content"
-					className={cn('hidden sm:flex gap-4', noto_sans.className)}
+					className={cn('hidden sm:flex gap-10', noto_sans.className)}
 					justify="start"
 				>
 					<NavbarItem
@@ -93,12 +92,7 @@ const ChatRoomLayout = (props: Props) => {
 						</Button>
 					</NavbarItem>
 				</NavbarContent>
-				<NavbarContent aria-label="Main Navigation Content" justify="end">
-					<NavbarItem aria-label="X">
-						<Button aria-label="X" isIconOnly className="border-1" variant="bordered" radius="full">
-							<XICon className="text-white" />
-						</Button>
-					</NavbarItem>
+				<NavbarContent aria-label="Main Navigation Content" justify="end" className="gap-10">
 					<NavbarItem aria-label="Connect Wallet">
 						<WalletConnect />
 					</NavbarItem>

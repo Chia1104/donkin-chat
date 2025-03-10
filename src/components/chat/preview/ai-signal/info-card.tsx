@@ -233,8 +233,10 @@ export const Hotspots = memo(
 export const Stock = memo(
 	({ stock }: StockProps) => {
 		const t = useTranslations('preview.ai-signal');
-		const isPositiveChange = isPositiveNumber(stock.change) || stock.change.startsWith('+');
-		const isNegativeChange = isNegativeNumber(stock.change) || stock.change.startsWith('-');
+		const isPositiveChange =
+			isPositiveNumber(stock.change) || (typeof stock.change === 'string' && stock.change.startsWith('+'));
+		const isNegativeChange =
+			isNegativeNumber(stock.change) || (typeof stock.change === 'string' && stock.change.startsWith('-'));
 		return (
 			<CardBody aria-label="Stock" className="rounded-lg gap-4 prose prose-invert p-0">
 				<div className="flex justify-between w-full gap-2">
@@ -255,7 +257,11 @@ export const Stock = memo(
 					<div className="w-1/2">
 						<h4 className="mt-0 text-sm font-normal">{t('card.stock.change')}</h4>
 						<span className={cn('text-lg', isPositiveChange && 'text-success', isNegativeChange && 'text-danger')}>
-							{isNumber(stock.change) ? roundDecimal(stock.change, 2) : stock.change}
+							{isNumber(stock.change)
+								? isPositiveChange
+									? `+${roundDecimal(stock.change, 2)}`
+									: roundDecimal(stock.change, 2)
+								: stock.change}
 						</span>
 					</div>
 				</div>

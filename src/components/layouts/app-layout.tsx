@@ -1,5 +1,7 @@
 import type { ReactNode, FC, ComponentPropsWithoutRef } from 'react';
 
+import { ViewTransitions } from 'next-view-transitions';
+
 import { Theme } from '@/enums/theme.enum';
 import { cn } from '@/utils/cn';
 
@@ -16,21 +18,23 @@ interface Props {
 const AppLayout: FC<Props> = ({ children, locale, htmlProps, bodyProps, theme }) => {
 	const themeSchema = theme ? (theme === Theme.Dark ? Theme.Dark : Theme.Light) : undefined;
 	return (
-		<html
-			lang={locale}
-			suppressHydrationWarning
-			{...htmlProps}
-			className={cn(htmlProps?.className, themeSchema)}
-			style={{
-				colorScheme: themeSchema,
-				...htmlProps?.style,
-			}}
-		>
-			<body {...bodyProps}>
-				<Background />
-				{children}
-			</body>
-		</html>
+		<ViewTransitions>
+			<html
+				lang={locale}
+				suppressHydrationWarning
+				{...htmlProps}
+				className={cn(htmlProps?.className, themeSchema)}
+				style={{
+					colorScheme: themeSchema,
+					...htmlProps?.style,
+				}}
+			>
+				<body {...bodyProps}>
+					<Background />
+					{children}
+				</body>
+			</html>
+		</ViewTransitions>
 	);
 };
 

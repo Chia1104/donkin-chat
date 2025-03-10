@@ -89,7 +89,7 @@ const MessageCard = ({
 
 		const failedMessageClassName =
 			status === 'failed'
-				? 'bg-danger-100/50 border border-danger-100 text-foreground'
+				? 'bg-danger-100/50 border border-danger-100 text-foreground p-5'
 				: message.role === 'user'
 					? 'bg-content1'
 					: '';
