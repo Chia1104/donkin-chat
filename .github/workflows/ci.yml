@@ -12,8 +12,7 @@ env:
   NEXT_PUBLIC_APP_ENV: test
   NODE_VERSION: 20
   NODE_ENV: test
-  NEXT_PUBLIC_APP_AIP_HOST: https://gateway.chia1104.dev
-  DATABASE_URL: postgres://donkin:donkin@localhost:5432/donkin
+  NEXT_PUBLIC_APP_API_HOST: ${{ secrets.NEXT_PUBLIC_APP_API_HOST }}
 
 jobs:
   lint:
