@@ -239,8 +239,6 @@ const List = ({ display }: { display: 'group' | 'single' }) => {
 };
 
 const TokensList = () => {
-	const t = useTranslations('preview.ai-signal');
-
 	return (
 		<div className="w-full h-full flex flex-col">
 			<header className="flex items-center justify-end py-4">
