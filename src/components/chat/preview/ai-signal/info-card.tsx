@@ -326,7 +326,10 @@ const InfoCard = ({ display = ['all'], onPress, cardProps, ...props }: CardProps
 		<HCard
 			aria-label="info-card"
 			isPressable
-			className={cn('shadow-none p-4 gap-5 relative w-full border-none rounded-sm', cardProps?.className)}
+			className={cn(
+				'shadow-none p-4 gap-5 relative w-full border-none rounded-sm bg-[#FFFFFF08]',
+				cardProps?.className,
+			)}
 			onPress={() => onPress && onPress(props)}
 			radius="sm"
 			{...cardProps}

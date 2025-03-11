@@ -1,17 +1,19 @@
 'use client';
 
-import { useCallback } from 'react';
+import { useCallback, useMemo } from 'react';
 
+import { ButtonGroup } from '@heroui/button';
+import { Divider } from '@heroui/divider';
+import { Image } from '@heroui/image';
+import { Popover, PopoverTrigger, PopoverContent } from '@heroui/popover';
+import { RadioGroup, Radio } from '@heroui/radio';
 import { ScrollShadow } from '@heroui/scroll-shadow';
-import { Tabs, Tab } from '@heroui/tabs';
-import AttachMoneyIcon from '@mui/icons-material/AttachMoney';
-import LocalFireDepartmentOutlinedIcon from '@mui/icons-material/LocalFireDepartmentOutlined';
-import ScheduleIcon from '@mui/icons-material/Schedule';
-import TrendingUpIcon from '@mui/icons-material/TrendingUp';
 import { AnimatePresence, motion } from 'framer-motion';
+import { ArrowUpDownIcon } from 'lucide-react';
 import { useTranslations } from 'next-intl';
 
 import InfoCard from '@/components/chat/preview/ai-signal/info-card';
+import { HeroButton } from '@/components/ui/hero-button';
 import { useChatStore } from '@/contexts/chat-provider';
 import { useMediaQuery } from '@/hooks/useMediaQuery';
 import { TokenSort } from '@/libs/ai/enums/tokenSort.enum';
@@ -24,92 +26,89 @@ const SortFilter = () => {
 	const t = useTranslations('preview.tokens-list.filter');
 
 	const sortOptions = {
-		[TokenSort.UpTime]: {
-			id: TokenSort.UpTime,
-			name: (
-				<span className="flex items-center gap-2">
-					<ScheduleIcon
-						sx={{
-							width: 12,
-							height: 12,
-							fill: 'currentColor',
-						}}
-					/>
-					{t('up-time.label')}
-				</span>
-			),
-		},
-		[TokenSort.MarketCap]: {
-			id: TokenSort.MarketCap,
-			name: (
-				<span className="flex items-center gap-2">
-					<AttachMoneyIcon
-						sx={{
-							width: 12,
-							height: 12,
-							fill: 'currentColor',
-						}}
-					/>
-					{t('market-cap')}
-				</span>
-			),
+		[TokenSort.Hot]: {
+			id: TokenSort.Hot,
+			name: t('hot'),
 		},
 		[TokenSort.Change]: {
 			id: TokenSort.Change,
-			name: (
-				<span className="flex items-center gap-2">
-					<TrendingUpIcon
-						sx={{
-							width: 12,
-							height: 12,
-							fill: 'currentColor',
-						}}
-					/>
-					{t('change.label')}
-				</span>
-			),
+			name: t('change.label'),
 		},
-		[TokenSort.Hot]: {
-			id: TokenSort.Hot,
-			name: (
-				<span className="flex items-center gap-2">
-					<LocalFireDepartmentOutlinedIcon
-						sx={{
-							width: 12,
-							height: 12,
-							fill: 'currentColor',
-						}}
-					/>
-					{t('hot')}
-				</span>
-			),
+		[TokenSort.MarketCap]: {
+			id: TokenSort.MarketCap,
+			name: t('market-cap'),
+		},
+		[TokenSort.UpTime]: {
+			id: TokenSort.UpTime,
+			name: t('up-time.label'),
 		},
 	};
 
+	const label = useMemo(() => {
+		return `${sortOptions[searchParams.sort].name}: ${searchParams.order === 'asc' ? t('order.asc') : t('order.des')}`;
+	}, [searchParams.order, searchParams.sort, sortOptions, t]);
+
 	return (
-		<Tabs
-			aria-label="filter time"
-			size="sm"
-			variant="light"
-			selectedKey={searchParams.sort}
-			onSelectionChange={key => {
-				void setSearchParams({
-					sort: key as TokenSort,
-				});
-			}}
-			as="ul"
-		>
-			<Tab as="li" key={TokenSort.UpTime} title={sortOptions[TokenSort.UpTime].name} className="px-2" isDisabled />
-			<Tab
-				as="li"
-				key={TokenSort.MarketCap}
-				title={sortOptions[TokenSort.MarketCap].name}
-				className="px-2"
-				isDisabled
-			/>
-			<Tab as="li" key={TokenSort.Change} title={sortOptions[TokenSort.Change].name} className="px-2" isDisabled />
-			<Tab as="li" key={TokenSort.Hot} title={sortOptions[TokenSort.Hot].name} className="px-2" />
-		</Tabs>
+		<Popover>
+			<PopoverTrigger>
+				<HeroButton variant="light" className="p-2 min-w-fit h-8 items-center flex text-sm" radius="sm">
+					{label} <ArrowUpDownIcon size={14} />
+				</HeroButton>
+			</PopoverTrigger>
+			<PopoverContent className="shadow-none border-0 min-w-[200px] rounded-sm p-0 bg-[rgba(28,_38,_51,_1)] overflow-hidden">
+				<RadioGroup
+					value={searchParams.sort}
+					onValueChange={value => {
+						void setSearchParams({ sort: value as TokenSort });
+					}}
+					className="w-full px-0 py-2"
+					classNames={{
+						wrapper: 'gap-0',
+					}}
+				>
+					{Object.values(sortOptions).map(option => {
+						return (
+							<Radio
+								classNames={{
+									base: 'w-full max-w-full py-3 px-4 m-0 data-[hover=true]:bg-default data-[selected=true]:bg-default',
+									wrapper: 'border-divider',
+								}}
+								size="sm"
+								key={option.id}
+								value={option.id}
+							>
+								{option.name}
+							</Radio>
+						);
+					})}
+				</RadioGroup>
+				<Divider />
+				<ButtonGroup className="w-full">
+					<HeroButton
+						variant="light"
+						className="w-full p-4 min-w-fit items-center flex text-sm border-r-[0.5px] border-divider"
+						radius="none"
+						onPress={() => {
+							void setSearchParams({ order: 'asc' });
+						}}
+					>
+						<Image src="/assets/images/asc.svg" width={16} height={16} />
+						{t('up-time.asc')}
+					</HeroButton>
+					<HeroButton
+						variant="light"
+						className="w-full p-4 min-w-fit items-center flex text-sm border-l-[0.5px] border-divider"
+						radius="none"
+						onPress={() => {
+							void setSearchParams({ order: 'desc' });
+						}}
+					>
+						<Image src="/assets/images/dsc.svg" width={16} height={16} />
+						{t('up-time.des')}
+					</HeroButton>
+				</ButtonGroup>
+			</PopoverContent>
+		</Popover>
 	);
 };
 
