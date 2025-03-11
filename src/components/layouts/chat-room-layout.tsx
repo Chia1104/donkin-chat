@@ -7,11 +7,11 @@ import SearchIcon from '@mui/icons-material/Search';
 import { useTranslations } from 'next-intl';
 import dynamic from 'next/dynamic';
 
-import { noto_sans } from '@/app/fonts';
 import Footer from '@/components/commons/footer';
 import { useRouter } from '@/i18n/routing';
 import { QueryType } from '@/libs/ai/enums/queryType.enum';
 import { useAISearchParams } from '@/libs/ai/hooks/useAISearchParams';
+import { noto_sans } from '@/themes/fonts';
 import { cn } from '@/utils/cn';
 
 import Donkin from '../commons/donkin';

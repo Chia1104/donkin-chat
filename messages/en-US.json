@@ -101,6 +101,11 @@
 					"1H": "1H",
 					"6H": "6H",
 					"24H": "24H"
+				},
+				"order": {
+					"label": "Order",
+					"des": "High to low",
+					"asc": "Low to high"
 				}
 			}
 		}

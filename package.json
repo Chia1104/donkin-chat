@@ -53,6 +53,7 @@
 		"d3": "^7.9.0",
 		"dayjs": "^1.11.13",
 		"drizzle-orm": "^0.40.0",
+		"echarts": "^5.6.0",
 		"echarts-for-react": "^3.0.3",
 		"fancy-canvas": "^2.1.0",
 		"fast-deep-equal": "^3.1.3",
