@@ -1,7 +1,5 @@
 'use client';
 
-import { useMemo } from 'react';
-
 import * as d3 from 'd3';
 
 import { cn } from '@/utils/cn';
@@ -32,8 +30,6 @@ interface TreemapProps {
 		rectangle?: string;
 	};
 }
-
-const colors = ['#e0ac2b', '#6689c6', '#a4c969', '#e85252', '#9a6fb0', '#a53253', '#7f7f7f'];
 
 export const D3Treemap = ({ width, height, data, classNames }: TreemapProps) => {
 	const hierarchy = d3.hierarchy(data).sum(d => d.value);
