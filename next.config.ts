@@ -39,7 +39,7 @@ const securityHeaders = [
 const nextConfig: NextConfig = {
 	output: 'standalone',
 	reactStrictMode: true,
-	transpilePackages: ['@t3-oss/env-nextjs', '@t3-oss/env-core', 'wagmi', '@solana/*'],
+	transpilePackages: ['@t3-oss/env-nextjs', '@t3-oss/env-core', 'wagmi', '@solana/*', 'echarts', 'zrender'],
 	experimental: {
 		optimizePackageImports: ['lodash-es'],
 		reactCompiler: true,
