@@ -3,7 +3,7 @@ import { withSentryConfig as withSentryConfigImport } from '@sentry/nextjs';
 import { NextConfig } from 'next';
 import createNextIntlPlugin from 'next-intl/plugin';
 
-import { env } from '@/utils/env';
+import { env, IS_PRODUCTION } from '@/utils/env';
 
 type Plugin = (config: NextConfig) => NextConfig;
 
@@ -72,7 +72,7 @@ const nextConfig: NextConfig = {
 		},
 		{
 			source: '/proxy-api/:path*',
-			destination: `${env.NEXT_PUBLIC_APP_API_HOST}/:path*`,
+			destination: !IS_PRODUCTION ? `${env.NEXT_PUBLIC_APP_API_HOST}/:path*` : '/proxy-api/:path*',
 		},
 	],
 };

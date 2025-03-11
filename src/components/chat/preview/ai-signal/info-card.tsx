@@ -10,13 +10,15 @@ import type { CardProps as HCardProps } from '@heroui/card';
 import { Card as HCard, CardBody, CardHeader as HCardHeader } from '@heroui/card';
 import { Image } from '@heroui/image';
 import { Progress } from '@heroui/progress';
+import { Skeleton } from '@heroui/skeleton';
+import { useClipboard } from '@heroui/use-clipboard';
 import ContentCopyRoundedIcon from '@mui/icons-material/ContentCopyRounded';
+import DoneAllIcon from '@mui/icons-material/DoneAll';
 import InfoOutlinedIcon from '@mui/icons-material/InfoOutlined';
 import LanguageIcon from '@mui/icons-material/Language';
 import TelegramIcon from '@mui/icons-material/Telegram';
 import { useTranslations } from 'next-intl';
 import NextImage from 'next/image';
-import { useCopyToClipboard } from 'usehooks-ts';
 
 import XIcon from '@/components/icons/x-icon';
 import { cn } from '@/utils/cn';
@@ -80,6 +82,7 @@ interface CardProps extends MetaProps, StockProps, HotspotProps {
 interface LinkIconProps {
 	provider: LinkProvider;
 	link: string;
+	copied?: boolean;
 }
 
 export const MOCK_DATA: CardProps = {
@@ -116,13 +119,16 @@ export const LinkIcon = (props: LinkIconProps) => {
 		case 'telegram':
 			return <TelegramIcon sx={{ width: 12, height: 12 }} />;
 		case 'copy':
-			return <ContentCopyRoundedIcon sx={{ width: 12, height: 12 }} />;
+			return props.copied ? (
+				<DoneAllIcon sx={{ width: 12, height: 12 }} />
+			) : (
+				<ContentCopyRoundedIcon sx={{ width: 12, height: 12 }} />
+			);
 	}
 };
 
 export const HeaderPrimitive = (props: HeaderPrimitiveProps) => {
-	const [, copy] = useCopyToClipboard();
-
+	const { copied, copy } = useClipboard();
 	return (
 		<>
 			<Avatar
@@ -132,10 +138,14 @@ export const HeaderPrimitive = (props: HeaderPrimitiveProps) => {
 				className={cn('w-12 h-12 min-w-12 min-h-12', props.avatarProps?.className)}
 				src={props.meta.avatar}
 			/>
-			<div className="flex flex-col gap-2 items-start max-w-[calc(100%-3rem)]">
-				<h3 className={cn('text-base leading-[14px] font-semibold flex max-w-full', props.classNames?.label)}>
-					<span className="line-clamp-1 break-words">{props.meta.name}</span>
-				</h3>
+			<div className="flex flex-col gap-2 items-start w-full max-w-[calc(100%-3rem)]">
+				{props.isLoading ? (
+					<Skeleton className="w-full max-w-[100px] h-3 rounded-full" />
+				) : (
+					<h3 className={cn('text-base leading-[14px] font-semibold flex max-w-full', props.classNames?.label)}>
+						<span className="line-clamp-1 break-words">{props.meta.name}</span>
+					</h3>
+				)}
 				{props.injects?.afterLabel}
 				<div className={cn('flex items-center gap-1 z-20', props.classNames?.linkWrapper)}>
 					{Object.entries(props.link ?? {}).map(([key, value]) => (
@@ -150,7 +160,7 @@ export const HeaderPrimitive = (props: HeaderPrimitiveProps) => {
 							size="sm"
 							className="bg-background max-w-5 h-5 max-h-5 w-5 min-w-5 min-h-5 p-0"
 						>
-							{value && <LinkIcon provider={key as LinkProvider} link={value} />}
+							{value && <LinkIcon provider={key as LinkProvider} link={value} copied={copied} />}
 						</Button>
 					))}
 				</div>
@@ -232,7 +242,7 @@ export const Hotspots = memo(
 	({ hotspots }: HotspotProps) => {
 		const t = useTranslations('preview.ai-signal');
 		return (
-			<CardBody aria-label="Hotspots" className="rounded-lg prose prose-invert gap-4 p-0">
+			<CardBody aria-label="Hotspots" className="rounded-none prose prose-invert gap-4 p-0">
 				<HotspotProgress label={t('card.x-hotspot')} value={hotspots.x} />
 				<HotspotProgress label={t('card.tg-hotspot')} value={hotspots.telegram} />
 			</CardBody>
@@ -242,44 +252,60 @@ export const Hotspots = memo(
 );
 
 export const Stock = memo(
-	({ stock }: StockProps) => {
+	({ stock, isLoading }: StockProps) => {
 		const t = useTranslations('preview.ai-signal');
 		const isPositiveChange =
 			isPositiveNumber(stock.change) || (typeof stock.change === 'string' && stock.change.startsWith('+'));
 		const isNegativeChange =
 			isNegativeNumber(stock.change) || (typeof stock.change === 'string' && stock.change.startsWith('-'));
 		return (
-			<CardBody aria-label="Stock" className="rounded-lg gap-4 prose prose-invert p-0">
+			<CardBody aria-label="Stock" className="rounded-none gap-4 prose prose-invert p-0">
 				<div className="flex justify-between w-full gap-2">
 					<div className="w-1/2">
 						<h4 className="m-0 text-xs font-normal leading-3 text-description">{t('card.stock.marketCap')}</h4>
-						<span className="text-sm font-normal leading-[14px]">{`$ ${formatLargeNumber(stock.marketCap)}`}</span>
+						{isLoading ? (
+							<Skeleton className="w-full max-w-[50px] h-2 mt-2 rounded-full" />
+						) : (
+							<span className="text-sm font-normal leading-[14px]">{`$ ${formatLargeNumber(stock.marketCap)}`}</span>
+						)}
 					</div>
 					<div className="w-1/2">
 						<h4 className="m-0 text-xs font-normal leading-3 text-description">{t('card.stock.price')}</h4>
-						<span className="text-sm font-normal leading-[14px]">{`$ ${formatLargeNumber(stock.price)}`}</span>
+						{isLoading ? (
+							<Skeleton className="w-full max-w-[50px] h-2 mt-2 rounded-full" />
+						) : (
+							<span className="text-sm font-normal leading-[14px]">{`$ ${formatLargeNumber(stock.price)}`}</span>
+						)}
 					</div>
 				</div>
 				<div className="flex justify-between w-full gap-2">
 					<div className="w-1/2">
 						<h4 className="m-0 text-xs font-normal leading-3 text-description">{t('card.stock.pool')}</h4>
-						<span className="text-sm font-normal leading-[14px]">{`$ ${formatLargeNumber(stock.pool)}`}</span>
+						{isLoading ? (
+							<Skeleton className="w-full max-w-[50px] h-2 mt-2 rounded-full" />
+						) : (
+							<span className="text-sm font-normal leading-[14px]">{`$ ${formatLargeNumber(stock.pool)}`}</span>
+						)}
 					</div>
 					<div className="w-1/2">
 						<h4 className="m-0 text-xs font-normal leading-3 text-description">{t('card.stock.change')}</h4>
-						<span
-							className={cn(
-								'text-sm font-normal leading-[14px]',
-								isPositiveChange && 'text-success',
-								isNegativeChange && 'text-danger',
-							)}
-						>
-							{isNumber(stock.change)
-								? isPositiveChange
-									? `+${roundDecimal(stock.change, 2)}`
-									: roundDecimal(stock.change, 2)
-								: stock.change}
-						</span>
+						{isLoading ? (
+							<Skeleton className="w-full max-w-[50px] h-2 mt-2 rounded-full" />
+						) : (
+							<span
+								className={cn(
+									'text-sm font-normal leading-[14px]',
+									isPositiveChange && 'text-success',
+									isNegativeChange && 'text-danger',
+								)}
+							>
+								{isNumber(stock.change)
+									? isPositiveChange
+										? `+${roundDecimal(stock.change, 2)}`
+										: roundDecimal(stock.change, 2)
+									: stock.change}
+							</span>
+						)}
 					</div>
 				</div>
 			</CardBody>
@@ -300,8 +326,9 @@ const InfoCard = ({ display = ['all'], onPress, cardProps, ...props }: CardProps
 		<HCard
 			aria-label="info-card"
 			isPressable
-			className={cn('shadow-none p-4 gap-5 relative w-full border-none', cardProps?.className)}
+			className={cn('shadow-none p-4 gap-5 relative w-full border-none rounded-sm', cardProps?.className)}
 			onPress={() => onPress && onPress(props)}
+			radius="sm"
 			{...cardProps}
 		>
 			{(display.includes('meta') || display.includes('all')) && <CardHeader {...props} />}
