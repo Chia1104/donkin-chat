@@ -11,7 +11,6 @@ import { useTranslations } from 'next-intl';
 import InfoCard from '@/components/chat/preview/ai-signal/info-card';
 import { useChatStore } from '@/contexts/chat-provider';
 import { useMediaQuery } from '@/hooks/useMediaQuery';
-import { useRouter } from '@/i18n/routing';
 import { useQueryTokensHot } from '@/libs/token/hooks/useQueryToken';
 import { cn } from '@/utils/cn';
 
@@ -24,7 +23,6 @@ interface FilterDate {
 const List = ({ display }: { display: 'group' | 'single' }) => {
 	const queryResult = useQueryTokensHot();
 	const isPreviewOnly = useChatStore(state => state.isPreviewOnly);
-	const router = useRouter();
 
 	const { isLgWidth, isMdWidth, isSmWidth } = useMediaQuery();
 
