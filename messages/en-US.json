@@ -86,6 +86,23 @@
 			"action": {
 				"more": "Show more currencies"
 			}
+		},
+		"tokens-list": {
+			"filter": {
+				"hot": "Hot",
+				"up-time": {
+					"label": "Online time",
+					"des": "Descending",
+					"asc": "Ascending"
+				},
+				"market-cap": "Market Cap",
+				"change": {
+					"label": "Change",
+					"1H": "1H",
+					"6H": "6H",
+					"24H": "24H"
+				}
+			}
 		}
 	},
 	"token": {

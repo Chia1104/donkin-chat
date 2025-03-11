@@ -1,12 +1,10 @@
 'use client';
 
-import { useCallback, memo } from 'react';
+import { memo } from 'react';
 
-import { Button } from '@heroui/button';
 import { Card, CardBody, CardFooter } from '@heroui/card';
 import { ScrollShadow } from '@heroui/scroll-shadow';
 import { AnimatePresence, motion } from 'framer-motion';
-import { ChevronLeftIcon, ChevronRightIcon } from 'lucide-react';
 
 import DefaultPrompt from '@/components/chat/default-prompt';
 import MessageCard from '@/components/chat/message-card';
@@ -78,31 +76,6 @@ const ChatFooter = memo(() => {
 	);
 });
 
-const PreviewAction = () => {
-	const { setIsPreviewOnly, isPreviewOnly } = useChatStore(state => state);
-
-	const handleSetIsPreviewOnly = useCallback(() => {
-		setIsPreviewOnly(!isPreviewOnly);
-	}, [isPreviewOnly, setIsPreviewOnly]);
-
-	return (
-		<Button
-			aria-label="preview-action"
-			isIconOnly
-			className={cn(
-				'rounded-full absolute top-1/2 -left-5 z-30 border-1 overflow-visible',
-				isPreviewOnly && 'border-primary border-2',
-			)}
-			variant="bordered"
-			color={isPreviewOnly ? 'primary' : 'default'}
-			onPress={handleSetIsPreviewOnly}
-		>
-			{/* {isPreviewOnly && <span className="rounded-full absolute inset-[0.15rem] bg-primary size-8 animate-ping" />} */}
-			{!isPreviewOnly ? <ChevronRightIcon size={16} /> : <ChevronLeftIcon size={16} />}
-		</Button>
-	);
-};
-
 const Chat = () => {
 	const isPreviewOnly = useChatStore(state => state.isPreviewOnly);
 
@@ -119,7 +92,6 @@ const Chat = () => {
 					isPreviewOnly ? 'w-[30px] rounded-full' : 'min-w-full',
 				)}
 			>
-				<PreviewAction />
 				<AnimatePresence mode="popLayout">
 					{!isPreviewOnly && (
 						<motion.div

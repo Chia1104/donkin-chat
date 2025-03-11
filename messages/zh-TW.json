@@ -86,6 +86,23 @@
 			"action": {
 				"more": "显示更多币种"
 			}
+		},
+		"tokens-list": {
+			"filter": {
+				"hot": "热度",
+				"up-time": {
+					"label": "上线时间",
+					"des": "遞減",
+					"asc": "遞增"
+				},
+				"market-cap": "市值",
+				"change": {
+					"label": "涨幅",
+					"1H": "1H",
+					"6H": "6H",
+					"24H": "24H"
+				}
+			}
 		}
 	},
 	"token": {
