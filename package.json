@@ -43,6 +43,7 @@
 		"@solana/web3.js": "^1.98.0",
 		"@t3-oss/env-nextjs": "^0.12.0",
 		"@tanstack/react-query": "^5.67.1",
+		"@tanstack/react-query-devtools": "^5.67.2",
 		"@wagmi/core": "^2.16.5",
 		"ai": "^4.1.51",
 		"babel-plugin-react-compiler": "19.0.0-beta-e1e972c-20250221",

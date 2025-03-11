@@ -14,7 +14,7 @@ const config: Config = {
 		extend: {
 			colors: {
 				primary: {
-					DEFAULT: '#2A68F8',
+					DEFAULT: 'rgba(53, 205, 255, 1)',
 				},
 				success: {
 					DEFAULT: '#4caf50',
@@ -41,7 +41,7 @@ const config: Config = {
 					transparent: 'rgba(244,67,54,0.75)',
 				},
 				root: {
-					DEFAULT: '#030514',
+					DEFAULT: 'rgba(10, 24, 42, 1)',
 				},
 				light: {
 					DEFAULT: '#fafafa',
@@ -54,6 +54,9 @@ const config: Config = {
 					light: '#484848',
 					dark: '#000000',
 					transparent: 'rgba(33,33,33,0.75)',
+				},
+				description: {
+					DEFAULT: 'rgba(255, 255, 255, 0.45)',
 				},
 			},
 			borderRadius: {
@@ -81,7 +84,7 @@ const config: Config = {
 				dark: {
 					colors: {
 						primary: {
-							DEFAULT: '#2A68F8',
+							DEFAULT: 'rgba(53, 205, 255, 1)',
 						},
 						danger: {
 							DEFAULT: '#FF4056',
@@ -90,11 +93,11 @@ const config: Config = {
 							DEFAULT: '#FFFFFF1F',
 						},
 						default: {
-							DEFAULT: '#FFFFFF1F',
+							DEFAULT: 'rgba(35, 48, 64, 1)',
 							400: '#FFFFFF14',
 						},
 						content1: {
-							DEFAULT: 'rgba(11,13,26)',
+							DEFAULT: 'rgba(21,30,44)',
 							300: 'rgba(255, 255, 255, 0.03)',
 						},
 					},
@@ -110,7 +113,7 @@ const config: Config = {
 				light: {
 					colors: {
 						primary: {
-							DEFAULT: '#2A68F8',
+							DEFAULT: 'rgba(53, 205, 255, 1)',
 						},
 						danger: {
 							DEFAULT: '#FF4056',
@@ -119,7 +122,7 @@ const config: Config = {
 							DEFAULT: '#FFFFFF1F',
 						},
 						default: {
-							DEFAULT: '#FFFFFF1F',
+							DEFAULT: 'rgba(35, 48, 64, 1)',
 							400: '#FFFFFF14',
 						},
 						content1: {

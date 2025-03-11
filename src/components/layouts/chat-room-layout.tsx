@@ -29,7 +29,7 @@ interface Props {
 const ChatRoomLayout = (props: Props) => {
 	const t = useTranslations('nav');
 	const router = useRouter();
-	const [searchParams, setSearchParams] = useAISearchParams();
+	const [_searchParams, setSearchParams] = useAISearchParams();
 
 	return (
 		<>
@@ -60,19 +60,12 @@ const ChatRoomLayout = (props: Props) => {
 					<NavbarItem
 						aria-label="AI Signal"
 						className="cursor-pointer"
-						isActive={searchParams.q === QueryType.AiSignal}
+						// isActive={searchParams.q === QueryType.Tokens}
 						onClick={() => {
-							void setSearchParams({ q: QueryType.AiSignal });
+							void setSearchParams({ q: QueryType.Tokens });
 						}}
 					>
-						{t('ai-signal')}
-					</NavbarItem>
-					<NavbarItem
-						aria-label="Whale Ranking"
-						className="cursor-pointer"
-						isActive={searchParams.q === QueryType.WhaleRanking}
-					>
-						{t('whale-ranking')}
+						{t('all-tokens')}
 					</NavbarItem>
 					<NavbarItem aria-label="Market">
 						<Button

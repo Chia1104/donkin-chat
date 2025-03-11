@@ -5,8 +5,6 @@ import { ViewTransitions } from 'next-view-transitions';
 import { Theme } from '@/enums/theme.enum';
 import { cn } from '@/utils/cn';
 
-import Background from '../commons/background';
-
 interface Props {
 	children: ReactNode;
 	locale?: Locale;
@@ -29,10 +27,7 @@ const AppLayout: FC<Props> = ({ children, locale, htmlProps, bodyProps, theme })
 					...htmlProps?.style,
 				}}
 			>
-				<body {...bodyProps}>
-					<Background />
-					{children}
-				</body>
+				<body {...bodyProps}>{children}</body>
 			</html>
 		</ViewTransitions>
 	);

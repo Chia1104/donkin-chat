@@ -39,7 +39,8 @@
 		"ai-signal": "AI-Signal",
 		"whale-ranking": "Whale Ranking",
 		"smart-rankings": "Smart Money Rankings",
-		"search-placeholder": "Search for a coin or wallet..."
+		"search-placeholder": "Search for a coin or wallet...",
+		"all-tokens": "All Tokens"
 	},
 	"footer": {
 		"about": "About Donkin",
