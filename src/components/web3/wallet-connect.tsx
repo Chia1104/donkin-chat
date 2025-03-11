@@ -98,8 +98,8 @@ const WalletConnect = (props: Props) => {
 			<Button onPress={onOpen} aria-label="Connect Wallet" className="rounded-full" isIconOnly variant="bordered">
 				<AccountBalanceWalletOutlinedIcon
 					sx={{
-						width: 20,
-						height: 20,
+						width: 16,
+						height: 16,
 					}}
 				/>
 			</Button>

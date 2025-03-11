@@ -48,7 +48,10 @@ const ChainSelector = () => {
 		<Select
 			aria-label="Network Selector"
 			classNames={{
-				trigger: 'border-1 p-2 border-default',
+				trigger:
+					'border-1 p-2 border-default data-[hover=true]:border-default data-[open=true]:border-default data-[focus=true]:border-default',
+				popoverContent: 'bg-[rgba(28,_38,_51,_1)] shadow-none rounded-sm px-0',
+				listbox: 'px-0',
 			}}
 			selectionMode="single"
 			variant="bordered"

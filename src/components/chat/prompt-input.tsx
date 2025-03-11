@@ -2,9 +2,9 @@ import { memo } from 'react';
 
 import type { FormProps } from '@heroui/form';
 import { Form } from '@heroui/form';
+import { Image } from '@heroui/image';
 import type { TextAreaProps } from '@heroui/input';
 import { Textarea } from '@heroui/input';
-import SendIcon from '@mui/icons-material/Send';
 import { useTranslations } from 'next-intl';
 
 import { cn } from '@/utils/cn';
@@ -40,14 +40,16 @@ const PromptInput = memo(
 					variant="underlined"
 					endContent={
 						<>
-							<HeroButton aria-label="Send" isIconOnly variant="light" type="submit" className="self-end">
-								<SendIcon
-									sx={{
-										width: 20,
-										height: 20,
-										transform: 'rotate(-90deg)',
-									}}
-								/>
+							<HeroButton
+								aria-label="Send"
+								radius="full"
+								size="sm"
+								isIconOnly
+								variant="light"
+								type="submit"
+								className="self-end"
+							>
+								<Image src="/assets/images/send.svg" width={24} height={24} />
 							</HeroButton>
 						</>
 					}
@@ -61,7 +63,7 @@ const PromptInput = memo(
 						],
 						innerWrapper: ['items-center px-3 py-2', props?.textarea?.classNames?.innerWrapper],
 						inputWrapper: [
-							'min-h-[60px] border-1 !rounded-lg bg-black/25 after:bg-gradient-to-r after:from-transparent after:via-primary/50 after:to-transparent after:bg-transparent ',
+							'min-h-[60px] border-1 !rounded-lg bg-black/25 bg-transparent after:bg-gradient-to-r after:from-transparent after:via-primary/50 after:to-transparent after:bg-transparent ',
 							props?.textarea?.classNames?.inputWrapper,
 						],
 					}}

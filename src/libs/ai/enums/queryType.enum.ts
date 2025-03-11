@@ -1,7 +1,5 @@
 export const QueryType = {
-	AiSignal: 'ai-signal',
-	WhaleRanking: 'whale-ranking',
-	SmartRankings: 'smart-rankings',
+	Tokens: 'tokens',
 	Heatmap: 'heatmap',
 } as const;
 

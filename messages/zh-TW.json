@@ -39,7 +39,8 @@
 		"ai-signal": "AI 信號",
 		"whale-ranking": "巨鯨排行",
 		"smart-rankings": "聰明錢排行",
-		"search-placeholder": "搜尋代幣或錢包..."
+		"search-placeholder": "搜尋代幣或錢包...",
+		"all-tokens": "所有Token"
 	},
 	"footer": {
 		"about": "关于 Donkin",

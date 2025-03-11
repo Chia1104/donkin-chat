@@ -11,7 +11,6 @@ import { useTranslations } from 'next-intl';
 import InfoCard from '@/components/chat/preview/ai-signal/info-card';
 import { useChatStore } from '@/contexts/chat-provider';
 import { useMediaQuery } from '@/hooks/useMediaQuery';
-import { useRouter } from '@/i18n/routing';
 import { useQueryTokensHot } from '@/libs/token/hooks/useQueryToken';
 import { cn } from '@/utils/cn';
 
@@ -24,7 +23,6 @@ interface FilterDate {
 const List = ({ display }: { display: 'group' | 'single' }) => {
 	const queryResult = useQueryTokensHot();
 	const isPreviewOnly = useChatStore(state => state.isPreviewOnly);
-	const router = useRouter();
 
 	const { isLgWidth, isMdWidth, isSmWidth } = useMediaQuery();
 
@@ -68,11 +66,11 @@ const List = ({ display }: { display: 'group' | 'single' }) => {
 		[isPreviewOnly, isLgWidth, isMdWidth, isSmWidth, display],
 	);
 
-	if (queryResult.isLoading) {
-		return <div>Loading...</div>;
-	} else if (queryResult.isError) {
-		return <div>Error: {queryResult.error.message}</div>;
-	}
+	// if (queryResult.isLoading) {
+	// 	return <div>Loading...</div>;
+	// } else if (queryResult.isError) {
+	// 	return <div>Error: {queryResult.error.message}</div>;
+	// }
 
 	return (
 		<>
@@ -105,20 +103,54 @@ const List = ({ display }: { display: 'group' | 'single' }) => {
 										telegram: 0,
 									}}
 									display={getItemDisplay(index, length)}
-									onPress={data => {
-										router.push(`/${data.meta.chain}/token/${data.meta.token}`);
+									// onPress={data => {
+									// 	router.push(`/${data.meta.chain}/token/${data.meta.token}`);
+									// }}
+									cardProps={{
+										isPressable: false,
 									}}
 								/>
 							</motion.li>
 						);
 					})}
+					{queryResult.isLoading &&
+						Array.from({ length: 10 }).map((_, index) => {
+							return (
+								<motion.li className="w-full" key={index} exit={{ opacity: 1 }} layout>
+									<InfoCard
+										meta={{
+											name: '',
+											avatar: '',
+											chain: '',
+											token: '',
+										}}
+										stock={{
+											marketCap: 0,
+											price: 0,
+											pool: 0,
+											change: 0,
+										}}
+										hotspots={{
+											x: 0,
+											telegram: 0,
+										}}
+										display={['all']}
+										cardProps={{
+											isPressable: false,
+										}}
+										isLoading
+									/>
+								</motion.li>
+							);
+						})}
+					;
 				</AnimatePresence>
 			</ul>
 		</>
 	);
 };
 
-const AiSignal = () => {
+const TokensList = () => {
 	const t = useTranslations('preview.ai-signal');
 
 	const filterDates: FilterDate[] = [
@@ -131,8 +163,7 @@ const AiSignal = () => {
 
 	return (
 		<div className="w-full h-full flex flex-col">
-			<header className="flex items-center justify-between p-4">
-				<h2 className="text-2xl font-bold">{t('title')}</h2>
+			<header className="flex items-center justify-end py-4">
 				<div className="flex gap-4">
 					<ButtonGroup aria-label="display" variant="bordered" radius="full" size="sm" className="relative">
 						{/* <HeroButton aria-label="group" className="border-1 border-r-0" onPress={() => setDisplay('group')}>
@@ -188,4 +219,4 @@ const AiSignal = () => {
 	);
 };
 
-export default AiSignal;
+export default TokensList;

@@ -6,6 +6,7 @@ import { memo } from 'react';
 import type { AvatarProps } from '@heroui/avatar';
 import { Avatar } from '@heroui/avatar';
 import { Button } from '@heroui/button';
+import type { CardProps as HCardProps } from '@heroui/card';
 import { Card as HCard, CardBody, CardHeader as HCardHeader } from '@heroui/card';
 import { Image } from '@heroui/image';
 import { Progress } from '@heroui/progress';
@@ -32,6 +33,7 @@ interface MetaProps {
 		token: string;
 	};
 	link?: Record<LinkProvider, string | undefined>;
+	isLoading?: boolean;
 }
 
 export interface HeaderPrimitiveProps extends MetaProps {
@@ -43,6 +45,7 @@ export interface HeaderPrimitiveProps extends MetaProps {
 	injects?: {
 		afterLabel?: ReactNode;
 	};
+	isLoading?: boolean;
 }
 
 interface HotspotProps {
@@ -50,6 +53,7 @@ interface HotspotProps {
 		x: number;
 		telegram: number;
 	};
+	isLoading?: boolean;
 }
 
 interface StockProps {
@@ -63,11 +67,14 @@ interface StockProps {
 		// 24h漲跌
 		change: string | number;
 	};
+	isLoading?: boolean;
 }
 
 interface CardProps extends MetaProps, StockProps, HotspotProps {
 	display?: ('all' | 'meta' | 'stock' | 'hotspots')[];
 	onPress?: (meta: MetaProps) => void;
+	cardProps?: HCardProps;
+	isLoading?: boolean;
 }
 
 interface LinkIconProps {
@@ -122,27 +129,31 @@ export const HeaderPrimitive = (props: HeaderPrimitiveProps) => {
 				aria-label="avatar"
 				size="sm"
 				{...props.avatarProps}
-				className={cn('w-6 h-6', props.avatarProps?.className)}
+				className={cn('w-12 h-12 min-w-12 min-h-12', props.avatarProps?.className)}
 				src={props.meta.avatar}
 			/>
-			<h3 className={cn('text-lg font-semibold', props.classNames?.label)}>{props.meta.name}</h3>
-			{props.injects?.afterLabel}
-			<div className={cn('flex items-center gap-1 z-20', props.classNames?.linkWrapper)}>
-				{Object.entries(props.link ?? {}).map(([key, value]) => (
-					<Button
-						aria-label={key}
-						as={key === 'copy' ? 'span' : 'a'}
-						href={value}
-						onPress={() => key === 'copy' && value && copy(value)}
-						isIconOnly
-						key={key}
-						radius="full"
-						size="sm"
-						className="bg-background max-w-5 h-5 max-h-5 w-5 min-w-5 min-h-5 p-0"
-					>
-						{value && <LinkIcon provider={key as LinkProvider} link={value} />}
-					</Button>
-				))}
+			<div className="flex flex-col gap-2 items-start max-w-[calc(100%-3rem)]">
+				<h3 className={cn('text-base leading-[14px] font-semibold flex max-w-full', props.classNames?.label)}>
+					<span className="line-clamp-1 break-words">{props.meta.name}</span>
+				</h3>
+				{props.injects?.afterLabel}
+				<div className={cn('flex items-center gap-1 z-20', props.classNames?.linkWrapper)}>
+					{Object.entries(props.link ?? {}).map(([key, value]) => (
+						<Button
+							aria-label={key}
+							as={key === 'copy' ? 'span' : 'a'}
+							href={value}
+							onPress={() => key === 'copy' && value && copy(value)}
+							isIconOnly
+							key={key}
+							radius="full"
+							size="sm"
+							className="bg-background max-w-5 h-5 max-h-5 w-5 min-w-5 min-h-5 p-0"
+						>
+							{value && <LinkIcon provider={key as LinkProvider} link={value} />}
+						</Button>
+					))}
+				</div>
 			</div>
 		</>
 	);
@@ -181,8 +192,8 @@ export const HotspotProgress = ({
 	const isHot = (value: number) => convert(value) >= 90;
 	return (
 		<div className={cn('w-full', className)}>
-			<div className={cn('flex items-center mb-2 gap-1', classNames?.labelWrapper)}>
-				<h4 className={cn('m-0 text-sm font-normal', classNames?.label)}>{label}</h4>
+			<div className={cn('flex items-center gap-1', classNames?.labelWrapper)}>
+				<h4 className={cn('m-0 text-xs font-normal leading-3 text-description', classNames?.label)}>{label}</h4>
 				{isHot(value) ? (
 					<Image
 						aria-label="hot"
@@ -208,7 +219,7 @@ export const HotspotProgress = ({
 						}}
 						value={convert(value)}
 						className="h-[6px]"
-						radius="none"
+						radius="full"
 					/>
 				</div>
 				<span>{roundDecimal(convert(value) / 10, 0)}</span>
@@ -241,22 +252,28 @@ export const Stock = memo(
 			<CardBody aria-label="Stock" className="rounded-lg gap-4 prose prose-invert p-0">
 				<div className="flex justify-between w-full gap-2">
 					<div className="w-1/2">
-						<h4 className="mt-0 text-sm font-normal">{t('card.stock.marketCap')}</h4>
-						<span className="text-lg">{`$ ${formatLargeNumber(stock.marketCap)}`}</span>
+						<h4 className="m-0 text-xs font-normal leading-3 text-description">{t('card.stock.marketCap')}</h4>
+						<span className="text-sm font-normal leading-[14px]">{`$ ${formatLargeNumber(stock.marketCap)}`}</span>
 					</div>
 					<div className="w-1/2">
-						<h4 className="mt-0 text-sm font-normal">{t('card.stock.price')}</h4>
-						<span className="text-lg">{`$ ${formatLargeNumber(stock.price)}`}</span>
+						<h4 className="m-0 text-xs font-normal leading-3 text-description">{t('card.stock.price')}</h4>
+						<span className="text-sm font-normal leading-[14px]">{`$ ${formatLargeNumber(stock.price)}`}</span>
 					</div>
 				</div>
 				<div className="flex justify-between w-full gap-2">
 					<div className="w-1/2">
-						<h4 className="mt-0 text-sm font-normal">{t('card.stock.pool')}</h4>
-						<span className="text-lg">{`$ ${formatLargeNumber(stock.pool)}`}</span>
+						<h4 className="m-0 text-xs font-normal leading-3 text-description">{t('card.stock.pool')}</h4>
+						<span className="text-sm font-normal leading-[14px]">{`$ ${formatLargeNumber(stock.pool)}`}</span>
 					</div>
 					<div className="w-1/2">
-						<h4 className="mt-0 text-sm font-normal">{t('card.stock.change')}</h4>
-						<span className={cn('text-lg', isPositiveChange && 'text-success', isNegativeChange && 'text-danger')}>
+						<h4 className="m-0 text-xs font-normal leading-3 text-description">{t('card.stock.change')}</h4>
+						<span
+							className={cn(
+								'text-sm font-normal leading-[14px]',
+								isPositiveChange && 'text-success',
+								isNegativeChange && 'text-danger',
+							)}
+						>
 							{isNumber(stock.change)
 								? isPositiveChange
 									? `+${roundDecimal(stock.change, 2)}`
@@ -278,13 +295,14 @@ export const Stock = memo(
 	},
 );
 
-const InfoCard = ({ display = ['all'], onPress, ...props }: CardProps) => {
+const InfoCard = ({ display = ['all'], onPress, cardProps, ...props }: CardProps) => {
 	return (
 		<HCard
 			aria-label="info-card"
 			isPressable
-			className="shadow-none p-4 gap-5 relative w-full border-none"
+			className={cn('shadow-none p-4 gap-5 relative w-full border-none', cardProps?.className)}
 			onPress={() => onPress && onPress(props)}
+			{...cardProps}
 		>
 			{(display.includes('meta') || display.includes('all')) && <CardHeader {...props} />}
 			{(display.includes('hotspots') || display.includes('all')) && <Hotspots {...props} />}
