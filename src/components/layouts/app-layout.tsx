@@ -3,6 +3,7 @@ import type { ReactNode, FC, ComponentPropsWithoutRef } from 'react';
 import { ViewTransitions } from 'next-view-transitions';
 
 import { Theme } from '@/enums/theme.enum';
+import { PingFangTC, AvenirNextLTPro_Regular } from '@/themes/fonts';
 import { cn } from '@/utils/cn';
 
 interface Props {
@@ -27,7 +28,12 @@ const AppLayout: FC<Props> = ({ children, locale, htmlProps, bodyProps, theme })
 					...htmlProps?.style,
 				}}
 			>
-				<body {...bodyProps}>{children}</body>
+				<body
+					{...bodyProps}
+					className={cn(PingFangTC.className, AvenirNextLTPro_Regular.className, bodyProps?.className)}
+				>
+					{children}
+				</body>
 			</html>
 		</ViewTransitions>
 	);
