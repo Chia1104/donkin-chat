@@ -32,6 +32,7 @@ const PromptInput = memo(
 				onSubmit={onSubmit}
 			>
 				<Textarea
+					isDisabled
 					aria-label="Prompt"
 					minRows={5}
 					maxRows={5}

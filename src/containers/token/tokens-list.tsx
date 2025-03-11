@@ -114,7 +114,9 @@ const SortFilter = () => {
 };
 
 const List = ({ display }: { display: 'group' | 'single' }) => {
-	const queryResult = useQueryTokensHot();
+	const queryResult = useQueryTokensHot({
+		refetchInterval: 30_000,
+	});
 	const isPreviewOnly = useChatStore(state => state.isPreviewOnly);
 
 	const { isLgWidth, isMdWidth, isSmWidth } = useMediaQuery();
