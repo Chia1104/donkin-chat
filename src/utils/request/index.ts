@@ -4,7 +4,7 @@ import { isObject } from 'lodash-es';
 
 import type { SmoothingParams } from '@/types/llm';
 
-import { env, IS_PRODUCTION } from '../env';
+import { env } from '../env';
 import { fetchEventSource } from './fetchEventSource';
 
 type RequestOptions = {
@@ -52,7 +52,7 @@ const END_ANIMATION_SPEED = 15;
 const getPrefixedUrl = (requestMode?: RequestMode) => {
 	switch (requestMode) {
 		case 'proxy':
-			return IS_PRODUCTION ? env.NEXT_PUBLIC_APP_API_HOST : '/proxy-api';
+			return '/proxy-api';
 		case 'self-api':
 			return '/';
 		case 'external':
