@@ -4,10 +4,11 @@ import { useCallback, useMemo } from 'react';
 
 import { ButtonGroup } from '@heroui/button';
 import { Divider } from '@heroui/divider';
-import { Image } from '@heroui/image';
 import { Popover, PopoverTrigger, PopoverContent } from '@heroui/popover';
 import { RadioGroup, Radio } from '@heroui/radio';
 import { ScrollShadow } from '@heroui/scroll-shadow';
+import { useDisclosure } from '@heroui/use-disclosure';
+import SvgIcon from '@mui/material/SvgIcon';
 import { AnimatePresence, motion } from 'framer-motion';
 import { ArrowUpDownIcon } from 'lucide-react';
 import { useTranslations } from 'next-intl';
@@ -21,35 +22,42 @@ import { useAISearchParams } from '@/libs/ai/hooks/useAISearchParams';
 import { useQueryTokensHot } from '@/libs/token/hooks/useQueryToken';
 import { cn } from '@/utils/cn';
 
+import AscIcon from '~/public/assets/images/asc.svg';
+import DscIcon from '~/public/assets/images/dsc.svg';
+
 const SortFilter = () => {
 	const [searchParams, setSearchParams] = useAISearchParams();
+	const { isOpen, onOpenChange, onClose } = useDisclosure();
 	const t = useTranslations('preview.tokens-list.filter');
 
-	const sortOptions = {
-		[TokenSort.Hot]: {
-			id: TokenSort.Hot,
-			name: t('hot'),
-		},
-		[TokenSort.Change]: {
-			id: TokenSort.Change,
-			name: t('change.label'),
-		},
-		[TokenSort.MarketCap]: {
-			id: TokenSort.MarketCap,
-			name: t('market-cap'),
-		},
-		[TokenSort.UpTime]: {
-			id: TokenSort.UpTime,
-			name: t('up-time.label'),
-		},
-	};
+	const sortOptions = useMemo(
+		() => ({
+			[TokenSort.Hot]: {
+				id: TokenSort.Hot,
+				name: t('hot'),
+			},
+			[TokenSort.Change]: {
+				id: TokenSort.Change,
+				name: t('change.label'),
+			},
+			[TokenSort.MarketCap]: {
+				id: TokenSort.MarketCap,
+				name: t('market-cap'),
+			},
+			[TokenSort.UpTime]: {
+				id: TokenSort.UpTime,
+				name: t('up-time.label'),
+			},
+		}),
+		[t],
+	);
 
 	const label = useMemo(() => {
 		return `${sortOptions[searchParams.sort].name}: ${searchParams.order === 'asc' ? t('order.asc') : t('order.des')}`;
 	}, [searchParams.order, searchParams.sort, sortOptions, t]);
 
 	return (
-		<Popover>
+		<Popover isOpen={isOpen} onOpenChange={onOpenChange}>
 			<PopoverTrigger>
 				<HeroButton variant="light" className="p-2 min-w-fit h-8 items-center flex text-sm" radius="sm">
 					{label} <ArrowUpDownIcon size={14} />
@@ -72,6 +80,7 @@ const SortFilter = () => {
 								classNames={{
 									base: 'w-full max-w-full py-3 px-4 m-0 data-[hover=true]:bg-default data-[selected=true]:bg-default',
 									wrapper: 'border-divider',
+									labelWrapper: 'ml-4',
 								}}
 								size="sm"
 								key={option.id}
@@ -90,9 +99,24 @@ const SortFilter = () => {
 						radius="none"
 						onPress={() => {
 							void setSearchParams({ order: 'asc' });
+							onClose();
 						}}
+						color={searchParams.order === 'asc' ? 'primary' : 'default'}
 					>
-						<Image src="/assets/images/asc.svg" width={16} height={16} />
+						<SvgIcon
+							viewBox="0 0 16 17"
+							sx={{
+								fontSize: '16px',
+								path: {
+									fill: searchParams.order === 'asc' ? 'rgba(53, 205, 255, 1)' : '#fff',
+								},
+								rect: {
+									stroke: searchParams.order === 'asc' ? 'rgba(53, 205, 255, 1)' : '#fff',
+								},
+							}}
+						>
+							<AscIcon />
+						</SvgIcon>
 						{t('up-time.asc')}
 					</HeroButton>
 					<HeroButton
@@ -101,9 +125,24 @@ const SortFilter = () => {
 						radius="none"
 						onPress={() => {
 							void setSearchParams({ order: 'desc' });
+							onClose();
 						}}
+						color={searchParams.order === 'desc' ? 'primary' : 'default'}
 					>
-						<Image src="/assets/images/dsc.svg" width={16} height={16} />
+						<SvgIcon
+							viewBox="0 0 16 17"
+							sx={{
+								fontSize: '16px',
+								path: {
+									fill: searchParams.order === 'desc' ? 'rgba(53, 205, 255, 1)' : '#fff',
+								},
+								rect: {
+									stroke: searchParams.order === 'desc' ? 'rgba(53, 205, 255, 1)' : '#fff',
+								},
+							}}
+						>
+							<DscIcon />
+						</SvgIcon>
 						{t('up-time.des')}
 					</HeroButton>
 				</ButtonGroup>

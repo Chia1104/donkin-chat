@@ -3,7 +3,6 @@ import { useMemo } from 'react';
 import { Button } from '@heroui/button';
 import { Image } from '@heroui/image';
 import { Modal, useDisclosure, ModalContent, ModalBody } from '@heroui/modal';
-import AccountBalanceWalletOutlinedIcon from '@mui/icons-material/AccountBalanceWalletOutlined';
 import { useWallet } from '@solana/wallet-adapter-react';
 import NextImage from 'next/image';
 import { useConnect } from 'wagmi';
@@ -96,12 +95,7 @@ const WalletConnect = (props: Props) => {
 	return (
 		<>
 			<Button onPress={onOpen} aria-label="Connect Wallet" className="rounded-full" isIconOnly variant="bordered">
-				<AccountBalanceWalletOutlinedIcon
-					sx={{
-						width: 16,
-						height: 16,
-					}}
-				/>
+				<Image src="/assets/images/wallet.svg" width={24} height={24} alt="wallet" aria-label="wallet" />
 			</Button>
 			<Modal isOpen={isOpen} onOpenChange={onOpenChange}>
 				<ModalContent className="p-5">
