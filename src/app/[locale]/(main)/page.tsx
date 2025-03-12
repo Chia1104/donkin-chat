@@ -34,7 +34,7 @@ const Page = () => {
 
 	return (
 		<section
-			className={cn('p-5 overflow-y-auto h-[calc(100vh-72px)] pr-0', !isPreviewOnly ? 'w-full lg:w-2/3' : 'w-full')}
+			className={cn('p-5 overflow-y-auto h-[calc(100vh-72px)]', !isPreviewOnly ? 'w-full lg:w-2/3 pr-0' : 'w-full')}
 		>
 			<AnimatePresence>
 				<Content />

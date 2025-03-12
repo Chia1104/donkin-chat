@@ -79,6 +79,10 @@ const ChatFooter = memo(() => {
 const Chat = () => {
 	const isPreviewOnly = useChatStore(state => state.isPreviewOnly);
 
+	if (isPreviewOnly) {
+		return null;
+	}
+
 	return (
 		<section
 			className={cn(

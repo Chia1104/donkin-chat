@@ -19,7 +19,7 @@ export type ChatStore = ChatState & ChatActions;
 
 export const defaultInitState: ChatState = {
 	chatId: '',
-	isPreviewOnly: false,
+	isPreviewOnly: true,
 	preview: null,
 };
 
