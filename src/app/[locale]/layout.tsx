@@ -55,7 +55,7 @@ const Layout = async ({
 		<AppLayout
 			locale={locale}
 			bodyProps={{
-				className: 'min-h-screen',
+				className: 'min-h-screen antialiased',
 			}}
 		>
 			<AppProviders messages={messages} timeZone={timeZone} locale={locale} wagmiSessionState={wagmiSessionState}>
