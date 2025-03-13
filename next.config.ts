@@ -3,8 +3,6 @@ import { withSentryConfig as withSentryConfigImport } from '@sentry/nextjs';
 import { NextConfig } from 'next';
 import createNextIntlPlugin from 'next-intl/plugin';
 
-import { env } from '@/utils/env';
-
 type Plugin = (config: NextConfig) => NextConfig;
 
 const withBundleAnalyzer = withBundleAnalyzerImport({
@@ -85,10 +83,6 @@ const nextConfig: NextConfig = {
 		{
 			source: '/sitemap-:id.xml',
 			destination: '/sitemap.xml/:id',
-		},
-		{
-			source: '/proxy-api/:path*',
-			destination: `${env.NEXT_PUBLIC_APP_API_HOST}/:path*`,
 		},
 	],
 };
