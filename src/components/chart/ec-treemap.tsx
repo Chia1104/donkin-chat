@@ -2,6 +2,7 @@
 
 import { useMemo } from 'react';
 
+import type { TreemapSeriesOption } from 'echarts';
 import type { EChartsOption } from 'echarts-for-react';
 import ReactECharts from 'echarts-for-react';
 
@@ -13,7 +14,7 @@ export interface CryptoData {
 	price: string;
 	change: number;
 	children?: CryptoData[];
-	itemStyle?: any;
+	itemStyle?: TreemapSeriesOption['itemStyle'];
 }
 
 interface Props {
@@ -21,34 +22,40 @@ interface Props {
 	options?: EChartsOption;
 }
 
-const colorStyle = (value: unknown) => {
+const itemStyle = (value: unknown): TreemapSeriesOption['itemStyle'] => {
 	if (isPositiveNumber(value)) {
 		return {
-			type: 'linear',
-			x: 0,
-			y: 0,
-			x2: 0,
-			y2: 1,
-			colorStops: [
-				{ offset: 0, color: '#21424100' },
-				{ offset: 1, color: '#214241' },
-			],
+			color: {
+				type: 'linear',
+				x: 0,
+				y: 0,
+				x2: 0,
+				y2: 1,
+				colorStops: [
+					{ offset: 0, color: '#21424100' },
+					{ offset: 1, color: '#214241' },
+				],
+			},
 		};
 	}
 	if (isNegativeNumber(value)) {
 		return {
-			type: 'linear',
-			x: 0,
-			y: 0,
-			x2: 0,
-			y2: 1,
-			colorStops: [
-				{ offset: 0, color: '#48223100' },
-				{ offset: 1, color: '#482231' },
-			],
+			color: {
+				type: 'linear',
+				x: 0,
+				y: 0,
+				x2: 0,
+				y2: 1,
+				colorStops: [
+					{ offset: 0, color: '#48223100' },
+					{ offset: 1, color: '#482231' },
+				],
+			},
 		};
 	}
-	return '#aaa';
+	return {
+		color: '#aaa',
+	};
 };
 
 export const MOCK_DATA: CryptoData[] = [
@@ -57,180 +64,140 @@ export const MOCK_DATA: CryptoData[] = [
 		value: [1000, 5.46],
 		price: '$99,299.9',
 		change: 5.46,
-		itemStyle: {
-			color: colorStyle(5.46),
-		},
+		itemStyle: itemStyle(5.46),
 	},
 	{
 		name: 'ETH',
 		value: [500, -18.46],
 		price: '$2,299.9',
 		change: -18.46,
-		itemStyle: {
-			color: colorStyle(-18.46),
-		},
+		itemStyle: itemStyle(-18.46),
 	},
 	{
 		name: 'XRP',
 		value: [200, 2.46],
 		price: '$2.9987',
 		change: 2.46,
-		itemStyle: {
-			color: colorStyle(2.46),
-		},
+		itemStyle: itemStyle(2.46),
 	},
 	{
 		name: 'SOL',
 		value: [200, -10.46],
 		price: '$190.47',
 		change: -10.46,
-		itemStyle: {
-			color: colorStyle(-10.46),
-		},
+		itemStyle: itemStyle(-10.46),
 	},
 	{
 		name: 'BNB',
 		value: [180, -0.46],
 		price: '$641.47',
 		change: -0.46,
-		itemStyle: {
-			color: colorStyle(-0.46),
-		},
+		itemStyle: itemStyle(-0.46),
 	},
 	{
 		name: 'DOGE',
 		value: [120, -10.46],
 		price: '$0.2513',
 		change: -10.46,
-		itemStyle: {
-			color: colorStyle(-10.46),
-		},
+		itemStyle: itemStyle(-10.46),
 	},
 	{
 		name: 'ADA',
 		value: [100, -0.46],
 		price: '$0.7731',
 		change: -0.46,
-		itemStyle: {
-			color: colorStyle(-0.46),
-		},
+		itemStyle: itemStyle(-0.46),
 	},
 	{
 		name: 'TRX',
 		value: [80, 10.46],
 		price: '$0.2409',
 		change: 10.46,
-		itemStyle: {
-			color: colorStyle(10.46),
-		},
+		itemStyle: itemStyle(10.46),
 	},
 	{
 		name: 'LINK',
 		value: [80, 5.46],
 		price: '$17.47',
 		change: 5.46,
-		itemStyle: {
-			color: colorStyle(5.46),
-		},
+		itemStyle: itemStyle(5.46),
 	},
 	{
 		name: 'AVAX',
 		value: [70, -5.46],
 		price: '$24.72',
 		change: -5.46,
-		itemStyle: {
-			color: colorStyle(-5.46),
-		},
+		itemStyle: itemStyle(-5.46),
 	},
 	{
 		name: 'SUI',
 		value: [60, 10.46],
 		price: '$1.47',
 		change: 10.46,
-		itemStyle: {
-			color: colorStyle(10.46),
-		},
+		itemStyle: itemStyle(10.46),
 	},
 	{
 		name: 'XLM',
 		value: [60, 10.46],
 		price: '$0.3189',
 		change: 10.46,
-		itemStyle: {
-			color: colorStyle(10.46),
-		},
+		itemStyle: itemStyle(10.46),
 	},
 	{
 		name: 'UNI',
 		value: [50, 10.46],
 		price: '$9.47',
 		change: 10.46,
-		itemStyle: {
-			color: colorStyle(10.46),
-		},
+		itemStyle: itemStyle(10.46),
 	},
 	{
 		name: 'DAI',
 		value: [50, -10.46],
 		price: '$0.99',
 		change: -10.46,
-		itemStyle: {
-			color: colorStyle(-10.46),
-		},
+		itemStyle: itemStyle(-10.46),
 	},
 	{
 		name: 'SHIB',
 		value: [40, 15.46],
 		price: '$0.00000916',
 		change: 15.46,
-		itemStyle: {
-			color: colorStyle(15.46),
-		},
+		itemStyle: itemStyle(15.46),
 	},
 	{
 		name: 'DOT',
 		value: [40, -0.46],
 		price: '$4.87',
 		change: -0.46,
-		itemStyle: {
-			color: colorStyle(-0.46),
-		},
+		itemStyle: itemStyle(-0.46),
 	},
 	{
 		name: 'ONDO',
 		value: [30, 10.46],
 		price: '$1.47',
 		change: 10.46,
-		itemStyle: {
-			color: colorStyle(10.46),
-		},
+		itemStyle: itemStyle(10.46),
 	},
 	{
 		name: 'TRUMP',
 		value: [30, 10.46],
 		price: '$1.47',
 		change: 10.46,
-		itemStyle: {
-			color: colorStyle(10.46),
-		},
+		itemStyle: itemStyle(10.46),
 	},
 	{
 		name: 'PEPE',
 		value: [20, -5.46],
 		price: '$0.00000976',
 		change: -5.46,
-		itemStyle: {
-			color: colorStyle(-5.46),
-		},
+		itemStyle: itemStyle(-5.46),
 	},
 	{
 		name: 'CKB',
 		value: [20, 5.46],
 		price: '$0.47',
 		change: 5.46,
-		itemStyle: {
-			color: colorStyle(5.46),
-		},
+		itemStyle: itemStyle(5.46),
 	},
 ];
 
