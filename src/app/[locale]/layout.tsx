@@ -1,6 +1,6 @@
 import type { ReactNode } from 'react';
 
-import type { Metadata, Viewport } from 'next';
+import type { Metadata } from 'next';
 import { getMessages, getTimeZone } from 'next-intl/server';
 import { setRequestLocale } from 'next-intl/server';
 import { headers } from 'next/headers';
@@ -14,15 +14,6 @@ import AppProviders from '@/contexts/app-providers';
 import { routing } from '@/i18n/routing';
 import { initDayjs } from '@/utils/dayjs';
 import { env } from '@/utils/env';
-
-export const viewport: Viewport = {
-	themeColor: [
-		{ media: '(prefers-color-scheme: light)', color: '#030514' },
-		{ media: '(prefers-color-scheme: dark)', color: '#030514' },
-	],
-	colorScheme: 'dark',
-	width: 'device-width',
-};
 
 export const metadata: Metadata = {
 	metadataBase: new URL(env.NEXT_PUBLIC_SITE_URL),
