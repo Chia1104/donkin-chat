@@ -24,8 +24,6 @@
 
 html,
 body {
-	--x: 0;
-	--y: 0;
 	scroll-behavior: smooth;
 	scroll-padding-top: 10px;
 	background: linear-gradient(180deg, #09182a 0%, #0f1319 100%);
@@ -37,6 +35,8 @@ body {
 
 @layer base {
 	:root {
+		--x: 0;
+		--y: 0;
 		--radius: 0.5rem;
 	}
 }

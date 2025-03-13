@@ -43,7 +43,7 @@ const AppProviders = (props: Props) => {
 				<SolanaWalletProvider>
 					<QueryClientProvider client={queryClient}>
 						<NuqsAdapter>
-							<NextThemeProvider defaultTheme="dark" enableSystem attribute="class">
+							<NextThemeProvider forcedTheme="dark" defaultTheme="dark" enableSystem attribute="class">
 								<MuiThemeProvider theme={defaultTheme}>
 									<HeroUIProvider>{props.children}</HeroUIProvider>
 								</MuiThemeProvider>

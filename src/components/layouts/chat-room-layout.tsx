@@ -94,7 +94,7 @@ const ChatRoomLayout = (props: Props) => {
 					</NavbarItem>
 				</NavbarContent>
 			</Navbar>
-			<main className="flex flex-col items-center justify-center min-h-[calc(100vh-72px)]">{props.children}</main>
+			<main className="flex flex-col items-center justify-center min-h-[calc(100dvh-72px)]">{props.children}</main>
 			<Footer />
 		</>
 	);
