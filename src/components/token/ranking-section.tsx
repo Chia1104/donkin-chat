@@ -22,7 +22,7 @@ import { HeroButton } from '../ui/hero-button';
 const Filter = () => {
 	const [isOpen, setIsOpen] = useState(false);
 	const [searchParams, setSearchParams] = useTokenSearchParams();
-	const locale = useLocale() as Locale;
+	const locale = useLocale();
 
 	return (
 		<Popover placement="top" isOpen={isOpen} onOpenChange={setIsOpen} showArrow>

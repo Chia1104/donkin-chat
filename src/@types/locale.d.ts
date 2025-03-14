@@ -1,3 +1,9 @@
+/**
+ * @deprecated Use `Locale` from "next-intl"
+ * ```ts
+ * import type {Locale} from "next-intl";
+ * ```
+ */
 type Locale = (typeof import('@/types/locale').Locale)[keyof typeof import('@/types/locale').Locale];
 
 type PropsWithLocale<T = unknown> = T & { locale?: Locale };
