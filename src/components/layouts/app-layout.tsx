@@ -1,5 +1,6 @@
 import type { ReactNode, FC, ComponentPropsWithoutRef } from 'react';
 
+import type { Locale } from 'next-intl';
 import { ViewTransitions } from 'next-view-transitions';
 
 import { Theme } from '@/enums/theme.enum';

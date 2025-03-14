@@ -18,7 +18,9 @@ const Footer = () => {
 				</Link>
 			</section>
 			<section>
-				<span className="text-[10px] leading-[12px]">{t('copyright', { year: new Date().getFullYear() })}</span>
+				<span className="text-[10px] leading-[12px]">
+					{t('copyright', { year: new Date().getFullYear().toString() })}
+				</span>
 			</section>
 		</footer>
 	);
