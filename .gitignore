@@ -34,3 +34,5 @@ package-lock.json
 .next
 
 .cache
+
+messages/*.d.json.ts
