@@ -134,6 +134,7 @@ export const HeaderPrimitive = (props: HeaderPrimitiveProps) => {
 			<Avatar
 				aria-label="avatar"
 				size="sm"
+				fallback={<Skeleton className="w-12 h-12 rounded-full" />}
 				{...props.avatarProps}
 				className={cn('w-12 h-12 min-w-12 min-h-12', props.avatarProps?.className)}
 				src={props.meta.avatar}
@@ -264,7 +265,7 @@ export const Stock = memo(
 					<div className="w-1/2">
 						<h4 className="m-0 text-xs font-normal leading-3 text-description">{t('card.stock.marketCap')}</h4>
 						{isLoading ? (
-							<Skeleton className="w-full max-w-[50px] h-2 mt-2 rounded-full" />
+							<Skeleton className="w-full max-w-[50px] h-3 mt-2 rounded-full mb-2" />
 						) : (
 							<span className="text-sm font-normal leading-[14px]">{`$ ${formatLargeNumber(stock.marketCap)}`}</span>
 						)}
@@ -272,7 +273,7 @@ export const Stock = memo(
 					<div className="w-1/2">
 						<h4 className="m-0 text-xs font-normal leading-3 text-description">{t('card.stock.price')}</h4>
 						{isLoading ? (
-							<Skeleton className="w-full max-w-[50px] h-2 mt-2 rounded-full" />
+							<Skeleton className="w-full max-w-[50px] h-3 mt-2 rounded-full mb-2" />
 						) : (
 							<span className="text-sm font-normal leading-[14px]">{`$ ${formatLargeNumber(stock.price)}`}</span>
 						)}
@@ -282,7 +283,7 @@ export const Stock = memo(
 					<div className="w-1/2">
 						<h4 className="m-0 text-xs font-normal leading-3 text-description">{t('card.stock.pool')}</h4>
 						{isLoading ? (
-							<Skeleton className="w-full max-w-[50px] h-2 mt-2 rounded-full" />
+							<Skeleton className="w-full max-w-[50px] h-3 mt-2 rounded-full mb-2" />
 						) : (
 							<span className="text-sm font-normal leading-[14px]">{`$ ${formatLargeNumber(stock.pool)}`}</span>
 						)}
@@ -290,7 +291,7 @@ export const Stock = memo(
 					<div className="w-1/2">
 						<h4 className="m-0 text-xs font-normal leading-3 text-description">{t('card.stock.change')}</h4>
 						{isLoading ? (
-							<Skeleton className="w-full max-w-[50px] h-2 mt-2 rounded-full" />
+							<Skeleton className="w-full max-w-[50px] h-3 mt-2 rounded-full mb-2" />
 						) : (
 							<span
 								className={cn(
