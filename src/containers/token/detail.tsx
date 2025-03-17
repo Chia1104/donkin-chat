@@ -121,7 +121,7 @@ const Detail = () => {
 								label={t('card.stock.marketCap')}
 								value={`$ ${formatLargeNumber(queryResult.data?.market_cap ?? 0)}`}
 							/>
-							<Stock label={t('card.stock.pool')} value={`$ ${formatLargeNumber(queryResult.data?.volume_24h ?? 0)}`} />
+							<Stock label={t('card.stock.pool')} value={`$ ${formatLargeNumber(queryResult.data?.liquidity ?? 0)}`} />
 							<Stock label={tToken('holder')} value={formatLargeNumber(0)} />
 							<Stock label={tToken('wallets')} value={formatLargeNumber(0)} />
 						</CardBody>
