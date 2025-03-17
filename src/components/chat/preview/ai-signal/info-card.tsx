@@ -136,6 +136,12 @@ export const HeaderPrimitive = (props: HeaderPrimitiveProps) => {
 				aria-label="avatar"
 				size="sm"
 				fallback={<Skeleton className="w-12 h-12 rounded-full" />}
+				// showFallback={isError}
+				name={props.meta.name}
+				imgProps={{
+					crossOrigin: 'anonymous',
+					// onError: () => setIsError(true),
+				}}
 				{...props.avatarProps}
 				className={cn('w-12 h-12 min-w-12 min-h-12', props.avatarProps?.className)}
 				src={props.meta.avatar}
