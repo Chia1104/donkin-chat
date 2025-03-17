@@ -38,12 +38,9 @@ const DateFilter = memo(() => {
 				});
 			}}
 		>
-			<Tab key={IntervalFilter.SixHours} title={IntervalFilter.SixHours} />
-			<Tab key={IntervalFilter.TwelveHours} title={IntervalFilter.TwelveHours} />
-			<Tab key={IntervalFilter.OneDay} title={IntervalFilter.OneDay} />
-			<Tab key={IntervalFilter.ThreeDays} title={IntervalFilter.ThreeDays} />
-			<Tab key={IntervalFilter.SevenDays} title={IntervalFilter.SevenDays} />
-			<Tab key={IntervalFilter.ThirtyDays} title={IntervalFilter.ThirtyDays} />
+			{Object.values(IntervalFilter).map(interval => (
+				<Tab key={interval} title={interval} className="px-2 py-0" />
+			))}
 		</Tabs>
 	);
 });
@@ -51,7 +48,7 @@ const DateFilter = memo(() => {
 const MetaInfo = () => {
 	return (
 		<div className="flex items-center gap-2">
-			<h3 className="text-xl font-normal">$0.3168105</h3>
+			<h3 className="text-[22px] font-medium">$0.3168105</h3>
 			<Chip color="danger" variant="flat" radius="sm" size="sm">
 				-0.87%
 			</Chip>
@@ -133,7 +130,7 @@ const Chart = () => {
 
 const Candlestick = () => {
 	return (
-		<section className="p-5 w-full h-[490px] rounded-lg flex flex-col gap-10">
+		<section className="w-full h-[490px] rounded-lg flex flex-col gap-10">
 			<header className="flex items-center justify-between">
 				<MetaInfo />
 				<DateFilter />

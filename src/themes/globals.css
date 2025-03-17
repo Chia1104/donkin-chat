@@ -38,5 +38,6 @@ body {
 		--x: 0;
 		--y: 0;
 		--radius: 0.5rem;
+		background-color: rgba(10, 24, 42, 1) !important;
 	}
 }

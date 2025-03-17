@@ -42,6 +42,7 @@ export interface HeaderPrimitiveProps extends MetaProps {
 	avatarProps?: AvatarProps;
 	classNames?: {
 		linkWrapper?: string;
+		labelWrapper?: string;
 		label?: string;
 	};
 	injects?: {
@@ -134,11 +135,20 @@ export const HeaderPrimitive = (props: HeaderPrimitiveProps) => {
 			<Avatar
 				aria-label="avatar"
 				size="sm"
+				fallback={<Skeleton className="w-12 h-12 rounded-full" />}
+				// showFallback={isError}
+				name={props.meta.name}
+				imgProps={{
+					crossOrigin: 'anonymous',
+					// onError: () => setIsError(true),
+				}}
 				{...props.avatarProps}
 				className={cn('w-12 h-12 min-w-12 min-h-12', props.avatarProps?.className)}
 				src={props.meta.avatar}
 			/>
-			<div className="flex flex-col gap-2 items-start w-full max-w-[calc(100%-3rem)]">
+			<div
+				className={cn('flex flex-col gap-2 items-start w-full max-w-[calc(100%-3rem)]', props.classNames?.labelWrapper)}
+			>
 				{props.isLoading ? (
 					<Skeleton className="w-full max-w-[100px] h-3 rounded-full" />
 				) : (
@@ -216,7 +226,7 @@ export const HotspotProgress = ({
 						className="m-0"
 					/>
 				) : null}
-				<InfoOutlinedIcon sx={{ width: 14, height: 14 }} />
+				<InfoOutlinedIcon sx={{ width: 14, height: 14, color: '#FFFFFF40' }} />
 			</div>
 			<div className={cn('w-full flex items-center justify-between gap-1', classNames?.progressWrapper)}>
 				<div className="w-[90%]">
@@ -264,7 +274,7 @@ export const Stock = memo(
 					<div className="w-1/2">
 						<h4 className="m-0 text-xs font-normal leading-3 text-description">{t('card.stock.marketCap')}</h4>
 						{isLoading ? (
-							<Skeleton className="w-full max-w-[50px] h-2 mt-2 rounded-full" />
+							<Skeleton className="w-full max-w-[50px] h-3 mt-2 rounded-full mb-2" />
 						) : (
 							<span className="text-sm font-normal leading-[14px]">{`$ ${formatLargeNumber(stock.marketCap)}`}</span>
 						)}
@@ -272,7 +282,7 @@ export const Stock = memo(
 					<div className="w-1/2">
 						<h4 className="m-0 text-xs font-normal leading-3 text-description">{t('card.stock.price')}</h4>
 						{isLoading ? (
-							<Skeleton className="w-full max-w-[50px] h-2 mt-2 rounded-full" />
+							<Skeleton className="w-full max-w-[50px] h-3 mt-2 rounded-full mb-2" />
 						) : (
 							<span className="text-sm font-normal leading-[14px]">{`$ ${formatLargeNumber(stock.price)}`}</span>
 						)}
@@ -282,7 +292,7 @@ export const Stock = memo(
 					<div className="w-1/2">
 						<h4 className="m-0 text-xs font-normal leading-3 text-description">{t('card.stock.pool')}</h4>
 						{isLoading ? (
-							<Skeleton className="w-full max-w-[50px] h-2 mt-2 rounded-full" />
+							<Skeleton className="w-full max-w-[50px] h-3 mt-2 rounded-full mb-2" />
 						) : (
 							<span className="text-sm font-normal leading-[14px]">{`$ ${formatLargeNumber(stock.pool)}`}</span>
 						)}
@@ -290,7 +300,7 @@ export const Stock = memo(
 					<div className="w-1/2">
 						<h4 className="m-0 text-xs font-normal leading-3 text-description">{t('card.stock.change')}</h4>
 						{isLoading ? (
-							<Skeleton className="w-full max-w-[50px] h-2 mt-2 rounded-full" />
+							<Skeleton className="w-full max-w-[50px] h-3 mt-2 rounded-full mb-2" />
 						) : (
 							<span
 								className={cn(

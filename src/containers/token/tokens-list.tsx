@@ -12,6 +12,8 @@ import SvgIcon from '@mui/material/SvgIcon';
 import { AnimatePresence, motion } from 'framer-motion';
 import { ArrowUpDownIcon } from 'lucide-react';
 import { useTranslations } from 'next-intl';
+import { useTransitionRouter } from 'next-view-transitions';
+import { VirtuosoGrid } from 'react-virtuoso';
 
 import InfoCard from '@/components/chat/preview/ai-signal/info-card';
 import { HeroButton } from '@/components/ui/hero-button';
@@ -59,7 +61,7 @@ const SortFilter = () => {
 	return (
 		<Popover isOpen={isOpen} onOpenChange={onOpenChange}>
 			<PopoverTrigger>
-				<HeroButton variant="light" className="p-2 min-w-fit h-8 items-center flex text-sm" radius="sm">
+				<HeroButton variant="light" isDisabled className="p-2 min-w-fit h-8 items-center flex text-sm" radius="sm">
 					{label} <ArrowUpDownIcon size={14} />
 				</HeroButton>
 			</PopoverTrigger>
@@ -156,6 +158,7 @@ const List = ({ display }: { display: 'group' | 'single' }) => {
 		refetchInterval: 30_000,
 	});
 	const isPreviewOnly = useChatStore(state => state.isPreviewOnly);
+	const router = useTransitionRouter();
 
 	const { isLgWidth, isMdWidth, isSmWidth } = useMediaQuery();
 
@@ -201,47 +204,76 @@ const List = ({ display }: { display: 'group' | 'single' }) => {
 
 	return (
 		<>
-			<ul
-				className={cn(
-					'grid grid-cols-1 gap-4 mb-4 w-full',
-					isPreviewOnly ? 'lg:grid-cols-4 md:grid-cols-3 sm:grid-cols-2' : 'lg:grid-cols-3 md:grid-cols-2',
-				)}
-			>
-				<AnimatePresence>
-					{queryResult.data?.map((_, index) => {
-						const length = queryResult.data.length;
-						return (
-							<motion.li className="w-full" key={index} exit={{ opacity: 1 }} layout>
-								<InfoCard
-									meta={{
-										name: _.name,
-										avatar: _.logo_uri ?? '',
-										chain: _.symbol,
-										token: _.address,
-									}}
-									stock={{
-										marketCap: _.market_cap,
-										price: _.price,
-										pool: _.volume_24h,
-										change: _.price_change_24h,
-									}}
-									hotspots={{
-										x: 0,
-										telegram: 0,
-									}}
-									display={getItemDisplay(index, length)}
-									// onPress={data => {
-									// 	router.push(`/${data.meta.chain}/token/${data.meta.token}`);
-									// }}
-									cardProps={{
-										isPressable: false,
-									}}
-								/>
-							</motion.li>
-						);
-					})}
-					{queryResult.isLoading &&
-						Array.from({ length: 10 }).map((_, index) => {
+			<VirtuosoGrid
+				components={{
+					List: ({ style, children, ref, ...props }) => (
+						<ul
+							style={style}
+							ref={ref as any}
+							{...props}
+							className={cn(
+								'grid grid-cols-1 gap-4 mb-4 w-full min-h-full',
+								isPreviewOnly ? 'lg:grid-cols-4 md:grid-cols-3 sm:grid-cols-2' : 'lg:grid-cols-3 md:grid-cols-2',
+							)}
+						>
+							<AnimatePresence>{children}</AnimatePresence>
+						</ul>
+					),
+					Item: ({ children, ...props }) => (
+						// @ts-expect-error - virtuoso type error
+						<li className="w-full" {...props}>
+							{children}
+						</li>
+					),
+					Scroller: ({ children, ...props }) => (
+						<ScrollShadow className="w-full h-[calc(100vh-156px)]" {...props}>
+							{children}
+						</ScrollShadow>
+					),
+					// Footer: () => <Spinner className="space-y-5 justify-self-center" />,
+				}}
+				data={queryResult.data ?? []}
+				totalCount={queryResult.data?.length ?? 0}
+				overscan={10}
+				itemContent={(index, _) => {
+					return (
+						<InfoCard
+							meta={{
+								name: _.name,
+								avatar: _.logo_uri ?? '',
+								chain: _.symbol,
+								token: _.address,
+							}}
+							stock={{
+								marketCap: _.market_cap,
+								price: _.price,
+								pool: _.liquidity,
+								change: _.price_change_24h,
+							}}
+							hotspots={{
+								x: 0,
+								telegram: 0,
+							}}
+							display={getItemDisplay(index, length)}
+							onPress={data => {
+								router.push(`/${data.meta.chain}/token/${data.meta.token}`);
+							}}
+							cardProps={{
+								isPressable: true,
+							}}
+						/>
+					);
+				}}
+			/>
+			{queryResult.isLoading && (
+				<ul
+					className={cn(
+						'grid grid-cols-1 gap-4 mb-4 w-full min-h-full',
+						isPreviewOnly ? 'lg:grid-cols-4 md:grid-cols-3 sm:grid-cols-2' : 'lg:grid-cols-3 md:grid-cols-2',
+					)}
+				>
+					<AnimatePresence>
+						{Array.from({ length: 12 }).map((_, index) => {
 							return (
 								<motion.li className="w-full" key={index} exit={{ opacity: 1 }} layout>
 									<InfoCard
@@ -270,8 +302,9 @@ const List = ({ display }: { display: 'group' | 'single' }) => {
 								</motion.li>
 							);
 						})}
-				</AnimatePresence>
-			</ul>
+					</AnimatePresence>
+				</ul>
+			)}
 		</>
 	);
 };
@@ -284,9 +317,7 @@ const TokensList = () => {
 					<SortFilter />
 				</div>
 			</header>
-			<ScrollShadow className="w-full h-[calc(100vh-156px)]">
-				<List display="single" />
-			</ScrollShadow>
+			<List display="single" />
 		</div>
 	);
 };

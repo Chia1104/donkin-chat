@@ -30,7 +30,7 @@ const HeroUIProvider = (props: { children: React.ReactNode }) => {
 	const router = useRouter();
 	const locale = useLocale();
 	return (
-		<_HeroUIProvider locale={locale} navigate={void router.push}>
+		<_HeroUIProvider locale={locale} navigate={void router.push} disableRipple>
 			{props.children}
 		</_HeroUIProvider>
 	);
