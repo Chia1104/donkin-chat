@@ -29,11 +29,13 @@
 			"url": "無效的網址格式",
 			"wallet-address": "無效的錢包地址",
 			"number": "無效的數字格式",
-			"more-than-0": "必須大於 0"
+			"more-than-0": "必須大於 0",
+			"more-than-min": "必須大於{min}"
 		}
 	},
 	"utils": {
-		"more-then-item": "大於 {item}"
+		"more-then-item": "大於 {item}",
+		"enter": "請輸入"
 	},
 	"nav": {
 		"ai-signal": "AI 信號",
@@ -132,7 +134,8 @@
 				"type-whale": "巨鲸",
 				"type-kol": "KOL",
 				"transaction-title": "交易金额",
-				"profit-title": "利潤"
+				"profit-title": "利潤",
+				"order-title": "喊單數量"
 			}
 		},
 		"holder": "持有人",

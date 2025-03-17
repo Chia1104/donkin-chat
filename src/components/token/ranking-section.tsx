@@ -34,7 +34,8 @@ const Filter = () => {
 					variant="light"
 					aria-label="Filter"
 					radius="full"
-					isDisabled={!searchParams.mark}
+					// isDisabled={!searchParams.mark}
+					isDisabled
 				>
 					<FilterAltOutlinedIcon
 						sx={{
@@ -46,13 +47,39 @@ const Filter = () => {
 			</PopoverTrigger>
 			<PopoverContent className={cn('w-[200px] overflow-hidden', locale === Locale.EN_US && 'w-[250px] max-w-[250px]')}>
 				<FilterForm
-					defaultValues={searchParams}
+					defaultValues={{
+						address: searchParams.filter?.address ?? [],
+						order: searchParams.filter?.order ?? [],
+						tmax: searchParams.filter?.tmax ?? null,
+						tmin: searchParams.filter?.tmin ?? null,
+						ocmax: searchParams.filter?.ocmax ?? null,
+						ocmin: searchParams.filter?.ocmin ?? null,
+					}}
 					onSubmit={value => {
-						void setSearchParams(value);
+						void setSearchParams({
+							filter: {
+								address: value.address ?? [],
+								order: value.order ?? [],
+								tmax: value.tmax,
+								tmin: value.tmin,
+								ocmax: value.ocmax,
+								ocmin: value.ocmin,
+							},
+						});
 						void setIsOpen(false);
 					}}
 					onReset={() => {
-						void setSearchParams(DEFAULT_FILTER_FORM_DATA);
+						void setSearchParams({
+							...DEFAULT_FILTER_FORM_DATA,
+							filter: {
+								address: [],
+								order: [],
+								tmax: null,
+								tmin: null,
+								ocmax: null,
+								ocmin: null,
+							},
+						});
 						void setIsOpen(false);
 					}}
 				/>

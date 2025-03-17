@@ -60,7 +60,7 @@ const SortFilter = () => {
 	return (
 		<Popover isOpen={isOpen} onOpenChange={onOpenChange}>
 			<PopoverTrigger>
-				<HeroButton variant="light" className="p-2 min-w-fit h-8 items-center flex text-sm" radius="sm">
+				<HeroButton variant="light" isDisabled className="p-2 min-w-fit h-8 items-center flex text-sm" radius="sm">
 					{label} <ArrowUpDownIcon size={14} />
 				</HeroButton>
 			</PopoverTrigger>
@@ -202,7 +202,7 @@ const List = ({ display }: { display: 'group' | 'single' }) => {
 	);
 
 	return (
-		<>
+		<ScrollShadow className="w-full h-[calc(100vh-156px)]">
 			<ul
 				className={cn(
 					'grid grid-cols-1 gap-4 mb-4 w-full',
@@ -274,7 +274,7 @@ const List = ({ display }: { display: 'group' | 'single' }) => {
 						})}
 				</AnimatePresence>
 			</ul>
-		</>
+		</ScrollShadow>
 	);
 };
 
@@ -286,9 +286,8 @@ const TokensList = () => {
 					<SortFilter />
 				</div>
 			</header>
-			<ScrollShadow className="w-full h-[calc(100vh-156px)]">
-				<List display="single" />
-			</ScrollShadow>
+
+			<List display="single" />
 		</div>
 	);
 };

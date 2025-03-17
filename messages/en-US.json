@@ -29,11 +29,13 @@
 			"url": "Invalid URL format",
 			"wallet-address": "Invalid wallet address",
 			"number": "Invalid number format",
-			"more-than-0": "Must be greater than 0"
+			"more-than-0": "Must be greater than 0",
+			"more-than-min": "Must be greater than {min}"
 		}
 	},
 	"utils": {
-		"more-then-item": "more then {item}"
+		"more-then-item": "more then {item}",
+		"enter": "Please enter"
 	},
 	"nav": {
 		"ai-signal": "AI-Signal",
@@ -132,7 +134,8 @@
 				"type-whale": "Whale",
 				"type-kol": "KOL",
 				"transaction-title": "Transaction amount",
-				"profit-title": "Profit"
+				"profit-title": "Profit",
+				"order-title": "Order quantity"
 			}
 		},
 		"holder": "holder",
