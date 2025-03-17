@@ -1,16 +1,12 @@
 export const IntervalFilter = {
-	// 6h
-	SixHours: '6h',
-	// 12h
-	TwelveHours: '12h',
-	// 1d
+	OneMinute: '1m',
+	FiveMinutes: '5m',
+	FifteenMinutes: '15m',
+	ThirtyMinutes: '30m',
+	OneHour: '1h',
+	FourHours: '4h',
 	OneDay: '1d',
-	// 3d
-	ThreeDays: '3d',
-	// 7d
-	SevenDays: '7d',
-	// 30d
-	ThirtyDays: '30d',
+	OneWeek: '1week',
 } as const;
 
 export type IntervalFilter = (typeof IntervalFilter)[keyof typeof IntervalFilter];

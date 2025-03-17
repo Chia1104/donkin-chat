@@ -114,6 +114,7 @@
 		"ranking": {
 			"title": "排名",
 			"mark-smart": "標記聰明錢包",
+			"profit-rank": "獲利金額排名",
 			"filter": {
 				"total-title": "總額($)",
 				"total-5k": "> 5,000",

@@ -12,7 +12,7 @@ import { filterFormSchemaPrimitive } from '../hooks/useFilterFormSchema';
 export const tokenQueryStates = {
 	[FilterColumn.Transactions]: parseAsNumberLiteral(TransactionsLiteral),
 	[FilterColumn.Mark]: parseAsBoolean.withDefault(true),
-	[FilterColumn.Interval]: parseAsStringEnum(Object.values(IntervalFilter)).withDefault(IntervalFilter.OneDay),
+	[FilterColumn.Interval]: parseAsStringEnum(Object.values(IntervalFilter)).withDefault(IntervalFilter.OneMinute),
 	[FilterColumn.Filter]: parseAsStringEnum(Object.values(Filter)),
 	// eslint-disable-next-line @typescript-eslint/unbound-method
 	[FilterColumn.Type]: parseAsJson(filterFormSchemaPrimitive.shape[FilterColumn.Type].parse),

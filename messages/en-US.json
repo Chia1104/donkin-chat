@@ -114,6 +114,7 @@
 		"ranking": {
 			"title": "Ranking",
 			"mark-smart": "Mark Smart Wallet",
+			"profit-rank": "Profit amount ranking",
 			"filter": {
 				"total-title": "Total amount ($)",
 				"total-5k": "> 5,000",

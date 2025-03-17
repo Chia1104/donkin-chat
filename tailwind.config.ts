@@ -35,7 +35,7 @@ const config: Config = {
 					transparent: 'rgba(255,152,0,0.75)',
 				},
 				danger: {
-					DEFAULT: '#ff4056',
+					DEFAULT: '#E75A5B',
 					light: '#ff7961',
 					dark: '#ba000d',
 					transparent: 'rgba(244,67,54,0.75)',
@@ -87,7 +87,7 @@ const config: Config = {
 							DEFAULT: 'rgba(53, 205, 255, 1)',
 						},
 						danger: {
-							DEFAULT: '#FF4056',
+							DEFAULT: '#E75A5B',
 						},
 						background: {
 							DEFAULT: '#FFFFFF14',
@@ -116,7 +116,7 @@ const config: Config = {
 							DEFAULT: 'rgba(53, 205, 255, 1)',
 						},
 						danger: {
-							DEFAULT: '#FF4056',
+							DEFAULT: '#E75A5B',
 						},
 						background: {
 							DEFAULT: '#FFFFFF14',

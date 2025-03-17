@@ -226,7 +226,7 @@ export const HotspotProgress = ({
 						className="m-0"
 					/>
 				) : null}
-				<InfoOutlinedIcon sx={{ width: 14, height: 14 }} />
+				<InfoOutlinedIcon sx={{ width: 14, height: 14, color: '#FFFFFF40' }} />
 			</div>
 			<div className={cn('w-full flex items-center justify-between gap-1', classNames?.progressWrapper)}>
 				<div className="w-[90%]">

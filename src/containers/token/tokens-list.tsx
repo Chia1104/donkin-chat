@@ -12,6 +12,7 @@ import SvgIcon from '@mui/material/SvgIcon';
 import { AnimatePresence, motion } from 'framer-motion';
 import { ArrowUpDownIcon } from 'lucide-react';
 import { useTranslations } from 'next-intl';
+import { useTransitionRouter } from 'next-view-transitions';
 
 import InfoCard from '@/components/chat/preview/ai-signal/info-card';
 import { HeroButton } from '@/components/ui/hero-button';
@@ -156,6 +157,7 @@ const List = ({ display }: { display: 'group' | 'single' }) => {
 		refetchInterval: 30_000,
 	});
 	const isPreviewOnly = useChatStore(state => state.isPreviewOnly);
+	const router = useTransitionRouter();
 
 	const { isLgWidth, isMdWidth, isSmWidth } = useMediaQuery();
 
@@ -230,9 +232,9 @@ const List = ({ display }: { display: 'group' | 'single' }) => {
 										telegram: 0,
 									}}
 									display={getItemDisplay(index, length)}
-									// onPress={data => {
-									// 	router.push(`/${data.meta.chain}/token/${data.meta.token}`);
-									// }}
+									onPress={data => {
+										router.push(`/${data.meta.chain}/token/${data.meta.token}`);
+									}}
 									cardProps={{
 										isPressable: true,
 									}}
