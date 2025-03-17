@@ -42,6 +42,7 @@ export interface HeaderPrimitiveProps extends MetaProps {
 	avatarProps?: AvatarProps;
 	classNames?: {
 		linkWrapper?: string;
+		labelWrapper?: string;
 		label?: string;
 	};
 	injects?: {
@@ -139,7 +140,9 @@ export const HeaderPrimitive = (props: HeaderPrimitiveProps) => {
 				className={cn('w-12 h-12 min-w-12 min-h-12', props.avatarProps?.className)}
 				src={props.meta.avatar}
 			/>
-			<div className="flex flex-col gap-2 items-start w-full max-w-[calc(100%-3rem)]">
+			<div
+				className={cn('flex flex-col gap-2 items-start w-full max-w-[calc(100%-3rem)]', props.classNames?.labelWrapper)}
+			>
 				{props.isLoading ? (
 					<Skeleton className="w-full max-w-[100px] h-3 rounded-full" />
 				) : (

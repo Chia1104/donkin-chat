@@ -90,7 +90,7 @@ const config: Config = {
 							DEFAULT: '#FF4056',
 						},
 						background: {
-							DEFAULT: '#0f1319',
+							DEFAULT: '#FFFFFF14',
 						},
 						default: {
 							DEFAULT: 'rgba(35, 48, 64, 1)',
@@ -119,7 +119,7 @@ const config: Config = {
 							DEFAULT: '#FF4056',
 						},
 						background: {
-							DEFAULT: '#0f1319',
+							DEFAULT: '#FFFFFF14',
 						},
 						default: {
 							DEFAULT: 'rgba(35, 48, 64, 1)',

@@ -234,7 +234,7 @@ const List = ({ display }: { display: 'group' | 'single' }) => {
 									// 	router.push(`/${data.meta.chain}/token/${data.meta.token}`);
 									// }}
 									cardProps={{
-										isPressable: false,
+										isPressable: true,
 									}}
 								/>
 							</motion.li>

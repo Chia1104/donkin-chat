@@ -59,14 +59,15 @@ const Detail = () => {
 						<HeaderPrimitive
 							avatarProps={{
 								size: 'lg',
-								className: 'w-8 h-8',
+								className: 'min-w-8 min-h-8 w-8 h-8',
 							}}
 							classNames={{
-								label: 'text-2xl',
+								label: 'text-2xl mr-2',
+								labelWrapper: 'flex-row items-center',
 							}}
 							injects={{
 								afterLabel: (
-									<span className="flex items-center gap-5">
+									<span className="flex items-center gap-3">
 										<Divider orientation="vertical" className="h-3" />
 										<p className="text-success text-xs">2h</p>
 										<p>{truncateMiddle(MOCK_DATA.meta.token, 7)}</p>
