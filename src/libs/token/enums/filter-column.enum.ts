@@ -28,7 +28,6 @@ export const FilterColumn = {
 	 * 喊單數量最大值
 	 */
 	OrderCountMax: 'ocmax',
-	Filter: 'filter',
 } as const;
 
 export type FilterColumn = (typeof FilterColumn)[keyof typeof FilterColumn];

@@ -135,7 +135,8 @@
 				"type-kol": "KOL",
 				"transaction-title": "交易金额",
 				"profit-title": "利潤",
-				"order-title": "喊單數量"
+				"order-title": "喊單數量",
+				"kol-order": "KOL 喊单次数"
 			}
 		},
 		"holder": "持有人",

@@ -117,6 +117,9 @@ export const useFormRules = () => {
 				.int({
 					message: intl('pattern.number'),
 				}),
+			number: z.number({
+				message: intl('pattern.number'),
+			}),
 			/**
 			 * 大於等於 0 的整數
 			 */

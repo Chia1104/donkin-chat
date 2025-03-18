@@ -3,7 +3,9 @@
 import { useState } from 'react';
 
 import { Avatar, AvatarGroup } from '@heroui/avatar';
+import { Badge } from '@heroui/badge';
 import { Divider } from '@heroui/divider';
+import { Image } from '@heroui/image';
 import { Popover, PopoverContent, PopoverTrigger } from '@heroui/popover';
 import { Switch } from '@heroui/switch';
 import FilterAltOutlinedIcon from '@mui/icons-material/FilterAltOutlined';
@@ -26,7 +28,7 @@ const Filter = () => {
 	const locale = useLocale();
 
 	return (
-		<Popover placement="top" isOpen={isOpen} onOpenChange={setIsOpen} showArrow>
+		<Popover placement="top-start" isOpen={isOpen} onOpenChange={setIsOpen}>
 			<PopoverTrigger>
 				<HeroButton
 					size="sm"
@@ -34,8 +36,7 @@ const Filter = () => {
 					variant="light"
 					aria-label="Filter"
 					radius="full"
-					// isDisabled={!searchParams.mark}
-					isDisabled
+					isDisabled={!searchParams.mark}
 				>
 					<FilterAltOutlinedIcon
 						sx={{
@@ -47,39 +48,20 @@ const Filter = () => {
 			</PopoverTrigger>
 			<PopoverContent className={cn('w-[200px] overflow-hidden', locale === Locale.EN_US && 'w-[250px] max-w-[250px]')}>
 				<FilterForm
-					defaultValues={{
-						address: searchParams.filter?.address ?? [],
-						order: searchParams.filter?.order ?? [],
-						tmax: searchParams.filter?.tmax ?? null,
-						tmin: searchParams.filter?.tmin ?? null,
-						ocmax: searchParams.filter?.ocmax ?? null,
-						ocmin: searchParams.filter?.ocmin ?? null,
-					}}
+					defaultValues={searchParams}
 					onSubmit={value => {
 						void setSearchParams({
-							filter: {
-								address: value.address ?? [],
-								order: value.order ?? [],
-								tmax: value.tmax,
-								tmin: value.tmin,
-								ocmax: value.ocmax,
-								ocmin: value.ocmin,
-							},
+							address: value.address ?? [],
+							order: value.order ?? [],
+							tmax: value.tmax,
+							tmin: value.tmin,
+							ocmax: value.ocmax,
+							ocmin: value.ocmin,
 						});
 						void setIsOpen(false);
 					}}
 					onReset={() => {
-						void setSearchParams({
-							...DEFAULT_FILTER_FORM_DATA,
-							filter: {
-								address: [],
-								order: [],
-								tmax: null,
-								tmin: null,
-								ocmax: null,
-								ocmin: null,
-							},
-						});
+						void setSearchParams(DEFAULT_FILTER_FORM_DATA);
 						void setIsOpen(false);
 					}}
 				/>
@@ -92,11 +74,11 @@ const RankingSection = () => {
 	const [searchParams, setSearchParams] = useTokenSearchParams();
 	const t = useTranslations('token');
 	return (
-		<Card className="w-full px-4 py-6 flex-row items-center justify-between">
+		<Card className="w-full px-4 py-6 flex-row items-center gap-10">
 			<Switch
 				aria-label={t('ranking.mark-smart')}
 				classNames={{
-					base: 'flex-row-reverse gap-6',
+					base: 'flex-row-reverse gap-6 items-center',
 					thumb: 'bg-[rgba(255,_255,_255,_0.45)] w-[14px] h-[14px] min-h-[14px] min-w-[14px]',
 					label: 'font-normal text-sm',
 					wrapper: 'w-9 h-[18px]',
@@ -106,7 +88,10 @@ const RankingSection = () => {
 				onValueChange={e => setSearchParams({ mark: e })}
 				size="sm"
 			>
-				{t('ranking.mark-smart')}
+				<span className="flex items-center">
+					{t('ranking.mark-smart')}
+					<Filter />
+				</span>
 			</Switch>
 			<Divider orientation="vertical" className="h-4" />
 			<div className="flex items-center gap-5">
@@ -115,8 +100,8 @@ const RankingSection = () => {
 						{t('ranking.profit-rank')}
 						<InfoOutlinedIcon
 							sx={{
-								width: '11px',
-								height: '11px',
+								width: '16px',
+								height: '16px',
 								marginLeft: '4px',
 								color: '#FFFFFF40',
 							}}
@@ -124,13 +109,24 @@ const RankingSection = () => {
 					</span>
 				</h3>
 				<AvatarGroup isGrid max={10} aria-label="Ranking" isDisabled={!searchParams.mark}>
-					<Avatar
-						aria-label="avatar"
-						size="sm"
+					<Badge
+						content={<Image src="/assets/images/crown.svg" width={10} height={10} />}
+						placement="top-left"
 						classNames={{
-							base: 'w-6 h-6',
+							badge: 'border-0 bg-transparent p-0 top-[5%] left-[5%]',
 						}}
-					/>
+						showOutline={false}
+						isOneChar
+						isDot
+					>
+						<Avatar
+							aria-label="avatar"
+							size="sm"
+							classNames={{
+								base: 'w-6 h-6',
+							}}
+						/>
+					</Badge>
 					<Avatar
 						aria-label="avatar"
 						size="sm"
@@ -154,8 +150,6 @@ const RankingSection = () => {
 					/>
 				</AvatarGroup>
 			</div>
-			<Divider orientation="vertical" className="h-4" />
-			<Filter />
 		</Card>
 	);
 };
