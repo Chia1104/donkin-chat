@@ -7,15 +7,6 @@ import { FilterColumn } from '@/libs/token/enums/filter-column.enum';
 import { Address } from '../enums/address.enum';
 import { Order } from '../enums/order.enum';
 
-export const filterFormSchemaPrimitive = z.object({
-	[FilterColumn.Address]: z.array(z.nativeEnum(Address)),
-	[FilterColumn.Order]: z.array(z.nativeEnum(Order)),
-	[FilterColumn.TransactionMin]: z.number().nullable(),
-	[FilterColumn.TransactionMax]: z.number().nullable(),
-	[FilterColumn.OrderCountMin]: z.number().nullable(),
-	[FilterColumn.OrderCountMax]: z.number().nullable(),
-});
-
 export const useFilterFormSchema = () => {
 	const { messages, patterns } = useFormRules();
 	const tvlPattern = useTranslations('validation.pattern');
@@ -27,17 +18,17 @@ export const useFilterFormSchema = () => {
 				.array(z.nativeEnum(Address, { message: messages.primitive.invalid_type_error }))
 				.nullable(),
 			[FilterColumn.Order]: z.array(z.nativeEnum(Order, { message: messages.primitive.invalid_type_error })).nullable(),
-			[FilterColumn.TransactionMin]: patterns.moreThenZeroNumber.nullable(),
-			[FilterColumn.TransactionMax]: patterns.moreThenZeroNumber.nullable(),
-			[FilterColumn.OrderCountMin]: patterns.moreThenZeroNumber.nullable(),
-			[FilterColumn.OrderCountMax]: patterns.moreThenZeroNumber.nullable(),
+			[FilterColumn.TransactionMin]: patterns.number.nullable(),
+			[FilterColumn.TransactionMax]: patterns.number.nullable(),
+			[FilterColumn.OrderCountMin]: patterns.number.nullable(),
+			[FilterColumn.OrderCountMax]: patterns.number.nullable(),
 		})
 		.refine(
 			data => {
 				const tmin = data[FilterColumn.TransactionMin];
 				const tmax = data[FilterColumn.TransactionMax];
 
-				if (tmin === null || tmax === null) {
+				if (tmin == null || tmax == null) {
 					return true;
 				}
 
@@ -47,6 +38,7 @@ export const useFilterFormSchema = () => {
 				message: tvlPattern('more-than-min', {
 					min: tokenRanking('filter.transaction-title'),
 				}),
+				path: [FilterColumn.TransactionMax],
 			},
 		)
 		.refine(
@@ -54,7 +46,7 @@ export const useFilterFormSchema = () => {
 				const ocmin = data[FilterColumn.OrderCountMin];
 				const ocmax = data[FilterColumn.OrderCountMax];
 
-				if (ocmin === null || ocmax === null) {
+				if (ocmin == null || ocmax == null) {
 					return true;
 				}
 
@@ -64,13 +56,14 @@ export const useFilterFormSchema = () => {
 				message: tvlPattern('more-than-min', {
 					min: tokenRanking('filter.order-title'),
 				}),
+				path: [FilterColumn.OrderCountMax],
 			},
 		);
 };
 
 export const DEFAULT_FILTER_FORM_DATA: FilterFormData = {
-	[FilterColumn.Address]: null,
-	[FilterColumn.Order]: null,
+	[FilterColumn.Address]: [Address.SmartMoney, Address.Whale],
+	[FilterColumn.Order]: [Order.KOL],
 	[FilterColumn.TransactionMin]: null,
 	[FilterColumn.TransactionMax]: null,
 	[FilterColumn.OrderCountMin]: null,

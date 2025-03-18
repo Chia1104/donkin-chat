@@ -49,6 +49,16 @@ const FilterForm = (props: Props) => {
 		}
 	};
 
+	const handleNumberChange = (e: React.ChangeEvent<HTMLInputElement>, onChange: (...event: any[]) => void) => {
+		console.log(e.target.value);
+		if (!e.target.value) {
+			onChange(null);
+			return;
+		}
+		const value = Number(e.target.value);
+		onChange(value);
+	};
+
 	return (
 		<Form {...form}>
 			<form onSubmit={onSubmit} className="w-full">
@@ -72,7 +82,8 @@ const FilterForm = (props: Props) => {
 										<Checkbox
 											classNames={{
 												base: 'bg-background rounded-lg m-0 max-w-full',
-												wrapper: 'bg-root',
+												wrapper:
+													'bg-transparent group-data-[hover=true]:before:bg-background before:border-white before:border-1 before:rounded-sm after:rounded-sm rounded-sm',
 												label: 'font-medium text-xs',
 											}}
 											size="sm"
@@ -83,7 +94,8 @@ const FilterForm = (props: Props) => {
 										<Checkbox
 											classNames={{
 												base: 'bg-background rounded-lg m-0 max-w-full',
-												wrapper: 'bg-root',
+												wrapper:
+													'bg-transparent group-data-[hover=true]:before:bg-background before:border-white before:border-1 before:rounded-sm after:rounded-sm rounded-sm',
 												label: 'font-medium text-xs',
 											}}
 											size="sm"
@@ -106,11 +118,23 @@ const FilterForm = (props: Props) => {
 							<FormField<FilterFormData, typeof FilterColumn.TransactionMin>
 								control={form.control}
 								name={FilterColumn.TransactionMin}
-								render={({ field }) => (
+								render={({ field, fieldState }) => (
 									<FormItem className="w-full">
 										<FormControl className="w-full">
-											{/* @ts-expect-error - work in progress */}
-											<Input size="sm" type="number" className="w-full" placeholder={tUtils('enter')} {...field} />
+											<Input
+												size="sm"
+												type="number"
+												className="w-full"
+												placeholder={tUtils('enter')}
+												classNames={{
+													inputWrapper:
+														'bg-background data-[hover=true]:bg-background-200 group-data-[focus=true]:bg-background-100',
+												}}
+												{...field}
+												value={field.value != null ? field.value.toString() : ''}
+												onChange={e => handleNumberChange(e, field.onChange)}
+												isInvalid={fieldState.invalid}
+											/>
 										</FormControl>
 									</FormItem>
 								)}
@@ -119,11 +143,23 @@ const FilterForm = (props: Props) => {
 							<FormField<FilterFormData, typeof FilterColumn.TransactionMax>
 								control={form.control}
 								name={FilterColumn.TransactionMax}
-								render={({ field }) => (
+								render={({ field, fieldState }) => (
 									<FormItem className="w-full">
 										<FormControl className="w-full">
-											{/* @ts-expect-error - work in progress */}
-											<Input size="sm" type="number" className="w-full" placeholder={tUtils('enter')} {...field} />
+											<Input
+												size="sm"
+												type="number"
+												className="w-full"
+												placeholder={tUtils('enter')}
+												classNames={{
+													inputWrapper:
+														'bg-background data-[hover=true]:bg-background-200 group-data-[focus=true]:bg-background-100',
+												}}
+												{...field}
+												value={field.value != null ? field.value.toString() : ''}
+												onChange={e => handleNumberChange(e, field.onChange)}
+												isInvalid={fieldState.invalid}
+											/>
 										</FormControl>
 									</FormItem>
 								)}
@@ -152,7 +188,8 @@ const FilterForm = (props: Props) => {
 										<Checkbox
 											classNames={{
 												base: 'bg-background rounded-lg m-0 max-w-full',
-												wrapper: 'bg-root',
+												wrapper:
+													'bg-transparent group-data-[hover=true]:before:bg-background before:border-white before:border-1 before:rounded-sm after:rounded-sm rounded-sm',
 												label: 'font-medium text-xs',
 											}}
 											size="sm"
@@ -167,19 +204,29 @@ const FilterForm = (props: Props) => {
 					/>
 					<div className="w-full space-y-2">
 						<FormItem className="w-full">
-							<FormLabel className="text-xs font-normal text-description">
-								{t('ranking.filter.transaction-title')}
-							</FormLabel>
+							<FormLabel className="text-xs font-normal text-description">{t('ranking.filter.kol-order')}</FormLabel>
 						</FormItem>
 						<div className="flex gap-1 items-center">
 							<FormField<FilterFormData, typeof FilterColumn.OrderCountMin>
 								control={form.control}
 								name={FilterColumn.OrderCountMin}
-								render={({ field }) => (
+								render={({ field, fieldState }) => (
 									<FormItem className="w-full">
 										<FormControl className="w-full">
-											{/* @ts-expect-error - work in progress */}
-											<Input size="sm" type="number" className="w-full" placeholder={tUtils('enter')} {...field} />
+											<Input
+												size="sm"
+												type="number"
+												className="w-full"
+												placeholder={tUtils('enter')}
+												classNames={{
+													inputWrapper:
+														'bg-background data-[hover=true]:bg-background-200 group-data-[focus=true]:bg-background-100',
+												}}
+												{...field}
+												value={field.value != null ? field.value.toString() : ''}
+												onChange={e => handleNumberChange(e, field.onChange)}
+												isInvalid={fieldState.invalid}
+											/>
 										</FormControl>
 									</FormItem>
 								)}
@@ -188,11 +235,23 @@ const FilterForm = (props: Props) => {
 							<FormField<FilterFormData, typeof FilterColumn.OrderCountMax>
 								control={form.control}
 								name={FilterColumn.OrderCountMax}
-								render={({ field }) => (
+								render={({ field, fieldState }) => (
 									<FormItem className="w-full">
 										<FormControl className="w-full">
-											{/* @ts-expect-error - work in progress */}
-											<Input size="sm" type="number" className="w-full" placeholder={tUtils('enter')} {...field} />
+											<Input
+												size="sm"
+												type="number"
+												className="w-full"
+												placeholder={tUtils('enter')}
+												classNames={{
+													inputWrapper:
+														'bg-background data-[hover=true]:bg-background-200 group-data-[focus=true]:bg-background-100',
+												}}
+												{...field}
+												value={field.value != null ? field.value.toString() : ''}
+												onChange={e => handleNumberChange(e, field.onChange)}
+												isInvalid={fieldState.invalid}
+											/>
 										</FormControl>
 									</FormItem>
 								)}

@@ -135,7 +135,8 @@
 				"type-kol": "KOL",
 				"transaction-title": "Transaction amount",
 				"profit-title": "Profit",
-				"order-title": "Order quantity"
+				"order-title": "Order quantity",
+				"kol-order": "KOL order quantity"
 			}
 		},
 		"holder": "holder",
