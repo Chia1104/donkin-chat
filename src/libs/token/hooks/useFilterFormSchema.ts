@@ -62,8 +62,8 @@ export const useFilterFormSchema = () => {
 };
 
 export const DEFAULT_FILTER_FORM_DATA: FilterFormData = {
-	[FilterColumn.Address]: [],
-	[FilterColumn.Order]: [],
+	[FilterColumn.Address]: [Address.SmartMoney, Address.Whale],
+	[FilterColumn.Order]: [Order.KOL],
 	[FilterColumn.TransactionMin]: null,
 	[FilterColumn.TransactionMax]: null,
 	[FilterColumn.OrderCountMin]: null,
