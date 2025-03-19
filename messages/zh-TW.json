@@ -141,5 +141,12 @@
 		},
 		"holder": "持有人",
 		"wallets": "錢包數"
+	},
+	"ChartExamples": {
+		"title": "圖表範例",
+		"candlestickTitle": "K 線圖",
+		"candlestickDescription": "這個 K 線圖顯示了隨時間變化的價格走勢。綠色蠟燭代表價格上漲，紅色蠟燭代表價格下跌。",
+		"clickableMarkersTitle": "可點擊標記",
+		"clickableMarkersDescription": "這個範例展示了如何在圖表上添加互動標記，點擊標記會顯示詳細資訊。"
 	}
 }

@@ -141,5 +141,12 @@
 		},
 		"holder": "holder",
 		"wallets": "Number of wallets"
+	},
+	"ChartExamples": {
+		"title": "Chart Examples",
+		"candlestickTitle": "Candlestick Chart (K-Line)",
+		"candlestickDescription": "This candlestick chart shows price movements over time. Green candles indicate upward price movements, while red candles represent downward movements.",
+		"clickableMarkersTitle": "Clickable Markers",
+		"clickableMarkersDescription": "This example demonstrates how to add interactive markers to charts that display detailed information when clicked."
 	}
 }
