@@ -7,6 +7,7 @@ import { Divider } from '@heroui/divider';
 import { Popover, PopoverTrigger, PopoverContent } from '@heroui/popover';
 import { RadioGroup, Radio } from '@heroui/radio';
 import { ScrollShadow } from '@heroui/scroll-shadow';
+import { Spinner } from '@heroui/spinner';
 import { useDisclosure } from '@heroui/use-disclosure';
 import SvgIcon from '@mui/material/SvgIcon';
 import { AnimatePresence, motion } from 'framer-motion';
@@ -272,7 +273,7 @@ const List = ({ display }: { display: 'group' | 'single' }) => {
 								isPreviewOnly ? 'lg:grid-cols-4 md:grid-cols-3 sm:grid-cols-2' : 'lg:grid-cols-3 md:grid-cols-2',
 							)}
 						>
-							<AnimatePresence>{children}</AnimatePresence>
+							{children}
 						</ul>
 					),
 					Item: ({ children, ...props }) => (
@@ -286,7 +287,12 @@ const List = ({ display }: { display: 'group' | 'single' }) => {
 							{children}
 						</ScrollShadow>
 					),
-					// Footer: () => <Spinner className="space-y-5 justify-self-center" />,
+					Footer: () =>
+						queryResult.isFetchingNextPage ? (
+							<div className="flex justify-center items-center h-full py-5">
+								<Spinner className="space-y-5 justify-self-center" />
+							</div>
+						) : null,
 				}}
 				data={queryResult.flatData ?? []}
 				totalCount={queryResult.flatData?.length ?? 0}
