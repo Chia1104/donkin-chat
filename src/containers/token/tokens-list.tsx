@@ -214,7 +214,6 @@ const List = ({ display }: { display: 'group' | 'single' }) => {
 
 	return (
 		<AsyncQuery
-			// @ts-expect-error - TODO: Fix the type error
 			queryResult={queryResult}
 			isInfinite
 			loadingFallback={
