@@ -1,10 +1,13 @@
+import type { TokenSort } from '@/libs/ai/enums/tokenSort.enum';
 import type { ResponseData, PaginationData, BaseRequestOptions, PaginationRequestOptions } from '@/types/request';
 import { request } from '@/utils/request';
 
 import type { Token } from '../pipes/token.pipe';
 import { tokenSchema, tokensPaginationSchema } from '../pipes/token.pipe';
 
-export type TokensHotRequestOptions = PaginationRequestOptions<['price_change_24h', 'market_cap', 'created_at', 'hot']>;
+export type TokensHotRequestOptions = PaginationRequestOptions<
+	[typeof TokenSort.Change, typeof TokenSort.Hot, typeof TokenSort.MarketCap, typeof TokenSort.UpTime]
+>;
 export type TokensHotResponse = PaginationData<Token>;
 
 export const getTokensHot = async (options?: BaseRequestOptions<TokensHotRequestOptions>) => {
