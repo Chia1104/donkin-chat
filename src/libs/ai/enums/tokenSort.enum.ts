@@ -1,6 +1,6 @@
 export const TokenSort = {
 	Hot: 'hot',
-	UpTime: 'created_at',
+	UpTime: 'minted_at',
 	MarketCap: 'market_cap',
 	Change: 'price_change_24h',
 } as const;
