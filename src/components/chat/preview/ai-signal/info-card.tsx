@@ -314,6 +314,7 @@ export const Stock = memo(
 										? `+${roundDecimal(stock.change, 2)}`
 										: roundDecimal(stock.change, 2)
 									: stock.change}
+								%
 							</span>
 						)}
 					</div>

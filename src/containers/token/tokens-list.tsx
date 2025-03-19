@@ -305,7 +305,7 @@ const List = ({ display }: { display: 'group' | 'single' }) => {
 								marketCap: _.market_cap,
 								price: _.price,
 								pool: _.liquidity,
-								change: _.price_change_24h,
+								change: _.change,
 							}}
 							hotspots={{
 								x: 0,
