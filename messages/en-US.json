@@ -19,7 +19,9 @@
 		"connect-wallet": "Connect Wallet",
 		"reset": "Reset",
 		"active": "Active",
-		"clear": "Clear"
+		"clear": "Clear",
+		"back": "Back",
+		"back-to-previous": "Back to previous"
 	},
 	"validation": {
 		"required": "This field is required",
@@ -42,6 +44,9 @@
 			"title": "Error",
 			"description": "Please try again later",
 			"retry": "Retry"
+		},
+		"not-found": {
+			"title": "Page not found"
 		}
 	},
 	"nav": {
@@ -147,6 +152,10 @@
 			}
 		},
 		"holder": "holder",
-		"wallets": "Number of wallets"
+		"wallets": "Number of wallets",
+		"not-found": {
+			"title": "Token not found",
+			"description": "The token you are trying to access does not exist or has been removed. Please check your link is correct, or try connecting your wallet to view your token."
+		}
 	}
 }

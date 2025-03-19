@@ -13,6 +13,7 @@ import { HotspotProgress } from '@/components/chat/preview/ai-signal/info-card';
 import Candlestick from '@/components/token/candlestick';
 import RankingSection from '@/components/token/ranking-section';
 import Card from '@/components/ui/card';
+import { useChatStore } from '@/contexts/chat-provider';
 import { useQueryToken } from '@/libs/token/hooks/useQueryToken';
 import { cn } from '@/utils/cn';
 import { truncateMiddle, formatLargeNumber } from '@/utils/format';
@@ -74,61 +75,69 @@ const Detail = () => {
 	const tToken = useTranslations('token');
 	const params = useParams<{ chain: string; token: string }>();
 	const queryResult = useQueryToken(params.token);
+	const isPreviewOnly = useChatStore(state => state.isPreviewOnly);
 
 	return (
-		<div className="w-full h-full flex flex-col">
-			<ScrollShadow className="w-full h-[calc(100vh-72px)]">
-				<div className="flex flex-col gap-5 w-full">
-					<header className="flex items-center gap-5">
-						<HeaderPrimitive
-							avatarProps={{
-								size: 'lg',
-								className: 'min-w-8 min-h-8 w-8 h-8',
-							}}
-							classNames={{
-								label: 'text-[22px] font-normal mr-2',
-								labelWrapper: 'flex-row items-center',
-							}}
-							injects={{
-								afterLabel: (
-									<span className="flex items-center gap-3">
-										<Divider orientation="vertical" className="h-3" />
-										<p className="text-success text-[12px] font-normal">2h</p>
-										<p className="text-[12px] font-normal">
-											{truncateMiddle(
-												queryResult.data?.address ?? '',
-												queryResult.data?.address ? queryResult.data?.address.length / 3 : 5,
-											)}
-										</p>
-									</span>
-								),
-							}}
-							isLoading={queryResult.isLoading}
-							meta={{
-								name: queryResult.data?.name ?? '',
-								avatar: queryResult.data?.logo_uri ?? '',
-								chain: queryResult.data?.symbol ?? '',
-								token: queryResult.data?.address ?? '',
-							}}
-						/>
-					</header>
-					<Candlestick />
-					<RankingSection />
-					<Card className="grid grid-cols-6 gap-2">
-						<Hotspot x={0} telegram={0} />
-						<CardBody className="col-span-4 grid grid-cols-4 gap-2">
-							<Stock
-								label={t('card.stock.marketCap')}
-								value={`$ ${formatLargeNumber(queryResult.data?.market_cap ?? 0)}`}
+		<section
+			className={cn('p-5 overflow-y-auto h-[calc(100vh-72px)]', !isPreviewOnly ? 'w-full lg:w-2/3 pr-0' : 'w-full')}
+		>
+			<div className="w-full h-full flex flex-col">
+				<ScrollShadow className="w-full h-[calc(100vh-72px)]">
+					<div className="flex flex-col gap-5 w-full">
+						<header className="flex items-center gap-5">
+							<HeaderPrimitive
+								avatarProps={{
+									size: 'lg',
+									className: 'min-w-8 min-h-8 w-8 h-8',
+								}}
+								classNames={{
+									label: 'text-[22px] font-normal mr-2',
+									labelWrapper: 'flex-row items-center',
+								}}
+								injects={{
+									afterLabel: (
+										<span className="flex items-center gap-3">
+											<Divider orientation="vertical" className="h-3" />
+											<p className="text-success text-[12px] font-normal">2h</p>
+											<p className="text-[12px] font-normal">
+												{truncateMiddle(
+													queryResult.data?.address ?? '',
+													queryResult.data?.address ? queryResult.data?.address.length / 3 : 5,
+												)}
+											</p>
+										</span>
+									),
+								}}
+								isLoading={queryResult.isLoading}
+								meta={{
+									name: queryResult.data?.name ?? '',
+									avatar: queryResult.data?.logo_uri ?? '',
+									chain: queryResult.data?.symbol ?? '',
+									token: queryResult.data?.address ?? '',
+								}}
 							/>
-							<Stock label={t('card.stock.pool')} value={`$ ${formatLargeNumber(queryResult.data?.liquidity ?? 0)}`} />
-							<Stock label={tToken('holder')} value={formatLargeNumber(0)} />
-							<Stock label={tToken('wallets')} value={formatLargeNumber(0)} />
-						</CardBody>
-					</Card>
-				</div>
-			</ScrollShadow>
-		</div>
+						</header>
+						<Candlestick />
+						<RankingSection />
+						<Card className="grid grid-cols-6 gap-2">
+							<Hotspot x={0} telegram={0} />
+							<CardBody className="col-span-4 grid grid-cols-4 gap-2">
+								<Stock
+									label={t('card.stock.marketCap')}
+									value={`$ ${formatLargeNumber(queryResult.data?.market_cap ?? 0)}`}
+								/>
+								<Stock
+									label={t('card.stock.pool')}
+									value={`$ ${formatLargeNumber(queryResult.data?.liquidity ?? 0)}`}
+								/>
+								<Stock label={tToken('holder')} value={formatLargeNumber(0)} />
+								<Stock label={tToken('wallets')} value={formatLargeNumber(0)} />
+							</CardBody>
+						</Card>
+					</div>
+				</ScrollShadow>
+			</div>
+		</section>
 	);
 };
 

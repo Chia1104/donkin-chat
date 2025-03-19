@@ -46,9 +46,9 @@ const WalletConnect = (props: Props) => {
 	const { vm = currentVM } = props;
 
 	const { isOpen, onOpen, onOpenChange } = useDisclosure();
-	const { connectors, connect } = useConnect();
+	const { connectors, connect, reset } = useConnect();
 	// eslint-disable-next-line @typescript-eslint/unbound-method
-	const { wallets, select: solanaSelect } = useWallet();
+	const { wallets, select: solanaSelect, connect: solanaConnect, disconnect: solanaDisconnect } = useWallet();
 
 	const walletList = useMemo(() => {
 		switch (vm) {
@@ -58,7 +58,10 @@ const WalletConnect = (props: Props) => {
 						{connectors.map(connector => (
 							<Button
 								key={connector.id}
-								onPress={() => connect({ connector })}
+								onPress={() => {
+									connect({ connector });
+									void solanaDisconnect();
+								}}
 								aria-label={connector.name}
 								startContent={<Icon id={connector.icon ?? connector.id} />}
 							>
@@ -78,6 +81,8 @@ const WalletConnect = (props: Props) => {
 									 * TODO: implement solana connect function
 									 */
 									solanaSelect(wallet.adapter.name);
+									void solanaConnect();
+									reset();
 								}}
 								aria-label={wallet.adapter.name}
 								startContent={<Icon id={wallet.adapter.icon} />}
@@ -90,7 +95,7 @@ const WalletConnect = (props: Props) => {
 			default:
 				return null;
 		}
-	}, [connect, connectors, solanaSelect, vm, wallets]);
+	}, [connect, connectors, reset, solanaConnect, solanaDisconnect, solanaSelect, vm, wallets]);
 
 	return (
 		<>
