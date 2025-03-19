@@ -37,6 +37,13 @@
 		"more-then-item": "大於 {item}",
 		"enter": "請輸入"
 	},
+	"commons": {
+		"error": {
+			"title": "發生錯誤",
+			"description": "請稍後再試一次",
+			"retry": "重試"
+		}
+	},
 	"nav": {
 		"ai-signal": "AI 信號",
 		"whale-ranking": "巨鯨排行",
