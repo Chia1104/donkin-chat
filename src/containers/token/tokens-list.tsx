@@ -17,6 +17,7 @@ import { VirtuosoGrid } from 'react-virtuoso';
 
 import InfoCard from '@/components/chat/preview/ai-signal/info-card';
 import { AsyncQuery } from '@/components/commons/async-query';
+import { ErrorBoundary } from '@/components/commons/error-boundary';
 import { HeroButton } from '@/components/ui/hero-button';
 import { useChatStore } from '@/contexts/chat-provider';
 import { useMediaQuery } from '@/hooks/useMediaQuery';
@@ -333,7 +334,9 @@ const TokensList = () => {
 					<SortFilter />
 				</div>
 			</header>
-			<List display="single" />
+			<ErrorBoundary>
+				<List display="single" />
+			</ErrorBoundary>
 		</div>
 	);
 };

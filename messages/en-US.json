@@ -40,7 +40,8 @@
 	"commons": {
 		"error": {
 			"title": "Error",
-			"description": "Please try again later"
+			"description": "Please try again later",
+			"retry": "Retry"
 		}
 	},
 	"nav": {

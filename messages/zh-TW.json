@@ -40,7 +40,8 @@
 	"commons": {
 		"error": {
 			"title": "發生錯誤",
-			"description": "請稍後再試一次"
+			"description": "請稍後再試一次",
+			"retry": "重試"
 		}
 	},
 	"nav": {
