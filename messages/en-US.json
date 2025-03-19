@@ -37,6 +37,12 @@
 		"more-then-item": "more then {item}",
 		"enter": "Please enter"
 	},
+	"commons": {
+		"error": {
+			"title": "Error",
+			"description": "Please try again later"
+		}
+	},
 	"nav": {
 		"ai-signal": "AI-Signal",
 		"whale-ranking": "Whale Ranking",

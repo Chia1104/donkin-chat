@@ -1,5 +1,7 @@
 import { z } from 'zod';
 
+import { paginationSchema } from '@/utils/schemas';
+
 export const tokenSchema = z.object({
 	address: z.string(),
 	chain_id: z.number(),
@@ -25,5 +27,9 @@ export const tokenSchema = z.object({
 });
 
 export const tokensSchema = z.array(tokenSchema);
+
+export const tokensPaginationSchema = paginationSchema.extend({
+	data: tokensSchema,
+});
 
 export type Token = z.infer<typeof tokenSchema>;
