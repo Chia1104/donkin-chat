@@ -4,6 +4,7 @@ import { useState } from 'react';
 
 import { Avatar, AvatarGroup } from '@heroui/avatar';
 import { Badge } from '@heroui/badge';
+import { Button } from '@heroui/button';
 import { Divider } from '@heroui/divider';
 import { Image } from '@heroui/image';
 import { Popover, PopoverContent, PopoverTrigger } from '@heroui/popover';
@@ -20,8 +21,6 @@ import { useTokenSearchParams } from '@/libs/token/hooks/useTokenSearchParams';
 import { Locale } from '@/types/locale';
 import { cn } from '@/utils/cn';
 
-import { HeroButton } from '../ui/hero-button';
-
 const Filter = () => {
 	const [isOpen, setIsOpen] = useState(false);
 	const [searchParams, setSearchParams] = useTokenSearchParams();
@@ -30,21 +29,14 @@ const Filter = () => {
 	return (
 		<Popover placement="top-start" isOpen={isOpen} onOpenChange={setIsOpen}>
 			<PopoverTrigger>
-				<HeroButton
-					size="sm"
-					isIconOnly
-					variant="light"
-					aria-label="Filter"
-					radius="full"
-					isDisabled={!searchParams.mark}
-				>
+				<Button size="sm" isIconOnly variant="light" aria-label="Filter" radius="full" isDisabled={!searchParams.mark}>
 					<FilterAltOutlinedIcon
 						sx={{
 							width: 20,
 							height: 20,
 						}}
 					/>
-				</HeroButton>
+				</Button>
 			</PopoverTrigger>
 			<PopoverContent className={cn('w-[200px] overflow-hidden', locale === Locale.EN_US && 'w-[250px] max-w-[250px]')}>
 				<FilterForm
