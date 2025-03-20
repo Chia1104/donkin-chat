@@ -3,6 +3,7 @@
 import { useCallback, useMemo } from 'react';
 
 import { ButtonGroup } from '@heroui/button';
+import { Button } from '@heroui/button';
 import { Divider } from '@heroui/divider';
 import { Popover, PopoverTrigger, PopoverContent } from '@heroui/popover';
 import { RadioGroup, Radio } from '@heroui/radio';
@@ -64,9 +65,9 @@ const SortFilter = () => {
 	return (
 		<Popover isOpen={isOpen} onOpenChange={onOpenChange}>
 			<PopoverTrigger>
-				<HeroButton variant="light" className="p-2 min-w-fit h-8 items-center flex text-sm" radius="sm">
+				<Button variant="light" className="p-2 min-w-fit h-8 items-center flex text-sm" radius="sm">
 					{label} <ArrowUpDownIcon size={14} />
-				</HeroButton>
+				</Button>
 			</PopoverTrigger>
 			<PopoverContent className="shadow-none border-0 min-w-[200px] rounded-sm p-0 bg-[rgba(28,_38,_51,_1)] overflow-hidden">
 				<RadioGroup
