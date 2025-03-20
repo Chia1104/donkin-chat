@@ -1,8 +1,9 @@
-import { IChartApi, ISeriesApi, MouseEventHandler, MouseEventParams, SeriesType, Time } from 'lightweight-charts';
+import type { IChartApi, ISeriesApi, MouseEventHandler, MouseEventParams, SeriesType, Time } from 'lightweight-charts';
 
 import { createSeriesMarkers } from '../series-marker';
 import type { SeriesMarker } from '../series-marker/types';
-import { createTooltip, positionTooltip, updateTooltipContent, TooltipContent } from './tooltip';
+import type { TooltipContent } from './tooltip';
+import { createTooltip, positionTooltip, updateTooltipContent } from './tooltip';
 
 export interface ClickableMarkerOptions {
 	onClick?: (marker: ClickableMarker<Time>, event: MouseEvent) => void;

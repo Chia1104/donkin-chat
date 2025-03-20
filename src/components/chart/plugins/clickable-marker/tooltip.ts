@@ -17,7 +17,6 @@ export function createTooltip(): HTMLElement {
 	tooltipElement.style.transition = 'opacity 0.2s ease-in-out';
 	tooltipElement.style.maxWidth = '280px';
 	tooltipElement.style.width = 'auto';
-	tooltipElement.style.pointerEvents = 'none'; // 讓滑鼠事件穿透
 
 	return tooltipElement;
 }
