@@ -19,7 +19,9 @@
 		"connect-wallet": "连接钱包",
 		"reset": "重置",
 		"active": "應用",
-		"clear": "清除"
+		"clear": "清除",
+		"back": "返回",
+		"back-to-previous": "返回上一頁"
 	},
 	"validation": {
 		"required": "此欄位為必填",
@@ -36,6 +38,16 @@
 	"utils": {
 		"more-then-item": "大於 {item}",
 		"enter": "請輸入"
+	},
+	"commons": {
+		"error": {
+			"title": "發生錯誤",
+			"description": "請稍後再試一次",
+			"retry": "重試"
+		},
+		"not-found": {
+			"title": "找不到頁面"
+		}
 	},
 	"nav": {
 		"ai-signal": "AI 信號",
@@ -140,7 +152,11 @@
 			}
 		},
 		"holder": "持有人",
-		"wallets": "錢包數"
+		"wallets": "錢包數",
+		"not-found": {
+			"title": "找不到代幣",
+			"description": "您嘗試訪問的代幣不存在或已被移除。請檢查您的鏈接是否正確，或嘗試連接您的錢包查看您的代幣。"
+		}
 	},
 	"ChartExamples": {
 		"title": "圖表範例",

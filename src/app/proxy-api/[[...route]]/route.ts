@@ -7,7 +7,15 @@ import { env } from '@/utils/env';
 const app = new Hono();
 
 app.all('/proxy-api/*', c => {
-	return proxy(`${env.NEXT_PUBLIC_APP_API_HOST}${c.req.path.replace(/^\/proxy-api/, '').replace(/\/$/, '')}`, {
+	const url = `${env.NEXT_PUBLIC_APP_API_HOST}${c.req.path.replace(/^\/proxy-api/, '').replace(/\/$/, '')}?${Object.entries(
+		c.req.query(),
+	)
+		.map(([key, value]) => `${key}=${value}`)
+		.join('&')}`;
+
+	console.log('PROXY URL: ', url);
+
+	return proxy(url, {
 		...c.req, // optional, specify only when forwarding all the request data (including credentials) is necessary.
 		headers: {
 			...c.req.header(),

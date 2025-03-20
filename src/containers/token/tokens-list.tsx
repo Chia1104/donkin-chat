@@ -3,10 +3,12 @@
 import { useCallback, useMemo } from 'react';
 
 import { ButtonGroup } from '@heroui/button';
+import { Button } from '@heroui/button';
 import { Divider } from '@heroui/divider';
 import { Popover, PopoverTrigger, PopoverContent } from '@heroui/popover';
 import { RadioGroup, Radio } from '@heroui/radio';
 import { ScrollShadow } from '@heroui/scroll-shadow';
+import { Spinner } from '@heroui/spinner';
 import { useDisclosure } from '@heroui/use-disclosure';
 import SvgIcon from '@mui/material/SvgIcon';
 import { AnimatePresence, motion } from 'framer-motion';
@@ -16,6 +18,8 @@ import { useTransitionRouter } from 'next-view-transitions';
 import { VirtuosoGrid } from 'react-virtuoso';
 
 import InfoCard from '@/components/chat/preview/ai-signal/info-card';
+import { AsyncQuery } from '@/components/commons/async-query';
+import { ErrorBoundary } from '@/components/commons/error-boundary';
 import { HeroButton } from '@/components/ui/hero-button';
 import { useChatStore } from '@/contexts/chat-provider';
 import { useMediaQuery } from '@/hooks/useMediaQuery';
@@ -61,9 +65,9 @@ const SortFilter = () => {
 	return (
 		<Popover isOpen={isOpen} onOpenChange={onOpenChange}>
 			<PopoverTrigger>
-				<HeroButton variant="light" isDisabled className="p-2 min-w-fit h-8 items-center flex text-sm" radius="sm">
+				<Button variant="light" className="p-2 min-w-fit h-8 items-center flex text-sm" radius="sm">
 					{label} <ArrowUpDownIcon size={14} />
-				</HeroButton>
+				</Button>
 			</PopoverTrigger>
 			<PopoverContent className="shadow-none border-0 min-w-[200px] rounded-sm p-0 bg-[rgba(28,_38,_51,_1)] overflow-hidden">
 				<RadioGroup
@@ -154,9 +158,17 @@ const SortFilter = () => {
 };
 
 const List = ({ display }: { display: 'group' | 'single' }) => {
-	const queryResult = useQueryTokensHot({
-		refetchInterval: 30_000,
-	});
+	const [searchParams] = useAISearchParams();
+	const queryResult = useQueryTokensHot(
+		{
+			page_size: 10,
+			sort_by: searchParams.sort,
+			order: searchParams.order,
+		},
+		{
+			refetchInterval: 30_000,
+		},
+	);
 	const isPreviewOnly = useChatStore(state => state.isPreviewOnly);
 	const router = useTransitionRouter();
 
@@ -203,72 +215,13 @@ const List = ({ display }: { display: 'group' | 'single' }) => {
 	);
 
 	return (
-		<>
-			<VirtuosoGrid
-				components={{
-					List: ({ style, children, ref, ...props }) => (
-						<ul
-							style={style}
-							ref={ref as any}
-							{...props}
-							className={cn(
-								'grid grid-cols-1 gap-4 mb-4 w-full min-h-full',
-								isPreviewOnly ? 'lg:grid-cols-4 md:grid-cols-3 sm:grid-cols-2' : 'lg:grid-cols-3 md:grid-cols-2',
-							)}
-						>
-							<AnimatePresence>{children}</AnimatePresence>
-						</ul>
-					),
-					Item: ({ children, ...props }) => (
-						// @ts-expect-error - virtuoso type error
-						<li className="w-full" {...props}>
-							{children}
-						</li>
-					),
-					Scroller: ({ children, ...props }) => (
-						<ScrollShadow className="w-full h-[calc(100vh-156px)]" {...props}>
-							{children}
-						</ScrollShadow>
-					),
-					// Footer: () => <Spinner className="space-y-5 justify-self-center" />,
-				}}
-				data={queryResult.data ?? []}
-				totalCount={queryResult.data?.length ?? 0}
-				overscan={10}
-				itemContent={(index, _) => {
-					return (
-						<InfoCard
-							meta={{
-								name: _.name,
-								avatar: _.logo_uri ?? '',
-								chain: _.symbol,
-								token: _.address,
-							}}
-							stock={{
-								marketCap: _.market_cap,
-								price: _.price,
-								pool: _.liquidity,
-								change: _.price_change_24h,
-							}}
-							hotspots={{
-								x: 0,
-								telegram: 0,
-							}}
-							display={getItemDisplay(index, length)}
-							onPress={data => {
-								router.push(`/${data.meta.chain}/token/${data.meta.token}`);
-							}}
-							cardProps={{
-								isPressable: true,
-							}}
-						/>
-					);
-				}}
-			/>
-			{queryResult.isLoading && (
+		<AsyncQuery
+			queryResult={queryResult}
+			isInfinite
+			loadingFallback={
 				<ul
 					className={cn(
-						'grid grid-cols-1 gap-4 mb-4 w-full min-h-full',
+						'grid grid-cols-1 gap-4 mb-4 w-full',
 						isPreviewOnly ? 'lg:grid-cols-4 md:grid-cols-3 sm:grid-cols-2' : 'lg:grid-cols-3 md:grid-cols-2',
 					)}
 				>
@@ -304,8 +257,78 @@ const List = ({ display }: { display: 'group' | 'single' }) => {
 						})}
 					</AnimatePresence>
 				</ul>
-			)}
-		</>
+			}
+		>
+			<VirtuosoGrid
+				endReached={() => {
+					void queryResult.fetchNextPage();
+				}}
+				components={{
+					List: ({ style, children, ref, ...props }) => (
+						<ul
+							style={style}
+							ref={ref as any}
+							{...props}
+							className={cn(
+								'grid grid-cols-1 gap-4 mb-4 w-full min-h-full',
+								isPreviewOnly ? 'lg:grid-cols-4 md:grid-cols-3 sm:grid-cols-2' : 'lg:grid-cols-3 md:grid-cols-2',
+							)}
+						>
+							{children}
+						</ul>
+					),
+					Item: ({ children, ...props }) => (
+						// @ts-expect-error - virtuoso type error
+						<li className="w-full" {...props}>
+							{children}
+						</li>
+					),
+					Scroller: ({ children, ...props }) => (
+						<ScrollShadow className="w-full h-[calc(100vh-156px)]" {...props}>
+							{children}
+						</ScrollShadow>
+					),
+					Footer: () =>
+						queryResult.isFetchingNextPage ? (
+							<div className="flex justify-center items-center h-full py-5">
+								<Spinner className="space-y-5 justify-self-center" />
+							</div>
+						) : null,
+				}}
+				data={queryResult.flatData ?? []}
+				totalCount={queryResult.flatData?.length ?? 0}
+				overscan={10}
+				itemContent={(index, _) => {
+					return (
+						<InfoCard
+							meta={{
+								name: _.name,
+								avatar: _.logo_uri ?? '',
+								chain: _.symbol,
+								token: _.address,
+							}}
+							stock={{
+								marketCap: _.market_cap,
+								price: _.price,
+								pool: _.liquidity,
+								change: _.change,
+							}}
+							hotspots={{
+								x: 0,
+								telegram: 0,
+							}}
+							display={getItemDisplay(index, length)}
+							onPress={data => {
+								router.push(`/${data.meta.chain}/token/${data.meta.token}`);
+							}}
+							cardProps={{
+								isPressable: true,
+							}}
+						/>
+					);
+				}}
+			/>
+		</AsyncQuery>
 	);
 };
 
@@ -317,7 +340,9 @@ const TokensList = () => {
 					<SortFilter />
 				</div>
 			</header>
-			<List display="single" />
+			<ErrorBoundary>
+				<List display="single" />
+			</ErrorBoundary>
 		</div>
 	);
 };

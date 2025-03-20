@@ -50,15 +50,16 @@ const START_ANIMATION_SPEED = 4;
 const END_ANIMATION_SPEED = 15;
 
 const getPrefixedUrl = (requestMode?: RequestMode) => {
+	const IS_SERVER = typeof window === 'undefined';
 	switch (requestMode) {
 		case 'proxy':
-			return '/proxy-api';
+			return !IS_SERVER ? '/proxy-api' : env.NEXT_PUBLIC_APP_API_HOST;
 		case 'self-api':
-			return '/';
+			return !IS_SERVER ? '/' : env.NEXT_PUBLIC_APP_API_HOST;
 		case 'external':
 			return env.NEXT_PUBLIC_APP_API_HOST;
 		default:
-			return '/';
+			return !IS_SERVER ? '/' : env.NEXT_PUBLIC_APP_API_HOST;
 	}
 };
 
