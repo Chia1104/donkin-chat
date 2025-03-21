@@ -109,7 +109,7 @@ export const MarkerTooltip = () => {
 				exit={{ opacity: 0 }}
 				transition={{ duration: 0.2 }}
 				ref={tooltipRef}
-				className="absolute z-[1000] bg-background rounded-sm p-2"
+				className="absolute z-[1000] bg-[#1C2633] rounded-sm p-2"
 				style={{ left: position.x, top: position.y }}
 			>
 				{tooltip}
