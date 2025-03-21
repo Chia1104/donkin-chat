@@ -2,15 +2,21 @@ import type { IChartApi, ISeriesApi, MouseEventHandler, MouseEventParams, Series
 
 import { createSeriesMarkers } from '../series-marker';
 import type { SeriesMarker } from '../series-marker/types';
-import type { TooltipContent } from './tooltip';
-import { createTooltip, positionTooltip, updateTooltipContent } from './tooltip';
 
 export interface ClickableMarkerOptions {
 	onClick?: (marker: ClickableMarker<Time>, event: MouseEvent) => void;
+	onOpenTooltip?: (option: {
+		tooltip: React.ReactNode;
+		visible: true;
+		position: { x: number; y: number };
+		container: HTMLElement;
+		activeMarker: ClickableMarker<Time>;
+	}) => void;
+	onCloseTooltip?: (option: { visible: false }) => void;
 }
 
 export interface ClickableMarker<TimeType> extends Omit<SeriesMarker<TimeType>, 'tooltip'> {
-	tooltip?: TooltipContent;
+	tooltip?: React.ReactNode;
 }
 
 export interface ClickableMarkerPluginApi<TimeType> {
@@ -32,26 +38,18 @@ export function createClickableMarkers<TimeType>(
 	// 使用 type casting 處理類型兼容性問題
 	const seriesMarkers = createSeriesMarkers(series, markers as unknown as SeriesMarker<TimeType>[]);
 
-	// 創建彈出窗口元素
-	const tooltipElement = createTooltip();
-
 	// 添加到圖表容器
 	const chartElement = chart.chartElement();
 	const chartContainer = chartElement.parentElement;
 	if (chartContainer) {
 		chartContainer.style.position = 'relative';
-		chartContainer.appendChild(tooltipElement);
 	}
-
-	// 當前活動的標記
-	let activeMarker: ClickableMarker<TimeType> | null = null;
 
 	// 點擊事件處理
 	const handleClick: MouseEventHandler<Time> = (param: MouseEventParams<Time>) => {
 		// 如果沒有點擊到具體位置，則返回
 		if (!param.point) {
-			tooltipElement.style.display = 'none';
-			activeMarker = null;
+			options?.onCloseTooltip?.({ visible: false });
 			return;
 		}
 
@@ -117,20 +115,17 @@ export function createClickableMarkers<TimeType>(
 			return Math.sqrt(dx * dx + dy * dy) <= markerSize;
 		});
 
-		if (clickedMarker?.tooltip) {
-			// 顯示彈出窗口
-			activeMarker = clickedMarker;
-
-			// 設置彈出窗口內容
-			updateTooltipContent(tooltipElement, clickedMarker.tooltip);
-
-			// 顯示彈出窗口
-			tooltipElement.style.display = 'block';
-
-			// 定位彈出窗口
-			if (chartContainer && param.point) {
-				positionTooltip(tooltipElement, param.point.x, param.point.y, chartContainer);
-			}
+		if (clickedMarker && chartContainer) {
+			options?.onOpenTooltip?.({
+				tooltip: clickedMarker.tooltip,
+				visible: true,
+				position: {
+					x: param.point?.x || 0,
+					y: param.point?.y || 0,
+				},
+				container: chartContainer,
+				activeMarker: clickedMarker as unknown as ClickableMarker<Time>,
+			});
 
 			// 調用點擊回調
 			if (options?.onClick) {
@@ -139,21 +134,11 @@ export function createClickableMarkers<TimeType>(
 			}
 		} else {
 			// 隱藏彈出窗口
-			tooltipElement.style.display = 'none';
-			activeMarker = null;
+			options?.onCloseTooltip?.({ visible: false });
 		}
 	};
 
 	chart.subscribeClick(handleClick);
-
-	// 處理圖表懸停
-	const handleCrosshairMove: MouseEventHandler<Time> = () => {
-		if (!activeMarker) {
-			tooltipElement.style.display = 'none';
-		}
-	};
-
-	chart.subscribeCrosshairMove(handleCrosshairMove);
 
 	return {
 		setMarkers: newMarkers => {
@@ -162,12 +147,7 @@ export function createClickableMarkers<TimeType>(
 		markers: () => seriesMarkers.markers() as unknown as readonly ClickableMarker<TimeType>[],
 		detach: () => {
 			seriesMarkers.detach();
-			// 移除彈出窗口和事件監聽器
-			if (tooltipElement.parentElement) {
-				tooltipElement.parentElement.removeChild(tooltipElement);
-			}
 			chart.unsubscribeClick(handleClick);
-			chart.unsubscribeCrosshairMove(handleCrosshairMove);
 		},
 	};
 }

@@ -3,9 +3,12 @@
 import { useEffect, useRef } from 'react';
 
 import dayjs from 'dayjs';
-import { CandlestickSeries, createChart, Time } from 'lightweight-charts';
+import type { Time } from 'lightweight-charts';
+import { CandlestickSeries, createChart } from 'lightweight-charts';
 
-import { createClickableMarkers, ClickableMarker } from './index';
+import type { ClickableMarker } from './core';
+import { createClickableMarkers } from './core';
+import { MarkerTooltipProvider, MarkerTooltip, useMarkerTooltipStore } from './marker-tooltip';
 
 // 模擬數據
 const mockData = [
@@ -26,12 +29,11 @@ const mockMarkers: ClickableMarker<Time>[] = [
 		color: '#E75A5B',
 		size: 1,
 		src: 'https://avatars.githubusercontent.com/u/38397958?v=4',
-		tooltip: {
-			title: '重要賣出信號',
-			content: '由於市場波動，專業交易者在此處大量賣出',
-			date: dayjs().subtract(5, 'day').format('YYYY/MM/DD'),
-			price: '$9.94',
-		},
+		tooltip: (
+			<div className="bg-white w-[300px] h-[300px]">
+				<p>test</p>
+			</div>
+		),
 	},
 	{
 		time: dayjs().subtract(2, 'day').format('YYYY-MM-DD') as Time,
@@ -39,18 +41,13 @@ const mockMarkers: ClickableMarker<Time>[] = [
 		color: '#38AF75',
 		size: 1,
 		src: 'https://avatars.githubusercontent.com/u/38397958?v=4',
-		tooltip: {
-			title: '關鍵買入時機',
-			content: '此處出現黃金交叉，是理想的買入時機',
-			date: dayjs().subtract(2, 'day').format('YYYY/MM/DD'),
-			price: '$10.17',
-			image: 'https://img.freepik.com/free-vector/golden-cross-pattern-candlestick-chart_78370-1696.jpg',
-		},
+		tooltip: 'test',
 	},
 ];
 
-const ClickableMarkerDemo = () => {
+const Chart = () => {
 	const chartRef = useRef<HTMLDivElement>(null);
+	const { openTooltip, closeTooltip } = useMarkerTooltipStore(store => store);
 
 	useEffect(() => {
 		if (!chartRef.current) return;
@@ -85,27 +82,36 @@ const ClickableMarkerDemo = () => {
 		chart.timeScale().fitContent();
 
 		// 創建可點擊標記
-		const _clickableMarkers = createClickableMarkers<Time>(chart, series, mockMarkers, {
+		createClickableMarkers<Time>(chart, series, mockMarkers, {
 			onClick: marker => {
 				console.log('標記被點擊:', marker);
 			},
+			onOpenTooltip: openTooltip,
+			onCloseTooltip: closeTooltip,
 		});
 
 		return () => {
 			chart.remove();
 		};
-	}, []);
+	}, [closeTooltip, openTooltip]);
 
+	return <div ref={chartRef} className="w-full h-[400px]" />;
+};
+
+const ClickableMarkerDemo = () => {
 	return (
-		<div className="w-full rounded-lg overflow-hidden">
-			<h2 className="text-xl font-bold mb-4">可點擊標記示例</h2>
-			<p className="text-gray-400 mb-4">點擊圖表中的標記查看更多信息</p>
-			<div ref={chartRef} className="w-full h-[400px]" />
-			<div className="mt-4 text-sm text-gray-400">
-				<p>1. 紅色：賣出信號</p>
-				<p>2. 綠色：買入信號</p>
+		<MarkerTooltipProvider>
+			<div className="w-full rounded-lg overflow-hidden">
+				<h2 className="text-xl font-bold mb-4">可點擊標記示例</h2>
+				<p className="text-gray-400 mb-4">點擊圖表中的標記查看更多信息</p>
+				<Chart />
+				<MarkerTooltip />
+				<div className="mt-4 text-sm text-gray-400">
+					<p>1. 紅色：賣出信號</p>
+					<p>2. 綠色：買入信號</p>
+				</div>
 			</div>
-		</div>
+		</MarkerTooltipProvider>
 	);
 };
 
