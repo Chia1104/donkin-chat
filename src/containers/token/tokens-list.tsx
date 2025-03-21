@@ -161,7 +161,7 @@ const List = ({ display }: { display: 'group' | 'single' }) => {
 	const [searchParams] = useAISearchParams();
 	const queryResult = useQueryTokensHot(
 		{
-			page_size: 10,
+			page_size: 20,
 			sort_by: searchParams.sort,
 			order: searchParams.order,
 		},

@@ -157,5 +157,12 @@
 			"title": "Token not found",
 			"description": "The token you are trying to access does not exist or has been removed. Please check your link is correct, or try connecting your wallet to view your token."
 		}
+	},
+	"ChartExamples": {
+		"title": "Chart Examples",
+		"candlestickTitle": "Candlestick Chart (K-Line)",
+		"candlestickDescription": "This candlestick chart shows price movements over time. Green candles indicate upward price movements, while red candles represent downward movements.",
+		"clickableMarkersTitle": "Clickable Markers",
+		"clickableMarkersDescription": "This example demonstrates how to add interactive markers to charts that display detailed information when clicked."
 	}
 }

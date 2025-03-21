@@ -11,7 +11,12 @@ import { IntervalFilter } from '@/libs/token/enums/interval-filter.enum';
 import { useTokenSearchParams } from '@/libs/token/hooks/useTokenSearchParams';
 import dayjs from '@/utils/dayjs';
 
-import { createSeriesMarkers } from '../chart/plugins/series-marker';
+import { createClickableMarkers } from '../chart/plugins/clickable-marker/core';
+import {
+	MarkerTooltipProvider,
+	MarkerTooltip,
+	useMarkerTooltipStore,
+} from '../chart/plugins/clickable-marker/marker-tooltip';
 import TradingChart from '../chart/trading-chart';
 
 const _MOCK_DATA = [
@@ -59,6 +64,7 @@ const MetaInfo = () => {
 const Chart = () => {
 	const locale = useLocale();
 	const [searchParams] = useTokenSearchParams();
+	const { openTooltip, closeTooltip } = useMarkerTooltipStore(store => store);
 	return (
 		<TradingChart
 			height={350}
@@ -88,22 +94,36 @@ const Chart = () => {
 					{ open: 10.47, high: 11.39, low: 10.4, close: 10.81, time: dayjs().add(6, 'day').format('YYYY-MM-DD') },
 				]);
 				chart.timeScale().fitContent();
-				createSeriesMarkers(series, [
+				createClickableMarkers(
+					chart,
+					series,
+					[
+						{
+							time: dayjs().format('YYYY-MM-DD'),
+							position: 'aboveBar',
+							color: '#FFFFFF73',
+							src: '/assets/images/buy-icon.svg',
+							size: 1,
+							tooltip: 'test 1',
+						},
+						{
+							time: dayjs().format('YYYY-MM-DD'),
+							position: 'aboveBar',
+							color: '#FFFFFF73',
+							src: '/assets/images/sell-icon.svg',
+							size: 1,
+							text: '+35',
+							tooltip: 'test 2',
+						},
+					],
 					{
-						time: dayjs().format('YYYY-MM-DD'),
-						position: 'belowBar',
-						color: searchParams.mark ? '#542029' : '#AE3241',
-						src: 'https://avatars.githubusercontent.com/u/38397958?v=4',
-						size: 1,
+						onClick: marker => {
+							console.log('標記被點擊:', marker);
+						},
+						onOpenTooltip: openTooltip,
+						onCloseTooltip: closeTooltip,
 					},
-					{
-						time: dayjs().format('YYYY-MM-DD'),
-						position: 'belowBar',
-						color: searchParams.mark ? '#542029' : '#AE3241',
-						src: 'https://avatars.githubusercontent.com/u/38397958?v=4',
-						size: 1,
-					},
-				]);
+				);
 			}}
 			initOptions={{
 				autoSize: true,
@@ -135,7 +155,10 @@ const Candlestick = () => {
 				<MetaInfo />
 				<DateFilter />
 			</header>
-			<Chart />
+			<MarkerTooltipProvider>
+				<Chart />
+				<MarkerTooltip />
+			</MarkerTooltipProvider>
 		</section>
 	);
 };
