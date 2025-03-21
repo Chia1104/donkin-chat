@@ -100,17 +100,16 @@ const Chart = () => {
 					[
 						{
 							time: dayjs().format('YYYY-MM-DD'),
-							position: 'belowBar',
-							color: searchParams.mark ? '#542029' : '#AE3241',
+							position: 'aboveBar',
+							color: '#FFFFFF73',
 							src: 'https://avatars.githubusercontent.com/u/38397958?v=4',
 							size: 1,
-							text: 'test 1',
 							tooltip: 'test 1',
 						},
 						{
 							time: dayjs().format('YYYY-MM-DD'),
-							position: 'belowBar',
-							color: searchParams.mark ? '#542029' : '#AE3241',
+							position: 'aboveBar',
+							color: '#FFFFFF73',
 							src: 'https://avatars.githubusercontent.com/u/38397958?v=4',
 							size: 1,
 							text: 'test 2',

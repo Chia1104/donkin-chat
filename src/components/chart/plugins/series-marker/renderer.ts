@@ -22,7 +22,7 @@ export interface SeriesMarkerRendererDataItem extends TimedValue {
 	internalId: number;
 	externalId?: string;
 	text?: SeriesMarkerText;
-	src: string;
+	src?: string;
 }
 
 export interface SeriesMarkerRendererData {
@@ -126,9 +126,9 @@ function drawShape(
 	item: SeriesMarkerRendererDataItem,
 	ctx: CanvasRenderingContext2D,
 	coordinates: BitmapShapeItemCoordinates,
-	src: string,
+	src?: string,
 ): void {
-	if (item.size === 0) {
+	if (item.size === 0 || !src) {
 		return;
 	}
 
