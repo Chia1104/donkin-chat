@@ -37,6 +37,19 @@ export class SeriesMarkersRenderer implements IPrimitivePaneRenderer {
 	private _fontFamily = '';
 	private _font = '';
 	private _defaultFontFamily = `-apple-system, BlinkMacSystemFont, 'Trebuchet MS', Roboto, Ubuntu, sans-serif`;
+	private _imageCache: Record<string, HTMLImageElement> = {};
+
+	private getImageCacheBySrc(src: string) {
+		if (this._imageCache[src]) {
+			return this._imageCache[src];
+		}
+
+		return null;
+	}
+
+	private setImageCacheBySrc(src: string, image: HTMLImageElement): void {
+		this._imageCache[src] = image;
+	}
 
 	private makeFont(size: number, family?: string, style?: string): string {
 		if (style !== undefined) {
@@ -89,7 +102,12 @@ export class SeriesMarkersRenderer implements IPrimitivePaneRenderer {
 				item.text.height = this._fontSize;
 				item.text.x = (item.x - item.text.width / 2) as Coordinate;
 			}
-			drawItem(item, ctx, horizontalPixelRatio, verticalPixelRatio);
+			let imageCache = item.src ? this.getImageCacheBySrc(item.src) : null;
+			if (!imageCache && item.src) {
+				this.setImageCacheBySrc(item.src, new Image());
+				imageCache = this.getImageCacheBySrc(item.src);
+			}
+			drawItem(item, ctx, horizontalPixelRatio, verticalPixelRatio, imageCache);
 		}
 	}
 }
@@ -113,13 +131,20 @@ function drawItem(
 	ctx: CanvasRenderingContext2D,
 	horizontalPixelRatio: number,
 	verticalPixelRatio: number,
+	imageCache: HTMLImageElement | null,
 ): void {
 	ctx.fillStyle = item.color;
 	if (item.text !== undefined) {
 		drawText(ctx, item.text.content, item.text.x, item.text.y, horizontalPixelRatio, verticalPixelRatio);
 	}
 
-	drawShape(item, ctx, bitmapShapeItemCoordinates(item, horizontalPixelRatio, verticalPixelRatio), item.src);
+	drawShape(
+		item,
+		ctx,
+		bitmapShapeItemCoordinates(item, horizontalPixelRatio, verticalPixelRatio),
+		item.src,
+		imageCache,
+	);
 }
 
 function drawShape(
@@ -127,10 +152,11 @@ function drawShape(
 	ctx: CanvasRenderingContext2D,
 	coordinates: BitmapShapeItemCoordinates,
 	src?: string,
+	imageCache?: HTMLImageElement | null,
 ): void {
 	if (item.size === 0 || !src) {
 		return;
 	}
 
-	drawAvatar(ctx, coordinates, item.size, src);
+	drawAvatar(ctx, coordinates, item.size, src, imageCache ?? null);
 }
