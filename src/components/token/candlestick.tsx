@@ -17,7 +17,6 @@ import {
 	MarkerTooltip,
 	useMarkerTooltipStore,
 } from '../chart/plugins/clickable-marker/marker-tooltip';
-import { createSeriesMarkers } from '../chart/plugins/series-marker';
 import TradingChart from '../chart/trading-chart';
 
 const _MOCK_DATA = [
