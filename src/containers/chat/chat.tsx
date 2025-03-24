@@ -2,6 +2,7 @@
 
 import { memo } from 'react';
 
+import { useChat } from '@ai-sdk/react';
 import { Card, CardBody, CardFooter } from '@heroui/card';
 import { ScrollShadow } from '@heroui/scroll-shadow';
 import { AnimatePresence, motion } from 'framer-motion';
@@ -10,7 +11,6 @@ import DefaultPrompt from '@/components/chat/default-prompt';
 import MessageCard from '@/components/chat/message-card';
 import PromptInput from '@/components/chat/prompt-input';
 import { useChatStore } from '@/contexts/chat-provider';
-import { useChat } from '@/libs/ai/hooks/useChat';
 import { cn } from '@/utils/cn';
 
 const useUIChat = () => {

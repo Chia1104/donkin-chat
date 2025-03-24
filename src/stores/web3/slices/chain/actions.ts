@@ -4,7 +4,7 @@ import type { StateCreator } from 'zustand/vanilla';
 
 import type { ChainID } from '@/libs/web3/enums/chain.enum';
 import { isEVMChainID, isSVMChainID } from '@/libs/web3/enums/chain.enum';
-import { setNamespace } from '@/utils/storeDebug';
+import { setNamespace } from '@/stores/utils/storeDebug';
 
 import type { Web3Store } from '../../store';
 

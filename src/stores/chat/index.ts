@@ -1,4 +1,4 @@
-import { produce } from 'immer';
+import { immer } from 'zustand/middleware/immer';
 import { createStore } from 'zustand/vanilla';
 
 export interface ChatState {
@@ -25,19 +25,11 @@ export const defaultInitState: ChatState = {
 
 export const createChatStore = (initState?: Partial<ChatState>) => {
 	const state = Object.assign({ ...defaultInitState }, initState);
-	return createStore<ChatStore>()(set => ({
-		...state,
-		updatePreview: (preview: any) =>
-			set(state =>
-				produce(state, draft => {
-					draft.preview = preview;
-				}),
-			),
-		setIsPreviewOnly: isPreviewOnly =>
-			set(state =>
-				produce(state, draft => {
-					draft.isPreviewOnly = isPreviewOnly ?? false;
-				}),
-			),
-	}));
+	return createStore<ChatStore>()(
+		immer(set => ({
+			...state,
+			updatePreview: (preview: any) => set(state => (state.preview = preview)),
+			setIsPreviewOnly: isPreviewOnly => (state.isPreviewOnly = isPreviewOnly ?? false),
+		})),
+	);
 };
