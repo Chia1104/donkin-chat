@@ -3,6 +3,7 @@
 import type { ReactNode } from 'react';
 
 import { CardBody } from '@heroui/card';
+import { Checkbox } from '@heroui/checkbox';
 import { Divider } from '@heroui/divider';
 import { ScrollShadow } from '@heroui/scroll-shadow';
 import { useTranslations } from 'next-intl';
@@ -11,9 +12,10 @@ import { useParams } from 'next/navigation';
 import { HeaderPrimitive } from '@/components/chat/preview/ai-signal/info-card';
 import { HotspotProgress } from '@/components/chat/preview/ai-signal/info-card';
 import Candlestick from '@/components/token/candlestick';
-import RankingSection from '@/components/token/ranking-section';
+import { FilterAction } from '@/components/token/filter-action';
 import Card from '@/components/ui/card';
 import { useQueryToken } from '@/libs/token/hooks/useQueryToken';
+import { useTokenSearchParams } from '@/libs/token/hooks/useTokenSearchParams';
 import { useChatStore } from '@/stores/chat';
 import { cn } from '@/utils/cn';
 import { truncateMiddle, formatLargeNumber } from '@/utils/format';
@@ -70,6 +72,26 @@ const Stock = ({
 	);
 };
 
+const Marker = () => {
+	const [searchParams, setSearchParams] = useTokenSearchParams();
+	const t = useTranslations('token');
+
+	return (
+		<Checkbox
+			size="sm"
+			classNames={{
+				base: 'items-center',
+				label: 'items-center flex mt-1',
+			}}
+			isSelected={searchParams.mark}
+			onValueChange={e => setSearchParams({ mark: e })}
+		>
+			{t('ranking.mark-smart')}
+			<FilterAction />
+		</Checkbox>
+	);
+};
+
 const Detail = () => {
 	const t = useTranslations('preview.ai-signal');
 	const tToken = useTranslations('token');
@@ -84,41 +106,45 @@ const Detail = () => {
 			<div className="w-full h-full flex flex-col">
 				<ScrollShadow className="w-full h-[calc(100vh-72px)]">
 					<div className="flex flex-col gap-5 w-full">
-						<header className="flex items-center gap-5">
-							<HeaderPrimitive
-								avatarProps={{
-									size: 'lg',
-									className: 'min-w-8 min-h-8 w-8 h-8',
-								}}
-								classNames={{
-									label: 'text-[22px] font-normal mr-2',
-									labelWrapper: 'flex-row items-center',
-								}}
-								injects={{
-									afterLabel: (
-										<span className="flex items-center gap-3">
-											<Divider orientation="vertical" className="h-3" />
-											<p className="text-success text-[12px] font-normal">2h</p>
-											<p className="text-[12px] font-normal">
-												{truncateMiddle(
-													queryResult.data?.address ?? '',
-													queryResult.data?.address ? queryResult.data?.address.length / 3 : 5,
-												)}
-											</p>
-										</span>
-									),
-								}}
-								isLoading={queryResult.isLoading}
-								meta={{
-									name: queryResult.data?.name ?? '',
-									avatar: queryResult.data?.logo_uri ?? '',
-									chain: queryResult.data?.symbol ?? '',
-									token: queryResult.data?.address ?? '',
-								}}
-							/>
+						<header className="flex justify-between items-center">
+							<section className="flex items-center gap-5">
+								<HeaderPrimitive
+									avatarProps={{
+										size: 'lg',
+										className: 'min-w-8 min-h-8 w-8 h-8',
+									}}
+									classNames={{
+										label: 'text-[22px] font-normal mr-2',
+										labelWrapper: 'flex-row items-center',
+									}}
+									injects={{
+										afterLabel: (
+											<span className="flex items-center gap-3">
+												<Divider orientation="vertical" className="h-3" />
+												<p className="text-success text-[12px] font-normal">2h</p>
+												<p className="text-[12px] font-normal">
+													{truncateMiddle(
+														queryResult.data?.address ?? '',
+														queryResult.data?.address ? queryResult.data?.address.length / 3 : 5,
+													)}
+												</p>
+											</span>
+										),
+									}}
+									isLoading={queryResult.isLoading}
+									meta={{
+										name: queryResult.data?.name ?? '',
+										avatar: queryResult.data?.logo_uri ?? '',
+										chain: queryResult.data?.symbol ?? '',
+										token: queryResult.data?.address ?? '',
+									}}
+								/>
+							</section>
+							<section>
+								<Marker />
+							</section>
 						</header>
 						<Candlestick />
-						<RankingSection />
 						<Card className="grid grid-cols-6 gap-2">
 							<Hotspot x={0} telegram={0} />
 							<CardBody className="col-span-4 grid grid-cols-4 gap-2">

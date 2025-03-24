@@ -67,7 +67,7 @@ const Chart = () => {
 	const { openTooltip, closeTooltip } = useMarkerTooltipStore(store => store);
 	return (
 		<TradingChart
-			height={350}
+			height={485}
 			onInit={chart => {
 				const series = chart.addSeries(CandlestickSeries, {
 					upColor: searchParams.mark ? '#2A4B3E' : '#45926D',
@@ -150,7 +150,7 @@ const Chart = () => {
 
 const Candlestick = () => {
 	return (
-		<section className="w-full h-[490px] rounded-lg flex flex-col gap-10">
+		<section className="w-full h-[625px] rounded-lg flex flex-col gap-10">
 			<header className="flex items-center justify-between">
 				<MetaInfo />
 				<DateFilter />
