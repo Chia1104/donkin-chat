@@ -10,7 +10,7 @@ import { AnimatePresence, motion } from 'framer-motion';
 import DefaultPrompt from '@/components/chat/default-prompt';
 import MessageCard from '@/components/chat/message-card';
 import PromptInput from '@/components/chat/prompt-input';
-import { useChatStore } from '@/contexts/chat-provider';
+import { useChatStore } from '@/stores/chat';
 import { cn } from '@/utils/cn';
 
 const useUIChat = () => {

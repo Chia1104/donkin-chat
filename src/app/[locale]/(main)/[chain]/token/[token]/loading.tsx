@@ -1,7 +1,7 @@
 'use client';
 
 import AppLoading from '@/components/commons/app-loading';
-import { useChatStore } from '@/contexts/chat-provider';
+import { useChatStore } from '@/stores/chat';
 import { cn } from '@/utils/cn';
 
 const Loading = () => {
