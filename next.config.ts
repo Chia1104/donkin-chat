@@ -46,6 +46,7 @@ const nextConfig: NextConfig = {
 	experimental: {
 		optimizePackageImports: ['lodash-es'],
 		reactCompiler: true,
+		viewTransition: true,
 		webpackBuildWorker: true,
 		authInterrupts: true,
 		turbo: {
