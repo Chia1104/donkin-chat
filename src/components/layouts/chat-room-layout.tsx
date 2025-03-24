@@ -9,8 +9,6 @@ import dynamic from 'next/dynamic';
 
 import Footer from '@/components/commons/footer';
 import { useRouter } from '@/i18n/routing';
-import { QueryType } from '@/libs/ai/enums/queryType.enum';
-import { useAISearchParams } from '@/libs/ai/hooks/useAISearchParams';
 import { noto_sans } from '@/themes/fonts';
 import { cn } from '@/utils/cn';
 
@@ -29,7 +27,6 @@ interface Props {
 const ChatRoomLayout = (props: Props) => {
 	const t = useTranslations('nav');
 	const router = useRouter();
-	const [_searchParams, setSearchParams] = useAISearchParams();
 
 	return (
 		<>
@@ -60,9 +57,8 @@ const ChatRoomLayout = (props: Props) => {
 					<NavbarItem
 						aria-label="AI Signal"
 						className="cursor-pointer"
-						// isActive={searchParams.q === QueryType.Tokens}
 						onClick={() => {
-							void setSearchParams({ q: QueryType.Tokens });
+							void router.push('/');
 						}}
 					>
 						{t('all-tokens')}

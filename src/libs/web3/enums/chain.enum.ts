@@ -1,5 +1,12 @@
 import { z } from 'zod';
 
+export const Chain = {
+	Solana: 'solana',
+	Ethereum: 'ethereum',
+} as const;
+
+export type Chain = (typeof Chain)[keyof typeof Chain];
+
 export const ChainID = {
 	ETH: 1,
 	BNB: 56,

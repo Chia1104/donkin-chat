@@ -78,8 +78,10 @@ const FilterForm = (props: Props) => {
 										aria-label="type"
 										value={field.value ?? []}
 										onChange={field.onChange}
+										radius="md"
 									>
 										<Checkbox
+											radius="md"
 											classNames={{
 												base: 'bg-background rounded-lg m-0 max-w-full',
 												wrapper:
@@ -98,6 +100,7 @@ const FilterForm = (props: Props) => {
 													'bg-transparent group-data-[hover=true]:before:bg-background before:border-white before:border-1 before:rounded-sm after:rounded-sm rounded-sm',
 												label: 'font-medium text-xs',
 											}}
+											radius="md"
 											size="sm"
 											value={Address.Whale}
 										>
@@ -123,6 +126,7 @@ const FilterForm = (props: Props) => {
 										<FormControl className="w-full">
 											<Input
 												size="sm"
+												radius="md"
 												type="number"
 												className="w-full"
 												placeholder={tUtils('enter')}
@@ -148,6 +152,7 @@ const FilterForm = (props: Props) => {
 										<FormControl className="w-full">
 											<Input
 												size="sm"
+												radius="md"
 												type="number"
 												className="w-full"
 												placeholder={tUtils('enter')}
@@ -184,6 +189,7 @@ const FilterForm = (props: Props) => {
 										aria-label="type"
 										value={field.value ?? []}
 										onChange={field.onChange}
+										radius="md"
 									>
 										<Checkbox
 											classNames={{
@@ -193,6 +199,7 @@ const FilterForm = (props: Props) => {
 												label: 'font-medium text-xs',
 											}}
 											size="sm"
+											radius="md"
 											value={Order.KOL}
 										>
 											<span className="flex items-center gap-2">{t('ranking.filter.type-kol')} </span>
@@ -215,6 +222,7 @@ const FilterForm = (props: Props) => {
 										<FormControl className="w-full">
 											<Input
 												size="sm"
+												radius="md"
 												type="number"
 												className="w-full"
 												placeholder={tUtils('enter')}
@@ -240,6 +248,7 @@ const FilterForm = (props: Props) => {
 										<FormControl className="w-full">
 											<Input
 												size="sm"
+												radius="md"
 												type="number"
 												className="w-full"
 												placeholder={tUtils('enter')}
