@@ -19,7 +19,7 @@ export const FilterAction = () => {
 	const locale = useLocale();
 
 	return (
-		<Popover placement="top-start" isOpen={isOpen} onOpenChange={setIsOpen}>
+		<Popover radius="md" placement="top-start" isOpen={isOpen} onOpenChange={setIsOpen}>
 			<PopoverTrigger>
 				<Button size="sm" isIconOnly variant="light" aria-label="Filter" radius="full" isDisabled={!searchParams.mark}>
 					<FilterAltOutlinedIcon
