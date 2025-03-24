@@ -55,7 +55,7 @@ export const request = (defaultOptions?: RequestOptions) => {
 	const { requestMode = 'proxy' } = defaultOptions || {};
 
 	return ky.extend({
-		timeout: 10_000,
+		timeout: 30_000,
 		credentials: 'include',
 		hooks: {
 			beforeRequest: [
