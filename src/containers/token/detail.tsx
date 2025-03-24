@@ -1,23 +1,28 @@
 'use client';
 
 import type { ReactNode } from 'react';
+import { useMemo } from 'react';
 
 import { CardBody } from '@heroui/card';
 import { Checkbox } from '@heroui/checkbox';
 import { Divider } from '@heroui/divider';
 import { ScrollShadow } from '@heroui/scroll-shadow';
+import { Skeleton } from '@heroui/skeleton';
 import { useTranslations } from 'next-intl';
 import { useParams } from 'next/navigation';
 
 import { HeaderPrimitive } from '@/components/chat/preview/ai-signal/info-card';
 import { HotspotProgress } from '@/components/chat/preview/ai-signal/info-card';
+import { ErrorBoundary } from '@/components/commons/error-boundary';
 import Candlestick from '@/components/token/candlestick';
 import { FilterAction } from '@/components/token/filter-action';
 import Card from '@/components/ui/card';
+import { useQueryOhlcv } from '@/libs/birdeye/hooks/useQueryOhlcv';
 import { useQueryToken } from '@/libs/token/hooks/useQueryToken';
 import { useTokenSearchParams } from '@/libs/token/hooks/useTokenSearchParams';
 import { useChatStore } from '@/stores/chat';
 import { cn } from '@/utils/cn';
+import dayjs from '@/utils/dayjs';
 import { truncateMiddle, formatLargeNumber } from '@/utils/format';
 
 const Hotspot = ({ x, telegram }: { x: number; telegram: number }) => {
@@ -50,6 +55,7 @@ const Stock = ({
 	label,
 	value,
 	classNames,
+	isPending,
 }: {
 	label: ReactNode;
 	value: ReactNode;
@@ -58,6 +64,7 @@ const Stock = ({
 		label?: string;
 		value?: string;
 	};
+	isPending?: boolean;
 }) => {
 	return (
 		<div
@@ -67,7 +74,11 @@ const Stock = ({
 			)}
 		>
 			<h4 className={cn('text-foreground-500 text-xs font-normal leading-3', classNames?.label)}>{label}</h4>
-			<span className={cn('text-sm font-normal leading-[14px]', classNames?.value)}>{value}</span>
+			{isPending ? (
+				<Skeleton className="w-10 h-3 rounded-full" />
+			) : (
+				<span className={cn('text-sm font-normal leading-[14px]', classNames?.value)}>{value}</span>
+			)}
 		</div>
 	);
 };
@@ -98,7 +109,37 @@ const Detail = () => {
 	const tToken = useTranslations('token');
 	const params = useParams<{ chain: string; token: string }>();
 	const queryResult = useQueryToken(params.token);
+	const [searchParams] = useTokenSearchParams();
 	const isPreviewOnly = useChatStore(state => state.isPreviewOnly);
+
+	const ohlcv = useQueryOhlcv(
+		{
+			data: {
+				address: queryResult.data?.address ?? '',
+				type: searchParams.interval,
+				time_from: dayjs().subtract(1, 'week').unix(),
+				time_to: dayjs().unix(),
+			},
+		},
+		{
+			enabled: queryResult.isSuccess,
+			refetchInterval: 15_000,
+		},
+	);
+
+	const ohlcvData = useMemo(() => {
+		if (!ohlcv.data?.data || !Array.isArray(ohlcv.data?.data)) {
+			return [];
+		}
+		return ohlcv.data?.data.map(item => ({
+			open: item.o,
+			high: item.h,
+			low: item.l,
+			close: item.c,
+			volume: item.v,
+			unix: item.unixTime,
+		}));
+	}, [ohlcv.data?.data]);
 
 	return (
 		<section
@@ -145,20 +186,32 @@ const Detail = () => {
 								<Marker />
 							</section>
 						</header>
-						<Candlestick />
+						<ErrorBoundary>
+							<Candlestick
+								meta={{
+									price: queryResult.data?.price ?? 0,
+									change: queryResult.data?.change ?? 0,
+								}}
+								data={ohlcvData}
+								isPending={ohlcv.isLoading}
+								isMetaPending={queryResult.isLoading}
+							/>
+						</ErrorBoundary>
 						<Card className="grid grid-cols-6 gap-2">
 							<Hotspot x={0} telegram={0} />
 							<CardBody className="col-span-4 grid grid-cols-4 gap-2">
 								<Stock
 									label={t('card.stock.marketCap')}
 									value={`$ ${formatLargeNumber(queryResult.data?.market_cap ?? 0)}`}
+									isPending={queryResult.isLoading}
 								/>
 								<Stock
 									label={t('card.stock.pool')}
 									value={`$ ${formatLargeNumber(queryResult.data?.liquidity ?? 0)}`}
+									isPending={queryResult.isLoading}
 								/>
-								<Stock label={tToken('holder')} value={formatLargeNumber(0)} />
-								<Stock label={tToken('wallets')} value={formatLargeNumber(0)} />
+								<Stock label={tToken('holder')} value={formatLargeNumber(0)} isPending={queryResult.isLoading} />
+								<Stock label={tToken('wallets')} value={formatLargeNumber(0)} isPending={queryResult.isLoading} />
 							</CardBody>
 						</Card>
 					</div>
