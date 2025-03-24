@@ -21,11 +21,11 @@ import InfoCard from '@/components/chat/preview/ai-signal/info-card';
 import { AsyncQuery } from '@/components/commons/async-query';
 import { ErrorBoundary } from '@/components/commons/error-boundary';
 import { HeroButton } from '@/components/ui/hero-button';
-import { useChatStore } from '@/contexts/chat-provider';
 import { useMediaQuery } from '@/hooks/useMediaQuery';
 import { TokenSort } from '@/libs/ai/enums/tokenSort.enum';
 import { useAISearchParams } from '@/libs/ai/hooks/useAISearchParams';
 import { useQueryTokensHot } from '@/libs/token/hooks/useQueryToken';
+import { useChatStore } from '@/stores/chat';
 import { cn } from '@/utils/cn';
 
 import AscIcon from '~/public/assets/images/asc.svg';

@@ -9,7 +9,6 @@ export const EventStreamContentType = 'text/event-stream';
 
 const LastEventId = 'last-event-id';
 
-// eslint-disable-next-line no-undef
 export interface FetchEventSourceInit extends RequestInit {
 	/** The Fetch function to use. Defaults to window.fetch */
 	fetch?: typeof fetch;
@@ -52,7 +51,6 @@ export interface FetchEventSourceInit extends RequestInit {
 }
 
 export function fetchEventSource(
-	// eslint-disable-next-line no-undef
 	input: RequestInfo,
 	{
 		signal: inputSignal,
@@ -83,21 +81,22 @@ export function fetchEventSource(
 
 				await inputOnOpen(response);
 
-				await getBytes(
-					// eslint-disable-next-line @typescript-eslint/no-non-null-assertion
-					response.body!,
-					getLines(
-						getMessages(id => {
-							if (id) {
-								// store the id and send it back on the next retry:
-								headers[LastEventId] = id;
-							} else {
-								// don't send the last-event-id header anymore:
-								delete headers[LastEventId];
-							}
-						}, onmessage),
-					),
-				);
+				if (response.body) {
+					await getBytes(
+						response.body,
+						getLines(
+							getMessages(id => {
+								if (id) {
+									// store the id and send it back on the next retry:
+									headers[LastEventId] = id;
+								} else {
+									// don't send the last-event-id header anymore:
+									delete headers[LastEventId];
+								}
+							}, onmessage),
+						),
+					);
+				}
 
 				onclose?.();
 				resolve();

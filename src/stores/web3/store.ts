@@ -4,9 +4,9 @@ import { shallow } from 'zustand/shallow';
 import { createWithEqualityFn } from 'zustand/traditional';
 import type { StateCreator } from 'zustand/vanilla';
 
-import { createDevtools } from '../middleware/createDevtools';
-import type { Web3StoreState } from './initialState';
-import { initialWeb3StoreState } from './initialState';
+import { createDevtools } from '../middleware/create-devtools';
+import type { Web3StoreState } from './initial-state';
+import { initialWeb3StoreState } from './initial-state';
 import type { Web3ChainAction } from './slices/chain/actions';
 import { web3ChainActions } from './slices/chain/actions';
 

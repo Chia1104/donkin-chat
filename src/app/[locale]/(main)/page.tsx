@@ -3,9 +3,9 @@
 import { AnimatePresence } from 'framer-motion';
 import dynamic from 'next/dynamic';
 
-import { useChatStore } from '@/contexts/chat-provider';
 import { QueryType } from '@/libs/ai/enums/queryType.enum';
 import { useAISearchParams } from '@/libs/ai/hooks/useAISearchParams';
+import { useChatStore } from '@/stores/chat';
 import { cn } from '@/utils/cn';
 
 const TokensList = dynamic(() => import('@/containers/token/tokens-list'));

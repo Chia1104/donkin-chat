@@ -13,8 +13,8 @@ import { HotspotProgress } from '@/components/chat/preview/ai-signal/info-card';
 import Candlestick from '@/components/token/candlestick';
 import RankingSection from '@/components/token/ranking-section';
 import Card from '@/components/ui/card';
-import { useChatStore } from '@/contexts/chat-provider';
 import { useQueryToken } from '@/libs/token/hooks/useQueryToken';
+import { useChatStore } from '@/stores/chat';
 import { cn } from '@/utils/cn';
 import { truncateMiddle, formatLargeNumber } from '@/utils/format';
 
