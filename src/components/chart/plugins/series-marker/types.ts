@@ -36,7 +36,7 @@ export interface SeriesMarker<TimeType> {
 	/**
 	 * The avatar of src.
 	 */
-	src: string;
+	src?: string;
 }
 
 export type MarkerPositions = Record<SeriesMarkerPosition, boolean>;

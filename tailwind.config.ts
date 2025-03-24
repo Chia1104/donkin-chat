@@ -14,7 +14,7 @@ const config: Config = {
 		extend: {
 			colors: {
 				primary: {
-					DEFAULT: '#FF533D',
+					DEFAULT: 'rgba(53, 205, 255, 1)',
 				},
 				success: {
 					DEFAULT: '#4caf50',
@@ -35,13 +35,13 @@ const config: Config = {
 					transparent: 'rgba(255,152,0,0.75)',
 				},
 				danger: {
-					DEFAULT: '#ff4056',
+					DEFAULT: '#E75A5B',
 					light: '#ff7961',
 					dark: '#ba000d',
 					transparent: 'rgba(244,67,54,0.75)',
 				},
 				root: {
-					DEFAULT: '#101010',
+					DEFAULT: 'rgba(10, 24, 42, 1)',
 				},
 				light: {
 					DEFAULT: '#fafafa',
@@ -55,11 +55,23 @@ const config: Config = {
 					dark: '#000000',
 					transparent: 'rgba(33,33,33,0.75)',
 				},
+				description: {
+					DEFAULT: 'rgba(255, 255, 255, 0.45)',
+				},
 			},
 			borderRadius: {
 				lg: 'var(--radius)',
 				md: 'calc(var(--radius) - 2px)',
 				sm: 'calc(var(--radius) - 4px)',
+			},
+			typography: {
+				DEFAULT: {
+					css: {
+						p: {
+							color: '#FFFFFF73',
+						},
+					},
+				},
 			},
 		},
 	},
@@ -72,33 +84,59 @@ const config: Config = {
 				dark: {
 					colors: {
 						primary: {
-							DEFAULT: '#FF533D',
+							DEFAULT: 'rgba(53, 205, 255, 1)',
 						},
 						danger: {
-							DEFAULT: '#FF4056',
+							DEFAULT: '#E75A5B',
 						},
 						background: {
-							DEFAULT: '#121213',
+							DEFAULT: '#FFFFFF14',
 						},
-						// content1: {
-						// 	DEFAULT: '#292828',
-						// },
+						default: {
+							DEFAULT: 'rgba(35, 48, 64, 1)',
+							400: '#FFFFFF14',
+						},
+						content1: {
+							DEFAULT: 'rgba(21,30,44)',
+							300: 'rgba(255, 255, 255, 0.03)',
+						},
+					},
+					layout: {
+						borderWidth: {
+							medium: '1px',
+						},
+						radius: {
+							small: '4px',
+						},
 					},
 				},
 				light: {
 					colors: {
 						primary: {
-							DEFAULT: '#FF533D',
+							DEFAULT: 'rgba(53, 205, 255, 1)',
 						},
 						danger: {
-							DEFAULT: '#FF4056',
+							DEFAULT: '#E75A5B',
 						},
 						background: {
-							DEFAULT: '#121213',
+							DEFAULT: '#FFFFFF14',
 						},
-						// content1: {
-						// 	DEFAULT: '#292828',
-						// },
+						default: {
+							DEFAULT: 'rgba(35, 48, 64, 1)',
+							400: '#FFFFFF14',
+						},
+						content1: {
+							DEFAULT: 'rgba(11,13,26)',
+							300: 'rgba(255, 255, 255, 0.03)',
+						},
+					},
+					layout: {
+						borderWidth: {
+							medium: '1px',
+						},
+						radius: {
+							small: '4px',
+						},
 					},
 				},
 			},

@@ -21,7 +21,9 @@
 		/** Transpile using Bundler (not tsc) */
 		"module": "Preserve",
 		"moduleResolution": "Bundler",
-		"noEmit": true
+		"noEmit": true,
+
+		"allowArbitraryExtensions": true
 	},
 	"exclude": ["node_modules", "build", "dist", ".next", ".expo", "vitest.config.mts.timestamp-*.mjs"]
 }

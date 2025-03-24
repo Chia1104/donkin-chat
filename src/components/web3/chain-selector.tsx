@@ -8,7 +8,7 @@ import { Select, SelectItem } from '@heroui/select';
 import BNBIcon from '@/components/icons/bnb-icon';
 import EthereumIcon from '@/components/icons/ethereum-icon';
 import SolanaIcon from '@/components/icons/solana-icon';
-import type { EVMChainID } from '@/libs/web3/enums/chain.enum';
+import type { ChainID } from '@/libs/web3/enums/chain.enum';
 import { ChainSymbol } from '@/libs/web3/enums/chain.enum';
 import { useWeb3Store } from '@/stores/web3/store';
 
@@ -34,6 +34,19 @@ const ChainIcon = ({ symbol }: { symbol: ChainSymbol }) => {
 
 const ChainSelector = () => {
 	const { supportedVM, chainId, switchChain } = useWeb3Store();
+	const chainIdSnapshot = React.useRef(chainId);
+
+	const handleChange = React.useCallback(
+		(chainId: ChainID) => {
+			chainIdSnapshot.current = chainId;
+			switchChain(chainId);
+		},
+		[switchChain],
+	);
+
+	const selectedKey = React.useMemo(() => {
+		return `${chainId ?? chainIdSnapshot.current}`;
+	}, [chainId]);
 
 	const chains: Chain[] = React.useMemo(() => {
 		return supportedVM.map(vm => ({
@@ -48,12 +61,16 @@ const ChainSelector = () => {
 		<Select
 			aria-label="Network Selector"
 			classNames={{
-				trigger: 'border-1 p-2',
+				trigger:
+					'border-1 p-2 border-default data-[hover=true]:border-default data-[open=true]:border-default data-[focus=true]:border-default',
+				popoverContent: 'bg-[rgba(28,_38,_51,_1)] shadow-none rounded-sm px-0',
+				listbox: 'px-0',
 			}}
 			selectionMode="single"
 			variant="bordered"
 			radius="full"
 			defaultSelectedKeys={[`${chainId}`]}
+			selectedKeys={[selectedKey]}
 			className="min-w-32"
 			items={chains}
 			placeholder="Select a network"
@@ -80,7 +97,10 @@ const ChainSelector = () => {
 					) : null,
 				);
 			}}
-			onChange={e => switchChain(Number(e.target.value) as unknown as EVMChainID)}
+			onChange={e => {
+				const value = e.target.value ? (Number(e.target.value) as ChainID) : chainIdSnapshot.current;
+				handleChange(value);
+			}}
 		>
 			{network => (
 				<SelectItem

@@ -43,28 +43,39 @@ export interface FetchSSEOptions {
 	smoothing?: SmoothingParams | boolean;
 }
 
+export type RequestMode = 'proxy' | 'self-api' | 'external';
+
 const START_ANIMATION_SPEED = 4;
 
 const END_ANIMATION_SPEED = 15;
 
-export const getPrefixedUrl = (requestMode?: 'proxy' | 'self-api' | 'external') => {
+const getPrefixedUrl = (requestMode?: RequestMode) => {
+	const IS_SERVER = typeof window === 'undefined';
 	switch (requestMode) {
 		case 'proxy':
-			return '/proxy-api';
+			return !IS_SERVER ? '/proxy-api' : env.NEXT_PUBLIC_APP_API_HOST;
 		case 'self-api':
-			return '/';
+			return !IS_SERVER ? '/' : env.NEXT_PUBLIC_APP_API_HOST;
 		case 'external':
-			return env.NEXT_PUBLIC_APP_AIP_HOST;
+			return env.NEXT_PUBLIC_APP_API_HOST;
 		default:
-			return '/';
+			return !IS_SERVER ? '/' : env.NEXT_PUBLIC_APP_API_HOST;
 	}
 };
 
+export const withPrefixedUrl = (url: string, requestMode?: RequestMode) => {
+	// remove trailing slash
+	const prefixedUrl = getPrefixedUrl(requestMode).replace(/\/$/, '');
+	// remove leading slash
+	const _url = url.replace(/^\//, '');
+	return `${prefixedUrl}/${_url}`;
+};
+
 export const request = (defaultOptions?: RequestOptions) => {
-	const { requestMode = 'self-api' } = defaultOptions || {};
+	const { requestMode = 'proxy' } = defaultOptions || {};
 
 	return ky.extend({
-		timeout: 60_000,
+		timeout: 10_000,
 		credentials: 'include',
 		hooks: {
 			beforeRequest: [

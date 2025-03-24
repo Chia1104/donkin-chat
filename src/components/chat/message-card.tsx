@@ -4,7 +4,6 @@ import React from 'react';
 
 import type { UIMessage } from '@ai-sdk/ui-utils';
 import { Badge } from '@heroui/badge';
-import { Button } from '@heroui/button';
 import { Chip } from '@heroui/chip';
 import { Link } from '@heroui/link';
 import { CircularProgress } from '@heroui/progress';
@@ -23,6 +22,8 @@ import rehypeRaw from 'rehype-raw';
 import rehypeSanitize from 'rehype-sanitize';
 import remarkGfm from 'remark-gfm';
 import remarkMath from 'remark-math';
+
+import { HeroButton } from '../ui/hero-button';
 
 const MarkdownHooks = dynamic(() => import('react-markdown').then(mod => mod.MarkdownHooks), { ssr: false });
 
@@ -88,9 +89,9 @@ const MessageCard = ({
 
 		const failedMessageClassName =
 			status === 'failed'
-				? 'bg-danger-100/50 border border-danger-100 text-foreground'
+				? 'bg-danger-100/50 border border-danger-100 text-foreground p-5'
 				: message.role === 'user'
-					? 'bg-content2'
+					? 'bg-content1'
 					: '';
 
 		return {
@@ -126,7 +127,7 @@ const MessageCard = ({
 						messageClassName,
 					)}
 				>
-					<div ref={messageRef} className={'text-small flex flex-col gap-2 max-w-[300px] prose prose-invert'}>
+					<div ref={messageRef} className={'text-small flex flex-col max-w-[300px] prose prose-invert'}>
 						{((isLoading && message.role === 'assistant' && isCurrent) || (isLoading && streamingContent)) && (
 							<CircularProgress size="sm" />
 						)}
@@ -165,54 +166,61 @@ const MessageCard = ({
 								)}
 							</div>
 						)}
+						{showFeedback && !hasFailed && !isLoading && (
+							<div className="flex">
+								<HeroButton
+									variant="light"
+									aria-label="share-button"
+									isIconOnly
+									size="sm"
+									onPress={() => handleShare()}
+								>
+									<ShareOutlinedIcon
+										className="text-default-600"
+										sx={{
+											width: 16,
+											height: 16,
+										}}
+									/>
+								</HeroButton>
+								<HeroButton variant="light" aria-label="copy-button" isIconOnly size="sm" onPress={handleCopy}>
+									{copied ? (
+										<CheckIcon
+											sx={{
+												width: 16,
+												height: 16,
+											}}
+											className="text-default-600"
+										/>
+									) : (
+										<ContentCopyRoundedIcon
+											sx={{
+												width: 16,
+												height: 16,
+											}}
+											className="text-default-600"
+										/>
+									)}
+								</HeroButton>
+								<HeroButton
+									variant="light"
+									aria-label="retry-button"
+									isIconOnly
+									size="sm"
+									onPress={() => handleRetry()}
+									isLoading={isPending || isRetrying}
+								>
+									<RefreshIcon
+										sx={{
+											width: 20,
+											height: 20,
+										}}
+										className="text-default-600"
+									/>
+								</HeroButton>
+							</div>
+						)}
 					</div>
-					{showFeedback && !hasFailed && !isLoading && (
-						<div className="flex gap-2">
-							<Button aria-label="share-button" isIconOnly size="sm" onPress={() => handleShare()}>
-								<ShareOutlinedIcon
-									className="text-default-600"
-									sx={{
-										width: 20,
-										height: 20,
-									}}
-								/>
-							</Button>
-							<Button aria-label="copy-button" isIconOnly size="sm" onPress={handleCopy}>
-								{copied ? (
-									<CheckIcon
-										sx={{
-											width: 20,
-											height: 20,
-										}}
-										className="text-default-600"
-									/>
-								) : (
-									<ContentCopyRoundedIcon
-										sx={{
-											width: 20,
-											height: 20,
-										}}
-										className="text-default-600"
-									/>
-								)}
-							</Button>
-							<Button
-								aria-label="retry-button"
-								isIconOnly
-								size="sm"
-								onPress={() => handleRetry()}
-								isLoading={isPending || isRetrying}
-							>
-								<RefreshIcon
-									sx={{
-										width: 20,
-										height: 20,
-									}}
-									className="text-default-600"
-								/>
-							</Button>
-						</div>
-					)}
 				</div>
 			</div>
 		</div>

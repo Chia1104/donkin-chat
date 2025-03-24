@@ -32,6 +32,7 @@ package-lock.json
 .idea
 
 .next
-next-env.d.ts
 
 .cache
+
+messages/*.d.json.ts

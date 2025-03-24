@@ -18,7 +18,10 @@
 		"cancel": "取消",
 		"connect-wallet": "连接钱包",
 		"reset": "重置",
-		"active": "應用"
+		"active": "應用",
+		"clear": "清除",
+		"back": "返回",
+		"back-to-previous": "返回上一頁"
 	},
 	"validation": {
 		"required": "此欄位為必填",
@@ -28,14 +31,30 @@
 			"url": "無效的網址格式",
 			"wallet-address": "無效的錢包地址",
 			"number": "無效的數字格式",
-			"more-than-0": "必須大於 0"
+			"more-than-0": "必須大於 0",
+			"more-than-min": "必須大於{min}"
+		}
+	},
+	"utils": {
+		"more-then-item": "大於 {item}",
+		"enter": "請輸入"
+	},
+	"commons": {
+		"error": {
+			"title": "發生錯誤",
+			"description": "請稍後再試一次",
+			"retry": "重試"
+		},
+		"not-found": {
+			"title": "找不到頁面"
 		}
 	},
 	"nav": {
 		"ai-signal": "AI 信號",
 		"whale-ranking": "巨鯨排行",
 		"smart-rankings": "聰明錢排行",
-		"search-placeholder": "搜尋代幣或錢包..."
+		"search-placeholder": "搜尋代幣或錢包...",
+		"all-tokens": "所有Token"
 	},
 	"footer": {
 		"about": "关于 Donkin",
@@ -44,7 +63,7 @@
 		"copyright": "Copyright © {year} Donkin. • All Rights Reserved"
 	},
 	"chat": {
-		"prompt-placeholder": "输入任何问题...",
+		"prompt-placeholder": "你想知道什么",
 		"donkin-title": "币圈最专业AI投顾",
 		"donkin-subtitle": "你好！我是 Donkin。你可以随时查询币圈即時信息。请告诉我你感兴趣的内容吧！",
 		"donkin-warning": "Donkin 可能提供不精確的資訊，請查證重要訊息",
@@ -75,12 +94,41 @@
 			"action": {
 				"more": "显示更多币种"
 			}
+		},
+		"tree-map": {
+			"title": "熱力圖",
+			"action": {
+				"more": "显示更多币种"
+			}
+		},
+		"tokens-list": {
+			"filter": {
+				"hot": "热度",
+				"up-time": {
+					"label": "上线时间",
+					"des": "遞減",
+					"asc": "遞增"
+				},
+				"market-cap": "市值",
+				"change": {
+					"label": "涨幅",
+					"1H": "1H",
+					"6H": "6H",
+					"24H": "24H"
+				},
+				"order": {
+					"label": "排序",
+					"des": "由高到低",
+					"asc": "由低到高"
+				}
+			}
 		}
 	},
 	"token": {
 		"ranking": {
-			"title": "Ranking",
+			"title": "排名",
 			"mark-smart": "標記聰明錢包",
+			"profit-rank": "獲利金額排名",
 			"filter": {
 				"total-title": "總額($)",
 				"total-5k": "> 5,000",
@@ -89,10 +137,32 @@
 				"transaction-title-by-day": "{day} 交易次數",
 				"transaction-less-100": "0 - 100",
 				"transaction-more-100": "> 100",
-				"favorite-only": "僅顯示我的收藏"
+				"favorite-only": "僅顯示我的收藏",
+				"filter-title": "篩選顯示",
+				"filter-recommend": "推荐",
+				"filter-manual": "自选",
+				"type-title": "聰明錢類型",
+				"type-smart-money": "聰明錢",
+				"type-whale": "巨鲸",
+				"type-kol": "KOL",
+				"transaction-title": "交易金额",
+				"profit-title": "利潤",
+				"order-title": "喊單數量",
+				"kol-order": "KOL 喊单次数"
 			}
 		},
 		"holder": "持有人",
-		"wallets": "錢包數"
+		"wallets": "錢包數",
+		"not-found": {
+			"title": "找不到代幣",
+			"description": "您嘗試訪問的代幣不存在或已被移除。請檢查您的鏈接是否正確，或嘗試連接您的錢包查看您的代幣。"
+		}
+	},
+	"ChartExamples": {
+		"title": "圖表範例",
+		"candlestickTitle": "K 線圖",
+		"candlestickDescription": "這個 K 線圖顯示了隨時間變化的價格走勢。綠色蠟燭代表價格上漲，紅色蠟燭代表價格下跌。",
+		"clickableMarkersTitle": "可點擊標記",
+		"clickableMarkersDescription": "這個範例展示了如何在圖表上添加互動標記，點擊標記會顯示詳細資訊。"
 	}
 }

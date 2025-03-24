@@ -11,7 +11,12 @@ import { IntervalFilter } from '@/libs/token/enums/interval-filter.enum';
 import { useTokenSearchParams } from '@/libs/token/hooks/useTokenSearchParams';
 import dayjs from '@/utils/dayjs';
 
-import { createSeriesMarkers } from '../chart/plugins/series-marker';
+import { createClickableMarkers } from '../chart/plugins/clickable-marker/core';
+import {
+	MarkerTooltipProvider,
+	MarkerTooltip,
+	useMarkerTooltipStore,
+} from '../chart/plugins/clickable-marker/marker-tooltip';
 import TradingChart from '../chart/trading-chart';
 
 const _MOCK_DATA = [
@@ -31,13 +36,6 @@ const DateFilter = memo(() => {
 			aria-label="filter time"
 			size="sm"
 			variant="light"
-			color="primary"
-			classNames={{
-				tabList: 'gap-1',
-				tab: 'py-1 px-2',
-				cursor: 'bg-transparent border-1 border-primary/25 text-primary',
-				tabContent: 'group-data-[selected=true]:text-primary',
-			}}
 			selectedKey={searchParams.interval}
 			onSelectionChange={key => {
 				void setSearchParams({
@@ -45,12 +43,9 @@ const DateFilter = memo(() => {
 				});
 			}}
 		>
-			<Tab key={IntervalFilter.SixHours} title={IntervalFilter.SixHours} />
-			<Tab key={IntervalFilter.TwelveHours} title={IntervalFilter.TwelveHours} />
-			<Tab key={IntervalFilter.OneDay} title={IntervalFilter.OneDay} />
-			<Tab key={IntervalFilter.ThreeDays} title={IntervalFilter.ThreeDays} />
-			<Tab key={IntervalFilter.SevenDays} title={IntervalFilter.SevenDays} />
-			<Tab key={IntervalFilter.ThirtyDays} title={IntervalFilter.ThirtyDays} />
+			{Object.values(IntervalFilter).map(interval => (
+				<Tab key={interval} title={interval} className="px-2 py-0" />
+			))}
 		</Tabs>
 	);
 });
@@ -58,7 +53,7 @@ const DateFilter = memo(() => {
 const MetaInfo = () => {
 	return (
 		<div className="flex items-center gap-2">
-			<h3 className="text-xl font-normal">$0.3168105</h3>
+			<h3 className="text-[22px] font-medium">$0.3168105</h3>
 			<Chip color="danger" variant="flat" radius="sm" size="sm">
 				-0.87%
 			</Chip>
@@ -69,6 +64,7 @@ const MetaInfo = () => {
 const Chart = () => {
 	const locale = useLocale();
 	const [searchParams] = useTokenSearchParams();
+	const { openTooltip, closeTooltip } = useMarkerTooltipStore(store => store);
 	return (
 		<TradingChart
 			height={350}
@@ -98,22 +94,36 @@ const Chart = () => {
 					{ open: 10.47, high: 11.39, low: 10.4, close: 10.81, time: dayjs().add(6, 'day').format('YYYY-MM-DD') },
 				]);
 				chart.timeScale().fitContent();
-				createSeriesMarkers(series, [
+				createClickableMarkers(
+					chart,
+					series,
+					[
+						{
+							time: dayjs().format('YYYY-MM-DD'),
+							position: 'aboveBar',
+							color: '#FFFFFF73',
+							src: '/assets/images/buy-icon.svg',
+							size: 1,
+							tooltip: 'test 1',
+						},
+						{
+							time: dayjs().format('YYYY-MM-DD'),
+							position: 'aboveBar',
+							color: '#FFFFFF73',
+							src: '/assets/images/sell-icon.svg',
+							size: 1,
+							text: '+35',
+							tooltip: 'test 2',
+						},
+					],
 					{
-						time: dayjs().format('YYYY-MM-DD'),
-						position: 'belowBar',
-						color: searchParams.mark ? '#542029' : '#AE3241',
-						src: 'https://avatars.githubusercontent.com/u/38397958?v=4',
-						size: 1,
+						onClick: marker => {
+							console.log('標記被點擊:', marker);
+						},
+						onOpenTooltip: openTooltip,
+						onCloseTooltip: closeTooltip,
 					},
-					{
-						time: dayjs().format('YYYY-MM-DD'),
-						position: 'belowBar',
-						color: searchParams.mark ? '#542029' : '#AE3241',
-						src: 'https://avatars.githubusercontent.com/u/38397958?v=4',
-						size: 1,
-					},
-				]);
+				);
 			}}
 			initOptions={{
 				autoSize: true,
@@ -140,12 +150,15 @@ const Chart = () => {
 
 const Candlestick = () => {
 	return (
-		<section className="border-1 border-divider p-5 w-full h-[490px] rounded-lg flex flex-col gap-10">
+		<section className="w-full h-[490px] rounded-lg flex flex-col gap-10">
 			<header className="flex items-center justify-between">
 				<MetaInfo />
 				<DateFilter />
 			</header>
-			<Chart />
+			<MarkerTooltipProvider>
+				<Chart />
+				<MarkerTooltip />
+			</MarkerTooltipProvider>
 		</section>
 	);
 };

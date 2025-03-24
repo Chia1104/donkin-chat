@@ -1,9 +1,11 @@
 import type { ReactNode, FC, ComponentPropsWithoutRef } from 'react';
 
-import { Theme } from '@/enums/theme.enum';
-import { cn } from '@/utils/cn';
+import type { Locale } from 'next-intl';
+import { ViewTransitions } from 'next-view-transitions';
 
-import Background from '../commons/background';
+import { Theme } from '@/enums/theme.enum';
+import { PingFangTC, AvenirNextLTPro_Regular } from '@/themes/fonts';
+import { cn } from '@/utils/cn';
 
 interface Props {
 	children: ReactNode;
@@ -16,21 +18,25 @@ interface Props {
 const AppLayout: FC<Props> = ({ children, locale, htmlProps, bodyProps, theme }) => {
 	const themeSchema = theme ? (theme === Theme.Dark ? Theme.Dark : Theme.Light) : undefined;
 	return (
-		<html
-			lang={locale}
-			suppressHydrationWarning
-			{...htmlProps}
-			className={cn(htmlProps?.className, themeSchema)}
-			style={{
-				colorScheme: themeSchema,
-				...htmlProps?.style,
-			}}
-		>
-			<body {...bodyProps}>
-				<Background />
-				{children}
-			</body>
-		</html>
+		<ViewTransitions>
+			<html
+				lang={locale}
+				suppressHydrationWarning
+				{...htmlProps}
+				className={cn(htmlProps?.className, themeSchema)}
+				style={{
+					colorScheme: themeSchema,
+					...htmlProps?.style,
+				}}
+			>
+				<body
+					{...bodyProps}
+					className={cn(PingFangTC.className, AvenirNextLTPro_Regular.className, bodyProps?.className)}
+				>
+					{children}
+				</body>
+			</html>
+		</ViewTransitions>
 	);
 };
 

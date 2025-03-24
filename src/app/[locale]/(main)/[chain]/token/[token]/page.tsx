@@ -1,21 +1,28 @@
-'use client';
-
-import { AnimatePresence } from 'framer-motion';
+import { HydrationBoundary, dehydrate } from '@tanstack/react-query';
+import { notFound } from 'next/navigation';
 
 import Detail from '@/containers/token/detail';
-import { useChatStore } from '@/contexts/chat-provider';
-import { cn } from '@/utils/cn';
+import { getToken } from '@/libs/token/resources/token.resource';
+import { getQueryClient } from '@/utils/query-client';
 
-const Page = () => {
-	const isPreviewOnly = useChatStore(state => state.isPreviewOnly);
+const Page = async ({ params }: { params: PageParamsWithLocale<{ token: string }> }) => {
+	const queryClient = getQueryClient();
+
+	const { token } = await params;
+
+	try {
+		await queryClient.fetchQuery({
+			queryKey: ['token', token],
+			queryFn: () => getToken(token),
+		});
+	} catch {
+		notFound();
+	}
+
 	return (
-		<section
-			className={cn('p-5 overflow-y-auto h-[calc(100vh-72px)] pr-0', !isPreviewOnly ? 'w-full lg:w-2/3' : 'w-full')}
-		>
-			<AnimatePresence>
-				<Detail />
-			</AnimatePresence>
-		</section>
+		<HydrationBoundary state={dehydrate(queryClient)}>
+			<Detail />
+		</HydrationBoundary>
 	);
 };
 

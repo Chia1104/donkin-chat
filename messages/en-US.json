@@ -18,7 +18,10 @@
 		"cancel": "Cancel",
 		"connect-wallet": "Connect Wallet",
 		"reset": "Reset",
-		"active": "Active"
+		"active": "Active",
+		"clear": "Clear",
+		"back": "Back",
+		"back-to-previous": "Back to previous"
 	},
 	"validation": {
 		"required": "This field is required",
@@ -28,14 +31,30 @@
 			"url": "Invalid URL format",
 			"wallet-address": "Invalid wallet address",
 			"number": "Invalid number format",
-			"more-than-0": "Must be greater than 0"
+			"more-than-0": "Must be greater than 0",
+			"more-than-min": "Must be greater than {min}"
+		}
+	},
+	"utils": {
+		"more-then-item": "more then {item}",
+		"enter": "Please enter"
+	},
+	"commons": {
+		"error": {
+			"title": "Error",
+			"description": "Please try again later",
+			"retry": "Retry"
+		},
+		"not-found": {
+			"title": "Page not found"
 		}
 	},
 	"nav": {
 		"ai-signal": "AI-Signal",
 		"whale-ranking": "Whale Ranking",
 		"smart-rankings": "Smart Money Rankings",
-		"search-placeholder": "Search for a coin or wallet..."
+		"search-placeholder": "Search for a coin or wallet...",
+		"all-tokens": "All Tokens"
 	},
 	"footer": {
 		"about": "About Donkin",
@@ -44,7 +63,7 @@
 		"copyright": "Copyright © {year} Donkin. • All Rights Reserved"
 	},
 	"chat": {
-		"prompt-placeholder": "Enter any question...",
+		"prompt-placeholder": "What do you want to know",
 		"donkin-title": "The most professional AI investment consultant in the cryptocurrency circle",
 		"donkin-subtitle": "Hello! I am Donkin. You can check the real-time information of the cryptocurrency circle at any time. Please tell me what you are interested in!",
 		"donkin-warning": "Donkin may provide inaccurate information, please verify important information",
@@ -75,12 +94,41 @@
 			"action": {
 				"more": "Show more currencies"
 			}
+		},
+		"tree-map": {
+			"title": "Heat map",
+			"action": {
+				"more": "Show more currencies"
+			}
+		},
+		"tokens-list": {
+			"filter": {
+				"hot": "Hot",
+				"up-time": {
+					"label": "Online time",
+					"des": "Descending",
+					"asc": "Ascending"
+				},
+				"market-cap": "Market Cap",
+				"change": {
+					"label": "Change",
+					"1H": "1H",
+					"6H": "6H",
+					"24H": "24H"
+				},
+				"order": {
+					"label": "Order",
+					"des": "High to low",
+					"asc": "Low to high"
+				}
+			}
 		}
 	},
 	"token": {
 		"ranking": {
 			"title": "Ranking",
 			"mark-smart": "Mark Smart Wallet",
+			"profit-rank": "Profit amount ranking",
 			"filter": {
 				"total-title": "Total amount ($)",
 				"total-5k": "> 5,000",
@@ -89,10 +137,32 @@
 				"transaction-title-by-day": "{day} of transactions",
 				"transaction-less-100": "0 - 100",
 				"transaction-more-100": "> 100",
-				"favorite-only": "Only show my favorites"
+				"favorite-only": "Only show my favorites",
+				"filter-title": "Filter display",
+				"filter-recommend": "Recommend",
+				"filter-manual": "Self-select",
+				"type-title": "Smart money type",
+				"type-smart-money": "Smart money",
+				"type-whale": "Whale",
+				"type-kol": "KOL",
+				"transaction-title": "Transaction amount",
+				"profit-title": "Profit",
+				"order-title": "Order quantity",
+				"kol-order": "KOL order quantity"
 			}
 		},
 		"holder": "holder",
-		"wallets": "Number of wallets"
+		"wallets": "Number of wallets",
+		"not-found": {
+			"title": "Token not found",
+			"description": "The token you are trying to access does not exist or has been removed. Please check your link is correct, or try connecting your wallet to view your token."
+		}
+	},
+	"ChartExamples": {
+		"title": "Chart Examples",
+		"candlestickTitle": "Candlestick Chart (K-Line)",
+		"candlestickDescription": "This candlestick chart shows price movements over time. Green candles indicate upward price movements, while red candles represent downward movements.",
+		"clickableMarkersTitle": "Clickable Markers",
+		"clickableMarkersDescription": "This example demonstrates how to add interactive markers to charts that display detailed information when clicked."
 	}
 }

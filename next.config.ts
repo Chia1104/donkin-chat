@@ -3,15 +3,18 @@ import { withSentryConfig as withSentryConfigImport } from '@sentry/nextjs';
 import { NextConfig } from 'next';
 import createNextIntlPlugin from 'next-intl/plugin';
 
-import { env } from '@/utils/env';
-
 type Plugin = (config: NextConfig) => NextConfig;
 
 const withBundleAnalyzer = withBundleAnalyzerImport({
 	enabled: process.env.ANALYZE === 'true',
 });
 
-const withNextIntl = createNextIntlPlugin();
+const withNextIntl = createNextIntlPlugin({
+	experimental: {
+		// Provide the path to the messages that you're using in `AppConfig`
+		createMessagesDeclaration: './messages/en-US.json',
+	},
+});
 
 const securityHeaders = [
 	{
@@ -39,12 +42,28 @@ const securityHeaders = [
 const nextConfig: NextConfig = {
 	output: 'standalone',
 	reactStrictMode: true,
-	transpilePackages: ['@t3-oss/env-nextjs', '@t3-oss/env-core', 'wagmi', '@solana/*'],
+	transpilePackages: ['@t3-oss/env-nextjs', '@t3-oss/env-core', 'wagmi', '@solana/*', 'echarts', 'zrender'],
 	experimental: {
 		optimizePackageImports: ['lodash-es'],
 		reactCompiler: true,
 		webpackBuildWorker: true,
 		authInterrupts: true,
+		turbo: {
+			rules: {
+				'*.svg': {
+					loaders: ['@svgr/webpack'],
+					as: '*.js',
+				},
+			},
+		},
+	},
+	webpack(config) {
+		config.module.rules.push({
+			test: /\.svg$/i,
+			issuer: /\.[jt]sx?$/,
+			use: ['@svgr/webpack'],
+		});
+		return config;
 	},
 	serverExternalPackages: [],
 	eslint: {
@@ -69,10 +88,6 @@ const nextConfig: NextConfig = {
 		{
 			source: '/sitemap-:id.xml',
 			destination: '/sitemap.xml/:id',
-		},
-		{
-			source: '/proxy-api/:path*',
-			destination: `${env.NEXT_PUBLIC_APP_AIP_HOST}/:path*`,
 		},
 	],
 };

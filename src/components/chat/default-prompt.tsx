@@ -6,10 +6,6 @@ import { Image } from '@heroui/image';
 import { useTranslations } from 'next-intl';
 import NextImage from 'next/image';
 
-import CoinIcon from '@/components/icons/coin-icon';
-import HotIcon from '@/components/icons/hot-icon';
-import WaleIcon from '@/components/icons/wale-icon';
-import WalletIcon from '@/components/icons/wallet-icon';
 import ActionCard, { ActionBody } from '@/components/ui/action-card';
 
 interface Props {
@@ -30,34 +26,33 @@ const DefaultPrompt = ({ currentCoin = 'XX', ...props }: Props) => {
 	);
 
 	return (
-		<section className="flex flex-col items-center justify-center w-full h-full max-w-[350px] gap-2 prose prose-invert">
-			<div className="flex flex-col items-center justify-center w-full max-w-[285px]">
+		<section className="flex flex-col items-center justify-center w-full h-full max-w-[350px] gap-5 prose prose-invert">
+			<div className="flex flex-col items-center justify-center w-full max-w-[285px] gap-3">
 				<Image
 					className="mb-2"
 					as={NextImage}
-					alt="sparkless"
-					src="/assets/images/sparkless.png"
-					width={96}
-					height={96}
+					alt="donkin"
+					src="/assets/images/donkin.png"
+					width={78}
+					height={78}
 					removeWrapper
-					aria-label="sparkless"
+					aria-label="donkin"
 				/>
 				<h2 className="mt-0 mb-2">{t('donkin-title')}</h2>
 				<p className="text-xs text-center">{t('donkin-subtitle')}</p>
 			</div>
-			<div className="border-1 border-divider flex flex-col gap-2 rounded-lg p-3 w-full not-prose">
-				<p className="text-xs">{t('default-prompt.title')}</p>
+			<div className="flex flex-col gap-4 rounded-lg p-3 w-full not-prose">
 				<ActionCard onPress={() => handleAction(t('default-prompt.latest-coins'))}>
-					<ActionBody icon={<HotIcon />} label={t('default-prompt.latest-coins')} />
+					<ActionBody label={t('default-prompt.latest-coins')} className="justify-center p-5" />
 				</ActionCard>
 				<ActionCard onPress={() => handleAction(t('default-prompt.smart-wallet-recommendations'))}>
-					<ActionBody icon={<WalletIcon />} label={t('default-prompt.smart-wallet-recommendations')} />
+					<ActionBody label={t('default-prompt.smart-wallet-recommendations')} className="justify-center p-5" />
 				</ActionCard>
 				<ActionCard onPress={() => handleAction(t('default-prompt.largest-whales'))}>
-					<ActionBody icon={<WaleIcon />} label={t('default-prompt.largest-whales')} />
+					<ActionBody label={t('default-prompt.largest-whales')} className="justify-center p-5" />
 				</ActionCard>
 				<ActionCard onPress={() => handleAction(t('default-prompt.info-about', { item: 'XX' }))}>
-					<ActionBody icon={<CoinIcon />} label={t('default-prompt.info-about', { item: currentCoin })} />
+					<ActionBody label={t('default-prompt.info-about', { item: currentCoin })} className="justify-center p-5" />
 				</ActionCard>
 			</div>
 		</section>
