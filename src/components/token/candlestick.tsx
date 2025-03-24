@@ -4,9 +4,10 @@ import { memo } from 'react';
 
 import { Chip } from '@heroui/chip';
 import { Tabs, Tab } from '@heroui/tabs';
-import { CandlestickSeries, ColorType } from 'lightweight-charts';
+import { CandlestickSeries, ColorType, HistogramSeries } from 'lightweight-charts';
 import { useLocale } from 'next-intl';
 
+import { experimental_useTailwindTheme as useTailwindTheme } from '@/hooks/useTailwindTheme';
 import { IntervalFilter } from '@/libs/token/enums/interval-filter.enum';
 import { useTokenSearchParams } from '@/libs/token/hooks/useTokenSearchParams';
 import dayjs from '@/utils/dayjs';
@@ -65,16 +66,17 @@ const Chart = () => {
 	const locale = useLocale();
 	const [searchParams] = useTokenSearchParams();
 	const { openTooltip, closeTooltip } = useMarkerTooltipStore(store => store);
+	const twTheme = useTailwindTheme();
 	return (
 		<TradingChart
 			height={485}
 			onInit={chart => {
 				const series = chart.addSeries(CandlestickSeries, {
-					upColor: searchParams.mark ? '#2A4B3E' : '#45926D',
-					downColor: searchParams.mark ? '#542029' : '#AE3241',
+					upColor: searchParams.mark ? twTheme.theme.colors.buy.disabled : twTheme.theme.colors.buy.DEFAULT,
+					downColor: searchParams.mark ? twTheme.theme.colors.sell.disabled : twTheme.theme.colors.sell.DEFAULT,
 					borderVisible: false,
-					wickUpColor: searchParams.mark ? '#2A4B3E' : '#45926D',
-					wickDownColor: searchParams.mark ? '#542029' : '#AE3241',
+					wickUpColor: searchParams.mark ? twTheme.theme.colors.buy.disabled : twTheme.theme.colors.buy.DEFAULT,
+					wickDownColor: searchParams.mark ? twTheme.theme.colors.sell.disabled : twTheme.theme.colors.sell.DEFAULT,
 				});
 
 				// mock data
@@ -94,36 +96,63 @@ const Chart = () => {
 					{ open: 10.47, high: 11.39, low: 10.4, close: 10.81, time: dayjs().add(6, 'day').format('YYYY-MM-DD') },
 				]);
 				chart.timeScale().fitContent();
-				createClickableMarkers(
-					chart,
-					series,
-					[
+				if (searchParams.mark) {
+					createClickableMarkers(
+						chart,
+						series,
+						[
+							{
+								time: dayjs().format('YYYY-MM-DD'),
+								position: 'aboveBar',
+								color: '#FFFFFF73',
+								src: '/assets/images/buy-icon.svg',
+								size: 1,
+								tooltip: 'test 1',
+							},
+							{
+								time: dayjs().format('YYYY-MM-DD'),
+								position: 'aboveBar',
+								color: '#FFFFFF73',
+								src: '/assets/images/sell-icon.svg',
+								size: 1,
+								text: '+35',
+								tooltip: 'test 2',
+							},
+						],
 						{
-							time: dayjs().format('YYYY-MM-DD'),
-							position: 'aboveBar',
-							color: '#FFFFFF73',
-							src: '/assets/images/buy-icon.svg',
-							size: 1,
-							tooltip: 'test 1',
+							onClick: marker => {
+								console.log('標記被點擊:', marker);
+							},
+							onOpenTooltip: openTooltip,
+							onCloseTooltip: closeTooltip,
 						},
-						{
-							time: dayjs().format('YYYY-MM-DD'),
-							position: 'aboveBar',
-							color: '#FFFFFF73',
-							src: '/assets/images/sell-icon.svg',
-							size: 1,
-							text: '+35',
-							tooltip: 'test 2',
-						},
-					],
-					{
-						onClick: marker => {
-							console.log('標記被點擊:', marker);
-						},
-						onOpenTooltip: openTooltip,
-						onCloseTooltip: closeTooltip,
+					);
+				}
+
+				const volumeSeries = chart.addSeries(HistogramSeries, {
+					priceFormat: {
+						type: 'volume',
 					},
-				);
+					priceScaleId: '', // set as an overlay by setting a blank priceScaleId
+				});
+				volumeSeries.priceScale().applyOptions({
+					scaleMargins: {
+						top: 0.8, // highest point of the series will be 70% away from the top
+						bottom: 0,
+					},
+				});
+				volumeSeries.setData([
+					{
+						time: dayjs().format('YYYY-MM-DD'),
+						value: 8,
+						color: twTheme.theme.colors.sell.disabled,
+					},
+					{
+						time: dayjs().add(1, 'day').format('YYYY-MM-DD'),
+						value: 7,
+						color: twTheme.theme.colors.buy.disabled,
+					},
+				]);
 			}}
 			initOptions={{
 				autoSize: true,
