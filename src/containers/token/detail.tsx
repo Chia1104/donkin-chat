@@ -78,6 +78,7 @@ const Marker = () => {
 
 	return (
 		<Checkbox
+			radius="sm"
 			size="sm"
 			classNames={{
 				base: 'items-center',

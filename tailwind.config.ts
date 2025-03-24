@@ -107,6 +107,7 @@ const config: Config = {
 						},
 						radius: {
 							small: '4px',
+							medium: '8px',
 						},
 					},
 				},
@@ -136,6 +137,7 @@ const config: Config = {
 						},
 						radius: {
 							small: '4px',
+							medium: '8px',
 						},
 					},
 				},
