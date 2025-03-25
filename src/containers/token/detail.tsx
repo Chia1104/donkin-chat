@@ -18,6 +18,7 @@ import Candlestick from '@/components/token/candlestick';
 import { FilterAction } from '@/components/token/filter-action';
 import Card from '@/components/ui/card';
 import { useQueryOhlcv } from '@/libs/birdeye/hooks/useQueryOhlcv';
+import { IntervalFilter } from '@/libs/token/enums/interval-filter.enum';
 import { useQueryToken } from '@/libs/token/hooks/useQueryToken';
 import { useTokenSearchParams } from '@/libs/token/hooks/useTokenSearchParams';
 import { useChatStore } from '@/stores/chat';
@@ -112,12 +113,35 @@ const Detail = () => {
 	const [searchParams] = useTokenSearchParams();
 	const isPreviewOnly = useChatStore(state => state.isPreviewOnly);
 
+	const timeFrom = useMemo(() => {
+		switch (searchParams.interval) {
+			case IntervalFilter.OneMinute:
+				return dayjs().subtract(6, 'hour').unix();
+			case IntervalFilter.FiveMinutes:
+				return dayjs().subtract(6, 'hour').unix();
+			case IntervalFilter.FifteenMinutes:
+				return dayjs().subtract(6, 'hour').unix();
+			case IntervalFilter.ThirtyMinutes:
+				return dayjs().subtract(12, 'hour').unix();
+			case IntervalFilter.OneHour:
+				return dayjs().subtract(1, 'week').unix();
+			case IntervalFilter.FourHours:
+				return dayjs().subtract(1, 'month').unix();
+			case IntervalFilter.OneDay:
+				return dayjs().subtract(1, 'month').unix();
+			case IntervalFilter.OneWeek:
+				return dayjs().subtract(1, 'month').unix();
+			default:
+				return dayjs().subtract(1, 'day').unix();
+		}
+	}, [searchParams.interval]);
+
 	const ohlcv = useQueryOhlcv(
 		{
 			data: {
 				address: queryResult.data?.address ?? '',
 				type: searchParams.interval,
-				time_from: dayjs().subtract(1, 'week').unix(),
+				time_from: timeFrom,
 				time_to: dayjs().unix(),
 			},
 		},
