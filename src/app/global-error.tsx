@@ -6,7 +6,7 @@ import AppLayout from '@/components/layouts/app-layout';
 import { withError } from '@/hocs/with-error';
 import { Locale } from '@/types/locale';
 
-const NotFound = withError(() => {
+const GlobalError = withError(() => {
 	return (
 		<AppLayout
 			locale={Locale.EN_US}
@@ -25,4 +25,4 @@ const NotFound = withError(() => {
 	);
 });
 
-export default NotFound;
+export default GlobalError;

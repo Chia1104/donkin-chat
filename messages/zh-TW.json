@@ -21,7 +21,8 @@
 		"active": "應用",
 		"clear": "清除",
 		"back": "返回",
-		"back-to-previous": "返回上一頁"
+		"back-to-previous": "返回上一頁",
+		"back-to-home": "返回首頁"
 	},
 	"validation": {
 		"required": "此欄位為必填",
@@ -46,7 +47,8 @@
 			"retry": "重試"
 		},
 		"not-found": {
-			"title": "找不到頁面"
+			"title": "找不到頁面",
+			"description": "該頁面可能已被刪除或不存在"
 		}
 	},
 	"nav": {

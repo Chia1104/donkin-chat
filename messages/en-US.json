@@ -21,7 +21,8 @@
 		"active": "Active",
 		"clear": "Clear",
 		"back": "Back",
-		"back-to-previous": "Back to previous"
+		"back-to-previous": "Back to previous",
+		"back-to-home": "Back to home"
 	},
 	"validation": {
 		"required": "This field is required",
@@ -46,7 +47,8 @@
 			"retry": "Retry"
 		},
 		"not-found": {
-			"title": "Page not found"
+			"title": "Page not found",
+			"description": "The page you are trying to access may have been deleted or does not exist"
 		}
 	},
 	"nav": {

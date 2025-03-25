@@ -1,16 +1,11 @@
 'use client';
 
-import Error from 'next/error';
+import AppNotFound from '@/components/commons/app-not-found';
 
 const NotFound = () => {
 	return (
-		<main className="text-white bg-root">
-			<Error statusCode={404} withDarkMode />
-			<style>
-				{`.next-error-h1 {
-					border-right:1px solid white
-				}`}
-			</style>
+		<main className="w-full h-[100dvh] flex items-center justify-center">
+			<AppNotFound />
 		</main>
 	);
 };
