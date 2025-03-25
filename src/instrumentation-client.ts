@@ -1,14 +1,7 @@
-import { init, replayIntegration } from '@sentry/nextjs';
+import * as Sentry from '@sentry/nextjs';
 
-import { env } from '@/utils/env';
+export const onRequestError = Sentry.captureRequestError;
 
-init({
-	dsn: env.NEXT_PUBLIC_SENTRY_DSN,
-	integrations: [replayIntegration()],
-	tracesSampleRate: 1.0,
-	replaysSessionSampleRate: 0.1,
-	replaysOnErrorSampleRate: 1.0,
-	enabled: ['production'].includes(env.NEXT_PUBLIC_APP_ENV),
-	environment: env.NEXT_PUBLIC_APP_ENV,
-	debug: env.NEXT_PUBLIC_APP_ENV === 'development',
-});
+export async function register() {
+	await import('../sentry.client.config');
+}
