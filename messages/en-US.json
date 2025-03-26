@@ -160,6 +160,14 @@
 			"description": "The token you are trying to access does not exist or has been removed. Please check your link is correct, or try connecting your wallet to view your token."
 		}
 	},
+	"donkin": {
+		"title": "Donkin",
+		"description": "Donkin is the most professional AI investment consultant in the cryptocurrency circle, providing real-time information and intelligent investment advice.",
+		"action": {
+			"open": "Open AI investment consultant",
+			"close": "Close AI investment consultant"
+		}
+	},
 	"ChartExamples": {
 		"title": "Chart Examples",
 		"candlestickTitle": "Candlestick Chart (K-Line)",

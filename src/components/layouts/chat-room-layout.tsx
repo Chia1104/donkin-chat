@@ -13,6 +13,7 @@ import { useGlobalStore } from '@/stores/global/store';
 import { noto_sans } from '@/themes/fonts';
 import { cn } from '@/utils/cn';
 
+import Logo from '../commons/donkin/logo';
 import Donkin from '../commons/donkin/title';
 import WalletConnect from '../web3/wallet-connect';
 
@@ -113,6 +114,7 @@ const ChatRoomLayout = (props: Props) => {
 				)}
 			</main>
 			<Footer />
+			<Logo className="fixed bottom-5 right-5 z-[9999]" opacityOnStatus="close" hiddenOnStatus="open" />
 		</>
 	);
 };
