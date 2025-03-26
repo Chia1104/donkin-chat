@@ -1,49 +1,63 @@
 'use client';
 
-import React, { useEffect, useRef } from 'react';
+import type { ComponentPropsWithoutRef } from 'react';
+import { useEffect, useRef, forwardRef, useImperativeHandle, useState } from 'react';
 
 import type { IChartApi, ChartOptions, DeepPartial } from 'lightweight-charts';
 import { createChart } from 'lightweight-charts';
 
-interface Props {
+interface TradingChartProps extends ComponentPropsWithoutRef<'div'> {
 	height?: number;
 	initOptions?: DeepPartial<ChartOptions>;
 	onInit?: (chart: IChartApi, container: HTMLDivElement) => void;
 }
 
-const TradingChart = (props: Props) => {
-	const chartContainerRef = useRef<HTMLDivElement | null>(null);
+export interface TradingChartRef {
+	chart: IChartApi | null;
+}
 
-	useEffect(() => {
-		const handleResize = () => {
-			chart.applyOptions({ width: chartContainerRef.current?.clientWidth ?? 0 });
-		};
+const TradingChart = forwardRef<TradingChartRef, TradingChartProps>(
+	({ height, initOptions, onInit, ...props }, ref) => {
+		useImperativeHandle(ref, () => ({
+			chart,
+		}));
 
-		if (!chartContainerRef.current) {
-			return;
-		}
+		const chartContainerRef = useRef<HTMLDivElement | null>(null);
+		const [chart, setChart] = useState<IChartApi | null>(null);
 
-		const chart = createChart(chartContainerRef.current, {
-			...props.initOptions,
-			width: chartContainerRef.current?.clientWidth ?? 0,
-			height: props.height,
-		});
-		chart.timeScale().fitContent();
+		useEffect(() => {
+			const handleResize = () => {
+				chartInstance.applyOptions({ width: chartContainerRef.current?.clientWidth ?? 0 });
+			};
 
-		if (props.onInit) {
-			props.onInit(chart, chartContainerRef.current);
-		}
+			if (!chartContainerRef.current) {
+				return;
+			}
 
-		window.addEventListener('resize', handleResize);
+			const chartInstance = createChart(chartContainerRef.current, {
+				...initOptions,
+				width: chartContainerRef.current?.clientWidth ?? 0,
+				height,
+			});
+			chartInstance.timeScale().fitContent();
 
-		return () => {
-			window.removeEventListener('resize', handleResize);
+			setChart(chartInstance);
 
-			chart.remove();
-		};
-	}, [props]);
+			if (onInit) {
+				onInit(chartInstance, chartContainerRef.current);
+			}
 
-	return <div ref={chartContainerRef} />;
-};
+			window.addEventListener('resize', handleResize);
+
+			return () => {
+				window.removeEventListener('resize', handleResize);
+
+				chartInstance.remove();
+			};
+		}, [height, initOptions, onInit]);
+
+		return <div ref={chartContainerRef} {...props} />;
+	},
+);
 
 export default TradingChart;

@@ -3,6 +3,7 @@ import { notFound } from 'next/navigation';
 
 import Detail from '@/containers/token/detail';
 import { getToken } from '@/libs/token/resources/token.resource';
+import { IS_DEV } from '@/utils/env';
 import { getQueryClient } from '@/utils/query-client';
 
 const Page = async ({ params }: { params: PageParamsWithLocale<{ token: string }> }) => {
@@ -16,7 +17,9 @@ const Page = async ({ params }: { params: PageParamsWithLocale<{ token: string }
 			queryFn: () => getToken(token),
 		});
 	} catch {
-		notFound();
+		if (!IS_DEV) {
+			notFound();
+		}
 	}
 
 	return (

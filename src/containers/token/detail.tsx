@@ -137,14 +137,13 @@ const Detail = () => {
 	const ohlcv = useQueryOhlcv(
 		{
 			data: {
-				address: queryResult.data?.address ?? '',
+				address: params.token,
 				type: searchParams.interval,
 				time_from: timeFrom,
 				time_to: dayjs().unix(),
 			},
 		},
 		{
-			enabled: queryResult.isSuccess,
 			refetchInterval: 15_000,
 		},
 	);
