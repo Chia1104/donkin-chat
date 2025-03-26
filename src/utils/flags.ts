@@ -13,9 +13,9 @@ export const aiChatFlag = flag<boolean>({
 		const { data: config, error } = await tryCatch(getConfig('flags.ai-chat'));
 
 		if (!config || error) {
-			return env.FLAGS_AI_CHAT === 'true';
+			return env.FLAGS_AI_CHAT === 'true' && !!env.OPENAI_API_KEY;
 		}
 
-		return config === 'true';
+		return config === 'true' && !!env.OPENAI_API_KEY;
 	},
 });

@@ -4,14 +4,15 @@ import { NextResponse } from 'next/server';
 import { z } from 'zod';
 
 import { ChatDTOSchema } from '@/libs/ai/validators/chat';
-import { env } from '@/utils/env';
 import { ParseJSONError } from '@/utils/error';
+import { aiChatFlag } from '@/utils/flags';
 
 export const maxDuration = 60;
 
 export async function POST(req: Request) {
 	try {
-		if (!env.OPENAI_API_KEY || env.FLAGS_AI_CHAT !== 'true') {
+		const enabled = await aiChatFlag();
+		if (!enabled) {
 			return NextResponse.json({ error: 'Not implemented' }, { status: 501 });
 		}
 
