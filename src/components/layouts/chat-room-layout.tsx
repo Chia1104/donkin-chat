@@ -12,7 +12,7 @@ import { useRouter } from '@/i18n/routing';
 import { noto_sans } from '@/themes/fonts';
 import { cn } from '@/utils/cn';
 
-import Donkin from '../commons/donkin';
+import Donkin from '../commons/donkin/title';
 import WalletConnect from '../web3/wallet-connect';
 
 const ChainSelector = dynamic(() => import('@/components/web3/chain-selector'), {
