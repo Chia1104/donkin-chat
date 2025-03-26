@@ -55,7 +55,7 @@ const ChatBody = () => {
 		<CardBody aria-label="chat-body" className="flex flex-col items-center justify-start w-full">
 			<ScrollShadow
 				aria-label="chat-scroll-shadow"
-				className="w-full min-w-full h-[calc(100vh-290px)] max-h-[calc(100vh-290px)] min-h-[calc(100vh-330px)]"
+				className="w-full min-w-full h-[calc(100vh-300px)] max-h-[calc(100vh-300px)] min-h-[calc(100vh-340px)]"
 			>
 				<div className="flex h-full justify-center items-center">
 					<Messages />
@@ -83,7 +83,7 @@ const Chat = () => {
 	return (
 		<Card
 			className={cn(
-				'bg-[#FFFFFF08] shadow-none p-3 relative overflow-visible transition-width ease-in-out duration-1000 h-full min-h-[calc(100vh-120px)] max-h-[calc(100vh-120px)]',
+				'bg-[#FFFFFF08] shadow-none p-5 relative overflow-visible transition-width ease-in-out duration-1000 h-full min-h-[calc(100vh-120px)] max-h-[calc(100vh-120px)]',
 				!isOpen ? 'w-[30px] rounded-full' : 'min-w-full',
 			)}
 			radius="sm"
@@ -92,12 +92,12 @@ const Chat = () => {
 				{isOpen && (
 					<motion.div
 						className="flex flex-col w-full h-full"
-						initial={{ opacity: 0 }}
-						animate={{ opacity: 1 }}
-						exit={{ opacity: 0 }}
+						initial={{ opacity: 0, y: -50 }}
+						animate={{ opacity: 1, y: 0 }}
+						exit={{ opacity: 0, y: 50 }}
 						transition={{
 							type: 'spring',
-							duration: 1,
+							duration: 0.5,
 						}}
 					>
 						<ChatBody />
