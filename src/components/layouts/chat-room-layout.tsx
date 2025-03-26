@@ -9,6 +9,7 @@ import dynamic from 'next/dynamic';
 
 import Footer from '@/components/commons/footer';
 import { useRouter } from '@/i18n/routing';
+import { useGlobalStore } from '@/stores/global/store';
 import { noto_sans } from '@/themes/fonts';
 import { cn } from '@/utils/cn';
 
@@ -22,11 +23,13 @@ const ChainSelector = dynamic(() => import('@/components/web3/chain-selector'), 
 
 interface Props {
 	children: React.ReactNode;
+	chatBot?: React.ReactNode;
 }
 
 const ChatRoomLayout = (props: Props) => {
 	const t = useTranslations('nav');
 	const router = useRouter();
+	const isOpen = useGlobalStore(state => state.donkin.isOpen);
 
 	return (
 		<>
@@ -90,7 +93,25 @@ const ChatRoomLayout = (props: Props) => {
 					</NavbarItem>
 				</NavbarContent>
 			</Navbar>
-			<main className="flex flex-col items-center justify-center min-h-[calc(100dvh-72px)]">{props.children}</main>
+			<main className="gap-10 overflow-hidden w-full relative flex items-center justify-center min-h-[calc(100dvh-72px)]">
+				<section
+					className={cn(
+						'p-5 overflow-y-auto h-[calc(100vh-72px)] flex items-center justify-center',
+						isOpen ? 'w-full lg:w-2/3 pr-0' : 'w-full',
+					)}
+				>
+					{props.children}
+				</section>
+				{isOpen && (
+					<section
+						className={cn(
+							'h-[calc(100vh-72px)] p-5 md:pl-0 md:py-5 transition-width ease-in-out duration-1000 w-full lg:w-1/3',
+						)}
+					>
+						{props.chatBot}
+					</section>
+				)}
+			</main>
 			<Footer />
 		</>
 	);

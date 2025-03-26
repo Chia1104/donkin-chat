@@ -17,15 +17,15 @@ import { useTranslations } from 'next-intl';
 import { useTransitionRouter } from 'next-view-transitions';
 import { VirtuosoGrid } from 'react-virtuoso';
 
-import InfoCard from '@/components/chat/preview/ai-signal/info-card';
 import { AsyncQuery } from '@/components/commons/async-query';
 import { ErrorBoundary } from '@/components/commons/error-boundary';
+import InfoCard from '@/components/token/info-card';
 import { HeroButton } from '@/components/ui/hero-button';
 import { useMediaQuery } from '@/hooks/useMediaQuery';
 import { TokenSort } from '@/libs/ai/enums/tokenSort.enum';
 import { useAISearchParams } from '@/libs/ai/hooks/useAISearchParams';
 import { useQueryTokensHot } from '@/libs/token/hooks/useQueryToken';
-import { useChatStore } from '@/stores/chat';
+import { useGlobalStore } from '@/stores/global/store';
 import { cn } from '@/utils/cn';
 
 import AscIcon from '~/public/assets/images/asc.svg';
@@ -169,14 +169,14 @@ const List = ({ display }: { display: 'group' | 'single' }) => {
 			refetchInterval: 30_000,
 		},
 	);
-	const isPreviewOnly = useChatStore(state => state.isPreviewOnly);
+	const isOpen = useGlobalStore(state => state.donkin.isOpen);
 	const router = useTransitionRouter();
 
 	const { isLgWidth, isMdWidth, isSmWidth } = useMediaQuery();
 
 	const getItemDisplay = useCallback(
 		(index: number, length: number): ('all' | 'meta' | 'stock' | 'hotspots')[] => {
-			const itemsPerRow = isPreviewOnly
+			const itemsPerRow = !isOpen
 				? isLgWidth
 					? 4
 					: isMdWidth
@@ -211,7 +211,7 @@ const List = ({ display }: { display: 'group' | 'single' }) => {
 				return ['all'];
 			}
 		},
-		[isPreviewOnly, isLgWidth, isMdWidth, isSmWidth, display],
+		[isOpen, isLgWidth, isMdWidth, isSmWidth, display],
 	);
 
 	return (
@@ -222,7 +222,7 @@ const List = ({ display }: { display: 'group' | 'single' }) => {
 				<ul
 					className={cn(
 						'grid grid-cols-1 gap-4 mb-4 w-full',
-						isPreviewOnly ? 'lg:grid-cols-4 md:grid-cols-3 sm:grid-cols-2' : 'lg:grid-cols-3 md:grid-cols-2',
+						!isOpen ? 'lg:grid-cols-4 md:grid-cols-3 sm:grid-cols-2' : 'lg:grid-cols-3 md:grid-cols-2',
 					)}
 				>
 					<AnimatePresence>
@@ -271,7 +271,7 @@ const List = ({ display }: { display: 'group' | 'single' }) => {
 							{...props}
 							className={cn(
 								'grid grid-cols-1 gap-4 mb-4 w-full min-h-full',
-								isPreviewOnly ? 'lg:grid-cols-4 md:grid-cols-3 sm:grid-cols-2' : 'lg:grid-cols-3 md:grid-cols-2',
+								!isOpen ? 'lg:grid-cols-4 md:grid-cols-3 sm:grid-cols-2' : 'lg:grid-cols-3 md:grid-cols-2',
 							)}
 						>
 							{children}

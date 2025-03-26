@@ -11,6 +11,7 @@ import DefaultPrompt from '@/components/chat/default-prompt';
 import MessageCard from '@/components/chat/message-card';
 import PromptInput from '@/components/chat/prompt-input';
 import { useChatStore } from '@/stores/chat';
+import { useGlobalStore } from '@/stores/global/store';
 import { cn } from '@/utils/cn';
 
 const useUIChat = () => {
@@ -77,44 +78,34 @@ const ChatFooter = memo(() => {
 });
 
 const Chat = () => {
-	const isPreviewOnly = useChatStore(state => state.isPreviewOnly);
-
-	if (isPreviewOnly) {
-		return null;
-	}
+	const isOpen = useGlobalStore(state => state.donkin.isOpen);
 
 	return (
-		<section
+		<Card
 			className={cn(
-				'h-[calc(100vh-72px)] w-full p-5 md:pl-0 md:py-5 transition-width ease-in-out duration-1000',
-				isPreviewOnly ? 'w-[70px]' : 'w-full lg:w-1/3',
+				'bg-[#FFFFFF08] shadow-none p-3 relative overflow-visible transition-width ease-in-out duration-1000 h-full min-h-[calc(100vh-120px)] max-h-[calc(100vh-120px)]',
+				!isOpen ? 'w-[30px] rounded-full' : 'min-w-full',
 			)}
+			radius="sm"
 		>
-			<Card
-				className={cn(
-					'bg-transparent shadow-none p-3 relative overflow-visible transition-width ease-in-out duration-1000 h-full min-h-[calc(100vh-120px)] max-h-[calc(100vh-120px)]',
-					isPreviewOnly ? 'w-[30px] rounded-full' : 'min-w-full',
+			<AnimatePresence mode="popLayout">
+				{isOpen && (
+					<motion.div
+						className="flex flex-col w-full h-full"
+						initial={{ opacity: 0 }}
+						animate={{ opacity: 1 }}
+						exit={{ opacity: 0 }}
+						transition={{
+							type: 'spring',
+							duration: 1,
+						}}
+					>
+						<ChatBody />
+						<ChatFooter />
+					</motion.div>
 				)}
-			>
-				<AnimatePresence mode="popLayout">
-					{!isPreviewOnly && (
-						<motion.div
-							className="flex flex-col w-full h-full"
-							initial={{ opacity: 0 }}
-							animate={{ opacity: 1 }}
-							exit={{ opacity: 0 }}
-							transition={{
-								type: 'spring',
-								duration: 1,
-							}}
-						>
-							<ChatBody />
-							<ChatFooter />
-						</motion.div>
-					)}
-				</AnimatePresence>
-			</Card>
-		</section>
+			</AnimatePresence>
+		</Card>
 	);
 };
 

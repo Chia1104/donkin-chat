@@ -9,6 +9,9 @@ import { createStore } from 'zustand/vanilla';
 
 export interface ChatState {
 	chatId: string;
+	/**
+	 * @deprecated use `global.store.donkin.isOpen` instead
+	 */
 	isPreviewOnly: boolean;
 	/**
 	 * TODO: define preview schema
