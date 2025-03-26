@@ -1,10 +1,9 @@
-import { optionalDevtools } from 'zustand-utils';
-import type { devtools as _devtools } from 'zustand/middleware';
+import { devtools } from 'zustand/middleware';
 
-import { IS_DEV } from '@/utils/env';
+import { IS_PRODUCTION, env } from '@/utils/env';
 
 export const createDevtools =
-	(name: string): typeof _devtools =>
+	(name: string): typeof devtools =>
 	initializer => {
 		let showDevtools = false;
 
@@ -17,7 +16,8 @@ export const createDevtools =
 			}
 		}
 
-		return optionalDevtools(showDevtools)(initializer, {
-			name: `Donkin_${name}` + (IS_DEV ? '_DEV' : ''),
+		return devtools(initializer, {
+			name: `Donkin_${name}` + (!IS_PRODUCTION ? '_DEV' : ''),
+			enabled: env.NEXT_PUBLIC_DEBUG_ZUSTAND_DEVTOOLS === 'true' ? true : showDevtools,
 		});
 	};
