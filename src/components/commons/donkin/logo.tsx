@@ -61,6 +61,23 @@ const ActiveLogo = (props: Props) => {
 
 	if (hiddenOnStatus === current) return null;
 
+	// 水平線變體
+	const horizontalVariant = {
+		hidden: { width: 0, x: 20, opacity: 0 },
+		visible: { width: 8, x: 16, opacity: 1, transition: { duration: 0.3 } },
+	};
+
+	// 垂直線變體
+	const leftLineVariant = {
+		hidden: { height: 0, y: 23, x: 15, width: 0, opacity: 0 },
+		visible: { height: 6, y: 20, x: 15, width: 1.5, opacity: 1, transition: { duration: 0.3 } },
+	};
+
+	const rightLineVariant = {
+		hidden: { height: 0, y: 23, x: 23.5, width: 0, opacity: 0 },
+		visible: { height: 6, y: 20, x: 22.5, width: 1.5, opacity: 1, transition: { duration: 0.3 } },
+	};
+
 	return (
 		<Tooltip content={content} showArrow>
 			<motion.div
@@ -83,20 +100,34 @@ const ActiveLogo = (props: Props) => {
 					{/* 高光效果 */}
 					<circle cx="20" cy="20" r="20" fill="url(#highlightGradient)" opacity="0.7" />
 
-					{!isActive ? (
-						<>
-							{/* 水平矩形 - 較短的橫線 */}
-							<motion.rect x="16" y="24" width="8" height="1.5" rx="1.5" fill="url(#lineGradient)" />
-						</>
-					) : (
-						<>
-							{/* 左側豎線 */}
-							<motion.rect x="15" y="20" width="1.5" height="6" rx="1.25" fill="url(#lineGradient)" />
+					{/* 水平矩形 - 較短的橫線 */}
+					<motion.rect
+						variants={horizontalVariant}
+						initial="hidden"
+						animate={!isActive ? 'visible' : 'hidden'}
+						y="24"
+						height="1.5"
+						rx="1.5"
+						fill="url(#lineGradient)"
+					/>
 
-							{/* 右側豎線 */}
-							<motion.rect x="22.5" y="20" width="1.5" height="6" rx="1.25" fill="url(#lineGradient)" />
-						</>
-					)}
+					{/* 左側豎線 */}
+					<motion.rect
+						variants={leftLineVariant}
+						initial="hidden"
+						animate={isActive ? 'visible' : 'hidden'}
+						rx="1.25"
+						fill="url(#lineGradient)"
+					/>
+
+					{/* 右側豎線 */}
+					<motion.rect
+						variants={rightLineVariant}
+						initial="hidden"
+						animate={isActive ? 'visible' : 'hidden'}
+						rx="1.25"
+						fill="url(#lineGradient)"
+					/>
 
 					<defs>
 						{/* 底色漸變 */}
