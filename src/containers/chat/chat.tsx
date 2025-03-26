@@ -10,6 +10,8 @@ import { AnimatePresence, motion } from 'framer-motion';
 import DefaultPrompt from '@/components/chat/default-prompt';
 import MessageCard from '@/components/chat/message-card';
 import PromptInput from '@/components/chat/prompt-input';
+import Logo from '@/components/commons/donkin/logo';
+import { DonkinStatus } from '@/enums/donkin.enum';
 import { useChatStore } from '@/stores/chat';
 import { useGlobalStore } from '@/stores/global/store';
 import { cn } from '@/utils/cn';
@@ -29,7 +31,7 @@ const Messages = ({ children }: { children?: React.ReactNode }) => {
 	}
 
 	return (
-		<section className="flex flex-col gap-5 w-full justify-start h-full min-w-full">
+		<section className="flex flex-col w-full justify-start h-full min-w-full">
 			{messages.map((message, index) => {
 				const isLast = index === messages.length - 1;
 				return (
@@ -51,8 +53,15 @@ const Messages = ({ children }: { children?: React.ReactNode }) => {
 };
 
 const ChatBody = () => {
+	const { status, messages } = useUIChat();
 	return (
-		<CardBody aria-label="chat-body" className="flex flex-col items-center justify-start w-full">
+		<CardBody aria-label="chat-body" className="flex flex-col items-center justify-start w-full relative">
+			{messages && messages.length > 0 && (
+				<Logo
+					current={status === 'streaming' ? DonkinStatus.Thinking : DonkinStatus.Open}
+					className="absolute top-0 left-0 size-8 z-[9999]"
+				/>
+			)}
 			<ScrollShadow
 				aria-label="chat-scroll-shadow"
 				className="w-full min-w-full h-[calc(100vh-300px)] max-h-[calc(100vh-300px)] min-h-[calc(100vh-340px)]"
@@ -83,7 +92,7 @@ const Chat = () => {
 	return (
 		<Card
 			className={cn(
-				'bg-[#FFFFFF08] shadow-none p-5 relative overflow-visible transition-width ease-in-out duration-1000 h-full min-h-[calc(100vh-120px)] max-h-[calc(100vh-120px)]',
+				'bg-[#FFFFFF08] shadow-none p-4 relative overflow-visible transition-width ease-in-out duration-1000 h-full min-h-[calc(100vh-120px)] max-h-[calc(100vh-120px)]',
 				!isOpen ? 'w-[30px] rounded-full' : 'min-w-full',
 			)}
 			radius="sm"

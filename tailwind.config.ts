@@ -1,4 +1,5 @@
 import { heroui } from '@heroui/theme';
+import containerQueries from '@tailwindcss/container-queries';
 import typography from '@tailwindcss/typography';
 import type { Config } from 'tailwindcss';
 import animate from 'tailwindcss-animate';
@@ -69,7 +70,9 @@ export const theme = {
 			DEFAULT: {
 				css: {
 					p: {
-						color: '#FFFFFF73',
+						color: '#FFFFFFD9',
+						marginTop: '0.8rem',
+						marginBottom: '0.8rem',
 					},
 				},
 			},
@@ -155,6 +158,7 @@ const config = {
 		}),
 		typography,
 		animate,
+		containerQueries,
 	],
 } satisfies Config;
 

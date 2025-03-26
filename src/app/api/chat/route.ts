@@ -11,7 +11,7 @@ export const maxDuration = 60;
 
 export async function POST(req: Request) {
 	try {
-		if (!env.OPENAI_API_KEY) {
+		if (!env.OPENAI_API_KEY || env.FLAGS_AI_CHAT !== 'true') {
 			return NextResponse.json({ error: 'Not implemented' }, { status: 501 });
 		}
 
