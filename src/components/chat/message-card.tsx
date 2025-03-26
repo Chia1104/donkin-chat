@@ -3,19 +3,14 @@
 import React from 'react';
 
 import type { UIMessage } from '@ai-sdk/ui-utils';
-import { Badge } from '@heroui/badge';
-import { Chip } from '@heroui/chip';
 import { Link } from '@heroui/link';
-import { CircularProgress } from '@heroui/progress';
 import { cn } from '@heroui/theme';
 import { useClipboard } from '@heroui/use-clipboard';
 import CheckIcon from '@mui/icons-material/Check';
-import CircleIcon from '@mui/icons-material/Circle';
 import ContentCopyRoundedIcon from '@mui/icons-material/ContentCopyRounded';
 import RefreshIcon from '@mui/icons-material/Refresh';
 import ShareOutlinedIcon from '@mui/icons-material/ShareOutlined';
 import rehypeShiki from '@shikijs/rehype';
-import { useTranslations } from 'next-intl';
 import dynamic from 'next/dynamic';
 import rehypeKatex from 'rehype-katex';
 import rehypeRaw from 'rehype-raw';
@@ -57,14 +52,12 @@ const MessageCard = ({
 	onRetry,
 	isRetrying,
 	isLoading,
-	isCurrent,
-	streamingContent,
+	isCurrent: _isCurrent,
+	streamingContent: _streamingContent,
 	experimental,
 	...props
 }: MessageCardProps) => {
-	const messageRef = React.useRef<HTMLDivElement>(null);
 	const [isPending, startTransition] = React.useTransition();
-	const t = useTranslations('meta');
 
 	const { copied, copy } = useClipboard();
 
@@ -91,7 +84,7 @@ const MessageCard = ({
 			status === 'failed'
 				? 'bg-danger-100/50 border border-danger-100 text-foreground p-5'
 				: message.role === 'user'
-					? 'bg-content1'
+					? 'bg-[#FFFFFF08] max-w-fit self-end'
 					: '';
 
 		return {
@@ -101,70 +94,46 @@ const MessageCard = ({
 	}, [message.role, status]);
 
 	return (
-		<div {...props} className={cn('flex flex-col gap-1 w-fit', classNames.wrapperClassName, className)}>
-			{(message.role === 'assistant' || streamingContent) && (
-				<div className="relative flex-none">
-					<Badge
-						aria-label="assistant-badge"
-						isOneChar
-						color="danger"
-						content={<CircleIcon />}
-						isInvisible={!hasFailed}
-						placement="bottom-right"
-						shape="circle"
-					>
-						<Chip variant="dot" className="border-none px-0 text-default-500">
-							{t('title')}
-						</Chip>
-					</Badge>
-				</div>
-			)}
-			<div className="flex w-full flex-col gap-4">
-				<div
-					className={cn(
-						'relative w-full rounded-medium px-4 text-default-600 flex flex-col gap-6',
-						classNames.failedMessageClassName,
-						messageClassName,
-					)}
-				>
-					<div ref={messageRef} className={'text-small flex flex-col max-w-[300px] prose prose-invert'}>
-						{((isLoading && message.role === 'assistant' && isCurrent) || (isLoading && streamingContent)) && (
-							<CircularProgress size="sm" />
-						)}
-						{hasFailed ? (
-							<p>
-								Something went wrong, if the issue persists please contact us through our help center at&nbsp;
-								<Link aria-label="support-email" href="mailto:support@acmeai.com" size="sm">
-									support@acmeai.com
-								</Link>
-							</p>
+		<div {...props} className={cn('flex w-full flex-col gap-4 py-4', classNames.wrapperClassName, className)}>
+			<div
+				className={cn(
+					'relative w-full rounded-medium px-4 text-default-600 flex flex-col gap-6 text-small prose prose-invert',
+					classNames.failedMessageClassName,
+					messageClassName,
+				)}
+			>
+				{hasFailed ? (
+					<p>
+						Something went wrong, if the issue persists please contact us through our help center at&nbsp;
+						<Link aria-label="support-email" href="mailto:support@acmeai.com" size="sm">
+							support@acmeai.com
+						</Link>
+					</p>
+				) : (
+					<div className="max-w-full">
+						{experimental?.shiki ? (
+							<MarkdownHooks
+								remarkPlugins={[[remarkGfm], [remarkMath]]}
+								rehypePlugins={[
+									[
+										rehypeShiki,
+										{
+											theme: 'one-dark-pro',
+										},
+									],
+									[rehypeRaw],
+									[rehypeKatex],
+								]}
+							>
+								{message.content}
+							</MarkdownHooks>
 						) : (
-							<div className="">
-								{experimental?.shiki ? (
-									<MarkdownHooks
-										remarkPlugins={[[remarkGfm], [remarkMath]]}
-										rehypePlugins={[
-											[
-												rehypeShiki,
-												{
-													theme: 'one-dark-pro',
-												},
-											],
-											[rehypeRaw],
-											[rehypeKatex],
-										]}
-									>
-										{message.content}
-									</MarkdownHooks>
-								) : (
-									<Markdown
-										remarkPlugins={[[remarkGfm], [remarkMath]]}
-										rehypePlugins={[[rehypeSanitize], [rehypeRaw], [rehypeKatex]]}
-									>
-										{message.content}
-									</Markdown>
-								)}
-							</div>
+							<Markdown
+								remarkPlugins={[[remarkGfm], [remarkMath]]}
+								rehypePlugins={[[rehypeSanitize], [rehypeRaw], [rehypeKatex]]}
+							>
+								{message.content}
+							</Markdown>
 						)}
 						{showFeedback && !hasFailed && !isLoading && (
 							<div className="flex">
@@ -221,7 +190,7 @@ const MessageCard = ({
 							</div>
 						)}
 					</div>
-				</div>
+				)}
 			</div>
 		</div>
 	);

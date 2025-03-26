@@ -7,6 +7,7 @@ import type { TextAreaProps } from '@heroui/input';
 import { Textarea } from '@heroui/input';
 import { useTranslations } from 'next-intl';
 
+import { useChatStore } from '@/stores/chat';
 import { cn } from '@/utils/cn';
 
 import { HeroButton } from '../ui/hero-button';
@@ -24,6 +25,7 @@ export interface Props {
 const PromptInput = memo(
 	({ onSubmit, value, onChange, props }: Props) => {
 		const t = useTranslations('chat');
+		const enabled = useChatStore(state => state.enabled);
 		return (
 			<Form
 				aria-label="Prompt Form"
@@ -32,7 +34,7 @@ const PromptInput = memo(
 				onSubmit={onSubmit}
 			>
 				<Textarea
-					isDisabled
+					isDisabled={!enabled}
 					aria-label="Prompt"
 					minRows={5}
 					maxRows={5}

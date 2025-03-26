@@ -17,6 +17,7 @@ export const env = createEnv({
 		SENTRY_PROJECT: z.string().optional(),
 		OPENAI_API_KEY: z.string().optional(),
 		BIRDEYE_API_KEY: z.string().optional(),
+		FLAGS_AI_CHAT: z.string().optional(),
 	},
 
 	client: {
@@ -46,6 +47,7 @@ export const env = createEnv({
 		BIRDEYE_API_KEY: process.env.BIRDEYE_API_KEY,
 		NEXT_PUBLIC_DEBUG_ZUSTAND_DEVTOOLS:
 			process.env.NEXT_PUBLIC_APP_ENV === 'production' ? process.env.NEXT_PUBLIC_DEBUG_ZUSTAND_DEVTOOLS : 'true',
+		FLAGS_AI_CHAT: process.env.FLAGS_AI_CHAT,
 	},
 
 	skipValidation: process.env.SKIP_ENV_VALIDATION === 'true' || process.env.SKIP_ENV_VALIDATION === '1',
