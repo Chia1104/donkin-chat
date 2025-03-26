@@ -2,11 +2,11 @@
 
 import { memo, useCallback } from 'react';
 
-import { Image } from '@heroui/image';
 import { useTranslations } from 'next-intl';
-import NextImage from 'next/image';
 
+import Logo from '@/components/commons/donkin/logo';
 import ActionCard, { ActionBody } from '@/components/ui/action-card';
+import { DonkinStatus } from '@/enums/donkin.enum';
 
 interface Props {
 	onAction?: (action: string) => void;
@@ -28,16 +28,7 @@ const DefaultPrompt = ({ currentCoin = 'XX', ...props }: Props) => {
 	return (
 		<section className="flex flex-col items-center justify-center w-full h-full max-w-[350px] gap-5 prose prose-invert">
 			<div className="flex flex-col items-center justify-center w-full max-w-[285px] gap-3">
-				<Image
-					className="mb-2"
-					as={NextImage}
-					alt="donkin"
-					src="/assets/images/donkin.png"
-					width={78}
-					height={78}
-					removeWrapper
-					aria-label="donkin"
-				/>
+				<Logo className="size-[78px]" current={DonkinStatus.Open} />
 				<h2 className="mt-0 mb-2">{t('donkin-title')}</h2>
 				<p className="text-xs text-center">{t('donkin-subtitle')}</p>
 			</div>

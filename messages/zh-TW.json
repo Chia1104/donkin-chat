@@ -160,6 +160,14 @@
 			"description": "您嘗試訪問的代幣不存在或已被移除。請檢查您的鏈接是否正確，或嘗試連接您的錢包查看您的代幣。"
 		}
 	},
+	"donkin": {
+		"title": "Donkin",
+		"description": "Donkin 是幣圈最專業的 AI 投顧，提供即時的幣圈資訊和智能的投資建議。",
+		"action": {
+			"open": "展開 AI 投顾",
+			"close": "收合 AI 投顾"
+		}
+	},
 	"ChartExamples": {
 		"title": "圖表範例",
 		"candlestickTitle": "K 線圖",

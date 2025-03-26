@@ -10,18 +10,13 @@ interface Props {
 const Layout = async (props: Props & PagePropsWithLocale) => {
 	const { threadId } = await loadAISearchParams(props.searchParams);
 	return (
-		<ChatRoomLayout>
-			<ChatStoreProvider
-				values={{
-					chatId: threadId,
-				}}
-			>
-				<div className="gap-10 overflow-hidden w-full relative flex">
-					{props.children}
-					{props.chat}
-				</div>
-			</ChatStoreProvider>
-		</ChatRoomLayout>
+		<ChatStoreProvider
+			values={{
+				chatId: threadId,
+			}}
+		>
+			<ChatRoomLayout chatBot={props.chat}>{props.children}</ChatRoomLayout>
+		</ChatStoreProvider>
 	);
 };
 

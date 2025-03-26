@@ -32,7 +32,7 @@ const AppPlugins = () => {
 			<Wb3StoreConsumer />
 			<ToasterPlugin />
 			<ToastProvider />
-			<ReactQueryDevtools initialIsOpen={false} />
+			<ReactQueryDevtools initialIsOpen={false} buttonPosition="top-left" />
 		</>
 	);
 };

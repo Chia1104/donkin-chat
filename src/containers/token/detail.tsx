@@ -11,17 +11,16 @@ import { Skeleton } from '@heroui/skeleton';
 import { useTranslations } from 'next-intl';
 import { useParams } from 'next/navigation';
 
-import { HeaderPrimitive } from '@/components/chat/preview/ai-signal/info-card';
-import { HotspotProgress } from '@/components/chat/preview/ai-signal/info-card';
 import { ErrorBoundary } from '@/components/commons/error-boundary';
 import Candlestick from '@/components/token/candlestick';
 import { FilterAction } from '@/components/token/filter-action';
+import { HeaderPrimitive } from '@/components/token/info-card';
+import { HotspotProgress } from '@/components/token/info-card';
 import Card from '@/components/ui/card';
 import { useQueryOhlcv } from '@/libs/birdeye/hooks/useQueryOhlcv';
 import { IntervalFilter } from '@/libs/token/enums/interval-filter.enum';
 import { useQueryToken } from '@/libs/token/hooks/useQueryToken';
 import { useTokenSearchParams } from '@/libs/token/hooks/useTokenSearchParams';
-import { useChatStore } from '@/stores/chat';
 import { cn } from '@/utils/cn';
 import dayjs from '@/utils/dayjs';
 import { truncateMiddle, formatLargeNumber } from '@/utils/format';
@@ -111,7 +110,6 @@ const Detail = () => {
 	const params = useParams<{ chain: string; token: string }>();
 	const queryResult = useQueryToken(params.token);
 	const [searchParams] = useTokenSearchParams();
-	const isPreviewOnly = useChatStore(state => state.isPreviewOnly);
 
 	const timeFrom = useMemo(() => {
 		switch (searchParams.interval) {
@@ -166,82 +164,78 @@ const Detail = () => {
 	}, [ohlcv.data?.data]);
 
 	return (
-		<section
-			className={cn('p-5 overflow-y-auto h-[calc(100vh-72px)]', !isPreviewOnly ? 'w-full lg:w-2/3 pr-0' : 'w-full')}
-		>
-			<div className="w-full h-full flex flex-col">
-				<ScrollShadow className="w-full h-[calc(100vh-72px)]">
-					<div className="flex flex-col gap-5 w-full">
-						<header className="flex justify-between items-center">
-							<section className="flex items-center gap-5">
-								<HeaderPrimitive
-									avatarProps={{
-										size: 'lg',
-										className: 'min-w-8 min-h-8 w-8 h-8',
-									}}
-									classNames={{
-										label: 'text-[22px] font-normal mr-2',
-										labelWrapper: 'flex-row items-center',
-									}}
-									injects={{
-										afterLabel: (
-											<span className="flex items-center gap-3">
-												<Divider orientation="vertical" className="h-3" />
-												<p className="text-success text-[12px] font-normal">2h</p>
-												<p className="text-[12px] font-normal">
-													{truncateMiddle(
-														queryResult.data?.address ?? '',
-														queryResult.data?.address ? queryResult.data?.address.length / 3 : 5,
-													)}
-												</p>
-											</span>
-										),
-									}}
-									isLoading={queryResult.isLoading}
-									meta={{
-										name: queryResult.data?.name ?? '',
-										avatar: queryResult.data?.logo_uri ?? '',
-										chain: queryResult.data?.symbol ?? '',
-										token: queryResult.data?.address ?? '',
-									}}
-								/>
-							</section>
-							<section>
-								<Marker />
-							</section>
-						</header>
-						<ErrorBoundary>
-							<Candlestick
-								meta={{
-									price: queryResult.data?.price ?? 0,
-									change: queryResult.data?.change ?? 0,
+		<div className="w-full h-full flex flex-col">
+			<ScrollShadow className="w-full h-[calc(100vh-72px)]">
+				<div className="flex flex-col gap-5 w-full">
+					<header className="flex justify-between items-center">
+						<section className="flex items-center gap-5">
+							<HeaderPrimitive
+								avatarProps={{
+									size: 'lg',
+									className: 'min-w-8 min-h-8 w-8 h-8',
 								}}
-								data={ohlcvData}
-								isPending={ohlcv.isLoading}
-								isMetaPending={queryResult.isLoading}
+								classNames={{
+									label: 'text-[22px] font-normal mr-2',
+									labelWrapper: 'flex-row items-center',
+								}}
+								injects={{
+									afterLabel: (
+										<span className="flex items-center gap-3">
+											<Divider orientation="vertical" className="h-3" />
+											<p className="text-success text-[12px] font-normal">2h</p>
+											<p className="text-[12px] font-normal">
+												{truncateMiddle(
+													queryResult.data?.address ?? '',
+													queryResult.data?.address ? queryResult.data?.address.length / 3 : 5,
+												)}
+											</p>
+										</span>
+									),
+								}}
+								isLoading={queryResult.isLoading}
+								meta={{
+									name: queryResult.data?.name ?? '',
+									avatar: queryResult.data?.logo_uri ?? '',
+									chain: queryResult.data?.symbol ?? '',
+									token: queryResult.data?.address ?? '',
+								}}
 							/>
-						</ErrorBoundary>
-						<Card className="grid grid-cols-6 gap-2">
-							<Hotspot x={0} telegram={0} />
-							<CardBody className="col-span-4 grid grid-cols-4 gap-2">
-								<Stock
-									label={t('card.stock.marketCap')}
-									value={`$ ${formatLargeNumber(queryResult.data?.market_cap ?? 0)}`}
-									isPending={queryResult.isLoading}
-								/>
-								<Stock
-									label={t('card.stock.pool')}
-									value={`$ ${formatLargeNumber(queryResult.data?.liquidity ?? 0)}`}
-									isPending={queryResult.isLoading}
-								/>
-								<Stock label={tToken('holder')} value={formatLargeNumber(0)} isPending={queryResult.isLoading} />
-								<Stock label={tToken('wallets')} value={formatLargeNumber(0)} isPending={queryResult.isLoading} />
-							</CardBody>
-						</Card>
-					</div>
-				</ScrollShadow>
-			</div>
-		</section>
+						</section>
+						<section>
+							<Marker />
+						</section>
+					</header>
+					<ErrorBoundary>
+						<Candlestick
+							meta={{
+								price: queryResult.data?.price ?? 0,
+								change: queryResult.data?.change ?? 0,
+							}}
+							data={ohlcvData}
+							isPending={ohlcv.isLoading}
+							isMetaPending={queryResult.isLoading}
+						/>
+					</ErrorBoundary>
+					<Card className="grid grid-cols-6 gap-2">
+						<Hotspot x={0} telegram={0} />
+						<CardBody className="col-span-4 grid grid-cols-4 gap-2">
+							<Stock
+								label={t('card.stock.marketCap')}
+								value={`$ ${formatLargeNumber(queryResult.data?.market_cap ?? 0)}`}
+								isPending={queryResult.isLoading}
+							/>
+							<Stock
+								label={t('card.stock.pool')}
+								value={`$ ${formatLargeNumber(queryResult.data?.liquidity ?? 0)}`}
+								isPending={queryResult.isLoading}
+							/>
+							<Stock label={tToken('holder')} value={formatLargeNumber(0)} isPending={queryResult.isLoading} />
+							<Stock label={tToken('wallets')} value={formatLargeNumber(0)} isPending={queryResult.isLoading} />
+						</CardBody>
+					</Card>
+				</div>
+			</ScrollShadow>
+		</div>
 	);
 };
 
