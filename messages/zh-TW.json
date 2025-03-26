@@ -163,6 +163,9 @@
 	"donkin": {
 		"title": "Donkin",
 		"description": "Donkin 是幣圈最專業的 AI 投顧，提供即時的幣圈資訊和智能的投資建議。",
+		"status": {
+			"thinking": "Donkin 正在思考中..."
+		},
 		"action": {
 			"open": "展開 AI 投顾",
 			"close": "收合 AI 投顾"

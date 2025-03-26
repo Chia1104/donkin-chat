@@ -163,6 +163,9 @@
 	"donkin": {
 		"title": "Donkin",
 		"description": "Donkin is the most professional AI investment consultant in the cryptocurrency circle, providing real-time information and intelligent investment advice.",
+		"status": {
+			"thinking": "Donkin is thinking..."
+		},
 		"action": {
 			"open": "Open AI investment consultant",
 			"close": "Close AI investment consultant"
