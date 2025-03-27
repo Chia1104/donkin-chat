@@ -1,18 +1,28 @@
-import type { MessageRole } from '../enums/messageRole.enum';
+import { z } from 'zod';
 
-export interface ModelReasoning {
-	content?: string;
-	duration?: number;
-}
+import { MessageRole } from '../enums/messageRole.enum';
 
-export interface MessageItem {
-	content: string | null;
-	createdAt: Date;
-	error: any;
-	id: string;
-	parentId: string | null;
-	reasoning: ModelReasoning | null;
-	role: MessageRole;
-	threadId: string;
-	updatedAt: Date | null;
-}
+export const modelReasoningSchema = z.object({
+	content: z.string().optional(),
+	duration: z.number().optional(),
+});
+
+export type ModelReasoning = z.infer<typeof modelReasoningSchema>;
+
+export const messageItemSchema = z.object({
+	content: z.string().nullable(),
+	createdAt: z.date(),
+	error: z.any().nullable(),
+	id: z.string(),
+	parentId: z.string().nullable(),
+	reasoning: modelReasoningSchema.nullable(),
+	role: z.nativeEnum(MessageRole),
+	threadId: z.string(),
+});
+
+/**
+ * extendable schema
+ */
+export type MessageItemSchema = z.ZodType<MessageItem>;
+
+export type MessageItem = z.infer<typeof messageItemSchema>;

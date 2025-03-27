@@ -1,6 +1,6 @@
 'use client';
 
-import { memo, createContext, use, useMemo } from 'react';
+import { memo, createContext, use, useMemo, useRef, useState, useCallback } from 'react';
 import type { PropsWithChildren } from 'react';
 
 import { Chip } from '@heroui/chip';
@@ -8,7 +8,7 @@ import { Skeleton } from '@heroui/skeleton';
 import { Spinner } from '@heroui/spinner';
 import { Tabs, Tab } from '@heroui/tabs';
 import { CandlestickSeries, ColorType, HistogramSeries } from 'lightweight-charts';
-import type { Time } from 'lightweight-charts';
+import type { Time, IChartApi } from 'lightweight-charts';
 import { useLocale } from 'next-intl';
 
 import { experimental_useTailwindTheme as useTailwindTheme } from '@/hooks/useTailwindTheme';
@@ -23,6 +23,7 @@ import {
 	MarkerTooltip,
 	// useMarkerTooltipStore,
 } from '../chart/plugins/clickable-marker/marker-tooltip';
+import type { TradingChartRef } from '../chart/trading-chart';
 import TradingChart from '../chart/trading-chart';
 
 interface Data {
@@ -114,6 +115,29 @@ const MetaInfo = () => {
 const Chart = () => {
 	const locale = useLocale();
 	const [searchParams] = useTokenSearchParams();
+	const [initOptions] = useState({
+		autoSize: true,
+		layout: {
+			textColor: '#9B9EAB',
+			background: { type: ColorType.Solid, color: 'transparent' },
+			attributionLogo: false,
+		},
+		grid: {
+			vertLines: {
+				color: 'transparent',
+			},
+			horzLines: {
+				color: 'transparent',
+			},
+		},
+		localization: {
+			locale,
+		},
+		timeScale: {
+			timeVisible: true,
+		},
+	});
+	const chartRef = useRef<TradingChartRef>(null);
 	// const { openTooltip, closeTooltip } = useMarkerTooltipStore(store => store);
 	const twTheme = useTailwindTheme();
 	const { data: _data, isPending } = useCandlestick();
@@ -126,6 +150,46 @@ const Chart = () => {
 		}));
 	}, [_data, twTheme.theme.colors.buy.disabled, twTheme.theme.colors.sell.disabled]);
 
+	const handleInit = useCallback(
+		(chart: IChartApi) => {
+			const candlestickSeries = chart.addSeries(CandlestickSeries, {
+				upColor: searchParams.mark ? twTheme.theme.colors.buy.disabled : twTheme.theme.colors.buy.DEFAULT,
+				downColor: searchParams.mark ? twTheme.theme.colors.sell.disabled : twTheme.theme.colors.sell.DEFAULT,
+				borderVisible: false,
+				wickUpColor: searchParams.mark ? twTheme.theme.colors.buy.disabled : twTheme.theme.colors.buy.DEFAULT,
+				wickDownColor: searchParams.mark ? twTheme.theme.colors.sell.disabled : twTheme.theme.colors.sell.DEFAULT,
+			});
+			const volumeSeries = chart.addSeries(HistogramSeries, {
+				priceFormat: {
+					type: 'volume',
+				},
+				priceScaleId: '', // set as an overlay by setting a blank priceScaleId
+			});
+			volumeSeries.priceScale().applyOptions({
+				scaleMargins: {
+					top: 0.8, // highest point of the series will be 70% away from the top
+					bottom: 0,
+				},
+			});
+
+			candlestickSeries.setData(
+				data.map(item => ({
+					...item,
+					color: undefined,
+				})),
+			);
+			volumeSeries.setData(data);
+		},
+		[
+			data,
+			searchParams.mark,
+			twTheme.theme.colors.buy.DEFAULT,
+			twTheme.theme.colors.buy.disabled,
+			twTheme.theme.colors.sell.DEFAULT,
+			twTheme.theme.colors.sell.disabled,
+		],
+	);
+
 	if (isPending) {
 		return (
 			<div className="flex items-center justify-center w-full h-[485px]">
@@ -134,97 +198,7 @@ const Chart = () => {
 		);
 	}
 
-	return (
-		<TradingChart
-			height={485}
-			onInit={chart => {
-				const series = chart.addSeries(CandlestickSeries, {
-					upColor: searchParams.mark ? twTheme.theme.colors.buy.disabled : twTheme.theme.colors.buy.DEFAULT,
-					downColor: searchParams.mark ? twTheme.theme.colors.sell.disabled : twTheme.theme.colors.sell.DEFAULT,
-					borderVisible: false,
-					wickUpColor: searchParams.mark ? twTheme.theme.colors.buy.disabled : twTheme.theme.colors.buy.DEFAULT,
-					wickDownColor: searchParams.mark ? twTheme.theme.colors.sell.disabled : twTheme.theme.colors.sell.DEFAULT,
-				});
-
-				// mock data
-				series.setData(
-					data.map(item => ({
-						...item,
-						color: undefined,
-					})),
-				);
-				chart.timeScale().fitContent();
-				// if (searchParams.mark) {
-				// 	createClickableMarkers(
-				// 		chart,
-				// 		series,
-				// 		[
-				// 			{
-				// 				time: dayjs().format('YYYY-MM-DD'),
-				// 				position: 'aboveBar',
-				// 				color: '#FFFFFF73',
-				// 				src: '/assets/images/buy-icon.svg',
-				// 				size: 1,
-				// 				tooltip: 'test 1',
-				// 			},
-				// 			{
-				// 				time: dayjs().format('YYYY-MM-DD'),
-				// 				position: 'aboveBar',
-				// 				color: '#FFFFFF73',
-				// 				src: '/assets/images/sell-icon.svg',
-				// 				size: 1,
-				// 				text: '+35',
-				// 				tooltip: 'test 2',
-				// 			},
-				// 		],
-				// 		{
-				// 			onClick: marker => {
-				// 				console.log('標記被點擊:', marker);
-				// 			},
-				// 			onOpenTooltip: openTooltip,
-				// 			onCloseTooltip: closeTooltip,
-				// 		},
-				// 	);
-				// }
-
-				const volumeSeries = chart.addSeries(HistogramSeries, {
-					priceFormat: {
-						type: 'volume',
-					},
-					priceScaleId: '', // set as an overlay by setting a blank priceScaleId
-				});
-				volumeSeries.priceScale().applyOptions({
-					scaleMargins: {
-						top: 0.8, // highest point of the series will be 70% away from the top
-						bottom: 0,
-					},
-				});
-				volumeSeries.setData(data);
-			}}
-			initOptions={{
-				autoSize: true,
-				layout: {
-					textColor: '#9B9EAB',
-					background: { type: ColorType.Solid, color: 'transparent' },
-					attributionLogo: false,
-				},
-				grid: {
-					vertLines: {
-						color: 'transparent',
-					},
-					horzLines: {
-						color: 'transparent',
-					},
-				},
-				localization: {
-					locale,
-				},
-				timeScale: {
-					timeVisible: true,
-				},
-			}}
-		/>
-	);
+	return <TradingChart ref={chartRef} height={485} onInit={handleInit} initOptions={initOptions} />;
 };
 
 const Candlestick = (props: CandlestickProps) => {
