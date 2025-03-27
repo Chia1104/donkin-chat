@@ -192,19 +192,19 @@ const Chart = () => {
 
 	if (isPending) {
 		return (
-			<div className="flex items-center justify-center w-full h-[485px]">
+			<div className="flex items-center justify-center w-full h-[55dvh]">
 				<Spinner />
 			</div>
 		);
 	}
 
-	return <TradingChart ref={chartRef} height={485} onInit={handleInit} initOptions={initOptions} />;
+	return <TradingChart ref={chartRef} className="h-[55dvh]" onInit={handleInit} initOptions={initOptions} />;
 };
 
 const Candlestick = (props: CandlestickProps) => {
 	return (
 		<CandlestickProvider {...props}>
-			<section className="w-full h-[625px] rounded-lg flex flex-col gap-10">
+			<section className="w-full rounded-lg flex flex-col gap-10">
 				<header className="flex items-center justify-between">
 					<MetaInfo />
 					<DateFilter />
