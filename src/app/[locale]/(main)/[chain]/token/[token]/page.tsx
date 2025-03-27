@@ -3,13 +3,15 @@ import { notFound } from 'next/navigation';
 
 import Detail from '@/containers/token/detail';
 import { getToken } from '@/libs/token/resources/token.resource';
+import { loadGlobalSearchParams } from '@/services/loadGlobalSearchParams';
 import { IS_DEV } from '@/utils/env';
 import { getQueryClient } from '@/utils/query-client';
 
-const Page = async ({ params }: { params: PageParamsWithLocale<{ token: string }> }) => {
+const Page = async (props: PagePropsWithLocale<{ token: string }>) => {
 	const queryClient = getQueryClient();
 
-	const { token } = await params;
+	const { token } = await props.params;
+	const searchParams = await loadGlobalSearchParams(props.searchParams);
 
 	try {
 		await queryClient.fetchQuery({
@@ -17,7 +19,7 @@ const Page = async ({ params }: { params: PageParamsWithLocale<{ token: string }
 			queryFn: () => getToken(token),
 		});
 	} catch {
-		if (!IS_DEV) {
+		if (!IS_DEV && !searchParams.debug) {
 			notFound();
 		}
 	}
