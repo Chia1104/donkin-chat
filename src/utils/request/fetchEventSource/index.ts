@@ -47,7 +47,7 @@ export interface FetchEventSourceInit extends RequestInit {
 	 * actually matches what you expect (and throw if it doesn't.) If not provided,
 	 * will default to a basic validation to ensure the content-type is text/event-stream.
 	 */
-	onopen: (response: Response) => Promise<void>;
+	onopen: (response: Response) => Promise<void> | void;
 }
 
 export function fetchEventSource(

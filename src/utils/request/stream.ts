@@ -30,14 +30,14 @@ export const fetchStream = async <T = unknown>(input: RequestInfo, payload: T, i
 
 	if (!response.ok) throw new Error('Stream request failed');
 
-	if (typeof response.body === 'undefined' || typeof response.body?.getReader() === 'undefined')
-		throw new Error('Stream response body is undefined');
+	const body = response.body;
+	if (!body) throw new Error('Stream response body is undefined');
 
-	const reader = response.body.getReader();
 	const decoder = new TextDecoder();
 
 	return {
 		[Symbol.asyncIterator]: async function* () {
+			const reader = body.getReader();
 			try {
 				while (true) {
 					const { done, value } = await reader.read();
