@@ -62,11 +62,13 @@ const ChatBody = () => {
 					className="absolute top-0 left-0 size-8 z-[9999]"
 				/>
 			)}
-			<ScrollShadow
-				aria-label="chat-scroll-shadow"
-				className="w-full min-w-full h-[calc(100vh-300px)] max-h-[calc(100vh-300px)] min-h-[calc(100vh-340px)]"
-			>
-				<div className="flex h-full justify-center items-center">
+			<ScrollShadow aria-label="chat-scroll-shadow" className="w-full min-w-full h-[calc(100vh-300px)]">
+				<div
+					className={cn(
+						'flex min-h-full justify-center',
+						messages && messages.length > 0 ? 'items-start' : 'items-center',
+					)}
+				>
 					<Messages />
 				</div>
 			</ScrollShadow>

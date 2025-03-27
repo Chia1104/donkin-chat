@@ -39,7 +39,6 @@ const TradingChart = forwardRef<TradingChartRef, TradingChartProps>(
 				width: chartContainerRef.current?.clientWidth ?? 0,
 				height,
 			});
-			chartInstance.timeScale().fitContent();
 
 			setChart(chartInstance);
 

@@ -38,11 +38,11 @@ const ActiveLogo = (props: Props) => {
 	const isActive = useMemo(() => {
 		switch (current) {
 			case DonkinStatus.Open:
-				return isHover ? false : true;
+				return isActivatable ? (isHover ? false : true) : true;
 			case DonkinStatus.Close:
-				return isHover ? true : false;
+				return isActivatable ? (isHover ? true : false) : false;
 		}
-	}, [current, isHover]);
+	}, [current, isHover, isActivatable]);
 
 	const content = useMemo(() => {
 		if (!isActivatable) return undefined;
@@ -80,7 +80,7 @@ const ActiveLogo = (props: Props) => {
 	};
 
 	return (
-		<Tooltip content={content} showArrow>
+		<Tooltip content={content} showArrow isDisabled={!isActivatable}>
 			<motion.div
 				initial={{ opacity: 0 }}
 				animate={{ opacity: opacityOnStatus === current ? (isHover ? 1 : 0.5) : 1 }}
