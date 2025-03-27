@@ -158,6 +158,13 @@
 		"not-found": {
 			"title": "找不到代幣",
 			"description": "您嘗試訪問的代幣不存在或已被移除。請檢查您的鏈接是否正確，或嘗試連接您的錢包查看您的代幣。"
+		},
+		"order-popover": {
+			"total-buy": "总买入金额",
+			"total-sell": "总卖出金额",
+			"total-volume": "清仓",
+			"order-success": "喊单成功次数",
+			"ask-more": "你还想知道..."
 		}
 	},
 	"donkin": {
@@ -169,6 +176,12 @@
 		"action": {
 			"open": "展開 AI 投顾",
 			"close": "收合 AI 投顾"
+		},
+		"ask-more": {
+			"kol-order": {
+				"smart-wallet": "哪些聪明钱在此 K 线上交易？",
+				"kol-order": "哪些 KOL 喊单？成效如何？"
+			}
 		}
 	},
 	"ChartExamples": {

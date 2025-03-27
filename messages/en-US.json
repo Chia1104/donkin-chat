@@ -158,6 +158,13 @@
 		"not-found": {
 			"title": "Token not found",
 			"description": "The token you are trying to access does not exist or has been removed. Please check your link is correct, or try connecting your wallet to view your token."
+		},
+		"order-popover": {
+			"total-buy": "Total buy amount",
+			"total-sell": "Total sell amount",
+			"total-volume": "Liquidate",
+			"order-success": "Order success times",
+			"ask-more": "You want to know..."
 		}
 	},
 	"donkin": {
@@ -169,6 +176,12 @@
 		"action": {
 			"open": "Open AI investment consultant",
 			"close": "Close AI investment consultant"
+		},
+		"ask-more": {
+			"kol-order": {
+				"smart-wallet": "What are smart money addresses buying?",
+				"kol-order": "What are KOLs calling? What is the effect?"
+			}
 		}
 	},
 	"ChartExamples": {
