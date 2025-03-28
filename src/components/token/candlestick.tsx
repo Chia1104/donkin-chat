@@ -8,21 +8,18 @@ import { Skeleton } from '@heroui/skeleton';
 import { Spinner } from '@heroui/spinner';
 import { Tabs, Tab } from '@heroui/tabs';
 import { CandlestickSeries, ColorType, HistogramSeries } from 'lightweight-charts';
-import type { Time, IChartApi } from 'lightweight-charts';
+import type { Time, IChartApi, ISeriesApi } from 'lightweight-charts';
 import { useLocale } from 'next-intl';
 
 import { experimental_useTailwindTheme as useTailwindTheme } from '@/hooks/useTailwindTheme';
+import { useMutationOhlcv } from '@/libs/birdeye/hooks/useQueryOhlcv';
 import { IntervalFilter } from '@/libs/token/enums/interval-filter.enum';
 import { useTokenSearchParams } from '@/libs/token/hooks/useTokenSearchParams';
+import dayjs from '@/utils/dayjs';
 import { formatLargeNumber, roundDecimal } from '@/utils/format';
 import { isPositiveNumber, isNegativeNumber, isNumber } from '@/utils/is';
 
-// import { createClickableMarkers } from '../chart/plugins/clickable-marker/core';
-import {
-	MarkerTooltipProvider,
-	MarkerTooltip,
-	// useMarkerTooltipStore,
-} from '../chart/plugins/clickable-marker/marker-tooltip';
+import { MarkerTooltipProvider, MarkerTooltip } from '../chart/plugins/clickable-marker/marker-tooltip';
 import type { TradingChartRef } from '../chart/trading-chart';
 import TradingChart from '../chart/trading-chart';
 
@@ -39,6 +36,12 @@ interface CandlestickProps {
 	meta: {
 		price: number;
 		change: number | string;
+		address: string;
+	};
+	query: {
+		type: IntervalFilter;
+		time_from: number;
+		time_to: number;
 	};
 	data: Data[];
 	isPending?: boolean;
@@ -138,17 +141,123 @@ const Chart = () => {
 		},
 	});
 	const chartRef = useRef<TradingChartRef>(null);
-	// const { openTooltip, closeTooltip } = useMarkerTooltipStore(store => store);
 	const twTheme = useTailwindTheme();
-	const { data: _data, isPending } = useCandlestick();
-	const data = useMemo(() => {
-		return _data.map(item => ({
+
+	const { mutate: fetchMoreOhlcv, isPending: isFetchMoreOhlcvPending } = useMutationOhlcv();
+	const { data, isPending, meta, query } = useCandlestick();
+	const [timeFrom, setTimeFrom] = useState(query.time_from);
+	const [timeTo, setTimeTo] = useState(query.time_to);
+	const initData = useMemo(() => {
+		return data.map(item => ({
 			...item,
 			value: item.volume,
 			time: item.unix as Time,
 			color: item.close > item.open ? twTheme.theme.colors.buy.disabled : twTheme.theme.colors.sell.disabled,
 		}));
-	}, [_data, twTheme.theme.colors.buy.disabled, twTheme.theme.colors.sell.disabled]);
+	}, [data, twTheme.theme.colors.buy.disabled, twTheme.theme.colors.sell.disabled]);
+
+	const handleGenerateTimeWithInterval = useCallback(
+		(current: number, interval: IntervalFilter, range: number): number => {
+			switch (interval) {
+				case IntervalFilter.OneMinute:
+					return dayjs.unix(current).subtract(range, 'minutes').unix();
+				case IntervalFilter.FiveMinutes:
+					return dayjs
+						.unix(current)
+						.subtract(range * 5, 'minutes')
+						.unix();
+				case IntervalFilter.FifteenMinutes:
+					return dayjs
+						.unix(current)
+						.subtract(range * 15, 'minutes')
+						.unix();
+				case IntervalFilter.ThirtyMinutes:
+					return dayjs
+						.unix(current)
+						.subtract(range * 30, 'minutes')
+						.unix();
+				case IntervalFilter.OneHour:
+					return dayjs.unix(current).subtract(range, 'hours').unix();
+				case IntervalFilter.FourHours:
+					return dayjs
+						.unix(current)
+						.subtract(range * 4, 'hours')
+						.unix();
+				case IntervalFilter.OneDay:
+					return dayjs.unix(current).subtract(range, 'days').unix();
+				case IntervalFilter.OneWeek:
+					return dayjs.unix(current).subtract(range, 'weeks').unix();
+				default:
+					return current;
+			}
+		},
+		[],
+	);
+
+	const _handleSubscribeVisibleLogicalRangeChange = useCallback(
+		(chart: IChartApi, candlestickSeries: ISeriesApi<'Candlestick'>, volumeSeries: ISeriesApi<'Histogram'>) => {
+			chart.timeScale().subscribeVisibleLogicalRangeChange(logicalRange => {
+				if (!logicalRange || isFetchMoreOhlcvPending) {
+					return;
+				}
+				if (logicalRange.from < 10) {
+					const numberBarsToLoad = 50 - logicalRange.from;
+
+					const newTimeFrom = handleGenerateTimeWithInterval(timeFrom, query.type, numberBarsToLoad);
+					const newTimeTo = handleGenerateTimeWithInterval(timeTo, query.type, 1);
+					fetchMoreOhlcv(
+						{
+							data: {
+								address: meta.address,
+								type: query.type,
+								time_from: newTimeFrom,
+								time_to: newTimeTo,
+							},
+						},
+						{
+							onSuccess(_data) {
+								setTimeFrom(newTimeFrom);
+								setTimeTo(newTimeTo);
+								const data = _data.data;
+								candlestickSeries.setData(
+									data.map(item => ({
+										value: item.v,
+										time: item.unixTime as Time,
+										open: item.o,
+										high: item.h,
+										low: item.l,
+										close: item.c,
+									})),
+								);
+								volumeSeries.setData(
+									data.map(item => ({
+										value: item.v,
+										time: item.unixTime as Time,
+										color: item.c > item.o ? twTheme.theme.colors.buy.disabled : twTheme.theme.colors.sell.disabled,
+										open: item.o,
+										high: item.h,
+										low: item.l,
+										close: item.c,
+									})),
+								);
+							},
+						},
+					);
+				}
+			});
+		},
+		[
+			fetchMoreOhlcv,
+			handleGenerateTimeWithInterval,
+			isFetchMoreOhlcvPending,
+			meta.address,
+			query.type,
+			timeFrom,
+			timeTo,
+			twTheme.theme.colors.buy.disabled,
+			twTheme.theme.colors.sell.disabled,
+		],
+	);
 
 	const handleInit = useCallback(
 		(chart: IChartApi) => {
@@ -173,15 +282,18 @@ const Chart = () => {
 			});
 
 			candlestickSeries.setData(
-				data.map(item => ({
+				initData.map(item => ({
 					...item,
 					color: undefined,
 				})),
 			);
-			volumeSeries.setData(data);
+			volumeSeries.setData(initData);
+
+			// handleSubscribeVisibleLogicalRangeChange(chart, candlestickSeries, volumeSeries);
 		},
 		[
-			data,
+			initData,
+			// handleSubscribeVisibleLogicalRangeChange,
 			searchParams.mark,
 			twTheme.theme.colors.buy.DEFAULT,
 			twTheme.theme.colors.buy.disabled,

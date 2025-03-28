@@ -1,7 +1,7 @@
 'use client';
 
 import type { ComponentPropsWithoutRef } from 'react';
-import { useEffect, useRef, forwardRef, useImperativeHandle, useState } from 'react';
+import { useEffect, useRef, forwardRef, useImperativeHandle, useState, useCallback } from 'react';
 
 import type { IChartApi, ChartOptions, DeepPartial } from 'lightweight-charts';
 import { createChart } from 'lightweight-charts';
@@ -25,6 +25,16 @@ const TradingChart = forwardRef<TradingChartRef, TradingChartProps>(
 		const chartContainerRef = useRef<HTMLDivElement | null>(null);
 		const [chart, setChart] = useState<IChartApi | null>(null);
 
+		const handleInit = useCallback(
+			(chart: IChartApi, container: HTMLDivElement) => {
+				setChart(chart);
+				if (onInit) {
+					onInit(chart, container);
+				}
+			},
+			[onInit],
+		);
+
 		useEffect(() => {
 			const handleResize = () => {
 				chartInstance.applyOptions({ width: chartContainerRef.current?.clientWidth ?? 0 });
@@ -40,11 +50,7 @@ const TradingChart = forwardRef<TradingChartRef, TradingChartProps>(
 				height,
 			});
 
-			setChart(chartInstance);
-
-			if (onInit) {
-				onInit(chartInstance, chartContainerRef.current);
-			}
+			handleInit(chartInstance, chartContainerRef.current);
 
 			window.addEventListener('resize', handleResize);
 
@@ -53,7 +59,7 @@ const TradingChart = forwardRef<TradingChartRef, TradingChartProps>(
 
 				chartInstance.remove();
 			};
-		}, [height, initOptions, onInit]);
+		}, [handleInit, height, initOptions]);
 
 		return <div ref={chartContainerRef} {...props} />;
 	},
