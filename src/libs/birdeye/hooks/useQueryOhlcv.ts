@@ -1,5 +1,5 @@
-import type { UseQueryOptions } from '@tanstack/react-query';
-import { useQuery } from '@tanstack/react-query';
+import type { UseQueryOptions, UseMutationOptions } from '@tanstack/react-query';
+import { useQuery, useMutation } from '@tanstack/react-query';
 
 import type { BaseRequestOptions } from '@/types/request';
 import type { ResponseData } from '@/types/request';
@@ -26,5 +26,20 @@ export const useQueryOhlcv = (
 		...options,
 		queryKey: ['birdeye', 'ohlcv', request.data],
 		queryFn: ({ signal }) => getOhlcv({ ...request, signal }),
+	});
+};
+
+export const useMutationOhlcv = <TContext = unknown>(
+	options?: Partial<
+		Omit<
+			UseMutationOptions<ResponseData<OhlcvItem[]>, Error, BaseRequestOptions<Partial<OhlcvRequest>>, TContext>,
+			'mutationFn'
+		>
+	>,
+) => {
+	return useMutation<ResponseData<OhlcvItem[]>, Error, BaseRequestOptions<Partial<OhlcvRequest>>, TContext>({
+		...options,
+		// mutationKey: ['birdeye', 'ohlcv', ...(options?.mutationKey || [])],
+		mutationFn: request => getOhlcv(request),
 	});
 };

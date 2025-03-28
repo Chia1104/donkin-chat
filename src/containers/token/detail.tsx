@@ -1,7 +1,7 @@
 'use client';
 
 import type { ReactNode } from 'react';
-import { useMemo } from 'react';
+import { useMemo, useRef } from 'react';
 
 import { CardBody } from '@heroui/card';
 import { Checkbox } from '@heroui/checkbox';
@@ -110,6 +110,7 @@ const Detail = () => {
 	const params = useParams<{ chain: string; token: string }>();
 	const queryResult = useQueryToken(params.token);
 	const [searchParams] = useTokenSearchParams();
+	const currentUnix = useRef(dayjs().unix());
 
 	const timeFrom = useMemo(() => {
 		switch (searchParams.interval) {
@@ -140,11 +141,14 @@ const Detail = () => {
 				address: params.token,
 				type: searchParams.interval,
 				time_from: timeFrom,
-				time_to: dayjs().unix(),
+				time_to: currentUnix.current,
 			},
 		},
 		{
-			refetchInterval: 15_000,
+			refetchOnMount: false,
+			refetchInterval: false,
+			refetchOnWindowFocus: false,
+			refetchOnReconnect: false,
 		},
 	);
 
@@ -209,6 +213,12 @@ const Detail = () => {
 							meta={{
 								price: queryResult.data?.price ?? 0,
 								change: queryResult.data?.change ?? 0,
+								address: params.token,
+							}}
+							query={{
+								type: searchParams.interval,
+								time_from: timeFrom,
+								time_to: currentUnix.current,
 							}}
 							data={ohlcvData}
 							isPending={ohlcv.isLoading}
