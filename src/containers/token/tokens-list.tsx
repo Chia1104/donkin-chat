@@ -166,7 +166,9 @@ const List = ({ display }: { display: 'group' | 'single' }) => {
 			order: searchParams.order,
 		},
 		{
-			refetchInterval: 30_000,
+			retry: false,
+			refetchOnMount: false,
+			refetchOnWindowFocus: false,
 		},
 	);
 	const isOpen = useGlobalStore(state => state.donkin.isOpen);
