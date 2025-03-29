@@ -108,7 +108,12 @@ const Detail = () => {
 	const t = useTranslations('preview.ai-signal');
 	const tToken = useTranslations('token');
 	const params = useParams<{ chain: string; token: string }>();
-	const queryResult = useQueryToken(params.token);
+	const queryResult = useQueryToken(params.token, {
+		retry: false,
+		refetchOnMount: false,
+		refetchInterval: false,
+		refetchOnWindowFocus: false,
+	});
 	const [searchParams] = useTokenSearchParams();
 	const currentUnix = useRef(dayjs().unix());
 
@@ -145,10 +150,10 @@ const Detail = () => {
 			},
 		},
 		{
+			retry: false,
 			refetchOnMount: false,
 			refetchInterval: false,
 			refetchOnWindowFocus: false,
-			refetchOnReconnect: false,
 		},
 	);
 
