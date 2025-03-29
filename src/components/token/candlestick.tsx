@@ -1,13 +1,13 @@
 'use client';
 
-import { memo, createContext, use, useMemo, useRef, useState, useCallback } from 'react';
+import { memo, createContext, use, useMemo, useState, useCallback } from 'react';
 import type { PropsWithChildren } from 'react';
 
 import { Chip } from '@heroui/chip';
 import { Skeleton } from '@heroui/skeleton';
 import { Spinner } from '@heroui/spinner';
 import { Tabs, Tab } from '@heroui/tabs';
-import { CandlestickSeries, ColorType, HistogramSeries } from 'lightweight-charts';
+import { ColorType, HistogramSeries, CandlestickSeries } from 'lightweight-charts';
 import type { Time, IChartApi, ISeriesApi } from 'lightweight-charts';
 import { useLocale } from 'next-intl';
 
@@ -19,9 +19,9 @@ import dayjs from '@/utils/dayjs';
 import { formatLargeNumber, roundDecimal } from '@/utils/format';
 import { isPositiveNumber, isNegativeNumber, isNumber } from '@/utils/is';
 
-import { MarkerTooltipProvider, MarkerTooltip } from '../chart/plugins/clickable-marker/marker-tooltip';
-import type { TradingChartRef } from '../chart/trading-chart';
-import TradingChart from '../chart/trading-chart';
+import { Chart as TradingChart } from '../chart/trading-chart/chart';
+import { MarkerTooltipProvider, MarkerTooltip } from '../chart/trading-chart/plugins/clickable-marker/marker-tooltip';
+import { Series } from '../chart/trading-chart/series';
 
 interface Data {
 	open: number;
@@ -140,7 +140,6 @@ const Chart = () => {
 			timeVisible: true,
 		},
 	});
-	const chartRef = useRef<TradingChartRef>(null);
 	const twTheme = useTailwindTheme();
 
 	const { mutate: fetchMoreOhlcv, isPending: isFetchMoreOhlcvPending } = useMutationOhlcv();
@@ -259,49 +258,6 @@ const Chart = () => {
 		],
 	);
 
-	const handleInit = useCallback(
-		(chart: IChartApi) => {
-			const candlestickSeries = chart.addSeries(CandlestickSeries, {
-				upColor: searchParams.mark ? twTheme.theme.colors.buy.disabled : twTheme.theme.colors.buy.DEFAULT,
-				downColor: searchParams.mark ? twTheme.theme.colors.sell.disabled : twTheme.theme.colors.sell.DEFAULT,
-				borderVisible: false,
-				wickUpColor: searchParams.mark ? twTheme.theme.colors.buy.disabled : twTheme.theme.colors.buy.DEFAULT,
-				wickDownColor: searchParams.mark ? twTheme.theme.colors.sell.disabled : twTheme.theme.colors.sell.DEFAULT,
-			});
-			const volumeSeries = chart.addSeries(HistogramSeries, {
-				priceFormat: {
-					type: 'volume',
-				},
-				priceScaleId: '', // set as an overlay by setting a blank priceScaleId
-			});
-			volumeSeries.priceScale().applyOptions({
-				scaleMargins: {
-					top: 0.8, // highest point of the series will be 70% away from the top
-					bottom: 0,
-				},
-			});
-
-			candlestickSeries.setData(
-				initData.map(item => ({
-					...item,
-					color: undefined,
-				})),
-			);
-			volumeSeries.setData(initData);
-
-			// handleSubscribeVisibleLogicalRangeChange(chart, candlestickSeries, volumeSeries);
-		},
-		[
-			initData,
-			// handleSubscribeVisibleLogicalRangeChange,
-			searchParams.mark,
-			twTheme.theme.colors.buy.DEFAULT,
-			twTheme.theme.colors.buy.disabled,
-			twTheme.theme.colors.sell.DEFAULT,
-			twTheme.theme.colors.sell.disabled,
-		],
-	);
-
 	if (isPending) {
 		return (
 			<div className="flex items-center justify-center w-full h-[55dvh]">
@@ -310,7 +266,42 @@ const Chart = () => {
 		);
 	}
 
-	return <TradingChart ref={chartRef} className="h-[55dvh]" onInit={handleInit} initOptions={initOptions} />;
+	return (
+		<TradingChart className="h-[55dvh]" initOptions={initOptions}>
+			<Series
+				series={CandlestickSeries}
+				data={initData.map(item => ({
+					...item,
+					color: undefined,
+				}))}
+				options={{
+					upColor: searchParams.mark ? twTheme.theme.colors.buy.disabled : twTheme.theme.colors.buy.DEFAULT,
+					downColor: searchParams.mark ? twTheme.theme.colors.sell.disabled : twTheme.theme.colors.sell.DEFAULT,
+					borderVisible: false,
+					wickUpColor: searchParams.mark ? twTheme.theme.colors.buy.disabled : twTheme.theme.colors.buy.DEFAULT,
+					wickDownColor: searchParams.mark ? twTheme.theme.colors.sell.disabled : twTheme.theme.colors.sell.DEFAULT,
+				}}
+			/>
+			<Series
+				series={HistogramSeries}
+				data={initData}
+				options={{
+					priceFormat: {
+						type: 'volume',
+					},
+					priceScaleId: '',
+				}}
+				onInit={series => {
+					series.priceScale().applyOptions({
+						scaleMargins: {
+							top: 0.8,
+							bottom: 0,
+						},
+					});
+				}}
+			/>
+		</TradingChart>
+	);
 };
 
 const Candlestick = (props: CandlestickProps) => {
