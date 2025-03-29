@@ -144,8 +144,8 @@ const Chart = () => {
 
 	const { mutate: fetchMoreOhlcv, isPending: isFetchMoreOhlcvPending } = useMutationOhlcv();
 	const { data, isPending, meta, query } = useCandlestick();
-	const [timeFrom, setTimeFrom] = useState(query.time_from);
-	const [timeTo, setTimeTo] = useState(query.time_to);
+	const [_timeFrom, setTimeFrom] = useState(query.time_from);
+	const [_timeTo, setTimeTo] = useState(query.time_to);
 	const initData = useMemo(() => {
 		return data.map(item => ({
 			...item,
@@ -193,17 +193,67 @@ const Chart = () => {
 		[],
 	);
 
+	const handleSubscribeVisibleLogicalRangeSuccess = useCallback(
+		(options: {
+			candlestickSeries?: ISeriesApi<'Candlestick'> | null;
+			volumeSeries?: ISeriesApi<'Histogram'> | null;
+			newTimeFrom: number;
+			newTimeTo: number;
+			data: Data[];
+		}) => {
+			setTimeFrom(options.newTimeFrom);
+			setTimeTo(options.newTimeTo);
+			const data = options.data;
+			if (options.candlestickSeries) {
+				options.candlestickSeries.setData(
+					data.map(item => ({
+						value: item.volume,
+						time: item.unix as Time,
+						open: item.open,
+						high: item.high,
+						low: item.low,
+						close: item.close,
+					})),
+				);
+			}
+			if (options.volumeSeries) {
+				options.volumeSeries.setData(
+					data.map(item => ({
+						value: item.volume,
+						time: item.unix as Time,
+						color: item.close > item.open ? twTheme.theme.colors.buy.disabled : twTheme.theme.colors.sell.disabled,
+						open: item.open,
+						high: item.high,
+						low: item.low,
+						close: item.close,
+					})),
+				);
+			}
+		},
+		[twTheme.theme.colors.buy.disabled, twTheme.theme.colors.sell.disabled],
+	);
+
 	const _handleSubscribeVisibleLogicalRangeChange = useCallback(
-		(chart: IChartApi, candlestickSeries: ISeriesApi<'Candlestick'>, volumeSeries: ISeriesApi<'Histogram'>) => {
-			chart.timeScale().subscribeVisibleLogicalRangeChange(logicalRange => {
+		(options: {
+			chart?: IChartApi | null;
+			candlestickSeries?: ISeriesApi<'Candlestick'> | null;
+			volumeSeries?: ISeriesApi<'Histogram'> | null;
+			timeFrom: number;
+			timeTo: number;
+		}) => {
+			if (!options.chart) {
+				console.warn('chart is not defined');
+				return;
+			}
+			options.chart.timeScale().subscribeVisibleLogicalRangeChange(logicalRange => {
 				if (!logicalRange || isFetchMoreOhlcvPending) {
 					return;
 				}
 				if (logicalRange.from < 10) {
 					const numberBarsToLoad = 50 - logicalRange.from;
 
-					const newTimeFrom = handleGenerateTimeWithInterval(timeFrom, query.type, numberBarsToLoad);
-					const newTimeTo = handleGenerateTimeWithInterval(timeTo, query.type, 1);
+					const newTimeFrom = handleGenerateTimeWithInterval(options.timeFrom, query.type, numberBarsToLoad);
+					const newTimeTo = handleGenerateTimeWithInterval(options.timeTo, query.type, 1);
 					fetchMoreOhlcv(
 						{
 							data: {
@@ -215,30 +265,22 @@ const Chart = () => {
 						},
 						{
 							onSuccess(_data) {
-								setTimeFrom(newTimeFrom);
-								setTimeTo(newTimeTo);
-								const data = _data.data;
-								candlestickSeries.setData(
-									data.map(item => ({
+								handleSubscribeVisibleLogicalRangeSuccess({
+									candlestickSeries: options.candlestickSeries,
+									volumeSeries: options.volumeSeries,
+									newTimeFrom,
+									newTimeTo,
+									data: _data.data.map(item => ({
 										value: item.v,
 										time: item.unixTime as Time,
 										open: item.o,
 										high: item.h,
 										low: item.l,
 										close: item.c,
+										volume: item.v,
+										unix: item.unixTime,
 									})),
-								);
-								volumeSeries.setData(
-									data.map(item => ({
-										value: item.v,
-										time: item.unixTime as Time,
-										color: item.c > item.o ? twTheme.theme.colors.buy.disabled : twTheme.theme.colors.sell.disabled,
-										open: item.o,
-										high: item.h,
-										low: item.l,
-										close: item.c,
-									})),
-								);
+								});
 							},
 						},
 					);
@@ -248,13 +290,10 @@ const Chart = () => {
 		[
 			fetchMoreOhlcv,
 			handleGenerateTimeWithInterval,
+			handleSubscribeVisibleLogicalRangeSuccess,
 			isFetchMoreOhlcvPending,
 			meta.address,
 			query.type,
-			timeFrom,
-			timeTo,
-			twTheme.theme.colors.buy.disabled,
-			twTheme.theme.colors.sell.disabled,
 		],
 	);
 

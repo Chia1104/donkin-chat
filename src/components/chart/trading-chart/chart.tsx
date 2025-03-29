@@ -21,17 +21,12 @@ export interface ChartContext {
 	free: (series: ISeriesApi<SeriesType>) => void;
 }
 
-export interface SeriesContext<T extends SeriesType> {
-	_api: ISeriesApi<T> | null;
-	api: () => ISeriesApi<T>;
-	free: (chart?: IChartApi) => void;
-}
-
 interface ChartContainerProps {
 	children: React.ReactNode;
 	container: HTMLDivElement;
 	layout?: DeepPartial<ChartOptions['layout']>;
 	initOptions?: DeepPartial<ChartOptions>;
+	onInit?: (chart: IChartApi) => void;
 }
 
 interface ChartProps
@@ -48,22 +43,22 @@ export const useChart = (name = 'useChart') => {
 	return context;
 };
 
-export function Chart({ children, layout, initOptions, ...props }: ChartProps) {
+export const Chart = forwardRef<IChartApi, ChartProps>(({ children, layout, initOptions, onInit, ...props }, ref) => {
 	const [container, setContainer] = useState<HTMLDivElement | null>(null);
 	const handleRef = useCallback((ref: HTMLDivElement) => setContainer(ref), []);
 	return (
 		<div ref={handleRef} {...props}>
 			{container && (
-				<ChartContainer container={container} layout={layout} initOptions={initOptions}>
+				<ChartContainer ref={ref} container={container} layout={layout} onInit={onInit} initOptions={initOptions}>
 					{children}
 				</ChartContainer>
 			)}
 		</div>
 	);
-}
+});
 
 export const ChartContainer = forwardRef<IChartApi, ChartContainerProps>(
-	({ children, container, layout, initOptions }, ref) => {
+	({ children, container, layout, initOptions, onInit }, ref) => {
 		const chartApiRef = useRef<ChartContext>({
 			_api: null,
 			api() {
@@ -73,6 +68,7 @@ export const ChartContainer = forwardRef<IChartApi, ChartContainerProps>(
 						layout,
 						width: container.clientWidth,
 					});
+					onInit?.(this._api);
 				}
 				return this._api;
 			},

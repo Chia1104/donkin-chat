@@ -1,6 +1,7 @@
 'use client';
 
-import { useLayoutEffect, useRef } from 'react';
+import type { ForwardedRef } from 'react';
+import { useLayoutEffect, useRef, forwardRef, useImperativeHandle } from 'react';
 
 import type {
 	Time,
@@ -13,8 +14,13 @@ import type {
 } from 'lightweight-charts';
 import { CandlestickSeries as _CandlestickSeries } from 'lightweight-charts';
 
-import type { SeriesContext } from './chart';
 import { useChart } from './chart';
+
+export interface SeriesContext<T extends SeriesType> {
+	_api: ISeriesApi<T> | null;
+	api: () => ISeriesApi<T>;
+	free: (chart?: IChartApi) => void;
+}
 
 interface Props<T extends SeriesType> {
 	data: SeriesDataItemTypeMap<Time>[T][];
@@ -23,7 +29,11 @@ interface Props<T extends SeriesType> {
 	onInit?: (series: ISeriesApi<T>, chart: IChartApi | null) => void;
 }
 
-export const Series = <T extends SeriesType>({ data, series: _series, options, onInit }: Props<T>) => {
+const SeriesWithGeneric = <T extends SeriesType>(
+	{ data, series: _series, options, onInit }: Props<T>,
+	ref: ForwardedRef<ISeriesApi<T>>,
+) => {
+	useImperativeHandle(ref, () => series.current.api(), []);
 	const chart = useChart('Series');
 	const series = useRef<SeriesContext<T>>({
 		_api: null,
@@ -61,3 +71,7 @@ export const Series = <T extends SeriesType>({ data, series: _series, options, o
 
 	return null;
 };
+
+export const Series = forwardRef(SeriesWithGeneric) as <T extends SeriesType>(
+	props: Props<T> & { ref?: ForwardedRef<ISeriesApi<T>> },
+) => ReturnType<typeof SeriesWithGeneric>;
