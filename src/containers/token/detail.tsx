@@ -108,12 +108,7 @@ const Detail = () => {
 	const t = useTranslations('preview.ai-signal');
 	const tToken = useTranslations('token');
 	const params = useParams<{ chain: string; token: string }>();
-	const queryResult = useQueryToken(params.token, {
-		retry: false,
-		refetchOnMount: false,
-		refetchInterval: false,
-		refetchOnWindowFocus: false,
-	});
+	const queryResult = useQueryToken(params.token);
 	const [searchParams] = useTokenSearchParams();
 	const currentUnix = useRef(dayjs().unix());
 
@@ -140,22 +135,14 @@ const Detail = () => {
 		}
 	}, [searchParams.interval]);
 
-	const ohlcv = useQueryOhlcv(
-		{
-			data: {
-				address: params.token,
-				type: searchParams.interval,
-				time_from: timeFrom,
-				time_to: currentUnix.current,
-			},
+	const ohlcv = useQueryOhlcv({
+		data: {
+			address: params.token,
+			type: searchParams.interval,
+			time_from: timeFrom,
+			time_to: currentUnix.current,
 		},
-		{
-			retry: false,
-			refetchOnMount: false,
-			refetchInterval: false,
-			refetchOnWindowFocus: false,
-		},
-	);
+	});
 
 	const ohlcvData = useMemo(() => {
 		if (!ohlcv.data?.data || !Array.isArray(ohlcv.data?.data)) {
