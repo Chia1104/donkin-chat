@@ -8,29 +8,32 @@ import { useChart } from './chart';
 
 interface Props {
 	method: (range: number) => void | Promise<void>;
+	enabled?: boolean;
 }
 
-export const SubscribeVisibleLogicalRange = ({ method }: Props) => {
+export const SubscribeVisibleLogicalRange = ({ method, enabled = true }: Props) => {
 	const chart = useChart();
 
 	const handleSubscribeVisibleLogicalRangeChange = useCallback(
 		(logicalRange: LogicalRange | null) => {
-			if (!logicalRange) {
+			if (!logicalRange || !enabled) {
 				return;
 			}
 			if (logicalRange.from < 10) {
 				void method(logicalRange.from);
 			}
 		},
-		[method],
+		[enabled, method],
 	);
 
 	useEffect(() => {
-		if (!chart._api) {
-			return;
-		}
-		chart._api.timeScale().subscribeVisibleLogicalRangeChange(handleSubscribeVisibleLogicalRangeChange);
-	}, [chart._api, handleSubscribeVisibleLogicalRangeChange]);
+		const api = chart.api();
+		api.timeScale().subscribeVisibleLogicalRangeChange(handleSubscribeVisibleLogicalRangeChange);
+
+		return () => {
+			api.timeScale().unsubscribeVisibleLogicalRangeChange(handleSubscribeVisibleLogicalRangeChange);
+		};
+	}, [chart, enabled, handleSubscribeVisibleLogicalRangeChange]);
 
 	return null;
 };

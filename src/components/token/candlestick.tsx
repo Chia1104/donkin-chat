@@ -8,7 +8,7 @@ import { Skeleton } from '@heroui/skeleton';
 import { Spinner } from '@heroui/spinner';
 import { Tabs, Tab } from '@heroui/tabs';
 import { ColorType, HistogramSeries, CandlestickSeries } from 'lightweight-charts';
-import type { Time } from 'lightweight-charts';
+import type { Time, ISeriesApi } from 'lightweight-charts';
 import { useLocale } from 'next-intl';
 
 import { experimental_useTailwindTheme as useTailwindTheme } from '@/hooks/useTailwindTheme';
@@ -117,16 +117,13 @@ const MetaInfo = () => {
 	);
 };
 
-/**
- * DO NOT ENABLE THIS COMPONENT
- * IT WILL CAUSE INFINITE LOOP
- */
-const SubscribeCandlestick = ({ enable = false }: { enable?: boolean }) => {
-	const { mutate, isPending } = useMutationOhlcv();
+const SubscribeCandlestick = ({ enable = true, onLoad }: { enable?: boolean; onLoad?: (data: Data[]) => void }) => {
+	const { mutateAsync, isPending, isError } = useMutationOhlcv();
 	const { meta, query } = useCandlestick();
 	const timeFrom = useRef(query.time_from);
 	const timeTo = useRef(query.time_to);
 	const series = useSeries('SubscribeCandlestick');
+	const [isNoData, setIsNoData] = useState(false);
 
 	const handleGenerateTimeWithInterval = useCallback(
 		(current: number, interval: IntervalFilter, range: number): number => {
@@ -167,49 +164,65 @@ const SubscribeCandlestick = ({ enable = false }: { enable?: boolean }) => {
 	);
 
 	const handleSubscribeVisibleLogicalRange = useCallback(
-		(range: number) => {
+		async (range: number) => {
+			if (isPending || isNoData || isError) {
+				return;
+			}
 			const numberBarsToLoad = 50 - range;
 			const newTimeFrom = handleGenerateTimeWithInterval(timeFrom.current, query.type, numberBarsToLoad);
 			const newTimeTo = handleGenerateTimeWithInterval(timeTo.current, query.type, 1);
-			if (!isPending) {
-				mutate(
-					{
-						data: {
-							address: meta.address,
-							type: query.type,
-							time_from: newTimeFrom,
-							time_to: newTimeTo,
-						},
-					},
-					{
-						onSuccess(data) {
-							timeFrom.current = newTimeFrom;
-							timeTo.current = newTimeTo;
-							series.api().setData(
-								data.data.map(item => ({
-									value: item.v,
-									time: item.unixTime as Time,
-									open: item.o,
-									high: item.h,
-									low: item.l,
-									close: item.c,
-									volume: item.v,
-									unix: item.unixTime,
-								})),
-							);
-						},
-					},
-				);
+			const _data = await mutateAsync({
+				data: {
+					address: meta.address,
+					type: query.type,
+					time_from: newTimeFrom,
+					time_to: newTimeTo,
+				},
+			});
+
+			timeFrom.current = newTimeFrom;
+			timeTo.current = newTimeTo;
+			const data = _data.data.map(item => ({
+				value: item.v,
+				time: item.unixTime as Time,
+				open: item.o,
+				high: item.h,
+				low: item.l,
+				close: item.c,
+				volume: item.v,
+				unix: item.unixTime,
+			}));
+			series.api().setData(data);
+			onLoad?.(data);
+			if (data.length === 0) {
+				setIsNoData(true);
+			} else {
+				setIsNoData(false);
 			}
 		},
-		[handleGenerateTimeWithInterval, query.type, isPending, mutate, meta.address, series],
+		[
+			isPending,
+			isNoData,
+			isError,
+			handleGenerateTimeWithInterval,
+			query.type,
+			mutateAsync,
+			meta.address,
+			series,
+			onLoad,
+		],
 	);
 
 	if (!enable) {
 		return null;
 	}
 
-	return <SubscribeVisibleLogicalRange method={handleSubscribeVisibleLogicalRange} />;
+	return (
+		<SubscribeVisibleLogicalRange
+			enabled={enable && !isNoData && !isError && !isPending}
+			method={handleSubscribeVisibleLogicalRange}
+		/>
+	);
 };
 
 const Chart = () => {
@@ -238,6 +251,7 @@ const Chart = () => {
 		},
 	});
 	const twTheme = useTailwindTheme();
+	const histogramSeriesRef = useRef<ISeriesApi<'Histogram'>>(null);
 
 	const { data, isPending } = useCandlestick();
 
@@ -250,6 +264,21 @@ const Chart = () => {
 		}));
 	}, [data, twTheme.theme.colors.buy.disabled, twTheme.theme.colors.sell.disabled]);
 
+	const handleSubscribeHistogram = useCallback(
+		(data: Data[]) => {
+			if (histogramSeriesRef.current) {
+				histogramSeriesRef.current.setData(
+					data.map(item => ({
+						value: item.volume,
+						time: item.unix as Time,
+						color: item.close > item.open ? twTheme.theme.colors.buy.disabled : twTheme.theme.colors.sell.disabled,
+					})),
+				);
+			}
+		},
+		[twTheme.theme.colors.buy.disabled, twTheme.theme.colors.sell.disabled],
+	);
+
 	if (isPending) {
 		return (
 			<div className="flex items-center justify-center w-full h-[55dvh]">
@@ -259,7 +288,15 @@ const Chart = () => {
 	}
 
 	return (
-		<TradingChart className="h-[55dvh]" initOptions={initOptions}>
+		<TradingChart
+			className="h-[55dvh]"
+			initOptions={initOptions}
+			onInit={c => {
+				if (data.length < 50) {
+					c.timeScale().fitContent();
+				}
+			}}
+		>
 			<Series
 				series={CandlestickSeries}
 				data={initData.map(item => ({
@@ -274,9 +311,10 @@ const Chart = () => {
 					wickDownColor: searchParams.mark ? twTheme.theme.colors.sell.disabled : twTheme.theme.colors.sell.DEFAULT,
 				}}
 			>
-				<SubscribeCandlestick />
+				<SubscribeCandlestick onLoad={handleSubscribeHistogram} enable={false} />
 			</Series>
 			<Series
+				ref={histogramSeriesRef}
 				series={HistogramSeries}
 				data={initData}
 				options={{

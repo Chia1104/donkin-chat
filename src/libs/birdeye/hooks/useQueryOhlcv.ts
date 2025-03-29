@@ -8,10 +8,13 @@ import { request } from '@/utils/request';
 import type { OhlcvRequest } from '../pipes/ohlcv.pipe';
 import type { OhlcvItem } from '../pipes/ohlcv.pipe';
 
-export const getOhlcv = async (options: BaseRequestOptions<Partial<OhlcvRequest>>) => {
-	const response = await request({ requestMode: 'self-api' }).get('api/birdeye/defi/ohlcv', {
-		searchParams: options.data,
-	});
+export const getOhlcv = async (options: BaseRequestOptions<Partial<OhlcvRequest>>, test?: boolean) => {
+	const response = await request({ requestMode: 'self-api' }).get(
+		test ? 'api/birdeye/defi/ohlcv/mock' : 'api/birdeye/defi/ohlcv',
+		{
+			searchParams: options.data,
+		},
+	);
 
 	return response.json<ResponseData<OhlcvItem[]>>();
 };
@@ -39,7 +42,7 @@ export const useMutationOhlcv = <TContext = unknown>(
 ) => {
 	return useMutation<ResponseData<OhlcvItem[]>, Error, BaseRequestOptions<Partial<OhlcvRequest>>, TContext>({
 		...options,
-		// mutationKey: ['birdeye', 'ohlcv', ...(options?.mutationKey || [])],
+		mutationKey: ['birdeye', 'ohlcv', ...(options?.mutationKey || [])],
 		mutationFn: request => getOhlcv(request),
 	});
 };
