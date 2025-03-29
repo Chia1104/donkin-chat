@@ -1,7 +1,7 @@
 'use client';
 
 import type { ForwardedRef } from 'react';
-import { useLayoutEffect, useRef, forwardRef, useImperativeHandle } from 'react';
+import { useLayoutEffect, useRef, forwardRef, useImperativeHandle, createContext, use } from 'react';
 
 import type {
 	Time,
@@ -27,10 +27,13 @@ interface Props<T extends SeriesType> {
 	series: SeriesDefinition<T>;
 	options?: SeriesPartialOptionsMap[T];
 	onInit?: (series: ISeriesApi<T>, chart: IChartApi | null) => void;
+	children?: React.ReactNode;
 }
 
+const SeriesContext = createContext<SeriesContext<SeriesType> | null>(null);
+
 const SeriesWithGeneric = <T extends SeriesType>(
-	{ data, series: _series, options, onInit }: Props<T>,
+	{ data, series: _series, options, onInit, children }: Props<T>,
 	ref: ForwardedRef<ISeriesApi<T>>,
 ) => {
 	useImperativeHandle(ref, () => series.current.api(), []);
@@ -69,7 +72,15 @@ const SeriesWithGeneric = <T extends SeriesType>(
 		}
 	}, [options]);
 
-	return null;
+	return <SeriesContext value={series.current}>{children}</SeriesContext>;
+};
+
+export const useSeries = (name = 'useSeries') => {
+	const context = use(SeriesContext);
+	if (!context) {
+		throw new Error(`${name} must be used within a Series`);
+	}
+	return context;
 };
 
 export const Series = forwardRef(SeriesWithGeneric) as <T extends SeriesType>(

@@ -1,6 +1,6 @@
 'use client';
 
-import { memo, createContext, use, useMemo, useState, useCallback } from 'react';
+import { memo, createContext, use, useMemo, useState, useCallback, useRef } from 'react';
 import type { PropsWithChildren } from 'react';
 
 import { Chip } from '@heroui/chip';
@@ -8,7 +8,7 @@ import { Skeleton } from '@heroui/skeleton';
 import { Spinner } from '@heroui/spinner';
 import { Tabs, Tab } from '@heroui/tabs';
 import { ColorType, HistogramSeries, CandlestickSeries } from 'lightweight-charts';
-import type { Time, IChartApi, ISeriesApi } from 'lightweight-charts';
+import type { Time } from 'lightweight-charts';
 import { useLocale } from 'next-intl';
 
 import { experimental_useTailwindTheme as useTailwindTheme } from '@/hooks/useTailwindTheme';
@@ -22,6 +22,8 @@ import { isPositiveNumber, isNegativeNumber, isNumber } from '@/utils/is';
 import { Chart as TradingChart } from '../chart/trading-chart/chart';
 import { MarkerTooltipProvider, MarkerTooltip } from '../chart/trading-chart/plugins/clickable-marker/marker-tooltip';
 import { Series } from '../chart/trading-chart/series';
+import { useSeries } from '../chart/trading-chart/series';
+import { SubscribeVisibleLogicalRange } from '../chart/trading-chart/subscrib-visible-logical-range';
 
 interface Data {
 	open: number;
@@ -115,45 +117,16 @@ const MetaInfo = () => {
 	);
 };
 
-const Chart = () => {
-	const locale = useLocale();
-	const [searchParams] = useTokenSearchParams();
-	const [initOptions] = useState({
-		autoSize: true,
-		layout: {
-			textColor: '#9B9EAB',
-			background: { type: ColorType.Solid, color: 'transparent' },
-			attributionLogo: false,
-		},
-		grid: {
-			vertLines: {
-				color: 'transparent',
-			},
-			horzLines: {
-				color: 'transparent',
-			},
-		},
-		localization: {
-			locale,
-		},
-		timeScale: {
-			timeVisible: true,
-		},
-	});
-	const twTheme = useTailwindTheme();
-
-	const { mutate: fetchMoreOhlcv, isPending: isFetchMoreOhlcvPending } = useMutationOhlcv();
-	const { data, isPending, meta, query } = useCandlestick();
-	const [_timeFrom, setTimeFrom] = useState(query.time_from);
-	const [_timeTo, setTimeTo] = useState(query.time_to);
-	const initData = useMemo(() => {
-		return data.map(item => ({
-			...item,
-			value: item.volume,
-			time: item.unix as Time,
-			color: item.close > item.open ? twTheme.theme.colors.buy.disabled : twTheme.theme.colors.sell.disabled,
-		}));
-	}, [data, twTheme.theme.colors.buy.disabled, twTheme.theme.colors.sell.disabled]);
+/**
+ * DO NOT ENABLE THIS COMPONENT
+ * IT WILL CAUSE INFINITE LOOP
+ */
+const SubscribeCandlestick = ({ enable = false }: { enable?: boolean }) => {
+	const { mutate, isPending } = useMutationOhlcv();
+	const { meta, query } = useCandlestick();
+	const timeFrom = useRef(query.time_from);
+	const timeTo = useRef(query.time_to);
+	const series = useSeries('SubscribeCandlestick');
 
 	const handleGenerateTimeWithInterval = useCallback(
 		(current: number, interval: IntervalFilter, range: number): number => {
@@ -193,109 +166,89 @@ const Chart = () => {
 		[],
 	);
 
-	const handleSubscribeVisibleLogicalRangeSuccess = useCallback(
-		(options: {
-			candlestickSeries?: ISeriesApi<'Candlestick'> | null;
-			volumeSeries?: ISeriesApi<'Histogram'> | null;
-			newTimeFrom: number;
-			newTimeTo: number;
-			data: Data[];
-		}) => {
-			setTimeFrom(options.newTimeFrom);
-			setTimeTo(options.newTimeTo);
-			const data = options.data;
-			if (options.candlestickSeries) {
-				options.candlestickSeries.setData(
-					data.map(item => ({
-						value: item.volume,
-						time: item.unix as Time,
-						open: item.open,
-						high: item.high,
-						low: item.low,
-						close: item.close,
-					})),
-				);
-			}
-			if (options.volumeSeries) {
-				options.volumeSeries.setData(
-					data.map(item => ({
-						value: item.volume,
-						time: item.unix as Time,
-						color: item.close > item.open ? twTheme.theme.colors.buy.disabled : twTheme.theme.colors.sell.disabled,
-						open: item.open,
-						high: item.high,
-						low: item.low,
-						close: item.close,
-					})),
+	const handleSubscribeVisibleLogicalRange = useCallback(
+		(range: number) => {
+			const numberBarsToLoad = 50 - range;
+			const newTimeFrom = handleGenerateTimeWithInterval(timeFrom.current, query.type, numberBarsToLoad);
+			const newTimeTo = handleGenerateTimeWithInterval(timeTo.current, query.type, 1);
+			if (!isPending) {
+				mutate(
+					{
+						data: {
+							address: meta.address,
+							type: query.type,
+							time_from: newTimeFrom,
+							time_to: newTimeTo,
+						},
+					},
+					{
+						onSuccess(data) {
+							timeFrom.current = newTimeFrom;
+							timeTo.current = newTimeTo;
+							series.api().setData(
+								data.data.map(item => ({
+									value: item.v,
+									time: item.unixTime as Time,
+									open: item.o,
+									high: item.h,
+									low: item.l,
+									close: item.c,
+									volume: item.v,
+									unix: item.unixTime,
+								})),
+							);
+						},
+					},
 				);
 			}
 		},
-		[twTheme.theme.colors.buy.disabled, twTheme.theme.colors.sell.disabled],
+		[handleGenerateTimeWithInterval, query.type, isPending, mutate, meta.address, series],
 	);
 
-	const _handleSubscribeVisibleLogicalRangeChange = useCallback(
-		(options: {
-			chart?: IChartApi | null;
-			candlestickSeries?: ISeriesApi<'Candlestick'> | null;
-			volumeSeries?: ISeriesApi<'Histogram'> | null;
-			timeFrom: number;
-			timeTo: number;
-		}) => {
-			if (!options.chart) {
-				console.warn('chart is not defined');
-				return;
-			}
-			options.chart.timeScale().subscribeVisibleLogicalRangeChange(logicalRange => {
-				if (!logicalRange || isFetchMoreOhlcvPending) {
-					return;
-				}
-				if (logicalRange.from < 10) {
-					const numberBarsToLoad = 50 - logicalRange.from;
+	if (!enable) {
+		return null;
+	}
 
-					const newTimeFrom = handleGenerateTimeWithInterval(options.timeFrom, query.type, numberBarsToLoad);
-					const newTimeTo = handleGenerateTimeWithInterval(options.timeTo, query.type, 1);
-					fetchMoreOhlcv(
-						{
-							data: {
-								address: meta.address,
-								type: query.type,
-								time_from: newTimeFrom,
-								time_to: newTimeTo,
-							},
-						},
-						{
-							onSuccess(_data) {
-								handleSubscribeVisibleLogicalRangeSuccess({
-									candlestickSeries: options.candlestickSeries,
-									volumeSeries: options.volumeSeries,
-									newTimeFrom,
-									newTimeTo,
-									data: _data.data.map(item => ({
-										value: item.v,
-										time: item.unixTime as Time,
-										open: item.o,
-										high: item.h,
-										low: item.l,
-										close: item.c,
-										volume: item.v,
-										unix: item.unixTime,
-									})),
-								});
-							},
-						},
-					);
-				}
-			});
+	return <SubscribeVisibleLogicalRange method={handleSubscribeVisibleLogicalRange} />;
+};
+
+const Chart = () => {
+	const locale = useLocale();
+	const [searchParams] = useTokenSearchParams();
+	const [initOptions] = useState({
+		autoSize: true,
+		layout: {
+			textColor: '#9B9EAB',
+			background: { type: ColorType.Solid, color: 'transparent' },
+			attributionLogo: false,
 		},
-		[
-			fetchMoreOhlcv,
-			handleGenerateTimeWithInterval,
-			handleSubscribeVisibleLogicalRangeSuccess,
-			isFetchMoreOhlcvPending,
-			meta.address,
-			query.type,
-		],
-	);
+		grid: {
+			vertLines: {
+				color: 'transparent',
+			},
+			horzLines: {
+				color: 'transparent',
+			},
+		},
+		localization: {
+			locale,
+		},
+		timeScale: {
+			timeVisible: true,
+		},
+	});
+	const twTheme = useTailwindTheme();
+
+	const { data, isPending } = useCandlestick();
+
+	const initData = useMemo(() => {
+		return data.map(item => ({
+			...item,
+			value: item.volume,
+			time: item.unix as Time,
+			color: item.close > item.open ? twTheme.theme.colors.buy.disabled : twTheme.theme.colors.sell.disabled,
+		}));
+	}, [data, twTheme.theme.colors.buy.disabled, twTheme.theme.colors.sell.disabled]);
 
 	if (isPending) {
 		return (
@@ -320,7 +273,9 @@ const Chart = () => {
 					wickUpColor: searchParams.mark ? twTheme.theme.colors.buy.disabled : twTheme.theme.colors.buy.DEFAULT,
 					wickDownColor: searchParams.mark ? twTheme.theme.colors.sell.disabled : twTheme.theme.colors.sell.DEFAULT,
 				}}
-			/>
+			>
+				<SubscribeCandlestick />
+			</Series>
 			<Series
 				series={HistogramSeries}
 				data={initData}
