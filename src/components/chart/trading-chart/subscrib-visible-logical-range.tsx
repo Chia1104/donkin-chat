@@ -1,6 +1,6 @@
 'use client';
 
-import { useEffect, useCallback } from 'react';
+import { useLayoutEffect, useCallback } from 'react';
 
 import type { LogicalRange } from 'lightweight-charts';
 
@@ -26,9 +26,13 @@ export const SubscribeVisibleLogicalRange = ({ method, enabled = true }: Props) 
 		[enabled, method],
 	);
 
-	useEffect(() => {
+	useLayoutEffect(() => {
 		const api = chart.api();
-		api.timeScale().subscribeVisibleLogicalRangeChange(handleSubscribeVisibleLogicalRangeChange);
+		if (enabled) {
+			api.timeScale().subscribeVisibleLogicalRangeChange(handleSubscribeVisibleLogicalRangeChange);
+		} else {
+			api.timeScale().unsubscribeVisibleLogicalRangeChange(handleSubscribeVisibleLogicalRangeChange);
+		}
 
 		return () => {
 			api.timeScale().unsubscribeVisibleLogicalRangeChange(handleSubscribeVisibleLogicalRangeChange);

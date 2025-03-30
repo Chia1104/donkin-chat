@@ -1,38 +1,33 @@
 'use client';
 
-import { memo, createContext, use, useMemo, useState, useCallback, useRef } from 'react';
+import { memo, createContext, use, useMemo, useState, useCallback, useRef, useEffect } from 'react';
 import type { PropsWithChildren } from 'react';
 
 import { Chip } from '@heroui/chip';
 import { Skeleton } from '@heroui/skeleton';
 import { Spinner } from '@heroui/spinner';
 import { Tabs, Tab } from '@heroui/tabs';
-import { ColorType, HistogramSeries, CandlestickSeries } from 'lightweight-charts';
+import { useQueryClient } from '@tanstack/react-query';
+import { ColorType, HistogramSeries, CandlestickSeries, createTextWatermark } from 'lightweight-charts';
 import type { Time, ISeriesApi } from 'lightweight-charts';
 import { useLocale } from 'next-intl';
+import { toast } from 'sonner';
 
 import { experimental_useTailwindTheme as useTailwindTheme } from '@/hooks/useTailwindTheme';
 import { useMutationOhlcv } from '@/libs/birdeye/hooks/useQueryOhlcv';
+import type { OlcvResponseDTO } from '@/libs/birdeye/hooks/useQueryOhlcv';
 import { IntervalFilter } from '@/libs/token/enums/interval-filter.enum';
 import { useTokenSearchParams } from '@/libs/token/hooks/useTokenSearchParams';
 import dayjs from '@/utils/dayjs';
 import { formatLargeNumber, roundDecimal } from '@/utils/format';
 import { isPositiveNumber, isNegativeNumber, isNumber } from '@/utils/is';
 
+import { useChart } from '../chart/trading-chart/chart';
 import { Chart as TradingChart } from '../chart/trading-chart/chart';
 import { MarkerTooltipProvider, MarkerTooltip } from '../chart/trading-chart/plugins/clickable-marker/marker-tooltip';
 import { Series } from '../chart/trading-chart/series';
 import { useSeries } from '../chart/trading-chart/series';
 import { SubscribeVisibleLogicalRange } from '../chart/trading-chart/subscrib-visible-logical-range';
-
-interface Data {
-	open: number;
-	high: number;
-	low: number;
-	close: number;
-	volume: number;
-	unix: number;
-}
 
 interface CandlestickProps {
 	meta: {
@@ -45,7 +40,7 @@ interface CandlestickProps {
 		time_from: number;
 		time_to: number;
 	};
-	data: Data[];
+	data: OlcvResponseDTO;
 	isPending?: boolean;
 	isMetaPending?: boolean;
 }
@@ -117,13 +112,19 @@ const MetaInfo = () => {
 	);
 };
 
-const SubscribeCandlestick = ({ enable = true, onLoad }: { enable?: boolean; onLoad?: (data: Data[]) => void }) => {
-	const { mutateAsync, isPending, isError } = useMutationOhlcv();
+const SubscribeCandlestick = ({
+	enable = true,
+	onLoad,
+}: {
+	enable?: boolean;
+	onLoad?: (data: OlcvResponseDTO) => void;
+}) => {
+	const { mutate, isPending, isError } = useMutationOhlcv();
 	const { meta, query } = useCandlestick();
-	const timeFrom = useRef(query.time_from);
-	const timeTo = useRef(query.time_to);
+	const [timeFrom, setTimeFrom] = useState(query.time_from);
 	const series = useSeries('SubscribeCandlestick');
 	const [isNoData, setIsNoData] = useState(false);
+	const queryClient = useQueryClient();
 
 	const handleGenerateTimeWithInterval = useCallback(
 		(current: number, interval: IntervalFilter, range: number): number => {
@@ -157,59 +158,89 @@ const SubscribeCandlestick = ({ enable = true, onLoad }: { enable?: boolean; onL
 				case IntervalFilter.OneWeek:
 					return dayjs.unix(current).subtract(range, 'weeks').unix();
 				default:
-					return current;
+					return dayjs.unix(current).unix();
 			}
 		},
 		[],
 	);
 
+	const handleSubscribe = useCallback(
+		(data: OlcvResponseDTO) => {
+			const previousData = queryClient.getQueryData<OlcvResponseDTO>(['birdeye', 'ohlcv', meta.address, query.type]);
+
+			if (Array.isArray(previousData) && data.length > 0) {
+				queryClient.setQueryData<OlcvResponseDTO>(['birdeye', 'ohlcv', meta.address, query.type], prev => {
+					if (!prev) {
+						return [];
+					}
+
+					const _data = [...data, ...prev];
+
+					series.api().setData(
+						_data.map(item => ({
+							...item,
+							time: item.unix as Time,
+						})),
+					);
+
+					onLoad?.(_data);
+
+					return _data;
+				});
+			}
+		},
+		[meta.address, onLoad, query.type, queryClient, series],
+	);
+
 	const handleSubscribeVisibleLogicalRange = useCallback(
-		async (range: number) => {
+		(range: number) => {
 			if (isPending || isNoData || isError) {
 				return;
 			}
 			const numberBarsToLoad = 50 - range;
-			const newTimeFrom = handleGenerateTimeWithInterval(timeFrom.current, query.type, numberBarsToLoad);
-			const newTimeTo = handleGenerateTimeWithInterval(timeTo.current, query.type, 1);
-			const _data = await mutateAsync({
-				data: {
-					address: meta.address,
-					type: query.type,
-					time_from: newTimeFrom,
-					time_to: newTimeTo,
+			const newTimeFrom = handleGenerateTimeWithInterval(timeFrom, query.type, numberBarsToLoad);
+			const newTimeTo = handleGenerateTimeWithInterval(timeFrom, query.type, 0);
+			setTimeFrom(newTimeFrom);
+			mutate(
+				{
+					data: {
+						address: meta.address,
+						type: query.type,
+						time_from: newTimeFrom,
+						time_to: newTimeTo,
+					},
 				},
-			});
+				{
+					onSuccess: _data => {
+						const data = _data.map(item => ({
+							...item,
+							time: item.unix as Time,
+						}));
 
-			timeFrom.current = newTimeFrom;
-			timeTo.current = newTimeTo;
-			const data = _data.data.map(item => ({
-				value: item.v,
-				time: item.unixTime as Time,
-				open: item.o,
-				high: item.h,
-				low: item.l,
-				close: item.c,
-				volume: item.v,
-				unix: item.unixTime,
-			}));
-			series.api().setData(data);
-			onLoad?.(data);
-			if (data.length === 0) {
-				setIsNoData(true);
-			} else {
-				setIsNoData(false);
-			}
+						if (data.length === 0) {
+							setIsNoData(true);
+						} else {
+							setIsNoData(false);
+							handleSubscribe(data);
+						}
+					},
+					onError: error => {
+						console.error(error);
+						toast.error('Failed to load data');
+					},
+				},
+			);
 		},
 		[
 			isPending,
 			isNoData,
 			isError,
 			handleGenerateTimeWithInterval,
+			timeFrom,
 			query.type,
-			mutateAsync,
+			mutate,
 			meta.address,
-			series,
-			onLoad,
+			handleSubscribe,
 		],
 	);
 
@@ -219,10 +250,33 @@ const SubscribeCandlestick = ({ enable = true, onLoad }: { enable?: boolean; onL
 
 	return (
 		<SubscribeVisibleLogicalRange
-			enabled={enable && !isNoData && !isError && !isPending}
+			enabled={!isPending && !isNoData && !isError}
 			method={handleSubscribeVisibleLogicalRange}
 		/>
 	);
+};
+
+const NoDataWatermark = ({ data, text = 'No data' }: { data: OlcvResponseDTO; text?: string }) => {
+	const twTheme = useTailwindTheme();
+	const chart = useChart();
+
+	useEffect(() => {
+		if (data.length === 0) {
+			const firstPane = chart.api().panes()[0];
+			createTextWatermark(firstPane, {
+				horzAlign: 'center',
+				vertAlign: 'center',
+				lines: [
+					{
+						text,
+						color: twTheme.theme.colors.description.DEFAULT,
+						fontSize: 24,
+					},
+				],
+			});
+		}
+	}, [data, chart, twTheme.theme.colors.description.DEFAULT, text]);
+	return null;
 };
 
 const Chart = () => {
@@ -253,7 +307,7 @@ const Chart = () => {
 	const twTheme = useTailwindTheme();
 	const histogramSeriesRef = useRef<ISeriesApi<'Histogram'>>(null);
 
-	const { data, isPending } = useCandlestick();
+	const { data, isPending, query } = useCandlestick();
 
 	const initData = useMemo(() => {
 		return data.map(item => ({
@@ -265,7 +319,7 @@ const Chart = () => {
 	}, [data, twTheme.theme.colors.buy.disabled, twTheme.theme.colors.sell.disabled]);
 
 	const handleSubscribeHistogram = useCallback(
-		(data: Data[]) => {
+		(data: OlcvResponseDTO) => {
 			if (histogramSeriesRef.current) {
 				histogramSeriesRef.current.setData(
 					data.map(item => ({
@@ -289,6 +343,7 @@ const Chart = () => {
 
 	return (
 		<TradingChart
+			key={query.type}
 			className="h-[55dvh]"
 			initOptions={initOptions}
 			onInit={c => {
@@ -297,6 +352,7 @@ const Chart = () => {
 				}
 			}}
 		>
+			<NoDataWatermark data={data} />
 			<Series
 				series={CandlestickSeries}
 				data={initData.map(item => ({
@@ -311,7 +367,7 @@ const Chart = () => {
 					wickDownColor: searchParams.mark ? twTheme.theme.colors.sell.disabled : twTheme.theme.colors.sell.DEFAULT,
 				}}
 			>
-				<SubscribeCandlestick onLoad={handleSubscribeHistogram} enable={false} />
+				<SubscribeCandlestick onLoad={handleSubscribeHistogram} />
 			</Series>
 			<Series
 				ref={histogramSeriesRef}

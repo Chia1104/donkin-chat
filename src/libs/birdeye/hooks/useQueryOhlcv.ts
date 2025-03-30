@@ -1,48 +1,47 @@
 import type { UseQueryOptions, UseMutationOptions } from '@tanstack/react-query';
 import { useQuery, useMutation } from '@tanstack/react-query';
+import { z } from 'zod';
 
 import type { BaseRequestOptions } from '@/types/request';
 import type { ResponseData } from '@/types/request';
 import { request } from '@/utils/request';
 
-import type { OhlcvRequest } from '../pipes/ohlcv.pipe';
-import type { OhlcvItem } from '../pipes/ohlcv.pipe';
+import type { OhlcvRequest, OhlcvItem, OhlcvItemDTO } from '../pipes/ohlcv.pipe';
+import { ohlcvItemDTOSchema } from '../pipes/ohlcv.pipe';
+
+export type OlcvResponse = OhlcvItem[];
+export type OlcvResponseDTO = OhlcvItemDTO[];
 
 export const getOhlcv = async (options: BaseRequestOptions<Partial<OhlcvRequest>>, test?: boolean) => {
-	const response = await request({ requestMode: 'self-api' }).get(
-		test ? 'api/birdeye/defi/ohlcv/mock' : 'api/birdeye/defi/ohlcv',
-		{
+	const response = await request({ requestMode: 'self-api' })
+		.get(test ? 'api/birdeye/defi/ohlcv/mock' : 'api/birdeye/defi/ohlcv', {
 			searchParams: options.data,
-		},
-	);
+		})
+		.json<ResponseData<OlcvResponse>>();
 
-	return response.json<ResponseData<OhlcvItem[]>>();
+	return z.array(ohlcvItemDTOSchema).parse(response.data);
 };
 
-type QueryOptions = UseQueryOptions<ResponseData<OhlcvItem[]>, Error, ResponseData<OhlcvItem[]>>;
+type QueryOptions = UseQueryOptions<OlcvResponseDTO, Error, OlcvResponseDTO>;
 
 export const useQueryOhlcv = (
 	request: BaseRequestOptions<Partial<OhlcvRequest>>,
 	options?: Partial<Omit<QueryOptions, 'queryKey' | 'queryFn'>>,
 ) => {
-	return useQuery<ResponseData<OhlcvItem[]>, Error, ResponseData<OhlcvItem[]>>({
+	return useQuery<OlcvResponseDTO, Error, OlcvResponseDTO>({
 		...options,
-		queryKey: ['birdeye', 'ohlcv', request.data],
+		queryKey: ['birdeye', 'ohlcv', request.data?.address, request.data?.type],
 		queryFn: ({ signal }) => getOhlcv({ ...request, signal }),
 	});
 };
 
 export const useMutationOhlcv = <TContext = unknown>(
 	options?: Partial<
-		Omit<
-			UseMutationOptions<ResponseData<OhlcvItem[]>, Error, BaseRequestOptions<Partial<OhlcvRequest>>, TContext>,
-			'mutationFn'
-		>
+		Omit<UseMutationOptions<OlcvResponseDTO, Error, BaseRequestOptions<Partial<OhlcvRequest>>, TContext>, 'mutationFn'>
 	>,
 ) => {
-	return useMutation<ResponseData<OhlcvItem[]>, Error, BaseRequestOptions<Partial<OhlcvRequest>>, TContext>({
+	return useMutation<OlcvResponseDTO, Error, BaseRequestOptions<Partial<OhlcvRequest>>, TContext>({
 		...options,
-		mutationKey: ['birdeye', 'ohlcv', ...(options?.mutationKey || [])],
 		mutationFn: request => getOhlcv(request),
 	});
 };
