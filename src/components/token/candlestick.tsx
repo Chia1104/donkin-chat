@@ -4,6 +4,7 @@ import { memo, createContext, use, useMemo, useState, useCallback, useRef, useEf
 import type { PropsWithChildren } from 'react';
 
 import { Chip } from '@heroui/chip';
+import { ScrollShadow } from '@heroui/scroll-shadow';
 import { Skeleton } from '@heroui/skeleton';
 import { Spinner } from '@heroui/spinner';
 import { Tabs, Tab } from '@heroui/tabs';
@@ -62,21 +63,23 @@ const useCandlestick = () => {
 const DateFilter = memo(() => {
 	const [searchParams, setSearchParams] = useTokenSearchParams();
 	return (
-		<Tabs
-			aria-label="filter time"
-			size="sm"
-			variant="light"
-			selectedKey={searchParams.interval}
-			onSelectionChange={key => {
-				void setSearchParams({
-					interval: key as IntervalFilter,
-				});
-			}}
-		>
-			{Object.values(IntervalFilter).map(interval => (
-				<Tab key={interval} title={interval} className="px-2 py-0" />
-			))}
-		</Tabs>
+		<ScrollShadow orientation="horizontal" className="w-fit">
+			<Tabs
+				aria-label="filter time"
+				size="sm"
+				variant="light"
+				selectedKey={searchParams.interval}
+				onSelectionChange={key => {
+					void setSearchParams({
+						interval: key as IntervalFilter,
+					});
+				}}
+			>
+				{Object.values(IntervalFilter).map(interval => (
+					<Tab key={interval} title={interval} className="px-2 py-0" />
+				))}
+			</Tabs>
+		</ScrollShadow>
 	);
 });
 
