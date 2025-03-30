@@ -135,14 +135,19 @@ const Detail = () => {
 		}
 	}, [searchParams.interval]);
 
-	const ohlcv = useQueryOhlcv({
-		data: {
-			address: params.token,
-			type: searchParams.interval,
-			time_from: timeFrom,
-			time_to: currentUnix.current,
+	const ohlcv = useQueryOhlcv(
+		{
+			data: {
+				address: params.token,
+				type: searchParams.interval,
+				time_from: timeFrom,
+				time_to: currentUnix.current,
+			},
 		},
-	});
+		{
+			gcTime: 0,
+		},
+	);
 
 	const ohlcvData = useMemo(() => {
 		if (!ohlcv?.data || !Array.isArray(ohlcv?.data)) {
