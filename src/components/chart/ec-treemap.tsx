@@ -2,8 +2,7 @@
 
 import { useMemo } from 'react';
 
-import type { TreemapSeriesOption } from 'echarts';
-import type { EChartsOption } from 'echarts-for-react';
+import type { TreemapSeriesOption, EChartsOption } from 'echarts';
 import ReactECharts from 'echarts-for-react';
 
 import { isPositiveNumber, isNegativeNumber } from '@/utils/is';
@@ -202,7 +201,7 @@ export const MOCK_DATA: CryptoData[] = [
 ];
 
 const ECTreemap = (props: Props) => {
-	const options: EChartsOption = useMemo(() => {
+	const options = useMemo(() => {
 		return {
 			series: [
 				{
