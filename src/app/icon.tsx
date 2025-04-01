@@ -1,6 +1,6 @@
 import { ImageResponse } from 'next/og';
 
-import { AcmeIcon } from '@/components/icons/acme-icon';
+import { DonkinIcon } from '@/components/icons/donkin-icon';
 
 export const size = {
 	width: 32,
@@ -9,8 +9,9 @@ export const size = {
 export const contentType = 'image/png';
 
 export default function Icon() {
-	return new ImageResponse(<AcmeIcon />, {
+	return new ImageResponse(<DonkinIcon />, {
 		...size,
 		status: 200,
+		debug: true,
 	});
 }

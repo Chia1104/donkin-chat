@@ -184,6 +184,24 @@
 			}
 		}
 	},
+	"address": {
+		"order-details": {
+			"symbol": "Asset",
+			"price": "Price",
+			"amount": "Amount",
+			"value": "Value",
+			"profit": "Profit",
+			"transaction-count": "Transaction count",
+			"title": "Total Profit & Loss Details"
+		},
+		"order-history": {
+			"balance-history": "Balance History",
+			"profit-loss": "Daily P&L",
+			"title": "Balance History & P&L",
+			"win-rate": "Win Rate",
+			"profit-loss-rate": "P&L"
+		}
+	},
 	"ChartExamples": {
 		"title": "Chart Examples",
 		"candlestickTitle": "Candlestick Chart (K-Line)",

@@ -33,6 +33,7 @@
 		"@next/third-parties": "^15.2.4",
 		"@radix-ui/react-label": "^2.1.2",
 		"@radix-ui/react-slot": "^1.1.2",
+		"@react-stately/data": "^3.12.2",
 		"@sentry/nextjs": "^9.9.0",
 		"@shikijs/rehype": "^3.2.1",
 		"@solana/wallet-adapter-base": "^0.9.24",
