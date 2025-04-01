@@ -1,13 +1,7 @@
-import { useTranslations } from 'next-intl';
-
-import { michroma } from '@/themes/fonts';
-import { cn } from '@/utils/cn';
+import { Image } from '@heroui/image';
 
 const Donkin = () => {
-	const t = useTranslations('meta');
-	return (
-		<span className={cn('uppercase font-normal text-base leading-[22.75px]', michroma.className)}>{t('title')}</span>
-	);
+	return <Image src="/assets/images/donkin-title.svg" alt="donkin" removeWrapper width={100} height={36} />;
 };
 
 export default Donkin;
