@@ -11,6 +11,8 @@ import { DonkinStatus } from '@/enums/donkin.enum';
 import { useGlobalStore } from '@/stores/global/store';
 import { cn } from '@/utils/cn';
 
+import OnboardingTooltip from './onboarding-tooltip';
+
 interface Props {
 	current?: DonkinStatus;
 	className?: string;
@@ -27,6 +29,8 @@ const ActiveLogo = (props: Props) => {
 	const ref = useRef<HTMLDivElement>(null);
 	const isHover = useHover(ref as React.RefObject<HTMLElement>);
 	const id = useId();
+	const { donkin } = useGlobalStore(state => state.onboarding);
+	const onboarding = useGlobalStore(state => state.completeDonkin);
 
 	const {
 		current = isOpen ? DonkinStatus.Open : DonkinStatus.Close,
@@ -48,16 +52,24 @@ const ActiveLogo = (props: Props) => {
 
 	const content = useMemo(() => {
 		if (!isActivatable) return undefined;
+		if (!donkin) {
+			return <OnboardingTooltip />;
+		}
 		switch (current) {
 			case DonkinStatus.Open:
 				return t('action.close');
 			case DonkinStatus.Close:
 				return t('action.open');
 		}
-	}, [current, isActivatable, t]);
+	}, [current, donkin, isActivatable, t]);
+
+	const forceOnboarding = !donkin && isActivatable;
 
 	const handleToggle = () => {
 		if (isActivatable) {
+			if (forceOnboarding) {
+				onboarding();
+			}
 			toggleDonkin();
 		}
 	};
@@ -82,7 +94,15 @@ const ActiveLogo = (props: Props) => {
 	};
 
 	return (
-		<Tooltip content={content} showArrow isDisabled={!isActivatable}>
+		<Tooltip
+			classNames={{
+				content: forceOnboarding && 'bg-transparent p-0 shadow-none border-none',
+			}}
+			isOpen={forceOnboarding ? true : undefined}
+			content={content}
+			showArrow
+			isDisabled={!isActivatable}
+		>
 			<motion.div
 				initial={{
 					scale: 0,

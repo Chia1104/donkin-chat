@@ -22,7 +22,20 @@
 		"clear": "清除",
 		"back": "返回",
 		"back-to-previous": "返回上一頁",
-		"back-to-home": "返回首頁"
+		"back-to-home": "返回首頁",
+		"skip": "略過",
+		"experience": "立即體驗"
+	},
+	"onboarding": {
+		"donkin": {
+			"title": "币圈最专业的",
+			"description": "用智能化的方式帮助客户更好地投资加密货币，提升投资效率和决策质量。",
+			"button": {
+				"hot-tokens": "KOL 都在喊单什么Token？",
+				"smart-wallets": "聪明钱地址都在买什么",
+				"whale-addresses": "最近巨鲸地址都在买什么？"
+			}
+		}
 	},
 	"validation": {
 		"required": "此欄位為必填",

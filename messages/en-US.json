@@ -22,7 +22,20 @@
 		"clear": "Clear",
 		"back": "Back",
 		"back-to-previous": "Back to previous",
-		"back-to-home": "Back to home"
+		"back-to-home": "Back to home",
+		"skip": "Skip",
+		"experience": "Experience"
+	},
+	"onboarding": {
+		"donkin": {
+			"title": "The most professional",
+			"description": "Use intelligent methods to help customers better invest in cryptocurrencies, improve investment efficiency and decision-making quality.",
+			"button": {
+				"hot-tokens": "What are KOLs calling? What is the effect?",
+				"smart-wallets": "What are smart money addresses buying?",
+				"whale-addresses": "What are whale addresses buying recently?"
+			}
+		}
 	},
 	"validation": {
 		"required": "This field is required",

@@ -3,5 +3,5 @@ export interface DonkinState {
 }
 
 export const initialDonkinState: DonkinState = {
-	isOpen: true,
+	isOpen: false,
 };
