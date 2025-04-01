@@ -10,6 +10,7 @@ import { Image } from '@heroui/image';
 import { ScrollShadow } from '@heroui/scroll-shadow';
 import { Spinner } from '@heroui/spinner';
 import { Tabs, Tab } from '@heroui/tabs';
+import { Tooltip } from '@heroui/tooltip';
 import TrendingDownIcon from '@mui/icons-material/TrendingDown';
 import TrendingUpIcon from '@mui/icons-material/TrendingUp';
 import { ColorType, HistogramSeries, AreaSeries } from 'lightweight-charts';
@@ -29,6 +30,7 @@ import { Chart } from '../chart/trading-chart/chart';
 import { MarkerTooltipProvider, MarkerTooltip } from '../chart/trading-chart/plugins/clickable-marker/marker-tooltip';
 import { Series } from '../chart/trading-chart/series';
 import CopyButton from '../commons/copy-button';
+import DonkinPopover from '../donkin/popover';
 
 interface OrderHistoryDataItem {
 	time: Time;
@@ -158,6 +160,7 @@ const DateFilter = () => {
 
 const Meta = () => {
 	const { meta } = useOrderHistory();
+	const tAskMore = useTranslations('donkin.ask-more');
 
 	const isPositive = isPositiveNumber(meta.profit) || (typeof meta.profit === 'string' && meta.profit.startsWith('+'));
 
@@ -166,7 +169,19 @@ const Meta = () => {
 			<div className="flex items-center gap-4">
 				<Avatar src={meta.avatar} size="md" className="w-12 h-12" />
 				<span className="flex items-center gap-2">
-					<p className="text-sm font-normal">{truncateMiddle(meta.address ?? '', 10)}</p>
+					<Tooltip
+						classNames={{
+							content: 'bg-transparent shadow-none p-0',
+						}}
+						content={
+							<DonkinPopover
+								className="w-[220px]"
+								askMore={[tAskMore('address-detail.history-analysis'), tAskMore('address-detail.current-holdings')]}
+							/>
+						}
+					>
+						<p className="text-sm font-normal">{truncateMiddle(meta.address ?? '', 10)}</p>
+					</Tooltip>
 					<CopyButton content={meta.address} />
 				</span>
 				<Divider orientation="vertical" className="h-4" />

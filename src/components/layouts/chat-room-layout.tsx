@@ -13,8 +13,8 @@ import { useGlobalStore } from '@/stores/global/store';
 import { noto_sans } from '@/themes/fonts';
 import { cn } from '@/utils/cn';
 
-import Logo from '../commons/donkin/logo';
-import Donkin from '../commons/donkin/title';
+import Logo from '../donkin/logo';
+import Donkin from '../donkin/title';
 import WalletConnect from '../web3/wallet-connect';
 
 const ChainSelector = dynamic(() => import('@/components/web3/chain-selector'), {

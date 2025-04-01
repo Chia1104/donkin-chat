@@ -181,6 +181,16 @@
 			"kol-order": {
 				"smart-wallet": "哪些聪明钱在此 K 线上交易？",
 				"kol-order": "哪些 KOL 喊单？成效如何？"
+			},
+			"token-name": {
+				"basic-info": "Token 基本信息分析",
+				"price-analysis": "涨跌原因分析",
+				"kol-order": "KOL 喊单分析",
+				"smart-wallet": "聪明钱买入分析"
+			},
+			"address-detail": {
+				"history-analysis": "地址分析（历史胜率/PnL）",
+				"current-holdings": "当前持仓分析"
 			}
 		}
 	},

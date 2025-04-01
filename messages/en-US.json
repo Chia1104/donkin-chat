@@ -181,6 +181,16 @@
 			"kol-order": {
 				"smart-wallet": "What are smart money addresses buying?",
 				"kol-order": "What are KOLs calling? What is the effect?"
+			},
+			"token-name": {
+				"basic-info": "Token basic information analysis",
+				"price-analysis": "Price analysis",
+				"kol-order": "KOL order analysis",
+				"smart-wallet": "Smart money buy analysis"
+			},
+			"address-detail": {
+				"history-analysis": "Address analysis (history win rate/PnL)",
+				"current-holdings": "Current position analysis"
 			}
 		}
 	},

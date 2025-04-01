@@ -10,7 +10,7 @@ import { AnimatePresence, motion } from 'framer-motion';
 import DefaultPrompt from '@/components/chat/default-prompt';
 import MessageCard from '@/components/chat/message-card';
 import PromptInput from '@/components/chat/prompt-input';
-import Logo from '@/components/commons/donkin/logo';
+import Logo from '@/components/donkin/logo';
 import { DonkinStatus } from '@/enums/donkin.enum';
 import { useChatStore } from '@/stores/chat';
 import { useGlobalStore } from '@/stores/global/store';

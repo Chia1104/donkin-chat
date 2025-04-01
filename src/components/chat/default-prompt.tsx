@@ -4,7 +4,7 @@ import { memo, useCallback } from 'react';
 
 import { useTranslations } from 'next-intl';
 
-import Logo from '@/components/commons/donkin/logo';
+import Logo from '@/components/donkin/logo';
 import ActionCard, { ActionBody } from '@/components/ui/action-card';
 import { DonkinStatus } from '@/enums/donkin.enum';
 

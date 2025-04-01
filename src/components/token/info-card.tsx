@@ -11,6 +11,7 @@ import { Card as HCard, CardBody, CardHeader as HCardHeader } from '@heroui/card
 import { Image } from '@heroui/image';
 import { Progress } from '@heroui/progress';
 import { Skeleton } from '@heroui/skeleton';
+import { Tooltip } from '@heroui/tooltip';
 import { useClipboard } from '@heroui/use-clipboard';
 import ContentCopyRoundedIcon from '@mui/icons-material/ContentCopyRounded';
 import DoneAllIcon from '@mui/icons-material/DoneAll';
@@ -47,6 +48,7 @@ export interface HeaderPrimitiveProps extends MetaProps {
 	};
 	injects?: {
 		afterLabel?: ReactNode;
+		nameTooltip?: ReactNode;
 	};
 	isLoading?: boolean;
 }
@@ -152,9 +154,18 @@ export const HeaderPrimitive = (props: HeaderPrimitiveProps) => {
 				{props.isLoading ? (
 					<Skeleton className="w-full max-w-[100px] h-3 rounded-full" />
 				) : (
-					<h3 className={cn('text-base leading-[14px] font-semibold flex max-w-full', props.classNames?.label)}>
-						<span className="line-clamp-1 break-words">{props.meta.name}</span>
-					</h3>
+					<Tooltip
+						isOpen={!props.injects?.nameTooltip ? false : undefined}
+						content={props.injects?.nameTooltip}
+						classNames={{
+							base: 'shadow-none',
+							content: 'bg-transparent shadow-none p-0',
+						}}
+					>
+						<h3 className={cn('text-base leading-[14px] font-semibold flex max-w-full', props.classNames?.label)}>
+							<span className="line-clamp-1 break-words">{props.meta.name}</span>
+						</h3>
+					</Tooltip>
 				)}
 				{props.injects?.afterLabel}
 				<div className={cn('flex items-center gap-1 z-20', props.classNames?.linkWrapper)}>
