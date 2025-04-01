@@ -11,6 +11,7 @@ import { Card as HCard, CardBody, CardHeader as HCardHeader } from '@heroui/card
 import { Image } from '@heroui/image';
 import { Progress } from '@heroui/progress';
 import { Skeleton } from '@heroui/skeleton';
+import { Tooltip } from '@heroui/tooltip';
 import { useClipboard } from '@heroui/use-clipboard';
 import ContentCopyRoundedIcon from '@mui/icons-material/ContentCopyRounded';
 import DoneAllIcon from '@mui/icons-material/DoneAll';
@@ -24,6 +25,8 @@ import XIcon from '@/components/icons/x-icon';
 import { cn } from '@/utils/cn';
 import { formatLargeNumber, roundDecimal } from '@/utils/format';
 import { isNumber, isPositiveNumber, isNegativeNumber } from '@/utils/is';
+
+import DonkinPopover from '../donkin/popover';
 
 type LinkProvider = 'website' | 'x' | 'telegram' | 'copy';
 
@@ -49,6 +52,7 @@ export interface HeaderPrimitiveProps extends MetaProps {
 		afterLabel?: ReactNode;
 	};
 	isLoading?: boolean;
+	onAskMore?: (item: string) => void;
 }
 
 interface HotspotProps {
@@ -130,6 +134,8 @@ export const LinkIcon = (props: LinkIconProps) => {
 
 export const HeaderPrimitive = (props: HeaderPrimitiveProps) => {
 	const { copied, copy } = useClipboard();
+	const tAskMore = useTranslations('donkin.ask-more');
+
 	return (
 		<>
 			<Avatar
@@ -152,9 +158,28 @@ export const HeaderPrimitive = (props: HeaderPrimitiveProps) => {
 				{props.isLoading ? (
 					<Skeleton className="w-full max-w-[100px] h-3 rounded-full" />
 				) : (
-					<h3 className={cn('text-base leading-[14px] font-semibold flex max-w-full', props.classNames?.label)}>
-						<span className="line-clamp-1 break-words">{props.meta.name}</span>
-					</h3>
+					<Tooltip
+						content={
+							<DonkinPopover
+								onAskMore={props.onAskMore}
+								className="w-[220px]"
+								askMore={[
+									tAskMore('token-name.basic-info'),
+									tAskMore('token-name.price-analysis'),
+									tAskMore('token-name.kol-order'),
+									tAskMore('token-name.smart-wallet'),
+								]}
+							/>
+						}
+						classNames={{
+							base: 'shadow-none',
+							content: 'bg-transparent shadow-none p-0',
+						}}
+					>
+						<h3 className={cn('text-base leading-[14px] font-semibold flex max-w-full', props.classNames?.label)}>
+							<span className="line-clamp-1 break-words">{props.meta.name}</span>
+						</h3>
+					</Tooltip>
 				)}
 				{props.injects?.afterLabel}
 				<div className={cn('flex items-center gap-1 z-20', props.classNames?.linkWrapper)}>

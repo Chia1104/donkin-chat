@@ -1,12 +1,15 @@
 'use client';
 
-import { useMemo } from 'react';
+import { useMemo, useRef, useState, useCallback, useEffect, forwardRef } from 'react';
 
-import type { TreemapSeriesOption } from 'echarts';
-import type { EChartsOption } from 'echarts-for-react';
+import type { TreemapSeriesOption, EChartsOption } from 'echarts';
 import ReactECharts from 'echarts-for-react';
+import { useTranslations } from 'next-intl';
+import { createPortal } from 'react-dom';
 
 import { isPositiveNumber, isNegativeNumber } from '@/utils/is';
+
+import DonkinPopover from '../donkin/popover';
 
 export interface CryptoData {
 	name: string;
@@ -201,9 +204,138 @@ export const MOCK_DATA: CryptoData[] = [
 	},
 ];
 
+interface TooltipProps {
+	data: CryptoData;
+	position: { x: number; y: number };
+	onClose: () => void;
+}
+
+const Tooltip = forwardRef<HTMLDivElement, TooltipProps>(({ data, position, onClose }, ref) => {
+	const tAskMore = useTranslations('donkin.ask-more');
+
+	// 調整位置以確保 tooltip 不會超出螢幕邊界
+	const adjustedPosition = useMemo(() => {
+		const tooltipWidth = 220;
+		const tooltipHeight = 210;
+
+		// 獲取視窗大小
+		const windowWidth = typeof window !== 'undefined' ? window.innerWidth : 0;
+		const windowHeight = typeof window !== 'undefined' ? window.innerHeight : 0;
+
+		// 計算調整後的位置
+		let adjustedX = position.x;
+		let adjustedY = position.y;
+
+		// 檢查右邊界
+		if (position.x + tooltipWidth > windowWidth) {
+			adjustedX = windowWidth - tooltipWidth - 10; // 保留10px邊距
+		}
+
+		// 檢查下邊界
+		if (position.y + tooltipHeight > windowHeight) {
+			adjustedY = windowHeight - tooltipHeight - 10; // 保留10px邊距
+		}
+
+		// 確保不超出左邊界和上邊界
+		adjustedX = Math.max(10, adjustedX);
+		adjustedY = Math.max(10, adjustedY);
+
+		return { x: adjustedX, y: adjustedY };
+	}, [position]);
+
+	return createPortal(
+		<DonkinPopover
+			ref={ref}
+			onClose={onClose}
+			style={{ position: 'absolute', top: adjustedPosition.y, left: adjustedPosition.x }}
+			askMore={[
+				tAskMore('token-name.basic-info'),
+				tAskMore('token-name.price-analysis'),
+				tAskMore('token-name.kol-order'),
+				tAskMore('token-name.smart-wallet'),
+			]}
+			onAskMore={ask => {
+				console.log(ask);
+				console.log(data);
+			}}
+		/>,
+		document.body,
+	);
+});
+
 const ECTreemap = (props: Props) => {
-	const options: EChartsOption = useMemo(() => {
+	const [tooltipInfo, setTooltipInfo] = useState<{ data: CryptoData; position: { x: number; y: number } } | null>(null);
+	const chartRef = useRef<ReactECharts>(null);
+	const containerRef = useRef<HTMLDivElement>(null);
+	const tooltipRef = useRef<HTMLDivElement>(null);
+
+	const handleChartClick = useCallback((params: any) => {
+		if (params.componentType === 'series') {
+			const domEvent = params.event.event;
+			setTooltipInfo({
+				data: params.data,
+				position: { x: domEvent.clientX, y: domEvent.clientY },
+			});
+		}
+	}, []);
+
+	const handleCloseTooltip = useCallback(() => {
+		setTooltipInfo(null);
+	}, []);
+
+	const handleMouseMove = useCallback(
+		(e: MouseEvent) => {
+			if (!tooltipInfo || !containerRef.current) return;
+
+			// 檢查滑鼠是否在圖表容器範圍內
+			const containerRect = containerRef.current.getBoundingClientRect();
+			const isInside =
+				e.clientX >= containerRect.left &&
+				e.clientX <= containerRect.right &&
+				e.clientY >= containerRect.top &&
+				e.clientY <= containerRect.bottom;
+
+			if (tooltipRef.current) {
+				const tooltipRect = tooltipRef.current.getBoundingClientRect();
+				const isInside =
+					e.clientX >= tooltipRect.left &&
+					e.clientX <= tooltipRect.right &&
+					e.clientY >= tooltipRect.top &&
+					e.clientY <= tooltipRect.bottom;
+				if (isInside) {
+					return;
+				}
+			}
+
+			// 如果滑鼠不在容器內，關閉 tooltip
+			if (!isInside) {
+				handleCloseTooltip();
+			}
+		},
+		[tooltipInfo, handleCloseTooltip],
+	);
+
+	useEffect(() => {
+		if (tooltipInfo) {
+			window.addEventListener('mousemove', handleMouseMove);
+		}
+
+		return () => {
+			window.removeEventListener('mousemove', handleMouseMove);
+		};
+	}, [tooltipInfo, handleMouseMove]);
+
+	const onEvents = useMemo(() => {
 		return {
+			click: handleChartClick,
+		};
+	}, [handleChartClick]);
+
+	const options = useMemo(() => {
+		return {
+			tooltip: {
+				show: false,
+			},
 			series: [
 				{
 					type: 'treemap',
@@ -256,12 +388,24 @@ const ECTreemap = (props: Props) => {
 	}, [props.data, props.options]);
 
 	return (
-		<ReactECharts
-			option={options}
-			style={{ height: '100%', width: '100%' }}
-			opts={{ renderer: 'canvas' }}
-			className="bg-transparent"
-		/>
+		<div ref={containerRef} className="w-full h-full relative">
+			<ReactECharts
+				ref={chartRef}
+				option={options}
+				style={{ height: '100%', width: '100%' }}
+				opts={{ renderer: 'canvas' }}
+				className="bg-transparent"
+				onEvents={onEvents}
+			/>
+			{tooltipInfo && (
+				<Tooltip
+					ref={tooltipRef}
+					data={tooltipInfo.data}
+					position={tooltipInfo.position}
+					onClose={handleCloseTooltip}
+				/>
+			)}
+		</div>
 	);
 };
 

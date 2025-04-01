@@ -8,6 +8,7 @@ import { Checkbox } from '@heroui/checkbox';
 import { Divider } from '@heroui/divider';
 import { ScrollShadow } from '@heroui/scroll-shadow';
 import { Skeleton } from '@heroui/skeleton';
+import { Tooltip } from '@heroui/tooltip';
 import { useTranslations } from 'next-intl';
 import { useParams } from 'next/navigation';
 
@@ -176,12 +177,21 @@ const Detail = () => {
 										<span className="flex items-center gap-3">
 											<Divider orientation="vertical" className="h-3" />
 											<p className="text-success text-[12px] font-normal">2h</p>
-											<p className="text-[12px] font-normal">
-												{truncateMiddle(
-													queryResult.data?.address ?? '',
-													queryResult.data?.address ? queryResult.data?.address.length / 3 : 5,
-												)}
-											</p>
+											<Tooltip
+												content={dayjs(queryResult.data?.created_at).format('YYYY-MM-DD HH:mm:ss')}
+												showArrow
+												radius="sm"
+												classNames={{
+													content: 'text-[10px] font-normal',
+												}}
+											>
+												<p className="text-[12px] font-normal">
+													{truncateMiddle(
+														queryResult.data?.address ?? '',
+														queryResult.data?.address ? queryResult.data?.address.length / 3 : 5,
+													)}
+												</p>
+											</Tooltip>
 										</span>
 									),
 								}}

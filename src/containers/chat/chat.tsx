@@ -10,7 +10,7 @@ import { AnimatePresence, motion } from 'framer-motion';
 import DefaultPrompt from '@/components/chat/default-prompt';
 import MessageCard from '@/components/chat/message-card';
 import PromptInput from '@/components/chat/prompt-input';
-import Logo from '@/components/commons/donkin/logo';
+import Logo from '@/components/donkin/logo';
 import { DonkinStatus } from '@/enums/donkin.enum';
 import { useChatStore } from '@/stores/chat';
 import { useGlobalStore } from '@/stores/global/store';
@@ -53,14 +53,11 @@ const Messages = ({ children }: { children?: React.ReactNode }) => {
 };
 
 const ChatBody = () => {
-	const { status, messages } = useUIChat();
+	const { messages } = useUIChat();
 	return (
 		<CardBody aria-label="chat-body" className="flex flex-col items-center justify-start w-full relative">
 			{messages && messages.length > 0 && (
-				<Logo
-					current={status === 'streaming' ? DonkinStatus.Thinking : DonkinStatus.Open}
-					className="absolute top-0 left-0 size-8 z-[9999]"
-				/>
+				<Logo current={DonkinStatus.Folded} className="absolute top-0 left-0 size-8 z-[9999]" />
 			)}
 			<ScrollShadow aria-label="chat-scroll-shadow" className="w-full min-w-full h-[calc(100vh-300px)]">
 				<div

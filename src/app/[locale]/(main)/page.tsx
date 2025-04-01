@@ -8,7 +8,7 @@ import { useAISearchParams } from '@/libs/ai/hooks/useAISearchParams';
 import { useChatStore } from '@/stores/chat';
 
 const TokensList = dynamic(() => import('@/containers/token/tokens-list'));
-const Heatmap = dynamic(() => import('@/containers/chat/heatmap'));
+const Heatmap = dynamic(() => import('@/containers/token/heatmap'));
 
 const Content = () => {
 	const preview = useChatStore(state => state.preview);
