@@ -115,23 +115,23 @@ const Detail = () => {
 	const timeFrom = useMemo(() => {
 		switch (searchParams.interval) {
 			case IntervalFilter.OneMinute:
-				return dayjs().subtract(6, 'hour').unix();
+				return dayjs.unix(currentUnix.current).subtract(6, 'hour').unix();
 			case IntervalFilter.FiveMinutes:
-				return dayjs().subtract(6, 'hour').unix();
+				return dayjs.unix(currentUnix.current).subtract(6, 'hour').unix();
 			case IntervalFilter.FifteenMinutes:
-				return dayjs().subtract(6, 'hour').unix();
+				return dayjs.unix(currentUnix.current).subtract(6, 'hour').unix();
 			case IntervalFilter.ThirtyMinutes:
-				return dayjs().subtract(12, 'hour').unix();
+				return dayjs.unix(currentUnix.current).subtract(12, 'hour').unix();
 			case IntervalFilter.OneHour:
-				return dayjs().subtract(1, 'week').unix();
+				return dayjs.unix(currentUnix.current).subtract(1, 'week').unix();
 			case IntervalFilter.FourHours:
-				return dayjs().subtract(1, 'month').unix();
+				return dayjs.unix(currentUnix.current).subtract(1, 'month').unix();
 			case IntervalFilter.OneDay:
-				return dayjs().subtract(1, 'month').unix();
+				return dayjs.unix(currentUnix.current).subtract(1, 'month').unix();
 			case IntervalFilter.OneWeek:
-				return dayjs().subtract(1, 'month').unix();
+				return dayjs.unix(currentUnix.current).subtract(1, 'month').unix();
 			default:
-				return dayjs().subtract(1, 'day').unix();
+				return dayjs.unix(currentUnix.current).subtract(1, 'day').unix();
 		}
 	}, [searchParams.interval]);
 
@@ -145,26 +145,16 @@ const Detail = () => {
 			},
 		},
 		{
-			refetchOnMount: false,
-			refetchInterval: false,
-			refetchOnWindowFocus: false,
-			refetchOnReconnect: false,
+			gcTime: 0,
 		},
 	);
 
 	const ohlcvData = useMemo(() => {
-		if (!ohlcv.data?.data || !Array.isArray(ohlcv.data?.data)) {
+		if (!ohlcv?.data || !Array.isArray(ohlcv?.data)) {
 			return [];
 		}
-		return ohlcv.data?.data.map(item => ({
-			open: item.o,
-			high: item.h,
-			low: item.l,
-			close: item.c,
-			volume: item.v,
-			unix: item.unixTime,
-		}));
-	}, [ohlcv.data?.data]);
+		return ohlcv.data;
+	}, [ohlcv.data]);
 
 	return (
 		<div className="w-full h-full flex flex-col">

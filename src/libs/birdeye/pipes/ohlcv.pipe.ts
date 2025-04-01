@@ -29,7 +29,17 @@ export const ohlcvItemSchema = z.object({
 	currency: z.string(),
 });
 
+export const ohlcvItemDTOSchema = ohlcvItemSchema.transform(item => ({
+	open: item.o,
+	high: item.h,
+	low: item.l,
+	close: item.c,
+	volume: item.v,
+	unix: item.unixTime,
+}));
+
 export type OhlcvItem = z.infer<typeof ohlcvItemSchema>;
+export type OhlcvItemDTO = z.infer<typeof ohlcvItemDTOSchema>;
 
 export const ohlcvResponseSchema = z.object({
 	items: z.array(ohlcvItemSchema),

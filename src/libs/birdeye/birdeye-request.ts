@@ -10,6 +10,7 @@ const birdeyeRequest = ky.create({
 	headers: {
 		'X-API-KEY': env.BIRDEYE_API_KEY,
 	},
+	retry: 0,
 });
 
 export default birdeyeRequest;

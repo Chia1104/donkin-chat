@@ -1,36 +1,34 @@
 'use client';
 
-import { memo, createContext, use, useMemo, useRef, useState, useCallback } from 'react';
+import { memo, createContext, use, useMemo, useState, useCallback, useRef, useEffect } from 'react';
 import type { PropsWithChildren } from 'react';
 
 import { Chip } from '@heroui/chip';
+import { ScrollShadow } from '@heroui/scroll-shadow';
 import { Skeleton } from '@heroui/skeleton';
 import { Spinner } from '@heroui/spinner';
 import { Tabs, Tab } from '@heroui/tabs';
-import { CandlestickSeries, ColorType, HistogramSeries } from 'lightweight-charts';
-import type { Time, IChartApi, ISeriesApi } from 'lightweight-charts';
+import { useQueryClient } from '@tanstack/react-query';
+import { ColorType, HistogramSeries, CandlestickSeries, createTextWatermark } from 'lightweight-charts';
+import type { Time, ISeriesApi } from 'lightweight-charts';
 import { useLocale } from 'next-intl';
+import { toast } from 'sonner';
 
 import { experimental_useTailwindTheme as useTailwindTheme } from '@/hooks/useTailwindTheme';
 import { useMutationOhlcv } from '@/libs/birdeye/hooks/useQueryOhlcv';
+import type { OlcvResponseDTO } from '@/libs/birdeye/hooks/useQueryOhlcv';
 import { IntervalFilter } from '@/libs/token/enums/interval-filter.enum';
 import { useTokenSearchParams } from '@/libs/token/hooks/useTokenSearchParams';
 import dayjs from '@/utils/dayjs';
 import { formatLargeNumber, roundDecimal } from '@/utils/format';
 import { isPositiveNumber, isNegativeNumber, isNumber } from '@/utils/is';
 
-import { MarkerTooltipProvider, MarkerTooltip } from '../chart/plugins/clickable-marker/marker-tooltip';
-import type { TradingChartRef } from '../chart/trading-chart';
-import TradingChart from '../chart/trading-chart';
-
-interface Data {
-	open: number;
-	high: number;
-	low: number;
-	close: number;
-	volume: number;
-	unix: number;
-}
+import { useChart } from '../chart/trading-chart/chart';
+import { Chart as TradingChart } from '../chart/trading-chart/chart';
+import { MarkerTooltipProvider, MarkerTooltip } from '../chart/trading-chart/plugins/clickable-marker/marker-tooltip';
+import { Series } from '../chart/trading-chart/series';
+import { useSeries } from '../chart/trading-chart/series';
+import { SubscribeVisibleLogicalRange } from '../chart/trading-chart/subscrib-visible-logical-range';
 
 interface CandlestickProps {
 	meta: {
@@ -43,7 +41,7 @@ interface CandlestickProps {
 		time_from: number;
 		time_to: number;
 	};
-	data: Data[];
+	data: OlcvResponseDTO;
 	isPending?: boolean;
 	isMetaPending?: boolean;
 }
@@ -65,21 +63,23 @@ const useCandlestick = () => {
 const DateFilter = memo(() => {
 	const [searchParams, setSearchParams] = useTokenSearchParams();
 	return (
-		<Tabs
-			aria-label="filter time"
-			size="sm"
-			variant="light"
-			selectedKey={searchParams.interval}
-			onSelectionChange={key => {
-				void setSearchParams({
-					interval: key as IntervalFilter,
-				});
-			}}
-		>
-			{Object.values(IntervalFilter).map(interval => (
-				<Tab key={interval} title={interval} className="px-2 py-0" />
-			))}
-		</Tabs>
+		<ScrollShadow orientation="horizontal" className="w-fit">
+			<Tabs
+				aria-label="filter time"
+				size="sm"
+				variant="light"
+				selectedKey={searchParams.interval}
+				onSelectionChange={key => {
+					void setSearchParams({
+						interval: key as IntervalFilter,
+					});
+				}}
+			>
+				{Object.values(IntervalFilter).map(interval => (
+					<Tab key={interval} title={interval} className="px-2 py-0" />
+				))}
+			</Tabs>
+		</ScrollShadow>
 	);
 });
 
@@ -115,46 +115,19 @@ const MetaInfo = () => {
 	);
 };
 
-const Chart = () => {
-	const locale = useLocale();
-	const [searchParams] = useTokenSearchParams();
-	const [initOptions] = useState({
-		autoSize: true,
-		layout: {
-			textColor: '#9B9EAB',
-			background: { type: ColorType.Solid, color: 'transparent' },
-			attributionLogo: false,
-		},
-		grid: {
-			vertLines: {
-				color: 'transparent',
-			},
-			horzLines: {
-				color: 'transparent',
-			},
-		},
-		localization: {
-			locale,
-		},
-		timeScale: {
-			timeVisible: true,
-		},
-	});
-	const chartRef = useRef<TradingChartRef>(null);
-	const twTheme = useTailwindTheme();
-
-	const { mutate: fetchMoreOhlcv, isPending: isFetchMoreOhlcvPending } = useMutationOhlcv();
-	const { data, isPending, meta, query } = useCandlestick();
+const SubscribeCandlestick = ({
+	enable = true,
+	onLoad,
+}: {
+	enable?: boolean;
+	onLoad?: (data: OlcvResponseDTO) => void;
+}) => {
+	const { mutate, isPending, isError } = useMutationOhlcv();
+	const { meta, query } = useCandlestick();
 	const [timeFrom, setTimeFrom] = useState(query.time_from);
-	const [timeTo, setTimeTo] = useState(query.time_to);
-	const initData = useMemo(() => {
-		return data.map(item => ({
-			...item,
-			value: item.volume,
-			time: item.unix as Time,
-			color: item.close > item.open ? twTheme.theme.colors.buy.disabled : twTheme.theme.colors.sell.disabled,
-		}));
-	}, [data, twTheme.theme.colors.buy.disabled, twTheme.theme.colors.sell.disabled]);
+	const series = useSeries('SubscribeCandlestick');
+	const [isNoData, setIsNoData] = useState(false);
+	const queryClient = useQueryClient();
 
 	const handleGenerateTimeWithInterval = useCallback(
 		(current: number, interval: IntervalFilter, range: number): number => {
@@ -188,118 +161,179 @@ const Chart = () => {
 				case IntervalFilter.OneWeek:
 					return dayjs.unix(current).subtract(range, 'weeks').unix();
 				default:
-					return current;
+					return dayjs.unix(current).unix();
 			}
 		},
 		[],
 	);
 
-	const _handleSubscribeVisibleLogicalRangeChange = useCallback(
-		(chart: IChartApi, candlestickSeries: ISeriesApi<'Candlestick'>, volumeSeries: ISeriesApi<'Histogram'>) => {
-			chart.timeScale().subscribeVisibleLogicalRangeChange(logicalRange => {
-				if (!logicalRange || isFetchMoreOhlcvPending) {
-					return;
-				}
-				if (logicalRange.from < 10) {
-					const numberBarsToLoad = 50 - logicalRange.from;
+	const handleSubscribe = useCallback(
+		(data: OlcvResponseDTO) => {
+			const previousData = queryClient.getQueryData<OlcvResponseDTO>(['birdeye', 'ohlcv', meta.address, query.type]);
 
-					const newTimeFrom = handleGenerateTimeWithInterval(timeFrom, query.type, numberBarsToLoad);
-					const newTimeTo = handleGenerateTimeWithInterval(timeTo, query.type, 1);
-					fetchMoreOhlcv(
-						{
-							data: {
-								address: meta.address,
-								type: query.type,
-								time_from: newTimeFrom,
-								time_to: newTimeTo,
-							},
-						},
-						{
-							onSuccess(_data) {
-								setTimeFrom(newTimeFrom);
-								setTimeTo(newTimeTo);
-								const data = _data.data;
-								candlestickSeries.setData(
-									data.map(item => ({
-										value: item.v,
-										time: item.unixTime as Time,
-										open: item.o,
-										high: item.h,
-										low: item.l,
-										close: item.c,
-									})),
-								);
-								volumeSeries.setData(
-									data.map(item => ({
-										value: item.v,
-										time: item.unixTime as Time,
-										color: item.c > item.o ? twTheme.theme.colors.buy.disabled : twTheme.theme.colors.sell.disabled,
-										open: item.o,
-										high: item.h,
-										low: item.l,
-										close: item.c,
-									})),
-								);
-							},
-						},
+			if (Array.isArray(previousData) && data.length > 0) {
+				queryClient.setQueryData<OlcvResponseDTO>(['birdeye', 'ohlcv', meta.address, query.type], prev => {
+					if (!prev) {
+						return [];
+					}
+
+					const _data = [...data, ...prev];
+
+					series.api().setData(
+						_data.map(item => ({
+							...item,
+							time: item.unix as Time,
+						})),
 					);
-				}
-			});
+
+					onLoad?.(_data);
+
+					return _data;
+				});
+			}
+		},
+		[meta.address, onLoad, query.type, queryClient, series],
+	);
+
+	const handleSubscribeVisibleLogicalRange = useCallback(
+		(range: number) => {
+			if (isPending || isNoData || isError) {
+				return;
+			}
+			const numberBarsToLoad = 50 - range;
+			const newTimeFrom = handleGenerateTimeWithInterval(timeFrom, query.type, numberBarsToLoad);
+			const newTimeTo = handleGenerateTimeWithInterval(timeFrom, query.type, 0);
+			setTimeFrom(newTimeFrom);
+			mutate(
+				{
+					data: {
+						address: meta.address,
+						type: query.type,
+						time_from: newTimeFrom,
+						time_to: newTimeTo,
+					},
+				},
+				{
+					onSuccess: _data => {
+						const data = _data.map(item => ({
+							...item,
+							time: item.unix as Time,
+						}));
+
+						if (data.length === 0) {
+							setIsNoData(true);
+						} else {
+							setIsNoData(false);
+							handleSubscribe(data);
+						}
+					},
+					onError: error => {
+						console.error(error);
+						toast.error('Failed to load data');
+					},
+				},
+			);
 		},
 		[
-			fetchMoreOhlcv,
+			isPending,
+			isNoData,
+			isError,
 			handleGenerateTimeWithInterval,
-			isFetchMoreOhlcvPending,
-			meta.address,
-			query.type,
 			timeFrom,
-			timeTo,
-			twTheme.theme.colors.buy.disabled,
-			twTheme.theme.colors.sell.disabled,
+			query.type,
+			mutate,
+			meta.address,
+			handleSubscribe,
 		],
 	);
 
-	const handleInit = useCallback(
-		(chart: IChartApi) => {
-			const candlestickSeries = chart.addSeries(CandlestickSeries, {
-				upColor: searchParams.mark ? twTheme.theme.colors.buy.disabled : twTheme.theme.colors.buy.DEFAULT,
-				downColor: searchParams.mark ? twTheme.theme.colors.sell.disabled : twTheme.theme.colors.sell.DEFAULT,
-				borderVisible: false,
-				wickUpColor: searchParams.mark ? twTheme.theme.colors.buy.disabled : twTheme.theme.colors.buy.DEFAULT,
-				wickDownColor: searchParams.mark ? twTheme.theme.colors.sell.disabled : twTheme.theme.colors.sell.DEFAULT,
-			});
-			const volumeSeries = chart.addSeries(HistogramSeries, {
-				priceFormat: {
-					type: 'volume',
-				},
-				priceScaleId: '', // set as an overlay by setting a blank priceScaleId
-			});
-			volumeSeries.priceScale().applyOptions({
-				scaleMargins: {
-					top: 0.8, // highest point of the series will be 70% away from the top
-					bottom: 0,
-				},
-			});
+	if (!enable) {
+		return null;
+	}
 
-			candlestickSeries.setData(
-				initData.map(item => ({
-					...item,
-					color: undefined,
-				})),
-			);
-			volumeSeries.setData(initData);
+	return (
+		<SubscribeVisibleLogicalRange
+			enabled={!isPending && !isNoData && !isError}
+			method={handleSubscribeVisibleLogicalRange}
+		/>
+	);
+};
 
-			// handleSubscribeVisibleLogicalRangeChange(chart, candlestickSeries, volumeSeries);
+const NoDataWatermark = ({ data, text = 'No data' }: { data: OlcvResponseDTO; text?: string }) => {
+	const twTheme = useTailwindTheme();
+	const chart = useChart();
+
+	useEffect(() => {
+		if (data.length === 0) {
+			const firstPane = chart.api().panes()[0];
+			createTextWatermark(firstPane, {
+				horzAlign: 'center',
+				vertAlign: 'center',
+				lines: [
+					{
+						text,
+						color: twTheme.theme.colors.description.DEFAULT,
+						fontSize: 24,
+					},
+				],
+			});
+		}
+	}, [data, chart, twTheme.theme.colors.description.DEFAULT, text]);
+	return null;
+};
+
+const Chart = () => {
+	const locale = useLocale();
+	const [searchParams] = useTokenSearchParams();
+	const [initOptions] = useState({
+		autoSize: true,
+		layout: {
+			textColor: '#9B9EAB',
+			background: { type: ColorType.Solid, color: 'transparent' },
+			attributionLogo: false,
 		},
-		[
-			initData,
-			// handleSubscribeVisibleLogicalRangeChange,
-			searchParams.mark,
-			twTheme.theme.colors.buy.DEFAULT,
-			twTheme.theme.colors.buy.disabled,
-			twTheme.theme.colors.sell.DEFAULT,
-			twTheme.theme.colors.sell.disabled,
-		],
+		grid: {
+			vertLines: {
+				color: 'transparent',
+			},
+			horzLines: {
+				color: 'transparent',
+			},
+		},
+		localization: {
+			locale,
+		},
+		timeScale: {
+			timeVisible: true,
+		},
+	});
+	const twTheme = useTailwindTheme();
+	const histogramSeriesRef = useRef<ISeriesApi<'Histogram'>>(null);
+
+	const { data, isPending, query } = useCandlestick();
+
+	const initData = useMemo(() => {
+		return data.map(item => ({
+			...item,
+			value: item.volume,
+			time: item.unix as Time,
+			color: item.close > item.open ? twTheme.theme.colors.buy.disabled : twTheme.theme.colors.sell.disabled,
+		}));
+	}, [data, twTheme.theme.colors.buy.disabled, twTheme.theme.colors.sell.disabled]);
+
+	const handleSubscribeHistogram = useCallback(
+		(data: OlcvResponseDTO) => {
+			if (histogramSeriesRef.current) {
+				histogramSeriesRef.current.setData(
+					data.map(item => ({
+						value: item.volume,
+						time: item.unix as Time,
+						color: item.close > item.open ? twTheme.theme.colors.buy.disabled : twTheme.theme.colors.sell.disabled,
+					})),
+				);
+			}
+		},
+		[twTheme.theme.colors.buy.disabled, twTheme.theme.colors.sell.disabled],
 	);
 
 	if (isPending) {
@@ -310,7 +344,55 @@ const Chart = () => {
 		);
 	}
 
-	return <TradingChart ref={chartRef} className="h-[55dvh]" onInit={handleInit} initOptions={initOptions} />;
+	return (
+		<TradingChart
+			key={query.type}
+			className="h-[55dvh]"
+			initOptions={initOptions}
+			onInit={c => {
+				if (data.length < 50) {
+					c.timeScale().fitContent();
+				}
+			}}
+		>
+			<NoDataWatermark data={data} />
+			<Series
+				series={CandlestickSeries}
+				data={initData.map(item => ({
+					...item,
+					color: undefined,
+				}))}
+				options={{
+					upColor: searchParams.mark ? twTheme.theme.colors.buy.disabled : twTheme.theme.colors.buy.DEFAULT,
+					downColor: searchParams.mark ? twTheme.theme.colors.sell.disabled : twTheme.theme.colors.sell.DEFAULT,
+					borderVisible: false,
+					wickUpColor: searchParams.mark ? twTheme.theme.colors.buy.disabled : twTheme.theme.colors.buy.DEFAULT,
+					wickDownColor: searchParams.mark ? twTheme.theme.colors.sell.disabled : twTheme.theme.colors.sell.DEFAULT,
+				}}
+			>
+				<SubscribeCandlestick onLoad={handleSubscribeHistogram} />
+			</Series>
+			<Series
+				ref={histogramSeriesRef}
+				series={HistogramSeries}
+				data={initData}
+				options={{
+					priceFormat: {
+						type: 'volume',
+					},
+					priceScaleId: '',
+				}}
+				onInit={series => {
+					series.priceScale().applyOptions({
+						scaleMargins: {
+							top: 0.8,
+							bottom: 0,
+						},
+					});
+				}}
+			/>
+		</TradingChart>
+	);
 };
 
 const Candlestick = (props: CandlestickProps) => {

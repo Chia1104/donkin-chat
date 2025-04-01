@@ -184,6 +184,24 @@
 			}
 		}
 	},
+	"address": {
+		"order-details": {
+			"symbol": "资产",
+			"amount": "數量",
+			"price": "價格",
+			"value": "价值",
+			"profit": "盈亏",
+			"transaction-count": "交易筆數",
+			"title": "总盈亏明细"
+		},
+		"order-history": {
+			"balance-history": "馀額历史",
+			"profit-loss": "每日盈亏",
+			"title": "馀額历史＆盈亏",
+			"win-rate": "勝率",
+			"profit-loss-rate": "盈虧"
+		}
+	},
 	"ChartExamples": {
 		"title": "圖表範例",
 		"candlestickTitle": "K 線圖",
