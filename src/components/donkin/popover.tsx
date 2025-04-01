@@ -1,9 +1,10 @@
 'use client';
 
 import type { ReactNode } from 'react';
-import { Fragment } from 'react';
+import { Fragment, forwardRef, useImperativeHandle, useRef } from 'react';
 
 import { Button } from '@heroui/button';
+import type { CardProps } from '@heroui/card';
 import { Card, CardHeader, CardBody } from '@heroui/card';
 import { Divider } from '@heroui/divider';
 import { Listbox, ListboxItem } from '@heroui/listbox';
@@ -14,20 +15,21 @@ import { cn } from '@/utils/cn';
 
 import Logo from '../donkin/logo';
 
-interface Props {
+interface Props extends CardProps {
 	header?: ReactNode;
 	body?: ReactNode;
 	onClose?: () => void;
 	askMore?: string[];
 	onAskMore?: (item: string) => void;
-	className?: string;
 }
 
-const DonkinPopover = (props: Props) => {
-	const { header, onClose, askMore, onAskMore, className, body } = props;
+const DonkinPopover = forwardRef<HTMLDivElement | null, Props>((props, ref) => {
+	const { header, onClose, askMore, onAskMore, className, body, ...rest } = props;
 	const t = useTranslations('token.order-popover');
+	const containerRef = useRef<HTMLDivElement | null>(null);
+	useImperativeHandle<HTMLDivElement | null, HTMLDivElement | null>(ref, () => containerRef.current);
 	return (
-		<Card className={cn('w-full max-w-[220px] shadow-none', className)} radius="md">
+		<Card radius="md" {...rest} ref={containerRef} className={cn('w-full max-w-[220px] shadow-none', className)}>
 			{header && (
 				<CardHeader className="flex flex-row items-center">
 					{header}
@@ -51,6 +53,23 @@ const DonkinPopover = (props: Props) => {
 				</CardHeader>
 			)}
 			<CardBody>
+				{!header && onClose && (
+					<Button
+						className="text-description w-6 min-w-6 h-6 min-h-6 justify-self-end self-end"
+						variant="light"
+						size="sm"
+						isIconOnly
+						radius="full"
+						onPress={onClose}
+					>
+						<CloseIcon
+							sx={{
+								width: '18px',
+								height: '18px',
+							}}
+						/>
+					</Button>
+				)}
 				{body}
 				{askMore && askMore.length > 0 && (
 					<div className="flex flex-col gap-2">
@@ -83,6 +102,6 @@ const DonkinPopover = (props: Props) => {
 			</CardBody>
 		</Card>
 	);
-};
+});
 
 export default DonkinPopover;
