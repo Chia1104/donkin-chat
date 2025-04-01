@@ -53,14 +53,11 @@ const Messages = ({ children }: { children?: React.ReactNode }) => {
 };
 
 const ChatBody = () => {
-	const { status, messages } = useUIChat();
+	const { messages } = useUIChat();
 	return (
 		<CardBody aria-label="chat-body" className="flex flex-col items-center justify-start w-full relative">
 			{messages && messages.length > 0 && (
-				<Logo
-					current={status === 'streaming' ? DonkinStatus.Thinking : DonkinStatus.Open}
-					className="absolute top-0 left-0 size-8 z-[9999]"
-				/>
+				<Logo current={DonkinStatus.Folded} className="absolute top-0 left-0 size-8 z-[9999]" />
 			)}
 			<ScrollShadow aria-label="chat-scroll-shadow" className="w-full min-w-full h-[calc(100vh-300px)]">
 				<div
