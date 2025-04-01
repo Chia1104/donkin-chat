@@ -29,7 +29,12 @@ const DonkinPopover = forwardRef<HTMLDivElement | null, Props>((props, ref) => {
 	const containerRef = useRef<HTMLDivElement | null>(null);
 	useImperativeHandle<HTMLDivElement | null, HTMLDivElement | null>(ref, () => containerRef.current);
 	return (
-		<Card radius="md" {...rest} ref={containerRef} className={cn('w-full max-w-[220px] shadow-none', className)}>
+		<Card
+			radius="md"
+			{...rest}
+			ref={containerRef}
+			className={cn('w-full max-w-[220px] shadow-none bg-[#1C2633]', className)}
+		>
 			{header && (
 				<CardHeader className="flex flex-row items-center">
 					{header}

@@ -13,7 +13,6 @@ import { useTranslations } from 'next-intl';
 import { useParams } from 'next/navigation';
 
 import { ErrorBoundary } from '@/components/commons/error-boundary';
-import DonkinPopover from '@/components/donkin/popover';
 import Candlestick from '@/components/token/candlestick';
 import { FilterAction } from '@/components/token/filter-action';
 import { HeaderPrimitive } from '@/components/token/info-card';
@@ -108,7 +107,6 @@ const Marker = () => {
 
 const Detail = () => {
 	const t = useTranslations('preview.ai-signal');
-	const tAskMore = useTranslations('donkin.ask-more');
 	const tToken = useTranslations('token');
 	const params = useParams<{ chain: string; token: string }>();
 	const queryResult = useQueryToken(params.token);
@@ -195,18 +193,6 @@ const Detail = () => {
 												</p>
 											</Tooltip>
 										</span>
-									),
-									nameTooltip: (
-										<DonkinPopover
-											onAskMore={console.log}
-											className="w-[220px]"
-											askMore={[
-												tAskMore('token-name.basic-info'),
-												tAskMore('token-name.price-analysis'),
-												tAskMore('token-name.kol-order'),
-												tAskMore('token-name.smart-wallet'),
-											]}
-										/>
 									),
 								}}
 								isLoading={queryResult.isLoading}

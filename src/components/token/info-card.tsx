@@ -26,6 +26,8 @@ import { cn } from '@/utils/cn';
 import { formatLargeNumber, roundDecimal } from '@/utils/format';
 import { isNumber, isPositiveNumber, isNegativeNumber } from '@/utils/is';
 
+import DonkinPopover from '../donkin/popover';
+
 type LinkProvider = 'website' | 'x' | 'telegram' | 'copy';
 
 interface MetaProps {
@@ -48,9 +50,9 @@ export interface HeaderPrimitiveProps extends MetaProps {
 	};
 	injects?: {
 		afterLabel?: ReactNode;
-		nameTooltip?: ReactNode;
 	};
 	isLoading?: boolean;
+	onAskMore?: (item: string) => void;
 }
 
 interface HotspotProps {
@@ -132,6 +134,8 @@ export const LinkIcon = (props: LinkIconProps) => {
 
 export const HeaderPrimitive = (props: HeaderPrimitiveProps) => {
 	const { copied, copy } = useClipboard();
+	const tAskMore = useTranslations('donkin.ask-more');
+
 	return (
 		<>
 			<Avatar
@@ -155,8 +159,18 @@ export const HeaderPrimitive = (props: HeaderPrimitiveProps) => {
 					<Skeleton className="w-full max-w-[100px] h-3 rounded-full" />
 				) : (
 					<Tooltip
-						isOpen={!props.injects?.nameTooltip ? false : undefined}
-						content={props.injects?.nameTooltip}
+						content={
+							<DonkinPopover
+								onAskMore={props.onAskMore}
+								className="w-[220px]"
+								askMore={[
+									tAskMore('token-name.basic-info'),
+									tAskMore('token-name.price-analysis'),
+									tAskMore('token-name.kol-order'),
+									tAskMore('token-name.smart-wallet'),
+								]}
+							/>
+						}
 						classNames={{
 							base: 'shadow-none',
 							content: 'bg-transparent shadow-none p-0',

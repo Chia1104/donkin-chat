@@ -3,6 +3,7 @@
 import { useMemo, memo } from 'react';
 
 import { Avatar } from '@heroui/avatar';
+import { Tooltip } from '@heroui/react';
 import { Table, TableHeader, TableBody, TableColumn, TableRow, TableCell } from '@heroui/table';
 import { useAsyncList } from '@react-stately/data';
 import { useTranslations } from 'next-intl';
@@ -12,6 +13,8 @@ import { useAddressSearchParams } from '@/libs/address/hooks/useAddressSearchPar
 import dayjs from '@/utils/dayjs';
 import { formatLargeNumber, roundDecimal } from '@/utils/format';
 import { isNumber, isPositiveNumber } from '@/utils/is';
+
+import DonkinPopover from '../donkin/popover';
 
 const useColumns = (): { key: string; label: string; allowsSorting?: boolean }[] => {
 	const t = useTranslations('address.order-details');
@@ -124,13 +127,34 @@ const MOCK_ROWS: Data[] = [
 ];
 
 const Cell = memo(({ item, columnKey }: { item: Data; columnKey: keyof Data }) => {
+	const tAskMore = useTranslations('donkin.ask-more');
+
 	switch (columnKey) {
 		case 'symbol':
 			return (
-				<span className="flex items-center gap-2">
-					<Avatar src={item.avatar} size="sm" className="w-4 h-4" />
-					{item.symbol}
-				</span>
+				<Tooltip
+					content={
+						<DonkinPopover
+							onAskMore={console.log}
+							className="w-[220px]"
+							askMore={[
+								tAskMore('token-name.basic-info'),
+								tAskMore('token-name.price-analysis'),
+								tAskMore('token-name.kol-order'),
+								tAskMore('token-name.smart-wallet'),
+							]}
+						/>
+					}
+					classNames={{
+						base: 'shadow-none',
+						content: 'bg-transparent shadow-none p-0',
+					}}
+				>
+					<span className="flex items-center gap-2">
+						<Avatar src={item.avatar} size="sm" className="w-4 h-4" />
+						{item.symbol}
+					</span>
+				</Tooltip>
 			);
 		case 'amount':
 			return (
