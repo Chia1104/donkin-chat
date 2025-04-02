@@ -6,6 +6,7 @@ import { Tooltip } from '@heroui/tooltip';
 import { motion, AnimatePresence } from 'framer-motion';
 import { useTranslations } from 'next-intl';
 import { useHover } from 'usehooks-ts';
+import { useIsMounted } from 'usehooks-ts';
 
 import { DonkinStatus } from '@/enums/donkin.enum';
 import { useGlobalStore } from '@/stores/global/store';
@@ -31,6 +32,7 @@ const ActiveLogo = (props: Props) => {
 	const id = useId();
 	const { donkin } = useGlobalStore(state => state.onboarding);
 	const onboarding = useGlobalStore(state => state.completeDonkin);
+	const isComponentMounted = useIsMounted();
 
 	const {
 		current = isOpen ? DonkinStatus.Open : DonkinStatus.Close,
@@ -63,7 +65,7 @@ const ActiveLogo = (props: Props) => {
 		}
 	}, [current, donkin, isActivatable, t]);
 
-	const forceOnboarding = !donkin && isActivatable;
+	const forceOnboarding = !donkin && isActivatable && isComponentMounted();
 
 	const handleToggle = () => {
 		if (isActivatable) {
