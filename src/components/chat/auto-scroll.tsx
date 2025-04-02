@@ -3,7 +3,8 @@ import { useCallback, useEffect, useRef, useState } from 'react';
 import type { ButtonProps } from '@heroui/button';
 import { Button } from '@heroui/button';
 import ArrowDownwardIcon from '@mui/icons-material/ArrowDownward';
-import { motion, AnimatePresence, MotionProps } from 'framer-motion';
+import type { MotionProps } from 'framer-motion';
+import { motion, AnimatePresence } from 'framer-motion';
 
 import { cn } from '@/utils/cn';
 
