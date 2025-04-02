@@ -31,7 +31,7 @@ const Messages = ({ children }: { children?: React.ReactNode }) => {
 	}
 
 	return (
-		<section className="flex flex-col w-full justify-start h-full min-w-full">
+		<section className="flex flex-col w-full justify-start h-full max-w-full gap-7">
 			{messages.map((message, index) => {
 				const isLast = index === messages.length - 1;
 				return (
@@ -39,11 +39,9 @@ const Messages = ({ children }: { children?: React.ReactNode }) => {
 						key={message.id}
 						message={message}
 						showFeedback={message.role === 'assistant' && isLast}
-						isLoading={status === 'streaming'}
+						isLoading={status === 'streaming' && isLast}
 						status={status === 'error' && isLast ? 'failed' : 'success'}
-						isCurrent={isLast}
 						onRetry={reload}
-						streamingContent={status === 'streaming' && isLast ? message.content : undefined}
 					/>
 				);
 			})}
@@ -55,11 +53,14 @@ const Messages = ({ children }: { children?: React.ReactNode }) => {
 const ChatBody = () => {
 	const { messages } = useUIChat();
 	return (
-		<CardBody aria-label="chat-body" className="flex flex-col items-center justify-start w-full relative">
+		<CardBody
+			aria-label="chat-body"
+			className="flex flex-col items-center justify-start w-full max-w-full relative p-0 py-3"
+		>
 			{messages && messages.length > 0 && (
 				<Logo current={DonkinStatus.Folded} className="absolute top-0 left-0 size-8 z-[100]" />
 			)}
-			<ScrollShadow aria-label="chat-scroll-shadow" className="w-full min-w-full h-[calc(100vh-300px)]">
+			<ScrollShadow aria-label="chat-scroll-shadow" className="w-full max-w-full h-[calc(100vh-300px)]">
 				<div
 					className={cn(
 						'flex min-h-full justify-center',
@@ -91,7 +92,7 @@ const Chat = () => {
 	return (
 		<Card
 			className={cn(
-				'bg-[#FFFFFF08] shadow-none p-4 relative overflow-visible transition-width ease-in-out duration-1000 h-full min-h-[calc(100vh-120px)] max-h-[calc(100vh-120px)]',
+				'bg-[#FFFFFF08] shadow-none p-5 relative overflow-visible transition-width ease-in-out duration-1000 h-full min-h-[calc(100vh-120px)] max-h-[calc(100vh-120px)]',
 				!isOpen ? 'w-[30px] rounded-full' : 'min-w-full',
 			)}
 			radius="sm"

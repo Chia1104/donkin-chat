@@ -36,8 +36,8 @@ const PromptInput = memo(
 				<Textarea
 					isDisabled={!enabled}
 					aria-label="Prompt"
-					minRows={5}
-					maxRows={5}
+					minRows={4}
+					maxRows={4}
 					placeholder={t('prompt-placeholder')}
 					radius="sm"
 					variant="underlined"

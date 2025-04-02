@@ -111,7 +111,7 @@ const ChatRoomLayout = (props: Props) => {
 				{isOpen && (
 					<section
 						className={cn(
-							'h-[calc(100vh-72px)] p-5 md:pl-0 md:py-5 transition-width ease-in-out duration-1000 w-full lg:w-1/3',
+							'h-[calc(100vh-72px)] p-5 md:pl-0 md:py-5 transition-width ease-in-out duration-1000 w-full md:w-1/2 lg:w-1/3',
 						)}
 					>
 						{props.chatBot}

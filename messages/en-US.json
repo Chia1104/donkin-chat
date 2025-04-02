@@ -88,6 +88,10 @@
 			"smart-wallet-recommendations": "What are smart money addresses buying",
 			"largest-whales": "What are whale addresses buying recently",
 			"info-about": "I want to know the information of {item} token"
+		},
+		"search": {
+			"title": "Donkin is searching...",
+			"error": "Search error, please try again."
 		}
 	},
 	"preview": {

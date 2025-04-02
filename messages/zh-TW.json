@@ -88,6 +88,10 @@
 			"smart-wallet-recommendations": "聪明钱地址都在买什么",
 			"largest-whales": "最近巨鲸地址都在买什么",
 			"info-about": "我想了解 {item} 代币的信息"
+		},
+		"search": {
+			"title": "Donkin 搜尋中...",
+			"error": "搜索时发生错误，请重新输入。"
 		}
 	},
 	"preview": {
