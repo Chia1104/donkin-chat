@@ -114,6 +114,7 @@ const ActiveLogo = (props: Props) => {
 				}}
 				exit={{
 					scale: 0,
+					opacity: 0,
 				}}
 				transition={{
 					delay,
@@ -272,6 +273,7 @@ const FoldLogo = (props: Props) => {
 							}}
 							exit={{
 								scale: 0,
+								opacity: 0,
 							}}
 							transition={{
 								ease: 'easeInOut',
