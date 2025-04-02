@@ -11,6 +11,7 @@ import { Listbox, ListboxItem } from '@heroui/listbox';
 import CloseIcon from '@mui/icons-material/Close';
 import { useTranslations } from 'next-intl';
 
+import { useChatStore } from '@/stores/chat/store';
 import { useGlobalStore } from '@/stores/global/store';
 import { cn } from '@/utils/cn';
 
@@ -30,6 +31,7 @@ const DonkinPopover = forwardRef<HTMLDivElement | null, Props>((props, ref) => {
 	const { toggleDonkin } = useGlobalStore(state => state);
 	const t = useTranslations('token.order-popover');
 	const containerRef = useRef<HTMLDivElement | null>(null);
+	const status = useChatStore(state => state.status);
 	useImperativeHandle<HTMLDivElement | null, HTMLDivElement | null>(ref, () => containerRef.current);
 	return (
 		<Card
@@ -82,7 +84,11 @@ const DonkinPopover = forwardRef<HTMLDivElement | null, Props>((props, ref) => {
 				{askMore && askMore.length > 0 && (
 					<div className="flex flex-col gap-2">
 						<div className="flex gap-1 items-center">
-							<Logo current="open" isActivatable={false} className="size-[14px]" />
+							<Logo
+								current={status === 'streaming' ? 'thinking' : 'open'}
+								isActivatable={false}
+								className="size-[14px]"
+							/>
 							<span className="font-normal text-xs text-primary">{t('ask-more')}</span>
 						</div>
 						<Listbox
