@@ -33,6 +33,7 @@ export type MessageCardProps = React.HTMLAttributes<HTMLDivElement> & {
 	experimental?: {
 		shiki?: boolean;
 	};
+	isCurrent?: boolean;
 };
 
 const MessageCard = ({
@@ -44,6 +45,7 @@ const MessageCard = ({
 	isRetrying,
 	isLoading,
 	experimental,
+	isCurrent,
 	...props
 }: MessageCardProps) => {
 	const [isPending, startTransition] = React.useTransition();
@@ -115,7 +117,7 @@ const MessageCard = ({
 							{message.content}
 						</Markdown>
 					)}
-					{showFeedback && !hasFailed && !isLoading && (
+					{showFeedback && !hasFailed && !isLoading && isCurrent && (
 						<div className="flex">
 							<CopyButton
 								content={message.content ?? ''}
@@ -159,6 +161,7 @@ export default React.memo(MessageCard, (prevProps, nextProps) => {
 		prevProps.message.content === nextProps.message.content &&
 		prevProps.status === nextProps.status &&
 		prevProps.isLoading === nextProps.isLoading &&
-		prevProps.isRetrying === nextProps.isRetrying
+		prevProps.isRetrying === nextProps.isRetrying &&
+		prevProps.isCurrent === nextProps.isCurrent
 	);
 });

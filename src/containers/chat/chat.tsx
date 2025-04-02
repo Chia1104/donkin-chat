@@ -42,6 +42,7 @@ const Messages = ({ children }: { children?: React.ReactNode }) => {
 						showFeedback={message.role === 'assistant' && isLast}
 						isLoading={status === 'streaming' && isLast}
 						status={status === 'error' && isLast ? 'failed' : 'success'}
+						isCurrent={isLast}
 					/>
 				);
 			})}
