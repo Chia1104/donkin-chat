@@ -30,7 +30,7 @@ export async function POST(req: Request) {
 		const parsed = ChatDTOSchema.parse(dto);
 
 		const result = streamText({
-			model: openai('gpt-4o'),
+			model: openai('gpt-4o-mini'),
 			messages: parsed.messages,
 		});
 
