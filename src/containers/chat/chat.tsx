@@ -1,12 +1,13 @@
 'use client';
 
-import { memo } from 'react';
+import { memo, useRef } from 'react';
 
 import { useChat } from '@ai-sdk/react';
 import { Card, CardBody, CardFooter } from '@heroui/card';
 import { ScrollShadow } from '@heroui/scroll-shadow';
 import { AnimatePresence, motion } from 'framer-motion';
 
+import { AutoScroll } from '@/components/chat/auto-scroll';
 import DefaultPrompt from '@/components/chat/default-prompt';
 import MessageCard from '@/components/chat/message-card';
 import PromptInput from '@/components/chat/prompt-input';
@@ -52,7 +53,8 @@ const Messages = ({ children }: { children?: React.ReactNode }) => {
 };
 
 const ChatBody = () => {
-	const { items: messages } = useChatStoreNew(state => state);
+	const { items: messages, status } = useChatStoreNew(state => state);
+	const containerRef = useRef<HTMLDivElement>(null);
 	return (
 		<CardBody
 			aria-label="chat-body"
@@ -61,7 +63,11 @@ const ChatBody = () => {
 			{messages && messages.length > 0 && (
 				<Logo current={DonkinStatus.Folded} className="absolute top-0 left-0 size-8 z-[100]" />
 			)}
-			<ScrollShadow aria-label="chat-scroll-shadow" className="w-full max-w-full h-[calc(100vh-300px)]">
+			<ScrollShadow
+				ref={containerRef}
+				aria-label="chat-scroll-shadow"
+				className="w-full max-w-full h-[calc(100vh-300px)] overflow-y-auto"
+			>
 				<div
 					className={cn(
 						'flex min-h-full justify-center',
@@ -71,6 +77,11 @@ const ChatBody = () => {
 					<Messages />
 				</div>
 			</ScrollShadow>
+			<AutoScroll
+				containerRef={containerRef}
+				streaming={status === 'streaming'}
+				wrapperClassName="absolute bottom-5 left-1/2 -translate-x-1/2 z-10"
+			/>
 		</CardBody>
 	);
 };
