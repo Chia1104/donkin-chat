@@ -1,12 +1,12 @@
 'use client';
 
-import { useMemo, useRef, useId } from 'react';
+import { useMemo, useRef, useId, useState } from 'react';
 
 import { Tooltip } from '@heroui/tooltip';
+import { useIsMounted } from '@heroui/use-is-mounted';
 import { motion, AnimatePresence } from 'framer-motion';
 import { useTranslations } from 'next-intl';
-import { useHover } from 'usehooks-ts';
-import { useIsMounted } from 'usehooks-ts';
+import { useHover, useInterval } from 'usehooks-ts';
 
 import { DonkinStatus } from '@/enums/donkin.enum';
 import { useGlobalStore } from '@/stores/global/store';
@@ -32,8 +32,8 @@ const ActiveLogo = (props: Props) => {
 	const id = useId();
 	const { donkin } = useGlobalStore(state => state.onboarding);
 	const onboarding = useGlobalStore(state => state.completeDonkin);
-	const isComponentMounted = useIsMounted();
-
+	const [isComponentMounted] = useIsMounted();
+	const [debouncedForceOnboarding, setDebouncedForceOnboarding] = useState(false);
 	const {
 		current = isOpen ? DonkinStatus.Open : DonkinStatus.Close,
 		className,
@@ -65,7 +65,7 @@ const ActiveLogo = (props: Props) => {
 		}
 	}, [current, donkin, isActivatable, t]);
 
-	const forceOnboarding = !donkin && isActivatable && isComponentMounted();
+	const forceOnboarding = !donkin && isActivatable && isComponentMounted;
 
 	const handleToggle = () => {
 		if (isActivatable) {
@@ -75,8 +75,6 @@ const ActiveLogo = (props: Props) => {
 			toggleDonkin();
 		}
 	};
-
-	if (hiddenOnStatus === current) return null;
 
 	// 水平線變體
 	const horizontalVariant = {
@@ -95,12 +93,18 @@ const ActiveLogo = (props: Props) => {
 		visible: { height: 6, y: 20, x: 22.5, width: 1.5, opacity: 1, transition: { duration: 0.3 } },
 	};
 
+	useInterval(() => {
+		setDebouncedForceOnboarding(forceOnboarding);
+	}, 500);
+
+	if (hiddenOnStatus === current) return null;
+
 	return (
 		<Tooltip
 			classNames={{
 				content: forceOnboarding && 'bg-transparent p-0 shadow-none border-none',
 			}}
-			isOpen={forceOnboarding ? true : undefined}
+			isOpen={debouncedForceOnboarding ? true : undefined}
 			content={content}
 			showArrow
 			isDisabled={!isActivatable}

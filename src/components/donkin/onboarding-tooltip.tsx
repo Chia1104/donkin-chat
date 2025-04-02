@@ -21,7 +21,7 @@ const OnboardingTooltip = () => {
 		onboarding();
 	};
 	return (
-		<Card className="bg-[rgba(28,_38,_51,_0.98)] p-5 max-w-[312px]">
+		<Card className="bg-[rgba(28,_38,_51,_0.98)] p-4 max-w-[312px]">
 			<CardHeader className="text-primary text-xs font-normal gap-2">
 				<Image src="/assets/images/sparkless.svg" alt="sparkle" className="w-4 h-4" />
 				{t('title')}

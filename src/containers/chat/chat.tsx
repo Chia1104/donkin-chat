@@ -57,7 +57,7 @@ const ChatBody = () => {
 	return (
 		<CardBody aria-label="chat-body" className="flex flex-col items-center justify-start w-full relative">
 			{messages && messages.length > 0 && (
-				<Logo current={DonkinStatus.Folded} className="absolute top-0 left-0 size-8 z-[9999]" />
+				<Logo current={DonkinStatus.Folded} className="absolute top-0 left-0 size-8 z-[100]" />
 			)}
 			<ScrollShadow aria-label="chat-scroll-shadow" className="w-full min-w-full h-[calc(100vh-300px)]">
 				<div
