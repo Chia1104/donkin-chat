@@ -23,8 +23,7 @@ import NextImage from 'next/image';
 
 import XIcon from '@/components/icons/x-icon';
 import { ChatStatus } from '@/libs/ai/enums/chatStatus.enum';
-import { useAISearchParams } from '@/libs/ai/hooks/useAISearchParams';
-import { useGetTokenInfo } from '@/libs/ai/hooks/useGetTokenInfo';
+import { useAskToken } from '@/libs/ai/hooks/useAskToken';
 import { useChatStore } from '@/stores/chat/store';
 import { cn } from '@/utils/cn';
 import { formatLargeNumber, roundDecimal } from '@/utils/format';
@@ -138,10 +137,8 @@ export const LinkIcon = (props: LinkIconProps) => {
 
 export const HeaderPrimitive = (props: HeaderPrimitiveProps) => {
 	const { copied, copy } = useClipboard();
-	const tAskMore = useTranslations('donkin.ask-more');
-	const [searchParams] = useAISearchParams();
-	const { mutate: getTokenInfo } = useGetTokenInfo();
 	const status = useChatStore(state => state.status);
+	const askToken = useAskToken(props.meta.name);
 
 	return (
 		<>
@@ -166,32 +163,7 @@ export const HeaderPrimitive = (props: HeaderPrimitiveProps) => {
 					<Skeleton className="w-full max-w-[100px] h-3 rounded-full" />
 				) : (
 					<Tooltip
-						content={
-							<DonkinPopover
-								disabled={status === ChatStatus.Streaming}
-								onAskMore={item => {
-									if (status === ChatStatus.Streaming) {
-										return;
-									}
-									switch (item) {
-										case tAskMore('token-name.basic-info'):
-											getTokenInfo({
-												threadId: searchParams.threadId,
-												userMessage: item,
-												token: props.meta.name,
-											});
-											break;
-									}
-								}}
-								className="w-[220px]"
-								askMore={[
-									tAskMore('token-name.basic-info'),
-									tAskMore('token-name.price-analysis'),
-									tAskMore('token-name.kol-order'),
-									tAskMore('token-name.smart-wallet'),
-								]}
-							/>
-						}
+						content={<DonkinPopover disabled={status === ChatStatus.Streaming} className="w-[220px]" {...askToken} />}
 						classNames={{
 							base: 'shadow-none',
 							content: 'bg-transparent shadow-none p-0',

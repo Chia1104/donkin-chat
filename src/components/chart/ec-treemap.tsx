@@ -4,13 +4,9 @@ import { useMemo, useRef, useState, useCallback, useEffect, forwardRef } from 'r
 
 import type { TreemapSeriesOption, EChartsOption } from 'echarts';
 import ReactECharts from 'echarts-for-react';
-import { useTranslations } from 'next-intl';
 import { createPortal } from 'react-dom';
 
-import { ChatStatus } from '@/libs/ai/enums/chatStatus.enum';
-import { useAISearchParams } from '@/libs/ai/hooks/useAISearchParams';
-import { useGetTokenInfo } from '@/libs/ai/hooks/useGetTokenInfo';
-import { useChatStore } from '@/stores/chat/store';
+import { useAskToken } from '@/libs/ai/hooks/useAskToken';
 import { isPositiveNumber, isNegativeNumber } from '@/utils/is';
 
 import DonkinPopover from '../donkin/popover';
@@ -215,7 +211,7 @@ interface TooltipProps {
 }
 
 const Tooltip = forwardRef<HTMLDivElement, TooltipProps>(({ data, position, onClose }, ref) => {
-	const tAskMore = useTranslations('donkin.ask-more');
+	const askToken = useAskToken(data.name);
 
 	// 調整位置以確保 tooltip 不會超出螢幕邊界
 	const adjustedPosition = useMemo(() => {
@@ -247,35 +243,12 @@ const Tooltip = forwardRef<HTMLDivElement, TooltipProps>(({ data, position, onCl
 		return { x: adjustedX, y: adjustedY };
 	}, [position]);
 
-	const { mutate: getTokenInfo } = useGetTokenInfo();
-	const [searchParams] = useAISearchParams();
-	const status = useChatStore(state => state.status);
-
 	return createPortal(
 		<DonkinPopover
 			ref={ref}
 			onClose={onClose}
 			style={{ position: 'absolute', top: adjustedPosition.y, left: adjustedPosition.x }}
-			askMore={[
-				tAskMore('token-name.basic-info'),
-				tAskMore('token-name.price-analysis'),
-				tAskMore('token-name.kol-order'),
-				tAskMore('token-name.smart-wallet'),
-			]}
-			onAskMore={item => {
-				if (status === ChatStatus.Streaming) {
-					return;
-				}
-				switch (item) {
-					case tAskMore('token-name.basic-info'):
-						getTokenInfo({
-							threadId: searchParams.threadId,
-							userMessage: item,
-							token: data.name,
-						});
-						break;
-				}
-			}}
+			{...askToken}
 		/>,
 		document.body,
 	);

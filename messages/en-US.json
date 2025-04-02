@@ -204,6 +204,8 @@
 				"basic-info-with-item": "{item} basic information analysis",
 				"price-analysis": "Price analysis",
 				"kol-order": "KOL order analysis",
+				"kol-order-with-item": "{item} KOL order analysis",
+				"kol-order-error": "No KOL order information found",
 				"smart-wallet": "Smart money buy analysis"
 			},
 			"address-detail": {

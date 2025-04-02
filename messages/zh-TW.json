@@ -204,6 +204,8 @@
 				"basic-info-with-item": "{item} 基本信息分析",
 				"price-analysis": "涨跌原因分析",
 				"kol-order": "KOL 喊单分析",
+				"kol-order-with-item": "{item} KOL 喊单分析",
+				"kol-order-error": "找不到喊单信息",
 				"smart-wallet": "聪明钱买入分析"
 			},
 			"address-detail": {
