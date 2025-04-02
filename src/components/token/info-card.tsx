@@ -22,6 +22,10 @@ import { useTranslations } from 'next-intl';
 import NextImage from 'next/image';
 
 import XIcon from '@/components/icons/x-icon';
+import { ChatStatus } from '@/libs/ai/enums/chatStatus.enum';
+import { useAISearchParams } from '@/libs/ai/hooks/useAISearchParams';
+import { useGetTokenInfo } from '@/libs/ai/hooks/useGetTokenInfo';
+import { useChatStore } from '@/stores/chat/store';
 import { cn } from '@/utils/cn';
 import { formatLargeNumber, roundDecimal } from '@/utils/format';
 import { isNumber, isPositiveNumber, isNegativeNumber } from '@/utils/is';
@@ -135,6 +139,9 @@ export const LinkIcon = (props: LinkIconProps) => {
 export const HeaderPrimitive = (props: HeaderPrimitiveProps) => {
 	const { copied, copy } = useClipboard();
 	const tAskMore = useTranslations('donkin.ask-more');
+	const [searchParams] = useAISearchParams();
+	const { mutate: getTokenInfo } = useGetTokenInfo();
+	const status = useChatStore(state => state.status);
 
 	return (
 		<>
@@ -161,7 +168,21 @@ export const HeaderPrimitive = (props: HeaderPrimitiveProps) => {
 					<Tooltip
 						content={
 							<DonkinPopover
-								onAskMore={props.onAskMore}
+								disabled={status === ChatStatus.Streaming}
+								onAskMore={item => {
+									if (status === ChatStatus.Streaming) {
+										return;
+									}
+									switch (item) {
+										case tAskMore('token-name.basic-info'):
+											getTokenInfo({
+												threadId: searchParams.threadId,
+												userMessage: item,
+												token: props.meta.name,
+											});
+											break;
+									}
+								}}
 								className="w-[220px]"
 								askMore={[
 									tAskMore('token-name.basic-info'),

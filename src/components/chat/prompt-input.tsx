@@ -13,7 +13,7 @@ import { cn } from '@/utils/cn';
 import { HeroButton } from '../ui/hero-button';
 
 export interface Props {
-	onSubmit: (e: React.FormEvent<HTMLFormElement>) => void;
+	onSubmit?: (e: React.FormEvent<HTMLFormElement>) => void;
 	value?: string;
 	onChange?: (e: React.ChangeEvent<HTMLInputElement>) => void;
 	props?: {
@@ -75,7 +75,7 @@ const PromptInput = memo(
 					onKeyDown={e => {
 						if (e.key === 'Enter' && !e.shiftKey && !e.nativeEvent.isComposing) {
 							e.preventDefault();
-							onSubmit(e as React.FormEvent<HTMLFormElement>);
+							onSubmit?.(e as React.FormEvent<HTMLFormElement>);
 						}
 					}}
 				/>

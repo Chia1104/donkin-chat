@@ -3,9 +3,6 @@ import { messageItemSchema } from '@/libs/ai/types/message';
 
 export interface ChatConfig {
 	endpoint: string;
-	/**
-	 * TODO: define generic schema
-	 */
 	messageSchema: MessageItemSchema;
 }
 

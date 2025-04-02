@@ -7,6 +7,10 @@ import ReactECharts from 'echarts-for-react';
 import { useTranslations } from 'next-intl';
 import { createPortal } from 'react-dom';
 
+import { ChatStatus } from '@/libs/ai/enums/chatStatus.enum';
+import { useAISearchParams } from '@/libs/ai/hooks/useAISearchParams';
+import { useGetTokenInfo } from '@/libs/ai/hooks/useGetTokenInfo';
+import { useChatStore } from '@/stores/chat/store';
 import { isPositiveNumber, isNegativeNumber } from '@/utils/is';
 
 import DonkinPopover from '../donkin/popover';
@@ -243,6 +247,10 @@ const Tooltip = forwardRef<HTMLDivElement, TooltipProps>(({ data, position, onCl
 		return { x: adjustedX, y: adjustedY };
 	}, [position]);
 
+	const { mutate: getTokenInfo } = useGetTokenInfo();
+	const [searchParams] = useAISearchParams();
+	const status = useChatStore(state => state.status);
+
 	return createPortal(
 		<DonkinPopover
 			ref={ref}
@@ -254,9 +262,19 @@ const Tooltip = forwardRef<HTMLDivElement, TooltipProps>(({ data, position, onCl
 				tAskMore('token-name.kol-order'),
 				tAskMore('token-name.smart-wallet'),
 			]}
-			onAskMore={ask => {
-				console.log(ask);
-				console.log(data);
+			onAskMore={item => {
+				if (status === ChatStatus.Streaming) {
+					return;
+				}
+				switch (item) {
+					case tAskMore('token-name.basic-info'):
+						getTokenInfo({
+							threadId: searchParams.threadId,
+							userMessage: item,
+							token: data.name,
+						});
+						break;
+				}
 			}}
 		/>,
 		document.body,

@@ -13,10 +13,11 @@ import PromptInput from '@/components/chat/prompt-input';
 import Logo from '@/components/donkin/logo';
 import { DonkinStatus } from '@/enums/donkin.enum';
 import { useChatStore } from '@/stores/chat';
+import { useChatStore as useChatStoreNew } from '@/stores/chat/store';
 import { useGlobalStore } from '@/stores/global/store';
 import { cn } from '@/utils/cn';
 
-const useUIChat = () => {
+export const useUIChat = () => {
 	const chatId = useChatStore(state => state.chatId);
 	return useChat({
 		id: chatId,
@@ -24,7 +25,7 @@ const useUIChat = () => {
 };
 
 const Messages = ({ children }: { children?: React.ReactNode }) => {
-	const { messages, status, reload } = useUIChat();
+	const { items: messages, status } = useChatStoreNew(state => state);
 
 	if (!messages || messages.length === 0) {
 		return <DefaultPrompt />;
@@ -41,7 +42,6 @@ const Messages = ({ children }: { children?: React.ReactNode }) => {
 						showFeedback={message.role === 'assistant' && isLast}
 						isLoading={status === 'streaming' && isLast}
 						status={status === 'error' && isLast ? 'failed' : 'success'}
-						onRetry={reload}
 					/>
 				);
 			})}
@@ -51,7 +51,7 @@ const Messages = ({ children }: { children?: React.ReactNode }) => {
 };
 
 const ChatBody = () => {
-	const { messages } = useUIChat();
+	const { items: messages } = useChatStoreNew(state => state);
 	return (
 		<CardBody
 			aria-label="chat-body"
@@ -75,13 +75,12 @@ const ChatBody = () => {
 };
 
 const ChatFooter = memo(() => {
-	const { input, handleInputChange, handleSubmit } = useUIChat();
 	return (
 		<CardFooter
 			aria-label="chat-footer"
 			className="rounded-none flex flex-col items-center prose prose-invert mt-auto min-w-full p-0 sticky bottom-0"
 		>
-			<PromptInput value={input} onChange={handleInputChange} onSubmit={handleSubmit} />
+			<PromptInput props={{ textarea: { isDisabled: true } }} />
 		</CardFooter>
 	);
 });

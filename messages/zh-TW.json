@@ -201,6 +201,7 @@
 			},
 			"token-name": {
 				"basic-info": "Token 基本信息分析",
+				"basic-info-with-item": "{item} 基本信息分析",
 				"price-analysis": "涨跌原因分析",
 				"kol-order": "KOL 喊单分析",
 				"smart-wallet": "聪明钱买入分析"

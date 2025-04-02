@@ -10,6 +10,12 @@ export interface ResponseData<TData = unknown> {
 	data: TData;
 }
 
+export interface AIResponseData<TData = unknown> {
+	code: number;
+	msg?: string;
+	data: TData;
+}
+
 export interface PaginationData<TData = unknown> {
 	total: number;
 	page: number;

@@ -2,7 +2,6 @@
 
 import React from 'react';
 
-import type { UIMessage } from '@ai-sdk/ui-utils';
 import { Button } from '@heroui/button';
 import { Spinner } from '@heroui/spinner';
 import { cn } from '@heroui/theme';
@@ -16,6 +15,8 @@ import rehypeSanitize from 'rehype-sanitize';
 import remarkGfm from 'remark-gfm';
 import remarkMath from 'remark-math';
 
+import type { MessageItem } from '@/libs/ai/types/message';
+
 import CopyButton from '../commons/copy-button';
 
 const MarkdownHooks = dynamic(() => import('react-markdown').then(mod => mod.MarkdownHooks), { ssr: false });
@@ -24,7 +25,7 @@ const Markdown = dynamic(() => import('react-markdown'), { ssr: false });
 
 export type MessageCardProps = React.HTMLAttributes<HTMLDivElement> & {
 	showFeedback?: boolean;
-	message: UIMessage;
+	message: MessageItem;
 	status?: 'success' | 'failed';
 	onRetry?: () => void;
 	isRetrying?: boolean;
@@ -117,7 +118,7 @@ const MessageCard = ({
 					{showFeedback && !hasFailed && !isLoading && (
 						<div className="flex">
 							<CopyButton
-								content={message.content}
+								content={message.content ?? ''}
 								variant="light"
 								className="bg-transparent max-w-[26px] h-[26px] max-h-[26px] w-[26px] min-w-[26px] min-h-[26px]"
 								iconProps={{

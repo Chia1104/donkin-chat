@@ -10,7 +10,6 @@ import dynamic from 'next/dynamic';
 import Footer from '@/components/commons/footer';
 import { useRouter } from '@/i18n/routing';
 import { QueryType } from '@/libs/ai/enums/queryType.enum';
-import { useAISearchParams } from '@/libs/ai/hooks/useAISearchParams';
 import { useGlobalStore } from '@/stores/global/store';
 import { noto_sans } from '@/themes/fonts';
 import { cn } from '@/utils/cn';
@@ -33,7 +32,6 @@ const ChatRoomLayout = (props: Props) => {
 	const t = useTranslations('nav');
 	const router = useRouter();
 	const isOpen = useGlobalStore(state => state.donkin.isOpen);
-	const [, setSearchParams] = useAISearchParams();
 
 	return (
 		<>
@@ -56,9 +54,7 @@ const ChatRoomLayout = (props: Props) => {
 						className="cursor-pointer"
 						aria-label="Donkin"
 						onClick={() => {
-							void setSearchParams({
-								q: QueryType.Heatmap,
-							});
+							router.push(`/?q=${QueryType.Heatmap}`);
 						}}
 					>
 						<Donkin />
