@@ -13,10 +13,11 @@ import PromptInput from '@/components/chat/prompt-input';
 import Logo from '@/components/donkin/logo';
 import { DonkinStatus } from '@/enums/donkin.enum';
 import { useChatStore } from '@/stores/chat';
+import { useChatStore as useChatStoreNew } from '@/stores/chat/store';
 import { useGlobalStore } from '@/stores/global/store';
 import { cn } from '@/utils/cn';
 
-const useUIChat = () => {
+export const useUIChat = () => {
 	const chatId = useChatStore(state => state.chatId);
 	return useChat({
 		id: chatId,
@@ -24,14 +25,14 @@ const useUIChat = () => {
 };
 
 const Messages = ({ children }: { children?: React.ReactNode }) => {
-	const { messages, status, reload } = useUIChat();
+	const { items: messages, status } = useChatStoreNew(state => state);
 
 	if (!messages || messages.length === 0) {
 		return <DefaultPrompt />;
 	}
 
 	return (
-		<section className="flex flex-col w-full justify-start h-full min-w-full">
+		<section className="flex flex-col w-full justify-start h-full max-w-full gap-7">
 			{messages.map((message, index) => {
 				const isLast = index === messages.length - 1;
 				return (
@@ -39,11 +40,8 @@ const Messages = ({ children }: { children?: React.ReactNode }) => {
 						key={message.id}
 						message={message}
 						showFeedback={message.role === 'assistant' && isLast}
-						isLoading={status === 'streaming'}
+						isLoading={status === 'streaming' && isLast}
 						status={status === 'error' && isLast ? 'failed' : 'success'}
-						isCurrent={isLast}
-						onRetry={reload}
-						streamingContent={status === 'streaming' && isLast ? message.content : undefined}
 					/>
 				);
 			})}
@@ -53,13 +51,16 @@ const Messages = ({ children }: { children?: React.ReactNode }) => {
 };
 
 const ChatBody = () => {
-	const { messages } = useUIChat();
+	const { items: messages } = useChatStoreNew(state => state);
 	return (
-		<CardBody aria-label="chat-body" className="flex flex-col items-center justify-start w-full relative">
+		<CardBody
+			aria-label="chat-body"
+			className="flex flex-col items-center justify-start w-full max-w-full relative p-0 py-3"
+		>
 			{messages && messages.length > 0 && (
 				<Logo current={DonkinStatus.Folded} className="absolute top-0 left-0 size-8 z-[100]" />
 			)}
-			<ScrollShadow aria-label="chat-scroll-shadow" className="w-full min-w-full h-[calc(100vh-300px)]">
+			<ScrollShadow aria-label="chat-scroll-shadow" className="w-full max-w-full h-[calc(100vh-300px)]">
 				<div
 					className={cn(
 						'flex min-h-full justify-center',
@@ -74,13 +75,12 @@ const ChatBody = () => {
 };
 
 const ChatFooter = memo(() => {
-	const { input, handleInputChange, handleSubmit } = useUIChat();
 	return (
 		<CardFooter
 			aria-label="chat-footer"
 			className="rounded-none flex flex-col items-center prose prose-invert mt-auto min-w-full p-0 sticky bottom-0"
 		>
-			<PromptInput value={input} onChange={handleInputChange} onSubmit={handleSubmit} />
+			<PromptInput props={{ textarea: { isDisabled: true } }} />
 		</CardFooter>
 	);
 });
@@ -91,7 +91,7 @@ const Chat = () => {
 	return (
 		<Card
 			className={cn(
-				'bg-[#FFFFFF08] shadow-none p-4 relative overflow-visible transition-width ease-in-out duration-1000 h-full min-h-[calc(100vh-120px)] max-h-[calc(100vh-120px)]',
+				'bg-[#FFFFFF08] shadow-none p-5 relative overflow-visible transition-width ease-in-out duration-1000 h-full min-h-[calc(100vh-120px)] max-h-[calc(100vh-120px)]',
 				!isOpen ? 'w-[30px] rounded-full' : 'min-w-full',
 			)}
 			radius="sm"

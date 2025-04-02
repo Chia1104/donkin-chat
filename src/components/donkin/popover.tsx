@@ -11,6 +11,7 @@ import { Listbox, ListboxItem } from '@heroui/listbox';
 import CloseIcon from '@mui/icons-material/Close';
 import { useTranslations } from 'next-intl';
 
+import { useGlobalStore } from '@/stores/global/store';
 import { cn } from '@/utils/cn';
 
 import Logo from '../donkin/logo';
@@ -21,10 +22,12 @@ interface Props extends CardProps {
 	onClose?: () => void;
 	askMore?: string[];
 	onAskMore?: (item: string) => void;
+	disabled?: boolean;
 }
 
 const DonkinPopover = forwardRef<HTMLDivElement | null, Props>((props, ref) => {
-	const { header, onClose, askMore, onAskMore, className, body, ...rest } = props;
+	const { header, onClose, askMore, onAskMore, className, body, disabled, ...rest } = props;
+	const { toggleDonkin } = useGlobalStore(state => state);
 	const t = useTranslations('token.order-popover');
 	const containerRef = useRef<HTMLDivElement | null>(null);
 	useImperativeHandle<HTMLDivElement | null, HTMLDivElement | null>(ref, () => containerRef.current);
@@ -82,15 +85,24 @@ const DonkinPopover = forwardRef<HTMLDivElement | null, Props>((props, ref) => {
 							<Logo current="open" isActivatable={false} className="size-[14px]" />
 							<span className="font-normal text-xs text-primary">{t('ask-more')}</span>
 						</div>
-						<Listbox aria-label="ask-more" className="bg-content1-300 rounded-md px-1.5 py-1" variant="light">
+						<Listbox
+							disabledKeys={disabled ? askMore : []}
+							aria-label="ask-more"
+							className="bg-content1-300 rounded-md px-1.5 py-1"
+							variant="light"
+						>
 							{askMore.map((item, index) => (
 								<Fragment key={item}>
 									<ListboxItem
+										key={item}
 										aria-label={item}
 										classNames={{
 											title: 'font-normal text-xs text-description',
 										}}
-										onPress={() => onAskMore?.(item)}
+										onPress={() => {
+											onAskMore?.(item);
+											toggleDonkin(true);
+										}}
 									>
 										{item}
 									</ListboxItem>

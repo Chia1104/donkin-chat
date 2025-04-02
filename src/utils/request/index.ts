@@ -4,7 +4,7 @@ import type { Options } from 'ky';
 import { env } from '../env';
 
 type RequestOptions = {
-	requestMode?: 'proxy' | 'self-api' | 'external';
+	requestMode?: RequestMode;
 } & Options;
 
 type SSEFinishType = 'done' | 'error' | 'abort';
@@ -27,7 +27,7 @@ export interface MessageReasoningChunk {
 	type: 'reasoning';
 }
 
-export type RequestMode = 'proxy' | 'self-api' | 'external';
+export type RequestMode = 'proxy' | 'self-api' | 'external' | 'ai' | 'proxy-ai';
 
 const getPrefixedUrl = (requestMode?: RequestMode) => {
 	const IS_SERVER = typeof window === 'undefined';
@@ -38,6 +38,10 @@ const getPrefixedUrl = (requestMode?: RequestMode) => {
 			return !IS_SERVER ? '/' : env.NEXT_PUBLIC_APP_API_HOST;
 		case 'external':
 			return env.NEXT_PUBLIC_APP_API_HOST;
+		case 'ai':
+			return env.NEXT_PUBLIC_APP_AI_API_HOST;
+		case 'proxy-ai':
+			return !IS_SERVER ? '/proxy-ai-api' : env.NEXT_PUBLIC_APP_AI_API_HOST;
 		default:
 			return !IS_SERVER ? '/' : env.NEXT_PUBLIC_APP_API_HOST;
 	}
@@ -57,12 +61,8 @@ export const request = (defaultOptions?: RequestOptions) => {
 	return ky.extend({
 		timeout: 30_000,
 		credentials: 'include',
-		hooks: {
-			beforeRequest: [
-				request => {
-					request.headers.set('Content-Type', 'application/json');
-				},
-			],
+		headers: {
+			'Content-Type': 'application/json',
 		},
 		prefixUrl: getPrefixedUrl(requestMode),
 		...defaultOptions,

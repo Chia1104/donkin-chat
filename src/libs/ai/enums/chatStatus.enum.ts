@@ -1,6 +1,6 @@
 export const ChatStatus = {
 	Idle: 'idle',
-	Pending: 'pending',
+	Streaming: 'streaming',
 	Error: 'error',
 	Success: 'success',
 } as const;

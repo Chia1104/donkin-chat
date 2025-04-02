@@ -9,6 +9,7 @@ import dynamic from 'next/dynamic';
 
 import Footer from '@/components/commons/footer';
 import { useRouter } from '@/i18n/routing';
+import { QueryType } from '@/libs/ai/enums/queryType.enum';
 import { useGlobalStore } from '@/stores/global/store';
 import { noto_sans } from '@/themes/fonts';
 import { cn } from '@/utils/cn';
@@ -53,7 +54,7 @@ const ChatRoomLayout = (props: Props) => {
 						className="cursor-pointer"
 						aria-label="Donkin"
 						onClick={() => {
-							void router.push('/');
+							router.push(`/?q=${QueryType.Heatmap}`);
 						}}
 					>
 						<Donkin />
@@ -106,7 +107,7 @@ const ChatRoomLayout = (props: Props) => {
 				{isOpen && (
 					<section
 						className={cn(
-							'h-[calc(100vh-72px)] p-5 md:pl-0 md:py-5 transition-width ease-in-out duration-1000 w-full lg:w-1/3',
+							'h-[calc(100vh-72px)] p-5 md:pl-0 md:py-5 transition-width ease-in-out duration-1000 w-full md:w-1/2 lg:w-1/3',
 						)}
 					>
 						{props.chatBot}
