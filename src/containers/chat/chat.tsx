@@ -13,11 +13,16 @@ import MessageCard from '@/components/chat/message-card';
 import PromptInput from '@/components/chat/prompt-input';
 import Logo from '@/components/donkin/logo';
 import { DonkinStatus } from '@/enums/donkin.enum';
+import { useAISearchParams } from '@/libs/ai/hooks/useAISearchParams';
 import { useChatStore } from '@/stores/chat';
 import { useChatStore as useChatStoreNew } from '@/stores/chat/store';
 import { useGlobalStore } from '@/stores/global/store';
 import { cn } from '@/utils/cn';
+import { uuid } from '@/utils/uuid';
 
+/**
+ * @deprecated use `useChatStore` in `@/stores/chat/store` instead
+ */
 export const useUIChat = () => {
 	const chatId = useChatStore(state => state.chatId);
 	return useChat({
@@ -77,22 +82,47 @@ const ChatBody = () => {
 					<Messages />
 				</div>
 			</ScrollShadow>
-			<AutoScroll
-				containerRef={containerRef}
-				streaming={status === 'streaming'}
-				wrapperClassName="absolute bottom-5 left-1/2 -translate-x-1/2 z-10"
-			/>
+			{messages && messages.length > 0 && (
+				<AutoScroll
+					containerRef={containerRef}
+					enabled={status === 'streaming'}
+					wrapperClassName="absolute bottom-5 left-1/2 -translate-x-1/2 z-10"
+				/>
+			)}
 		</CardBody>
 	);
 };
 
 const ChatFooter = memo(() => {
+	const { pushMessage, setInput, input } = useChatStoreNew(state => state);
+	const [searchParams] = useAISearchParams();
 	return (
 		<CardFooter
 			aria-label="chat-footer"
 			className="rounded-none flex flex-col items-center prose prose-invert mt-auto min-w-full p-0 sticky bottom-0"
 		>
-			<PromptInput props={{ textarea: { isDisabled: true } }} />
+			<PromptInput
+				props={{ textarea: { isDisabled: true } }}
+				onChange={e => {
+					setInput(e.target.value);
+				}}
+				value={input}
+				onSubmit={e => {
+					e.preventDefault();
+					setInput('');
+					pushMessage([
+						{
+							role: 'user',
+							content: input,
+							createdAt: new Date(),
+							id: uuid(),
+							parentId: null,
+							reasoning: null,
+							threadId: searchParams.threadId,
+						},
+					]);
+				}}
+			/>
 		</CardFooter>
 	);
 });
@@ -103,7 +133,7 @@ const Chat = () => {
 	return (
 		<Card
 			className={cn(
-				'bg-[#FFFFFF08] shadow-none p-5 relative overflow-visible transition-width ease-in-out duration-1000 h-full min-h-[calc(100vh-120px)] max-h-[calc(100vh-120px)]',
+				'bg-[#FFFFFF08] shadow-none p-5 relative overflow-visible transition-width ease-in-out duration-1000 h-full min-h-[calc(100vh-130px)] max-h-[calc(100vh-130px)]',
 				!isOpen ? 'w-[30px] rounded-full' : 'min-w-full',
 			)}
 			radius="sm"
