@@ -7,7 +7,7 @@ import ReactECharts from 'echarts-for-react';
 import { createPortal } from 'react-dom';
 
 import { useAskToken } from '@/libs/ai/hooks/useAskToken';
-import { isPositiveNumber, isNegativeNumber } from '@/utils/is';
+import { isPositiveNumber, isNegativeNumber, isString } from '@/utils/is';
 
 import DonkinPopover from '../donkin/popover';
 
@@ -15,7 +15,7 @@ export interface CryptoData {
 	name: string;
 	value: number | number[];
 	price: string;
-	change: number;
+	change: string | number;
 	children?: CryptoData[];
 	itemStyle?: TreemapSeriesOption['itemStyle'];
 }
@@ -25,8 +25,8 @@ interface Props {
 	options?: EChartsOption;
 }
 
-const itemStyle = (value: unknown): TreemapSeriesOption['itemStyle'] => {
-	if (isPositiveNumber(value)) {
+export const itemStyle = (value: unknown): TreemapSeriesOption['itemStyle'] => {
+	if (isPositiveNumber(value) || (isString(value) && value.startsWith('+'))) {
 		return {
 			color: {
 				type: 'linear',
@@ -41,7 +41,7 @@ const itemStyle = (value: unknown): TreemapSeriesOption['itemStyle'] => {
 			},
 		};
 	}
-	if (isNegativeNumber(value)) {
+	if (isNegativeNumber(value) || (isString(value) && value.startsWith('-'))) {
 		return {
 			color: {
 				type: 'linear',
