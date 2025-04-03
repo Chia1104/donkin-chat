@@ -77,7 +77,7 @@ export const useGetTokenTrends = (
 				updateLastMessageContent(t('kol-order-error'));
 				return;
 			}
-			updateLastMessageContent(data.kol_opinions ?? data.summarize ?? '');
+			updateLastMessageContent(data.summarize ?? data.kol_opinions ?? '');
 		},
 		onError: (error, dto, context) => {
 			setStatus(ChatStatus.Error);

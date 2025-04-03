@@ -20,7 +20,7 @@ export const chat = (options: BaseRequestOptions<CoreMessage[]>) => {
 };
 
 export const getTokenInfo = async (token: string) => {
-	const response = await request({ requestMode: 'proxy-ai', timeout: 60_000 })
+	const response = await request({ requestMode: 'proxy-ai', timeout: 120_000 })
 		.post(`api/v1/ai/token_info`, {
 			json: {
 				token,
@@ -32,7 +32,7 @@ export const getTokenInfo = async (token: string) => {
 };
 
 export const getTokenTrends = async (token: string) => {
-	const response = await request({ requestMode: 'proxy-ai', timeout: 60_000 })
+	const response = await request({ requestMode: 'proxy-ai', timeout: 120_000 })
 		.post(`api/v1/ai/token_trends`, {
 			json: {
 				token,
