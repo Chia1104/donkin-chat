@@ -12,7 +12,8 @@ interface AutoScrollProps<TContainer extends HTMLElement> extends ButtonProps {
 	/**
 	 * 是否正在進行流式回應
 	 */
-	streaming?: boolean;
+	enabled?: boolean;
+	initialScroll?: boolean;
 	/**
 	 * 容器的ref
 	 */
@@ -22,8 +23,9 @@ interface AutoScrollProps<TContainer extends HTMLElement> extends ButtonProps {
 }
 
 export function AutoScroll<TContainer extends HTMLElement>({
-	streaming = false,
+	enabled = false,
 	containerRef,
+	initialScroll = true,
 	...props
 }: AutoScrollProps<TContainer>) {
 	const isUserScrolling = useRef(false);
@@ -69,7 +71,7 @@ export function AutoScroll<TContainer extends HTMLElement>({
 
 		// 使用 requestAnimationFrame 確保在下一個繪製幀才執行滾動
 		requestAnimationFrame(() => {
-			if (!isUserScrolling.current || streaming) {
+			if (!isUserScrolling.current || enabled) {
 				container.scrollTo({
 					top: container.scrollHeight,
 					behavior: 'smooth',
@@ -77,7 +79,7 @@ export function AutoScroll<TContainer extends HTMLElement>({
 			}
 			prevScrollHeight.current = container.scrollHeight;
 		});
-	}, [containerRef, streaming]);
+	}, [containerRef, enabled]);
 
 	const clickToScrollToBottom = useCallback(() => {
 		const container = containerRef.current;
@@ -91,10 +93,10 @@ export function AutoScroll<TContainer extends HTMLElement>({
 
 	// 當 streaming 狀態變更時滾動到底部
 	useEffect(() => {
-		if (streaming) {
+		if (enabled) {
 			scrollToBottom();
 		}
-	}, [scrollToBottom, streaming]);
+	}, [scrollToBottom, enabled]);
 
 	// 根據 streaming 狀態自動滾動到底部
 	useEffect(() => {
@@ -102,11 +104,13 @@ export function AutoScroll<TContainer extends HTMLElement>({
 		if (!container) return;
 
 		// 初始化時滾動到底部
-		scrollToBottom();
+		if (initialScroll) {
+			scrollToBottom();
+		}
 
 		// 建立 MutationObserver 監視內容變化
 		const observer = new MutationObserver(() => {
-			if (streaming && !isUserScrolling.current) {
+			if (enabled && !isUserScrolling.current) {
 				scrollToBottom();
 			}
 		});
@@ -120,16 +124,7 @@ export function AutoScroll<TContainer extends HTMLElement>({
 		return () => {
 			observer.disconnect();
 		};
-	}, [containerRef, scrollToBottom, streaming]);
-
-	// 初始渲染後立即滾動到底部
-	useEffect(() => {
-		scrollToBottom();
-
-		// 確保在初始內容載入後也滾動到底部
-		const timeoutId = setTimeout(scrollToBottom, 100);
-		return () => clearTimeout(timeoutId);
-	}, [scrollToBottom]);
+	}, [containerRef, scrollToBottom, enabled, initialScroll]);
 
 	return (
 		<AnimatePresence>

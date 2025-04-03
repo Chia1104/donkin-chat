@@ -56,6 +56,9 @@ export const ChatStoreProvider = ({ children, values }: ChatStoreProviderProps) 
 	return <ChatStoreContext value={storeRef.current}>{children}</ChatStoreContext>;
 };
 
+/**
+ * @deprecated use `useChatStore` in `@/stores/chat/store` instead
+ */
 export const useChatStore = <T,>(selector: (store: ChatStore) => T): T => {
 	const chatStoreContext = use(ChatStoreContext);
 

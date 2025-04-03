@@ -8,7 +8,7 @@ import { uuid } from '@/utils/uuid';
 export const aiQueryStates = {
 	q: parseAsStringEnum(Object.values(QueryType)).withDefault(QueryType.Tokens),
 	threadId: parseAsString.withDefault(uuid()),
-	sort: parseAsStringEnum(Object.values(TokenSort)).withDefault(TokenSort.Hot),
+	sort: parseAsStringEnum(Object.values(TokenSort)).withDefault(TokenSort.MarketCap),
 	order: parseAsStringEnum(Object.values(Sort)).withDefault(Sort.Desc),
 };
 
