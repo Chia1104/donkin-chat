@@ -15,3 +15,7 @@ export const isNegativeNumber = (value: unknown): value is number => {
 export const isURL = (value: unknown): value is URL => {
 	return z.instanceof(URL).safeParse(value).success;
 };
+
+export const isString = (value: unknown): value is string => {
+	return z.string().safeParse(value).success;
+};
