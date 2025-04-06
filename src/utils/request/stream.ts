@@ -50,5 +50,6 @@ export const fetchStream = async <T = unknown>(input: RequestInfo, payload: T, i
 				reader.releaseLock();
 			}
 		},
+		stream: body,
 	};
 };

@@ -18,9 +18,7 @@ const devtools = createDevtools('chat.store');
 /**
  * TODO: pass generic schema
  */
-const createStore: StateCreator<ChatStore<MessageItem>, [['zustand/devtools', never]], [], ChatStore<MessageItem>> = (
-	...params
-) => ({
+const createStore: ChatStoreApi = (...params) => ({
 	...initialChatState,
 
 	...chatActions(...params),
@@ -30,3 +28,10 @@ export const useChatStore = createWithEqualityFn<ChatStore<MessageItem>>()(
 	subscribeWithSelector(devtools(createStore)),
 	shallow,
 );
+
+export type ChatStoreApi = StateCreator<
+	ChatStore<MessageItem>,
+	[['zustand/devtools', never]],
+	[],
+	ChatStore<MessageItem>
+>;

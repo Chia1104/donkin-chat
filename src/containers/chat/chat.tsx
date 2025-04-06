@@ -2,7 +2,6 @@
 
 import { memo, useRef } from 'react';
 
-import { useChat } from '@ai-sdk/react';
 import { Card, CardBody, CardFooter } from '@heroui/card';
 import { ScrollShadow } from '@heroui/scroll-shadow';
 import { AnimatePresence, motion } from 'framer-motion';
@@ -13,25 +12,14 @@ import MessageCard from '@/components/chat/message-card';
 import PromptInput from '@/components/chat/prompt-input';
 import Logo from '@/components/donkin/logo';
 import { DonkinStatus } from '@/enums/donkin.enum';
-import { useAISearchParams } from '@/libs/ai/hooks/useAISearchParams';
-import { useChatStore } from '@/stores/chat';
+import { ChatStatus } from '@/libs/ai/enums/chatStatus.enum';
 import { useChatStore as useChatStoreNew } from '@/stores/chat/store';
 import { useGlobalStore } from '@/stores/global/store';
 import { cn } from '@/utils/cn';
-import { uuid } from '@/utils/uuid';
-
-/**
- * @deprecated use `useChatStore` in `@/stores/chat/store` instead
- */
-export const useUIChat = () => {
-	const chatId = useChatStore(state => state.chatId);
-	return useChat({
-		id: chatId,
-	});
-};
 
 const Messages = ({ children }: { children?: React.ReactNode }) => {
-	const { items: messages, status } = useChatStoreNew(state => state);
+	const messages = useChatStoreNew(state => state.items);
+	const status = useChatStoreNew(state => state.status);
 
 	if (!messages || messages.length === 0) {
 		return <DefaultPrompt />;
@@ -46,9 +34,8 @@ const Messages = ({ children }: { children?: React.ReactNode }) => {
 						key={message.id}
 						message={message}
 						showFeedback={message.role === 'assistant' && isLast}
-						isLoading={status === 'streaming' && isLast}
-						status={status === 'error' && isLast ? 'failed' : 'success'}
-						isCurrent={isLast}
+						isLoading={status === ChatStatus.Streaming && isLast}
+						status={status === ChatStatus.Error && isLast ? 'failed' : 'success'}
 					/>
 				);
 			})}
@@ -58,7 +45,8 @@ const Messages = ({ children }: { children?: React.ReactNode }) => {
 };
 
 const ChatBody = () => {
-	const { items: messages, status } = useChatStoreNew(state => state);
+	const status = useChatStoreNew(state => state.status);
+	const messages = useChatStoreNew(state => state.items);
 	const containerRef = useRef<HTMLDivElement>(null);
 	return (
 		<CardBody
@@ -85,7 +73,7 @@ const ChatBody = () => {
 			{messages && messages.length > 0 && (
 				<AutoScroll
 					containerRef={containerRef}
-					enabled={status === 'streaming'}
+					enabled={status === ChatStatus.Streaming}
 					wrapperClassName="absolute bottom-5 left-1/2 -translate-x-1/2 z-10"
 				/>
 			)}
@@ -94,8 +82,9 @@ const ChatBody = () => {
 };
 
 const ChatFooter = memo(() => {
-	const { pushMessage, setInput, input } = useChatStoreNew(state => state);
-	const [searchParams] = useAISearchParams();
+	const handleSubmit = useChatStoreNew(state => state.handleSubmit);
+	const setInput = useChatStoreNew(state => state.setInput);
+	const input = useChatStoreNew(state => state.input);
 	return (
 		<CardFooter
 			aria-label="chat-footer"
@@ -109,18 +98,7 @@ const ChatFooter = memo(() => {
 				value={input}
 				onSubmit={e => {
 					e.preventDefault();
-					setInput('');
-					pushMessage([
-						{
-							role: 'user',
-							content: input,
-							createdAt: new Date(),
-							id: uuid(),
-							parentId: null,
-							reasoning: null,
-							threadId: searchParams.threadId,
-						},
-					]);
+					handleSubmit();
 				}}
 			/>
 		</CardFooter>
