@@ -1,4 +1,3 @@
-import { processDataStream } from 'ai';
 import { z } from 'zod';
 import type { StateCreator } from 'zustand/vanilla';
 
@@ -39,7 +38,7 @@ export const chatActions: StateCreator<
 	[['zustand/devtools', never]],
 	[],
 	ChatAction<MessageItem>
-> = (set, get) => ({
+> = (set, get, ctx) => ({
 	setInput: (input: string) => {
 		set({ input }, false, nameSpace('setInput', input));
 	},
@@ -146,30 +145,7 @@ export const chatActions: StateCreator<
 	 */
 	internal_handleSSE: async _messages => {
 		const messages = z.array(get().messageSchema).parse(_messages);
-		let text = '';
 		const response = await fetchStream(get().endpoint, { messages, id: get().threadId });
-		await processDataStream({
-			stream: response.stream,
-			onTextPart: part => {
-				text += part;
-				get().internal_setStream(text);
-				get().updateLastMessageContent(text);
-			},
-			onErrorPart: error => {
-				get().setStatus(ChatStatus.Error);
-				const lastMessage = get().getLastMessage();
-				if (lastMessage) {
-					get().updateMessage(lastMessage.id, {
-						error,
-					});
-				}
-			},
-			onFinishStepPart: () => {
-				get().setStatus(ChatStatus.Success);
-			},
-			onStartStepPart: () => {
-				get().setStatus(ChatStatus.Streaming);
-			},
-		});
+		get().messageProcessor({ set, get, ctx, response });
 	},
 });

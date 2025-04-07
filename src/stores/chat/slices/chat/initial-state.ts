@@ -11,5 +11,5 @@ export const initialChatState: ChatState = {
 	status: ChatStatus.Idle,
 	input: '',
 	threadId: '',
-	enabled: false,
+	enabled: true,
 };
