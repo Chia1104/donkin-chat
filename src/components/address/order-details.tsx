@@ -10,6 +10,7 @@ import { useTranslations } from 'next-intl';
 
 import { IntervalFilter } from '@/libs/address/enums/interval-filter.enum';
 import { useAddressSearchParams } from '@/libs/address/hooks/useAddressSearchParams';
+import type { Address } from '@/libs/address/pipes/address.pipe';
 import dayjs from '@/utils/dayjs';
 import { formatLargeNumber, roundDecimal } from '@/utils/format';
 import { isNumber, isPositiveNumber } from '@/utils/is';
@@ -63,7 +64,7 @@ interface Data {
 	};
 }
 
-const MOCK_ROWS: Data[] = [
+export const MOCK_ROWS: Data[] = [
 	{
 		symbol: 'BTC',
 		avatar: 'https://assets.coingecko.com/coins/images/1/large/bitcoin.png?1747033579',
@@ -186,7 +187,7 @@ const Cell = memo(({ item, columnKey }: { item: Data; columnKey: keyof Data }) =
 	}
 });
 
-const OrderDetails = () => {
+const OrderDetails = ({ data }: { data: Address }) => {
 	const columns = useColumns();
 	const [searchParams] = useAddressSearchParams();
 	const t = useTranslations('address.order-details');
@@ -214,7 +215,21 @@ const OrderDetails = () => {
 	const list = useAsyncList({
 		load() {
 			return {
-				items: MOCK_ROWS,
+				items: data.token_pnls.map(
+					token =>
+						({
+							symbol: token.symbol,
+							avatar: token.symbol,
+							amount: Number(token.amount),
+							price: Number(token.price),
+							value: Number(token.value),
+							profit: Number(token.return),
+							'transaction-count': {
+								buy: token.buy,
+								sell: token.sell,
+							},
+						}) satisfies Data,
+				),
 			};
 		},
 		sort({ items, sortDescriptor }) {

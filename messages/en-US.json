@@ -230,6 +230,10 @@
 			"title": "Balance History & P&L",
 			"win-rate": "Win Rate",
 			"profit-loss-rate": "P&L"
+		},
+		"not-found": {
+			"title": "Address not found",
+			"description": "The address you are trying to access does not exist or has been removed. Please check your link is correct, or try connecting your wallet to view your address."
 		}
 	},
 	"ChartExamples": {
