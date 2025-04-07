@@ -12,7 +12,6 @@ import type { StateCreator, StoreApi } from 'zustand/vanilla';
 import { createStore } from 'zustand/vanilla';
 
 import { ChatStatus } from '@/libs/ai/enums/chatStatus.enum';
-import { messageItemSchema } from '@/libs/ai/types/message';
 import type { MessageItem } from '@/libs/ai/types/message';
 
 import { createDevtools } from '../middleware/create-devtools';
@@ -100,13 +99,6 @@ export const defineChatStore = <TMessageItem extends MessageItem>({
 	return { ChatStoreProvider, useChatStore, ChatStoreContext, creator };
 };
 
-const messageItemSchemaWithContext = messageItemSchema.transform(item => ({
-	...item,
-	context: {
-		foo: 'bar' as const,
-	},
-}));
-
 const { ChatStoreProvider, useChatStore, ChatStoreContext, creator } = defineChatStore({
 	async messageProcessor({ get, response }) {
 		let text = '';
@@ -133,9 +125,6 @@ const { ChatStoreProvider, useChatStore, ChatStoreContext, creator } = defineCha
 				get().setStatus(ChatStatus.Streaming);
 			},
 		});
-	},
-	initState: {
-		messageSchema: messageItemSchemaWithContext,
 	},
 });
 

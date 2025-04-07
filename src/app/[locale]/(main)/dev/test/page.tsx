@@ -31,7 +31,7 @@ const TestOrderPopover = () => {
 };
 
 const Page = () => {
-	const { handleSubmit } = useChatStore();
+	const handleSubmit = useChatStore(state => state.handleSubmit);
 
 	return (
 		<div className="flex flex-col gap-4 w-full items-center">
