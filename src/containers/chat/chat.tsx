@@ -13,13 +13,14 @@ import PromptInput from '@/components/chat/prompt-input';
 import Logo from '@/components/donkin/logo';
 import { DonkinStatus } from '@/enums/donkin.enum';
 import { ChatStatus } from '@/libs/ai/enums/chatStatus.enum';
-import { useChatStore as useChatStoreNew } from '@/stores/chat/store';
+import { useChatStore } from '@/stores/chat/store';
 import { useGlobalStore } from '@/stores/global/store';
 import { cn } from '@/utils/cn';
 
 const Messages = ({ children }: { children?: React.ReactNode }) => {
-	const messages = useChatStoreNew(state => state.items);
-	const status = useChatStoreNew(state => state.status);
+	const messages = useChatStore(state => state.items);
+	const status = useChatStore(state => state.status);
+	const handleRetry = useChatStore(state => state.handleRetry);
 
 	if (!messages || messages.length === 0) {
 		return <DefaultPrompt />;
@@ -36,6 +37,26 @@ const Messages = ({ children }: { children?: React.ReactNode }) => {
 						showFeedback={message.role === 'assistant' && isLast}
 						isLoading={status === ChatStatus.Streaming && isLast}
 						status={status === ChatStatus.Error && isLast ? 'failed' : 'success'}
+						onRetry={message =>
+							handleRetry(
+								message.id,
+								message.toolCalls?.length
+									? message => {
+											if (message.toolCalls) {
+												for (const toolCall of message.toolCalls) {
+													/**
+													 * TODO: Implement tool calls
+													 */
+													switch (toolCall.function.name) {
+														default:
+															break;
+													}
+												}
+											}
+										}
+									: undefined,
+							)
+						}
 					/>
 				);
 			})}
@@ -45,8 +66,8 @@ const Messages = ({ children }: { children?: React.ReactNode }) => {
 };
 
 const ChatBody = () => {
-	const status = useChatStoreNew(state => state.status);
-	const messages = useChatStoreNew(state => state.items);
+	const status = useChatStore(state => state.status);
+	const messages = useChatStore(state => state.items);
 	const containerRef = useRef<HTMLDivElement>(null);
 	return (
 		<CardBody
@@ -82,16 +103,17 @@ const ChatBody = () => {
 };
 
 const ChatFooter = memo(() => {
-	const handleSubmit = useChatStoreNew(state => state.handleSubmit);
-	const setInput = useChatStoreNew(state => state.setInput);
-	const input = useChatStoreNew(state => state.input);
+	const handleSubmit = useChatStore(state => state.handleSubmit);
+	const setInput = useChatStore(state => state.setInput);
+	const input = useChatStore(state => state.input);
+	const enabled = useChatStore(state => state.enabled);
 	return (
 		<CardFooter
 			aria-label="chat-footer"
 			className="rounded-none flex flex-col items-center prose prose-invert mt-auto min-w-full p-0 sticky bottom-0"
 		>
 			<PromptInput
-				props={{ textarea: { isDisabled: true } }}
+				props={{ textarea: { isDisabled: !enabled } }}
 				onChange={e => {
 					setInput(e.target.value);
 				}}

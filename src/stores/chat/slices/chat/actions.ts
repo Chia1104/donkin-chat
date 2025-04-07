@@ -25,6 +25,7 @@ export interface ChatAction<TMessageItem extends MessageItem> {
 	getLastMessage: () => TMessageItem | undefined;
 	updateLastMessageContent: (content: string) => void;
 	handleSubmit: (content?: string, parts?: unknown[]) => void;
+	handleRetry: (id: string, handler?: (message: TMessageItem) => void) => void;
 
 	/**
 	 * INTERNAL USE ONLY
@@ -114,6 +115,24 @@ export const chatActions: StateCreator<
 		]);
 		set({ status: ChatStatus.Streaming, input: '' }, false, nameSpace('handleSubmit'));
 
+		void get().internal_handleSSE(get().items);
+	},
+	handleRetry: (id, handler) => {
+		const message = get().getMessage(id);
+		if (!message) {
+			return;
+		}
+		void get().updateMessage(id, {
+			error: null,
+			content: '',
+			createdAt: dayjs().toDate(),
+		});
+		set({ status: ChatStatus.Streaming }, false, nameSpace('handleRetry', id));
+		if (handler) {
+			// eslint-disable-next-line @typescript-eslint/no-non-null-assertion
+			handler(get().getMessage(id)!);
+			return;
+		}
 		void get().internal_handleSSE(get().items);
 	},
 

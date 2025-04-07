@@ -7,6 +7,7 @@ import dayjs from '@/utils/dayjs';
 import { uuid } from '@/utils/uuid';
 
 import { ChatStatus } from '../enums/chatStatus.enum';
+import { SupportedTool } from '../enums/supportedTool.enum';
 import type { TokenTrends } from '../pipes/token.pipe';
 import { getTokenTrends } from '../resources/chat.resource';
 
@@ -61,6 +62,12 @@ export const useGetTokenTrends = (
 					parentId: userId,
 					reasoning: null,
 					threadId: dto.threadId,
+					toolCalls: [
+						{
+							id: SupportedTool.GetTokenTrend,
+							function: { name: SupportedTool.GetTokenTrend, arguments: '' },
+						},
+					],
 				},
 			]);
 			setStatus(ChatStatus.Streaming);

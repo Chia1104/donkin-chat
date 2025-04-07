@@ -17,7 +17,7 @@ export type MessageCardProps = React.HTMLAttributes<HTMLDivElement> & {
 	showFeedback?: boolean;
 	message: MessageItem;
 	status?: 'success' | 'failed';
-	onRetry?: () => void;
+	onRetry?: (message: MessageItem) => void;
 	isRetrying?: boolean;
 	isLoading?: boolean;
 	experimental?: {
@@ -42,8 +42,8 @@ const MessageCard = ({
 	const hasFailed = status === 'failed';
 
 	const handleRetry = React.useCallback(() => {
-		startTransition(() => onRetry?.());
-	}, [onRetry]);
+		startTransition(() => onRetry?.(message));
+	}, [onRetry, message]);
 
 	const classNames = React.useMemo(() => {
 		const failedMessageClassName =
