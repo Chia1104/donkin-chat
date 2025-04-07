@@ -1,6 +1,6 @@
 import ChatRoomLayout from '@/components/layouts/chat-room-layout';
 import { loadAISearchParams } from '@/libs/ai/services/loadAISearchParams';
-import { ChatStoreProvider } from '@/stores/chat';
+import { ChatStoreProvider } from '@/stores/chat/store';
 import { aiChatFlag } from '@/utils/flags';
 
 interface Props {
@@ -14,7 +14,7 @@ const Layout = async (props: Props & PagePropsWithLocale) => {
 	return (
 		<ChatStoreProvider
 			values={{
-				chatId: threadId,
+				threadId,
 				enabled,
 			}}
 		>

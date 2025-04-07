@@ -5,7 +5,7 @@ import type { TextAreaProps } from '@heroui/input';
 import { Textarea } from '@heroui/input';
 import { useTranslations } from 'next-intl';
 
-import { useChatStore } from '@/stores/chat';
+import { useChatStore } from '@/stores/chat/store';
 import { cn } from '@/utils/cn';
 
 import { HeroButton } from '../ui/hero-button';

@@ -31,27 +31,11 @@ const TestOrderPopover = () => {
 };
 
 const Page = () => {
-	const { internal_handleSSE } = useChatStore();
+	const handleSubmit = useChatStore(state => state.handleSubmit);
 
 	return (
 		<div className="flex flex-col gap-4 w-full items-center">
-			<Button
-				onPress={() =>
-					internal_handleSSE([
-						{
-							content: '幫我生成一個 500 字故事',
-							role: 'user',
-							threadId: '123',
-							createdAt: new Date(),
-							id: '123',
-							parentId: null,
-							reasoning: null,
-						},
-					])
-				}
-			>
-				Test SSE
-			</Button>
+			<Button onPress={() => handleSubmit('幫我生成一個 500 字故事')}>Test SSE</Button>
 			<TestOrderPopover />
 		</div>
 	);

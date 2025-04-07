@@ -2,7 +2,6 @@
 
 import { memo, useRef } from 'react';
 
-import { useChat } from '@ai-sdk/react';
 import { Card, CardBody, CardFooter } from '@heroui/card';
 import { ScrollShadow } from '@heroui/scroll-shadow';
 import { AnimatePresence, motion } from 'framer-motion';
@@ -13,25 +12,15 @@ import MessageCard from '@/components/chat/message-card';
 import PromptInput from '@/components/chat/prompt-input';
 import Logo from '@/components/donkin/logo';
 import { DonkinStatus } from '@/enums/donkin.enum';
-import { useAISearchParams } from '@/libs/ai/hooks/useAISearchParams';
-import { useChatStore } from '@/stores/chat';
-import { useChatStore as useChatStoreNew } from '@/stores/chat/store';
+import { ChatStatus } from '@/libs/ai/enums/chatStatus.enum';
+import { useChatStore } from '@/stores/chat/store';
 import { useGlobalStore } from '@/stores/global/store';
 import { cn } from '@/utils/cn';
-import { uuid } from '@/utils/uuid';
-
-/**
- * @deprecated use `useChatStore` in `@/stores/chat/store` instead
- */
-export const useUIChat = () => {
-	const chatId = useChatStore(state => state.chatId);
-	return useChat({
-		id: chatId,
-	});
-};
 
 const Messages = ({ children }: { children?: React.ReactNode }) => {
-	const { items: messages, status } = useChatStoreNew(state => state);
+	const messages = useChatStore(state => state.items);
+	const status = useChatStore(state => state.status);
+	const handleRetry = useChatStore(state => state.handleRetry);
 
 	if (!messages || messages.length === 0) {
 		return <DefaultPrompt />;
@@ -46,9 +35,28 @@ const Messages = ({ children }: { children?: React.ReactNode }) => {
 						key={message.id}
 						message={message}
 						showFeedback={message.role === 'assistant' && isLast}
-						isLoading={status === 'streaming' && isLast}
-						status={status === 'error' && isLast ? 'failed' : 'success'}
-						isCurrent={isLast}
+						isLoading={status === ChatStatus.Streaming && isLast}
+						status={status === ChatStatus.Error && isLast ? 'failed' : 'success'}
+						onRetry={message =>
+							handleRetry(
+								message.id,
+								message.toolCalls?.length
+									? message => {
+											if (message.toolCalls) {
+												for (const toolCall of message.toolCalls) {
+													/**
+													 * TODO: Implement tool calls
+													 */
+													switch (toolCall.function.name) {
+														default:
+															break;
+													}
+												}
+											}
+										}
+									: undefined,
+							)
+						}
 					/>
 				);
 			})}
@@ -58,7 +66,8 @@ const Messages = ({ children }: { children?: React.ReactNode }) => {
 };
 
 const ChatBody = () => {
-	const { items: messages, status } = useChatStoreNew(state => state);
+	const status = useChatStore(state => state.status);
+	const messages = useChatStore(state => state.items);
 	const containerRef = useRef<HTMLDivElement>(null);
 	return (
 		<CardBody
@@ -85,7 +94,7 @@ const ChatBody = () => {
 			{messages && messages.length > 0 && (
 				<AutoScroll
 					containerRef={containerRef}
-					enabled={status === 'streaming'}
+					enabled={status === ChatStatus.Streaming}
 					wrapperClassName="absolute bottom-5 left-1/2 -translate-x-1/2 z-10"
 				/>
 			)}
@@ -94,33 +103,24 @@ const ChatBody = () => {
 };
 
 const ChatFooter = memo(() => {
-	const { pushMessage, setInput, input } = useChatStoreNew(state => state);
-	const [searchParams] = useAISearchParams();
+	const handleSubmit = useChatStore(state => state.handleSubmit);
+	const setInput = useChatStore(state => state.setInput);
+	const input = useChatStore(state => state.input);
+	const enabled = useChatStore(state => state.enabled);
 	return (
 		<CardFooter
 			aria-label="chat-footer"
 			className="rounded-none flex flex-col items-center prose prose-invert mt-auto min-w-full p-0 sticky bottom-0"
 		>
 			<PromptInput
-				props={{ textarea: { isDisabled: true } }}
+				props={{ textarea: { isDisabled: !enabled } }}
 				onChange={e => {
 					setInput(e.target.value);
 				}}
 				value={input}
 				onSubmit={e => {
 					e.preventDefault();
-					setInput('');
-					pushMessage([
-						{
-							role: 'user',
-							content: input,
-							createdAt: new Date(),
-							id: uuid(),
-							parentId: null,
-							reasoning: null,
-							threadId: searchParams.threadId,
-						},
-					]);
+					handleSubmit();
 				}}
 			/>
 		</CardFooter>

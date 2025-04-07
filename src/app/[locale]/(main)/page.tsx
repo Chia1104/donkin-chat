@@ -5,18 +5,12 @@ import dynamic from 'next/dynamic';
 
 import { QueryType } from '@/libs/ai/enums/queryType.enum';
 import { useAISearchParams } from '@/libs/ai/hooks/useAISearchParams';
-import { useChatStore } from '@/stores/chat';
 
 const TokensList = dynamic(() => import('@/containers/token/tokens-list'));
 const Heatmap = dynamic(() => import('@/containers/token/heatmap'));
 
 const Content = () => {
-	const preview = useChatStore(state => state.preview);
 	const [searchParams] = useAISearchParams();
-
-	if (preview) {
-		return preview;
-	}
 
 	switch (searchParams.q) {
 		case QueryType.Tokens:

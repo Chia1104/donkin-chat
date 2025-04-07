@@ -1,12 +1,12 @@
-/* eslint-disable @typescript-eslint/no-unused-vars */
 import { z } from 'zod';
 import type { StateCreator } from 'zustand/vanilla';
 
 import { ChatStatus } from '@/libs/ai/enums/chatStatus.enum';
 import type { MessageItem } from '@/libs/ai/types/message';
 import { setNamespace } from '@/stores/utils/storeDebug';
-import { fetchEventSource } from '@/utils/request/fetchEventSource';
+import dayjs from '@/utils/dayjs';
 import { fetchStream } from '@/utils/request/stream';
+import { uuid } from '@/utils/uuid';
 
 import type { ChatStore } from '../../store';
 
@@ -22,8 +22,9 @@ export interface ChatAction<TMessageItem extends MessageItem> {
 	deleteLastMessage: () => void;
 	getMessage: (id: string) => TMessageItem | undefined;
 	getLastMessage: () => TMessageItem | undefined;
-
 	updateLastMessageContent: (content: string) => void;
+	handleSubmit: (content?: string, parts?: unknown[]) => void;
+	handleRetry: (id: string, handler?: (message: TMessageItem) => void) => void;
 
 	/**
 	 * INTERNAL USE ONLY
@@ -37,7 +38,7 @@ export const chatActions: StateCreator<
 	[['zustand/devtools', never]],
 	[],
 	ChatAction<MessageItem>
-> = (set, get) => ({
+> = (set, get, ctx) => ({
 	setInput: (input: string) => {
 		set({ input }, false, nameSpace('setInput', input));
 	},
@@ -85,34 +86,66 @@ export const chatActions: StateCreator<
 	getLastMessage: () => {
 		return get().items[get().items.length - 1];
 	},
+	handleSubmit: content => {
+		if (!get().input && !content) {
+			return;
+		}
+		const userId = uuid();
+		const assistantId = uuid();
+		get().pushMessage([
+			{
+				role: 'user',
+				content: content ?? get().input,
+				createdAt: dayjs().toDate(),
+				id: userId,
+				parentId: null,
+				reasoning: null,
+				threadId: get().threadId,
+			},
+			{
+				role: 'assistant',
+				content: '',
+				createdAt: dayjs().toDate(),
+				id: assistantId,
+				parentId: userId,
+				reasoning: null,
+				threadId: get().threadId,
+			},
+		]);
+		set({ status: ChatStatus.Streaming, input: '' }, false, nameSpace('handleSubmit'));
 
+		void get().internal_handleSSE(get().items);
+	},
+	handleRetry: (id, handler) => {
+		const message = get().getMessage(id);
+		if (!message) {
+			return;
+		}
+		if (handler) {
+			handler(message);
+			return;
+		}
+		void get().updateMessage(id, {
+			error: null,
+			content: '',
+			createdAt: dayjs().toDate(),
+		});
+		set({ status: ChatStatus.Streaming }, false, nameSpace('handleRetry', id));
+		void get().internal_handleSSE(get().items);
+	},
+
+	/**
+	 * INTERNAL USE ONLY
+	 */
 	internal_setStream: (stream: string) => {
 		set({ currentStream: stream }, false, nameSpace('internal_setStream', stream));
 	},
+	/**
+	 * INTERNAL USE ONLY
+	 */
 	internal_handleSSE: async _messages => {
 		const messages = z.array(get().messageSchema).parse(_messages);
-		const response = await fetchStream(get().endpoint, { messages, id: 'test' });
-		for await (const chunk of response) {
-			console.log('chunk', chunk);
-		}
-		// await fetchEventSource(get().endpoint, {
-		// 	method: 'POST',
-		// 	headers: {
-		// 		'Content-Type': 'application/json',
-		// 	},
-		// 	body: JSON.stringify({ messages, id: 'test' }),
-		// 	onopen: response => {
-		// 		console.log('onopen', response);
-		// 	},
-		// 	onmessage: event => {
-		// 		console.log('onmessage', event);
-		// 	},
-		// 	onclose: () => {
-		// 		console.log('onclose');
-		// 	},
-		// 	onerror: error => {
-		// 		console.log('onerror', error);
-		// 	},
-		// });
+		const response = await fetchStream(get().endpoint, { messages, id: get().threadId });
+		await get().messageProcessor({ set, get, ctx, response });
 	},
 });

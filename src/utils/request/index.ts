@@ -7,26 +7,6 @@ type RequestOptions = {
 	requestMode?: RequestMode;
 } & Options;
 
-type SSEFinishType = 'done' | 'error' | 'abort';
-
-export type OnFinishHandler = (
-	text: string,
-	context: {
-		reasoning?: string;
-		type?: SSEFinishType;
-	},
-) => Promise<void>;
-
-export interface MessageTextChunk {
-	text: string;
-	type: 'text';
-}
-
-export interface MessageReasoningChunk {
-	text: string;
-	type: 'reasoning';
-}
-
 export type RequestMode = 'proxy' | 'self-api' | 'external' | 'ai' | 'proxy-ai';
 
 const getPrefixedUrl = (requestMode?: RequestMode) => {

@@ -9,6 +9,14 @@ export const modelReasoningSchema = z.object({
 
 export type ModelReasoning = z.infer<typeof modelReasoningSchema>;
 
+export const toolCallSchema = z.object({
+	id: z.string(),
+	function: z.object({
+		name: z.string(),
+		arguments: z.string(),
+	}),
+});
+
 export const messageItemSchema = z.object({
 	content: z.string().nullable(),
 	createdAt: z.date(),
@@ -18,6 +26,7 @@ export const messageItemSchema = z.object({
 	reasoning: modelReasoningSchema.nullable(),
 	role: z.nativeEnum(MessageRole),
 	threadId: z.string(),
+	toolCalls: z.array(toolCallSchema).optional(),
 });
 
 /**

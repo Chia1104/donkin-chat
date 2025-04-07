@@ -6,34 +6,23 @@ import { Button } from '@heroui/button';
 import { Spinner } from '@heroui/spinner';
 import { cn } from '@heroui/theme';
 import RefreshIcon from '@mui/icons-material/Refresh';
-import rehypeShiki from '@shikijs/rehype';
 import { useTranslations } from 'next-intl';
-import dynamic from 'next/dynamic';
-import rehypeKatex from 'rehype-katex';
-import rehypeRaw from 'rehype-raw';
-import rehypeSanitize from 'rehype-sanitize';
-import remarkGfm from 'remark-gfm';
-import remarkMath from 'remark-math';
 
 import type { MessageItem } from '@/libs/ai/types/message';
 
 import CopyButton from '../commons/copy-button';
-
-const MarkdownHooks = dynamic(() => import('react-markdown').then(mod => mod.MarkdownHooks), { ssr: false });
-
-const Markdown = dynamic(() => import('react-markdown'), { ssr: false });
+import Markdown from './markdown';
 
 export type MessageCardProps = React.HTMLAttributes<HTMLDivElement> & {
 	showFeedback?: boolean;
 	message: MessageItem;
 	status?: 'success' | 'failed';
-	onRetry?: () => void;
+	onRetry?: (message: MessageItem) => void;
 	isRetrying?: boolean;
 	isLoading?: boolean;
 	experimental?: {
 		shiki?: boolean;
 	};
-	isCurrent?: boolean;
 };
 
 const MessageCard = ({
@@ -45,7 +34,6 @@ const MessageCard = ({
 	isRetrying,
 	isLoading,
 	experimental,
-	isCurrent,
 	...props
 }: MessageCardProps) => {
 	const [isPending, startTransition] = React.useTransition();
@@ -54,8 +42,8 @@ const MessageCard = ({
 	const hasFailed = status === 'failed';
 
 	const handleRetry = React.useCallback(() => {
-		startTransition(() => onRetry?.());
-	}, [onRetry]);
+		startTransition(() => onRetry?.(message));
+	}, [onRetry, message]);
 
 	const classNames = React.useMemo(() => {
 		const failedMessageClassName =
@@ -93,31 +81,8 @@ const MessageCard = ({
 				<p>{t('search.error')}</p>
 			) : (
 				<>
-					{experimental?.shiki ? (
-						<MarkdownHooks
-							remarkPlugins={[[remarkGfm], [remarkMath]]}
-							rehypePlugins={[
-								[
-									rehypeShiki,
-									{
-										theme: 'one-dark-pro',
-									},
-								],
-								[rehypeRaw],
-								[rehypeKatex],
-							]}
-						>
-							{message.content}
-						</MarkdownHooks>
-					) : (
-						<Markdown
-							remarkPlugins={[[remarkGfm], [remarkMath]]}
-							rehypePlugins={[[rehypeSanitize], [rehypeRaw], [rehypeKatex]]}
-						>
-							{message.content}
-						</Markdown>
-					)}
-					{showFeedback && !hasFailed && !isLoading && isCurrent && (
+					<Markdown experimental={experimental} content={message.content ?? ''} />
+					{showFeedback && !hasFailed && !isLoading && (
 						<div className="flex">
 							<CopyButton
 								content={message.content ?? ''}
@@ -162,6 +127,6 @@ export default React.memo(MessageCard, (prevProps, nextProps) => {
 		prevProps.status === nextProps.status &&
 		prevProps.isLoading === nextProps.isLoading &&
 		prevProps.isRetrying === nextProps.isRetrying &&
-		prevProps.isCurrent === nextProps.isCurrent
+		prevProps.showFeedback === nextProps.showFeedback
 	);
 });
