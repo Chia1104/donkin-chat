@@ -32,7 +32,7 @@ import { Series } from '../chart/trading-chart/series';
 import CopyButton from '../commons/copy-button';
 import DonkinPopover from '../donkin/popover';
 
-interface OrderHistoryDataItem {
+export interface OrderHistoryDataItem {
 	time: Time;
 	value: number;
 	isProfit?: boolean;
@@ -47,7 +47,6 @@ interface OrderHistoryProps {
 	};
 	win: {
 		rate: number;
-		amount: number;
 	};
 	profit: {
 		rate: number;
