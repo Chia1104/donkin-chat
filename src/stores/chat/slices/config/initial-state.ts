@@ -27,7 +27,7 @@ export interface ChatConfig<TMessageItem extends MessageItem> {
 			StateCreator<ChatStore<TMessageItem>, [['zustand/devtools', never]], [], ChatAction<TMessageItem>>
 		>[2];
 		response: Awaited<ReturnType<typeof fetchStream>>;
-	}) => void;
+	}) => void | Promise<void>;
 }
 
 export const initialChatConfig: ChatConfig<MessageItem> = {

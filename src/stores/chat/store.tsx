@@ -108,9 +108,9 @@ const messageItemSchemaWithContext = messageItemSchema.transform(item => ({
 }));
 
 const { ChatStoreProvider, useChatStore, ChatStoreContext, creator } = defineChatStore({
-	messageProcessor({ get, response }) {
+	async messageProcessor({ get, response }) {
 		let text = '';
-		void processDataStream({
+		await processDataStream({
 			stream: response.stream,
 			onTextPart: part => {
 				text += part;

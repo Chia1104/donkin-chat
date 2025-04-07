@@ -146,6 +146,6 @@ export const chatActions: StateCreator<
 	internal_handleSSE: async _messages => {
 		const messages = z.array(get().messageSchema).parse(_messages);
 		const response = await fetchStream(get().endpoint, { messages, id: get().threadId });
-		get().messageProcessor({ set, get, ctx, response });
+		await get().messageProcessor({ set, get, ctx, response });
 	},
 });
