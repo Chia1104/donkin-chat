@@ -127,12 +127,12 @@ export const chatActions: StateCreator<
 			content: '',
 			createdAt: dayjs().toDate(),
 		});
-		set({ status: ChatStatus.Streaming }, false, nameSpace('handleRetry', id));
 		if (handler) {
 			// eslint-disable-next-line @typescript-eslint/no-non-null-assertion
 			handler(get().getMessage(id)!);
 			return;
 		}
+		set({ status: ChatStatus.Streaming }, false, nameSpace('handleRetry', id));
 		void get().internal_handleSSE(get().items);
 	},
 
