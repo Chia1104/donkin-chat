@@ -122,16 +122,15 @@ export const chatActions: StateCreator<
 		if (!message) {
 			return;
 		}
+		if (handler) {
+			handler(message);
+			return;
+		}
 		void get().updateMessage(id, {
 			error: null,
 			content: '',
 			createdAt: dayjs().toDate(),
 		});
-		if (handler) {
-			// eslint-disable-next-line @typescript-eslint/no-non-null-assertion
-			handler(get().getMessage(id)!);
-			return;
-		}
 		set({ status: ChatStatus.Streaming }, false, nameSpace('handleRetry', id));
 		void get().internal_handleSSE(get().items);
 	},
