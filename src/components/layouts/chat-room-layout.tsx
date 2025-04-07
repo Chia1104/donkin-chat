@@ -1,9 +1,7 @@
 'use client';
 
-import { Button } from '@heroui/button';
 import { Navbar, NavbarContent, NavbarItem } from '@heroui/navbar';
 import { Skeleton } from '@heroui/skeleton';
-import SearchIcon from '@mui/icons-material/Search';
 import { useTranslations } from 'next-intl';
 import dynamic from 'next/dynamic';
 
@@ -14,6 +12,7 @@ import { useGlobalStore } from '@/stores/global/store';
 import { noto_sans } from '@/themes/fonts';
 import { cn } from '@/utils/cn';
 
+import SearchAddress from '../commons/search-address';
 import Logo from '../donkin/logo';
 import Donkin from '../donkin/title';
 import WalletConnect from '../web3/wallet-connect';
@@ -60,7 +59,7 @@ const ChatRoomLayout = (props: Props) => {
 						<Donkin />
 					</NavbarItem>
 					<NavbarItem
-						aria-label="AI Signal"
+						aria-label={t('all-tokens')}
 						className="cursor-pointer"
 						onClick={() => {
 							void router.push('/');
@@ -68,22 +67,8 @@ const ChatRoomLayout = (props: Props) => {
 					>
 						{t('all-tokens')}
 					</NavbarItem>
-					<NavbarItem aria-label="Market">
-						<Button
-							aria-label="Search"
-							variant="bordered"
-							className="rounded-full border-1 min-w-[200px] justify-between"
-							endContent={
-								<SearchIcon
-									sx={{
-										width: 22,
-										height: 22,
-									}}
-								/>
-							}
-						>
-							<span className="text-foreground-500">{t('search-placeholder')}</span>
-						</Button>
+					<NavbarItem aria-label={t('search-placeholder')}>
+						<SearchAddress />
 					</NavbarItem>
 				</NavbarContent>
 				<NavbarContent aria-label="Main Navigation Content" justify="end" className="gap-10">

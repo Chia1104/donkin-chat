@@ -51,7 +51,8 @@
 	},
 	"utils": {
 		"more-then-item": "大於 {item}",
-		"enter": "請輸入"
+		"enter": "請輸入",
+		"no-data": "找不到任何結果"
 	},
 	"commons": {
 		"error": {
