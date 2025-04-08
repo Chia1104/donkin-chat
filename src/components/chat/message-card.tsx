@@ -62,7 +62,7 @@ const MessageCard = ({
 		<div
 			{...props}
 			className={cn(
-				'relative w-fit rounded-medium text-default-600 flex flex-col text-small prose prose-invert',
+				'relative w-fit rounded-medium text-default-600 flex flex-col text-small prose prose-invert prose-sm prose-headings:mt-3 prose-headings:mb-2 prose-ul:my-2.5 prose-table:my-2.5',
 				classNames.failedMessageClassName,
 				className,
 			)}
@@ -83,7 +83,7 @@ const MessageCard = ({
 				<>
 					<Markdown experimental={experimental} content={message.content ?? ''} />
 					{showFeedback && !hasFailed && !isLoading && (
-						<div className="flex">
+						<div className="flex mb-3">
 							<CopyButton
 								content={message.content ?? ''}
 								variant="light"

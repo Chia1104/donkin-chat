@@ -2,8 +2,10 @@
 
 import { memo } from 'react';
 
+import { Link } from '@heroui/link';
 import rehypeShiki from '@shikijs/rehype';
 import dynamic from 'next/dynamic';
+import type { Components } from 'react-markdown';
 import rehypeKatex from 'rehype-katex';
 import rehypeRaw from 'rehype-raw';
 import rehypeSanitize from 'rehype-sanitize';
@@ -28,6 +30,17 @@ const rehypePluginsWithShiki: PluggableList = [
 ];
 const rehypePluginsWithoutShiki: PluggableList = [[rehypeSanitize], [rehypeRaw], [rehypeKatex]];
 
+const components: Components = {
+	a: ({ children, ...props }) => {
+		return (
+			// @ts-expect-error - error
+			<Link {...props} underline="always" color="primary" size="sm" target="_blank" rel="noopener noreferrer">
+				{children}
+			</Link>
+		);
+	},
+};
+
 interface Props {
 	content: string;
 	experimental?: {
@@ -37,11 +50,11 @@ interface Props {
 
 const Markdown = (props: Props) => {
 	return props.experimental?.shiki ? (
-		<ReactMarkdownHooks remarkPlugins={remarkPlugins} rehypePlugins={rehypePluginsWithShiki}>
+		<ReactMarkdownHooks remarkPlugins={remarkPlugins} rehypePlugins={rehypePluginsWithShiki} components={components}>
 			{props.content}
 		</ReactMarkdownHooks>
 	) : (
-		<ReactMarkdown remarkPlugins={remarkPlugins} rehypePlugins={rehypePluginsWithoutShiki}>
+		<ReactMarkdown remarkPlugins={remarkPlugins} rehypePlugins={rehypePluginsWithoutShiki} components={components}>
 			{props.content}
 		</ReactMarkdown>
 	);
