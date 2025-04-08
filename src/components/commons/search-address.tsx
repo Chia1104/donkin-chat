@@ -6,6 +6,7 @@ import { Autocomplete, AutocompleteItem } from '@heroui/autocomplete';
 import { Avatar } from '@heroui/avatar';
 import SearchIcon from '@mui/icons-material/Search';
 import { useAsyncList } from '@react-stately/data';
+import { asyncDebounce } from '@tanstack/react-pacer/async-debouncer';
 import { useTranslations } from 'next-intl';
 
 import { useCMD } from '@/hooks/useCMD';
@@ -22,9 +23,19 @@ const SearchAddress = () => {
 	const tUtils = useTranslations('utils');
 	const ref = useRef<HTMLInputElement>(null);
 
+	const debouncedSetSearch = asyncDebounce(
+		(value?: string) => {
+			console.log(value);
+			return Promise.resolve([]);
+		},
+		{
+			wait: 800,
+		},
+	);
+
 	const list = useAsyncList<Data>({
-		load({ filterText }) {
-			console.log(filterText);
+		async load({ filterText }) {
+			await debouncedSetSearch(filterText);
 			return {
 				items: [],
 			};
