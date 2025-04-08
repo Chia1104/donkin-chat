@@ -324,6 +324,9 @@ const ECTreemap = (props: Props) => {
 
 	const options = useMemo(() => {
 		return {
+			dataZoom: {
+				type: 'inside',
+			},
 			tooltip: {
 				show: false,
 			},
@@ -344,28 +347,107 @@ const ECTreemap = (props: Props) => {
 					label: {
 						show: true,
 						formatter: (params: any) => {
+							let sizeType = 'normal';
+							if (params.dataIndex > 14) {
+								sizeType = 'tiny';
+							} else if (params.dataIndex > 10) {
+								sizeType = 'small';
+							} else if (params.dataIndex > 6) {
+								sizeType = 'medium';
+							}
+
+							const isPositive = params.data.change > 0;
+
 							return [
-								`{name|${params.name}}`,
-								`{price|${params.data.price}}`,
-								`{change|${params.data.change > 0 ? '+' : ''}${params.data.change}%}`,
+								`{${sizeType}Name|${params.name}}`,
+								`{${sizeType}Price|${params.data.price}}`,
+								`{${isPositive ? `${sizeType}ChangePositive` : `${sizeType}ChangeNegative`}|${params.data.change > 0 ? '+' : ''}${params.data.change}%}`,
 							].join('\n');
 						},
 						rich: {
-							name: {
+							normalName: {
 								fontSize: 24,
 								fontWeight: 'bold',
 								color: '#fff',
 								padding: [20, 2, 2, 10],
 							},
-							price: {
+							mediumName: {
+								fontSize: 20,
+								fontWeight: 'bold',
+								color: '#fff',
+								padding: [18, 2, 2, 9],
+							},
+							smallName: {
+								fontSize: 18,
+								fontWeight: 'bold',
+								color: '#fff',
+								padding: [15, 2, 2, 8],
+							},
+							tinyName: {
+								fontSize: 14,
+								fontWeight: 'bold',
+								color: '#fff',
+								padding: [12, 2, 2, 6],
+							},
+							normalPrice: {
 								fontSize: 14,
 								color: '#fff',
 								padding: [5, 2, 2, 10],
 							},
-							change: {
+							mediumPrice: {
+								fontSize: 13,
+								color: '#fff',
+								padding: [5, 2, 2, 9],
+							},
+							smallPrice: {
+								fontSize: 12,
+								color: '#fff',
+								padding: [4, 2, 2, 8],
+							},
+							tinyPrice: {
+								fontSize: 10,
+								color: '#fff',
+								padding: [3, 2, 2, 6],
+							},
+							normalChangePositive: {
 								fontSize: 14,
 								padding: [5, 2, 2, 10],
-								color: '#fff',
+								color: 'rgba(56, 175, 117, 1)',
+							},
+							normalChangeNegative: {
+								fontSize: 14,
+								padding: [5, 2, 2, 10],
+								color: 'rgba(231, 90, 91, 1)',
+							},
+							mediumChangePositive: {
+								fontSize: 13,
+								padding: [5, 2, 2, 9],
+								color: 'rgba(56, 175, 117, 1)',
+							},
+							mediumChangeNegative: {
+								fontSize: 13,
+								padding: [5, 2, 2, 9],
+								color: 'rgba(231, 90, 91, 1)',
+							},
+							smallChangePositive: {
+								fontSize: 12,
+								padding: [4, 2, 2, 8],
+								color: 'rgba(56, 175, 117, 1)',
+							},
+							smallChangeNegative: {
+								fontSize: 12,
+								padding: [4, 2, 2, 8],
+								color: 'rgba(231, 90, 91, 1)',
+							},
+							tinyChangePositive: {
+								fontSize: 10,
+								padding: [3, 2, 2, 6],
+								color: 'rgba(56, 175, 117, 1)',
+							},
+							tinyChangeNegative: {
+								fontSize: 10,
+								padding: [3, 2, 2, 6],
+								color: 'rgba(231, 90, 91, 1)',
 							},
 						},
 					},
