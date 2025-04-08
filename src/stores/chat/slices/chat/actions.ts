@@ -14,7 +14,6 @@ const nameSpace = setNamespace('chat/chat');
 
 export interface ChatAction<TMessageItem extends MessageItem> {
 	setInput: (input: string) => void;
-	submit: () => void;
 	setStatus: (status: ChatStatus) => void;
 	pushMessage: (messages: TMessageItem[]) => void;
 	deleteMessage: (id: string) => void;
@@ -41,14 +40,6 @@ export const chatActions: StateCreator<
 > = (set, get, ctx) => ({
 	setInput: (input: string) => {
 		set({ input }, false, nameSpace('setInput', input));
-	},
-	submit: () => {
-		const current = get().input;
-		const validated = z.string().min(1).safeParse(current);
-		if (!validated.success) {
-			return;
-		}
-		set({ status: ChatStatus.Streaming }, false, nameSpace('submit'));
 	},
 	setStatus: (status: ChatStatus) => {
 		set({ status }, false, nameSpace('setStatus', status));
