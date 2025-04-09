@@ -5,6 +5,7 @@ export interface ChatState {
 	status: ChatStatus;
 	input: string;
 	enabled: boolean;
+	abortController?: AbortController;
 }
 
 export const initialChatState: ChatState = {

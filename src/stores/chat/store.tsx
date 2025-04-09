@@ -102,29 +102,45 @@ export const defineChatStore = <TMessageItem extends MessageItem>({
 const { ChatStoreProvider, useChatStore, ChatStoreContext, creator } = defineChatStore({
 	async messageProcessor({ get, response }) {
 		let text = '';
-		await processDataStream({
-			stream: response.stream,
-			onTextPart: part => {
-				text += part;
-				get().internal_setStream(text);
-				get().updateLastMessageContent(text);
-			},
-			onErrorPart: error => {
-				get().setStatus(ChatStatus.Error);
-				const lastMessage = get().getLastMessage();
-				if (lastMessage) {
-					get().updateMessage(lastMessage.id, {
-						error,
-					});
-				}
-			},
-			onFinishStepPart: () => {
-				get().setStatus(ChatStatus.Success);
-			},
-			onStartStepPart: () => {
-				get().setStatus(ChatStatus.Streaming);
-			},
-		});
+		try {
+			await processDataStream({
+				stream: response.stream,
+				onTextPart: part => {
+					text += part;
+					get().internal_setStream(text);
+					get().updateLastMessageContent(text);
+				},
+				onErrorPart: error => {
+					get().setStatus(ChatStatus.Error);
+					const lastMessage = get().getLastMessage();
+					if (lastMessage) {
+						get().updateMessage(lastMessage.id, {
+							error,
+						});
+					}
+				},
+				onFinishStepPart: () => {
+					get().setStatus(ChatStatus.Success);
+				},
+				onStartStepPart: () => {
+					get().setStatus(ChatStatus.Streaming);
+				},
+			});
+		} catch (error) {
+			// 處理因為取消請求而產生的AbortError
+			if (error instanceof Error && error.name === 'AbortError') {
+				console.info('Stream processing was aborted');
+				return;
+			}
+			console.error('Error processing stream:', error);
+			get().setStatus(ChatStatus.Error);
+			const lastMessage = get().getLastMessage();
+			if (lastMessage) {
+				get().updateMessage(lastMessage.id, {
+					error: error instanceof Error ? error.message : 'Unknown error occurred',
+				});
+			}
+		}
 	},
 });
 
