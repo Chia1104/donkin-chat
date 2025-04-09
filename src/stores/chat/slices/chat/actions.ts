@@ -27,6 +27,7 @@ export interface ChatAction<TMessageItem extends MessageItem> {
 	handleSubmit: (content?: string, parts?: unknown[]) => void;
 	handleRetry: (id: string, handler?: (message: TMessageItem) => void) => void;
 	handleCancel: () => void;
+	getLatestUserMessage: () => TMessageItem | undefined;
 
 	/**
 	 * INTERNAL USE ONLY
@@ -38,7 +39,7 @@ export interface ChatAction<TMessageItem extends MessageItem> {
 }
 
 export const chatActions: StateCreator<
-	ChatStore<MessageItem>,
+	ChatStore<MessageItem, unknown, unknown>,
 	[['zustand/devtools', never]],
 	[],
 	ChatAction<MessageItem>
@@ -88,13 +89,14 @@ export const chatActions: StateCreator<
 		}
 		const userId = uuid();
 		const assistantId = uuid();
+		const lastMessage = get().getLastMessage();
 		get().pushMessage([
 			{
 				role: 'user',
 				content: content ?? get().input,
 				createdAt: dayjs().toDate(),
 				id: userId,
-				parentId: null,
+				parentId: lastMessage?.id ?? null,
 				reasoning: null,
 				threadId: get().threadId,
 			},
@@ -137,6 +139,12 @@ export const chatActions: StateCreator<
 			console.warn(error);
 		}
 	},
+	getLatestUserMessage: () => {
+		return get()
+			.items.slice()
+			.reverse()
+			.find(item => item.role === 'user');
+	},
 
 	/**
 	 * INTERNAL USE ONLY
@@ -153,13 +161,11 @@ export const chatActions: StateCreator<
 			abortController = new AbortController();
 			set({ abortController }, false, nameSpace('internal_stream'));
 		}
-		return await fetchStream(
-			get().endpoint,
-			{ messages, id: get().threadId },
-			{
-				signal: abortController.signal,
-			},
-		);
+		const dto = get().streamRequestDTO?.({ set, get, ctx, messages });
+		return await fetchStream(get().endpoint, dto ?? { messages, id: get().threadId }, {
+			signal: abortController.signal,
+			...get().streamRequestInit?.({ set, get, ctx }),
+		});
 	},
 	/**
 	 * INTERNAL USE ONLY
@@ -177,8 +183,10 @@ export const chatActions: StateCreator<
 	internal_handleSSE: async _messages => {
 		const messages = z.array(get().messageSchema).parse(_messages);
 		try {
+			await get().preStream?.({ set, get, ctx });
 			const { data: response, error } = await tryCatch(get().internal_stream(messages));
 			if (error) {
+				console.error('Error in internal_handleSSE:', error);
 				if (isAbortError(error)) {
 					console.info('Request was aborted');
 					return;
@@ -187,6 +195,7 @@ export const chatActions: StateCreator<
 				return;
 			}
 			await get().messageProcessor({ set, get, ctx, response });
+			await get().postStream?.({ set, get, ctx });
 		} catch (error) {
 			if (isAbortError(error)) {
 				console.info('Request was aborted');

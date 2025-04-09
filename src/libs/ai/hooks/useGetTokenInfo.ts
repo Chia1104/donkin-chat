@@ -2,7 +2,7 @@ import type { UseMutationOptions } from '@tanstack/react-query';
 import { useMutation } from '@tanstack/react-query';
 import { useTranslations } from 'next-intl';
 
-import { useChatStore } from '@/stores/chat/store';
+import { useChatStore } from '@/stores/chat';
 import dayjs from '@/utils/dayjs';
 import { uuid } from '@/utils/uuid';
 

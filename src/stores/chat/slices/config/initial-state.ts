@@ -8,26 +8,53 @@ import type { fetchStream } from '@/utils/request/stream';
 import type { ChatStore } from '../../store';
 import type { ChatAction } from '../chat/actions';
 
-export interface ChatConfig<TMessageItem extends MessageItem> {
+interface BaseContext<TMessageItem extends MessageItem, TStreamRequestDTO = unknown, TContext = unknown> {
+	set: Parameters<
+		StateCreator<
+			ChatStore<TMessageItem, TStreamRequestDTO, TContext>,
+			[['zustand/devtools', never]],
+			[],
+			ChatAction<TMessageItem>
+		>
+	>[0];
+	get: Parameters<
+		StateCreator<
+			ChatStore<TMessageItem, TStreamRequestDTO, TContext>,
+			[['zustand/devtools', never]],
+			[],
+			ChatAction<TMessageItem>
+		>
+	>[1];
+	ctx: Parameters<
+		StateCreator<
+			ChatStore<TMessageItem, TStreamRequestDTO, TContext>,
+			[['zustand/devtools', never]],
+			[],
+			ChatAction<TMessageItem>
+		>
+	>[2];
+}
+
+export interface ChatConfig<TMessageItem extends MessageItem, TStreamRequestDTO = unknown, TContext = unknown> {
 	endpoint: string;
 	messageSchema: z.ZodType<TMessageItem, any, any>;
-	messageProcessor: ({
-		set,
-		get,
-		ctx,
-		response,
-	}: {
-		set: Parameters<
-			StateCreator<ChatStore<TMessageItem>, [['zustand/devtools', never]], [], ChatAction<TMessageItem>>
-		>[0];
-		get: Parameters<
-			StateCreator<ChatStore<TMessageItem>, [['zustand/devtools', never]], [], ChatAction<TMessageItem>>
-		>[1];
-		ctx: Parameters<
-			StateCreator<ChatStore<TMessageItem>, [['zustand/devtools', never]], [], ChatAction<TMessageItem>>
-		>[2];
-		response: Awaited<ReturnType<typeof fetchStream>>;
-	}) => void | Promise<void>;
+	messageProcessor: (
+		context: BaseContext<TMessageItem, TStreamRequestDTO, TContext> & {
+			response: Awaited<ReturnType<typeof fetchStream>>;
+		},
+	) => void | Promise<void>;
+	onCancel?: (context: BaseContext<TMessageItem, TStreamRequestDTO, TContext>) => void | Promise<void>;
+	preStream?: (context: BaseContext<TMessageItem, TStreamRequestDTO, TContext>) => void | Promise<void>;
+	postStream?: (context: BaseContext<TMessageItem, TStreamRequestDTO, TContext>) => void | Promise<void>;
+	streamRequestInit?: (context: BaseContext<TMessageItem, TStreamRequestDTO, TContext>) => RequestInit & {
+		searchParams?: Record<string, string>;
+	};
+	streamRequestDTO?: (
+		context: BaseContext<TMessageItem, TStreamRequestDTO, TContext> & {
+			messages: TMessageItem[];
+		},
+	) => TStreamRequestDTO;
+	context?: TContext;
 }
 
 export const initialChatConfig: ChatConfig<MessageItem> = {

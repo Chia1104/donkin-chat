@@ -4,7 +4,7 @@ import { Button } from '@heroui/button';
 import { useTranslations } from 'next-intl';
 
 import OrderPopover from '@/components/token/order-popover';
-import { useChatStore } from '@/stores/chat/store';
+import { useChatStore } from '@/stores/chat';
 
 const TestOrderPopover = () => {
 	const t = useTranslations('donkin.ask-more.kol-order');
