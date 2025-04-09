@@ -13,11 +13,6 @@ import { Progress } from '@heroui/progress';
 import { Skeleton } from '@heroui/skeleton';
 import { Tooltip } from '@heroui/tooltip';
 import { useClipboard } from '@heroui/use-clipboard';
-import ContentCopyRoundedIcon from '@mui/icons-material/ContentCopyRounded';
-import DoneAllIcon from '@mui/icons-material/DoneAll';
-import InfoOutlinedIcon from '@mui/icons-material/InfoOutlined';
-import LanguageIcon from '@mui/icons-material/Language';
-import TelegramIcon from '@mui/icons-material/Telegram';
 import { useTranslations } from 'next-intl';
 import NextImage from 'next/image';
 
@@ -121,16 +116,16 @@ export const MOCK_DATA: CardProps = {
 export const LinkIcon = (props: LinkIconProps) => {
 	switch (props.provider) {
 		case 'website':
-			return <LanguageIcon sx={{ width: 12, height: 12 }} />;
+			return <span className="text-default-600 i-material-symbols-language size-4" />;
 		case 'x':
 			return <XIcon className="size-2" />;
 		case 'telegram':
-			return <TelegramIcon sx={{ width: 12, height: 12 }} />;
+			return <span className="text-default-600 i-material-symbols-telegram size-4" />;
 		case 'copy':
 			return props.copied ? (
-				<DoneAllIcon sx={{ width: 12, height: 12 }} />
+				<span className="text-default-600 i-material-symbols-done-all size-4" />
 			) : (
-				<ContentCopyRoundedIcon sx={{ width: 12, height: 12 }} />
+				<span className="text-default-600 i-material-symbols-content-copy size-4" />
 			);
 	}
 };
@@ -244,7 +239,7 @@ export const HotspotProgress = ({
 						className="m-0"
 					/>
 				) : null}
-				<InfoOutlinedIcon sx={{ width: 14, height: 14, color: '#FFFFFF40' }} />
+				<span className="text-default-600 i-material-symbols-info size-4" />
 			</div>
 			<div className={cn('w-full flex items-center justify-between gap-1', classNames?.progressWrapper)}>
 				<div className="w-[90%]">

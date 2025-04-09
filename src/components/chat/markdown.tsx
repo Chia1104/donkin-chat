@@ -10,14 +10,13 @@ import rehypeKatex from 'rehype-katex';
 import rehypeRaw from 'rehype-raw';
 import rehypeSanitize from 'rehype-sanitize';
 import remarkGfm from 'remark-gfm';
-import remarkMath from 'remark-math';
 import type { PluggableList } from 'unified';
 
 const ReactMarkdownHooks = dynamic(() => import('react-markdown').then(mod => mod.MarkdownHooks), { ssr: false });
 
 const ReactMarkdown = dynamic(() => import('react-markdown'), { ssr: false });
 
-const remarkPlugins: PluggableList = [[remarkGfm], [remarkMath]];
+const remarkPlugins: PluggableList = [[remarkGfm]];
 const rehypePluginsWithShiki: PluggableList = [
 	[
 		rehypeShiki,
@@ -26,7 +25,6 @@ const rehypePluginsWithShiki: PluggableList = [
 		},
 	],
 	[rehypeRaw],
-	[rehypeKatex],
 ];
 const rehypePluginsWithoutShiki: PluggableList = [[rehypeSanitize], [rehypeRaw], [rehypeKatex]];
 

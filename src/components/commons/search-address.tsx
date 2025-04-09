@@ -4,7 +4,6 @@ import { useRef } from 'react';
 
 import { Autocomplete, AutocompleteItem } from '@heroui/autocomplete';
 import { Avatar } from '@heroui/avatar';
-import SearchIcon from '@mui/icons-material/Search';
 import { useAsyncList } from '@react-stately/data';
 import { asyncDebounce } from '@tanstack/react-pacer/async-debouncer';
 import { useTranslations } from 'next-intl';
@@ -58,14 +57,7 @@ const SearchAddress = () => {
 			placeholder={t('search-placeholder')}
 			aria-label={t('search-placeholder')}
 			variant="bordered"
-			endContent={
-				<SearchIcon
-					sx={{
-						width: 22,
-						height: 22,
-					}}
-				/>
-			}
+			endContent={<span className="text-default-600 i-material-symbols-search size-[22px]" />}
 			classNames={{
 				base: 'min-w-[200px]',
 				selectorButton: 'hidden',

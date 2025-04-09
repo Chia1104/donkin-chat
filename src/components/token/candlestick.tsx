@@ -14,11 +14,11 @@ import type { Time, ISeriesApi } from 'lightweight-charts';
 import { useLocale } from 'next-intl';
 import { toast } from 'sonner';
 
-import { experimental_useTailwindTheme as useTailwindTheme } from '@/hooks/useTailwindTheme';
 import { useMutationOhlcv } from '@/libs/birdeye/hooks/useQueryOhlcv';
 import type { OlcvResponseDTO } from '@/libs/birdeye/hooks/useQueryOhlcv';
 import { IntervalFilter } from '@/libs/token/enums/interval-filter.enum';
 import { useTokenSearchParams } from '@/libs/token/hooks/useTokenSearchParams';
+import { theme as twTheme } from '@/themes/tw.theme';
 import dayjs from '@/utils/dayjs';
 import { formatLargeNumber, roundDecimal } from '@/utils/format';
 import { isPositiveNumber, isNegativeNumber, isNumber } from '@/utils/is';
@@ -29,6 +29,7 @@ import { MarkerTooltipProvider, MarkerTooltip } from '../chart/trading-chart/plu
 import { Series } from '../chart/trading-chart/series';
 import { useSeries } from '../chart/trading-chart/series';
 import { SubscribeVisibleLogicalRange } from '../chart/trading-chart/subscrib-visible-logical-range';
+import { ErrorBoundary } from '../commons/error-boundary';
 
 interface CandlestickProps {
 	meta: {
@@ -260,7 +261,6 @@ const SubscribeCandlestick = ({
 };
 
 const NoDataWatermark = ({ data, text = 'No data' }: { data: OlcvResponseDTO; text?: string }) => {
-	const twTheme = useTailwindTheme();
 	const chart = useChart();
 
 	useEffect(() => {
@@ -272,13 +272,13 @@ const NoDataWatermark = ({ data, text = 'No data' }: { data: OlcvResponseDTO; te
 				lines: [
 					{
 						text,
-						color: twTheme.theme.colors.description.DEFAULT,
+						color: twTheme.extend.colors.description.DEFAULT,
 						fontSize: 24,
 					},
 				],
 			});
 		}
-	}, [data, chart, twTheme.theme.colors.description.DEFAULT, text]);
+	}, [data, chart, text]);
 	return null;
 };
 
@@ -307,7 +307,6 @@ const Chart = () => {
 			timeVisible: true,
 		},
 	});
-	const twTheme = useTailwindTheme();
 	const histogramSeriesRef = useRef<ISeriesApi<'Histogram'>>(null);
 
 	const { data, isPending, query } = useCandlestick();
@@ -317,24 +316,21 @@ const Chart = () => {
 			...item,
 			value: item.volume,
 			time: item.unix as Time,
-			color: item.close > item.open ? twTheme.theme.colors.buy.disabled : twTheme.theme.colors.sell.disabled,
+			color: item.close > item.open ? twTheme.extend.colors.buy.disabled : twTheme.extend.colors.sell.disabled,
 		}));
-	}, [data, twTheme.theme.colors.buy.disabled, twTheme.theme.colors.sell.disabled]);
+	}, [data]);
 
-	const handleSubscribeHistogram = useCallback(
-		(data: OlcvResponseDTO) => {
-			if (histogramSeriesRef.current) {
-				histogramSeriesRef.current.setData(
-					data.map(item => ({
-						value: item.volume,
-						time: item.unix as Time,
-						color: item.close > item.open ? twTheme.theme.colors.buy.disabled : twTheme.theme.colors.sell.disabled,
-					})),
-				);
-			}
-		},
-		[twTheme.theme.colors.buy.disabled, twTheme.theme.colors.sell.disabled],
-	);
+	const handleSubscribeHistogram = useCallback((data: OlcvResponseDTO) => {
+		if (histogramSeriesRef.current) {
+			histogramSeriesRef.current.setData(
+				data.map(item => ({
+					value: item.volume,
+					time: item.unix as Time,
+					color: item.close > item.open ? twTheme.extend.colors.buy.disabled : twTheme.extend.colors.sell.disabled,
+				})),
+			);
+		}
+	}, []);
 
 	if (isPending) {
 		return (
@@ -363,11 +359,11 @@ const Chart = () => {
 					color: undefined,
 				}))}
 				options={{
-					upColor: searchParams.mark ? twTheme.theme.colors.buy.disabled : twTheme.theme.colors.buy.DEFAULT,
-					downColor: searchParams.mark ? twTheme.theme.colors.sell.disabled : twTheme.theme.colors.sell.DEFAULT,
+					upColor: searchParams.mark ? twTheme.extend.colors.buy.disabled : twTheme.extend.colors.buy.DEFAULT,
+					downColor: searchParams.mark ? twTheme.extend.colors.sell.disabled : twTheme.extend.colors.sell.DEFAULT,
 					borderVisible: false,
-					wickUpColor: searchParams.mark ? twTheme.theme.colors.buy.disabled : twTheme.theme.colors.buy.DEFAULT,
-					wickDownColor: searchParams.mark ? twTheme.theme.colors.sell.disabled : twTheme.theme.colors.sell.DEFAULT,
+					wickUpColor: searchParams.mark ? twTheme.extend.colors.buy.disabled : twTheme.extend.colors.buy.DEFAULT,
+					wickDownColor: searchParams.mark ? twTheme.extend.colors.sell.disabled : twTheme.extend.colors.sell.DEFAULT,
 				}}
 			>
 				<SubscribeCandlestick onLoad={handleSubscribeHistogram} />
@@ -403,10 +399,12 @@ const Candlestick = (props: CandlestickProps) => {
 					<MetaInfo />
 					<DateFilter />
 				</header>
-				<MarkerTooltipProvider>
-					<Chart />
-					<MarkerTooltip />
-				</MarkerTooltipProvider>
+				<ErrorBoundary>
+					<MarkerTooltipProvider>
+						<Chart />
+						<MarkerTooltip />
+					</MarkerTooltipProvider>
+				</ErrorBoundary>
 			</section>
 		</CandlestickProvider>
 	);

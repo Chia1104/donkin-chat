@@ -1,5 +1,4 @@
 import '@solana/wallet-adapter-react-ui/styles.css';
-// import 'katex/dist/katex.min.css';
 import type { Viewport } from 'next';
 
 import '@/themes/globals.css';

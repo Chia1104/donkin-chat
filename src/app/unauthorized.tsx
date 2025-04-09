@@ -1,6 +1,6 @@
 import { getLocale } from 'next-intl/server';
 
-import { redirect } from '@/i18n/routing';
+import { redirect } from '@/libs/i18n/routing';
 
 const Unauthorized = async () => {
 	const locale = await getLocale();

@@ -4,7 +4,6 @@ import { useState } from 'react';
 
 import { Button } from '@heroui/button';
 import { Popover, PopoverContent, PopoverTrigger } from '@heroui/popover';
-import FilterAltOutlinedIcon from '@mui/icons-material/FilterAltOutlined';
 import { useLocale } from 'next-intl';
 
 import FilterForm from '@/components/token/filter-form';
@@ -22,12 +21,7 @@ export const FilterAction = () => {
 		<Popover radius="md" placement="top-start" isOpen={isOpen} onOpenChange={setIsOpen}>
 			<PopoverTrigger>
 				<Button size="sm" isIconOnly variant="light" aria-label="Filter" radius="full" isDisabled={!searchParams.mark}>
-					<FilterAltOutlinedIcon
-						sx={{
-							width: 20,
-							height: 20,
-						}}
-					/>
+					<span className="text-default-600 i-material-symbols-filter-alt-outline size-5" />
 				</Button>
 			</PopoverTrigger>
 			<PopoverContent className={cn('w-[200px] overflow-hidden', locale === Locale.EN_US && 'w-[250px] max-w-[250px]')}>

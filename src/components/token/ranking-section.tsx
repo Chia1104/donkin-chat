@@ -5,7 +5,6 @@ import { Badge } from '@heroui/badge';
 import { Divider } from '@heroui/divider';
 import { Image } from '@heroui/image';
 import { Switch } from '@heroui/switch';
-import InfoOutlinedIcon from '@mui/icons-material/InfoOutlined';
 import { useTranslations } from 'next-intl';
 
 import Card from '@/components/ui/card';
@@ -41,14 +40,7 @@ const RankingSection = () => {
 				<h3 className="text-sm font-normal">
 					<span>
 						{t('ranking.profit-rank')}
-						<InfoOutlinedIcon
-							sx={{
-								width: '16px',
-								height: '16px',
-								marginLeft: '4px',
-								color: '#FFFFFF40',
-							}}
-						/>
+						<span className="text-[#FFFFFF40] i-material-symbols-info size-4 ml-1" />
 					</span>
 				</h3>
 				<AvatarGroup isGrid max={10} aria-label="Ranking" isDisabled={!searchParams.mark}>

@@ -3,6 +3,7 @@ import { Form } from '@heroui/form';
 import { Image } from '@heroui/image';
 import type { TextAreaProps } from '@heroui/input';
 import { Textarea } from '@heroui/input';
+import { Tooltip } from '@heroui/tooltip';
 import { useTranslations } from 'next-intl';
 
 import { ChatStatus } from '@/libs/ai/enums/chatStatus.enum';
@@ -23,6 +24,7 @@ export interface Props {
 
 const PromptInput = ({ onSubmit, value, onChange, props }: Props) => {
 	const t = useTranslations('chat');
+	const tAction = useTranslations('action');
 	const enabled = useChatStore(state => state.enabled);
 	const status = useChatStore(state => state.status);
 	const handleCancel = useChatStore(state => state.handleCancel);
@@ -50,7 +52,7 @@ const PromptInput = ({ onSubmit, value, onChange, props }: Props) => {
 				radius="sm"
 				variant="underlined"
 				endContent={
-					<>
+					<Tooltip content={status === ChatStatus.Streaming ? tAction('pause') : tAction('send')} size="sm">
 						<HeroButton
 							aria-label="Send"
 							radius="full"
@@ -66,7 +68,7 @@ const PromptInput = ({ onSubmit, value, onChange, props }: Props) => {
 								<Image src="/assets/images/send.svg" width={24} height={24} />
 							)}
 						</HeroButton>
-					</>
+					</Tooltip>
 				}
 				{...props?.textarea}
 				className={cn('min-h-[60px] w-full', props?.textarea?.className)}

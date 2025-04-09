@@ -1,7 +1,7 @@
 import ChatRoomLayout from '@/components/layouts/chat-room-layout';
 import { loadAISearchParams } from '@/libs/ai/services/loadAISearchParams';
+import { aiChatFlag } from '@/libs/flags/services/flags';
 import { ChatStoreProvider } from '@/stores/chat/store';
-import { aiChatFlag } from '@/utils/flags';
 
 interface Props {
 	children: React.ReactNode;
