@@ -113,7 +113,7 @@ const ChatFooter = memo(() => {
 			className="rounded-none flex flex-col items-center prose prose-invert mt-auto min-w-full p-0 sticky bottom-0"
 		>
 			<PromptInput
-				props={{ textarea: { isDisabled: !enabled } }}
+				props={{ textarea: { isDisabled: !enabled, autoFocus: true } }}
 				onChange={e => {
 					setInput(e.target.value);
 				}}
