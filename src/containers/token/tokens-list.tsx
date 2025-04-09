@@ -18,6 +18,8 @@ import { VirtuosoGrid } from 'react-virtuoso';
 
 import { AsyncQuery } from '@/components/commons/async-query';
 import { ErrorBoundary } from '@/components/commons/error-boundary';
+import { AscIcon } from '@/components/icons/asc-icon';
+import { DescIcon } from '@/components/icons/desc-icon';
 import InfoCard from '@/components/token/info-card';
 import { HeroButton } from '@/components/ui/hero-button';
 import { useMediaQuery } from '@/hooks/useMediaQuery';
@@ -26,9 +28,6 @@ import { useAISearchParams } from '@/libs/ai/hooks/useAISearchParams';
 import { useQueryTokensHot } from '@/libs/token/hooks/useQueryToken';
 import { useGlobalStore } from '@/stores/global/store';
 import { cn } from '@/utils/cn';
-
-import AscIcon from '~/public/assets/images/asc.svg';
-import DscIcon from '~/public/assets/images/dsc.svg';
 
 const SortFilter = () => {
 	const [searchParams, setSearchParams] = useAISearchParams();
@@ -100,7 +99,7 @@ const SortFilter = () => {
 				<ButtonGroup className="w-full">
 					<HeroButton
 						variant="light"
-						className="w-full p-4 min-w-fit items-center flex text-sm border-r-[0.5px] border-divider"
+						className="w-full px-4 py-2 min-w-fit items-center flex text-sm border-r-[0.5px] border-divider"
 						radius="none"
 						onPress={() => {
 							void setSearchParams({ order: 'asc' });
@@ -109,18 +108,15 @@ const SortFilter = () => {
 						color={searchParams.order === 'asc' ? 'primary' : 'default'}
 					>
 						<AscIcon
-							viewBox="0 0 16 17"
-							style={{
-								fontSize: '16px',
-								path: {
-									fill: searchParams.order === 'asc' ? 'rgba(53, 205, 255, 1)' : '#fff',
-								},
-								rect: {
-									stroke: searchParams.order === 'asc' ? 'rgba(53, 205, 255, 1)' : '#fff',
-								},
+							size={16}
+							pathProps={{
+								fill: searchParams.order === 'asc' ? 'rgba(53, 205, 255, 1)' : '#fff',
+							}}
+							rectProps={{
+								stroke: searchParams.order === 'asc' ? 'rgba(53, 205, 255, 1)' : '#fff',
 							}}
 						/>
-						{t('up-time.asc')}
+						<span>{t('up-time.asc')}</span>
 					</HeroButton>
 					<HeroButton
 						variant="light"
@@ -132,16 +128,13 @@ const SortFilter = () => {
 						}}
 						color={searchParams.order === 'desc' ? 'primary' : 'default'}
 					>
-						<DscIcon
-							viewBox="0 0 16 17"
-							style={{
-								fontSize: '16px',
-								path: {
-									fill: searchParams.order === 'desc' ? 'rgba(53, 205, 255, 1)' : '#fff',
-								},
-								rect: {
-									stroke: searchParams.order === 'desc' ? 'rgba(53, 205, 255, 1)' : '#fff',
-								},
+						<DescIcon
+							size={16}
+							pathProps={{
+								fill: searchParams.order === 'desc' ? 'rgba(53, 205, 255, 1)' : '#fff',
+							}}
+							rectProps={{
+								stroke: searchParams.order === 'desc' ? 'rgba(53, 205, 255, 1)' : '#fff',
 							}}
 						/>
 						{t('up-time.des')}

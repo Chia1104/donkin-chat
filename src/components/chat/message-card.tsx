@@ -5,6 +5,7 @@ import React from 'react';
 import { Button } from '@heroui/button';
 import { Spinner } from '@heroui/spinner';
 import { cn } from '@heroui/theme';
+import { Tooltip } from '@heroui/tooltip';
 import { useTranslations } from 'next-intl';
 
 import type { MessageItem } from '@/libs/ai/types/message';
@@ -37,6 +38,7 @@ const MessageCard = ({
 }: MessageCardProps) => {
 	const [isPending, startTransition] = React.useTransition();
 	const t = useTranslations('chat');
+	const tAction = useTranslations('action');
 
 	const hasFailed = status === 'failed';
 
@@ -91,18 +93,20 @@ const MessageCard = ({
 									className: 'size-4',
 								}}
 							/>
-							<Button
-								variant="light"
-								aria-label="retry-button"
-								isIconOnly
-								radius="full"
-								size="sm"
-								onPress={() => handleRetry()}
-								isLoading={isPending || isRetrying}
-								className="max-w-[26px] h-[26px] max-h-[26px] w-[26px] min-w-[26px] min-h-[26px]"
-							>
-								<span className="text-default-600 i-material-symbols-refresh size-4" />
-							</Button>
+							<Tooltip content={tAction('retry')} size="sm">
+								<Button
+									variant="light"
+									aria-label="retry-button"
+									isIconOnly
+									radius="full"
+									size="sm"
+									onPress={() => handleRetry()}
+									isLoading={isPending || isRetrying}
+									className="max-w-[26px] h-[26px] max-h-[26px] w-[26px] min-w-[26px] min-h-[26px]"
+								>
+									<span className="text-default-600 i-material-symbols-refresh size-4" />
+								</Button>
+							</Tooltip>
 						</div>
 					)}
 				</>

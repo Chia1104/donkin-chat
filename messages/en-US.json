@@ -24,7 +24,12 @@
 		"back-to-previous": "Back to previous",
 		"back-to-home": "Back to home",
 		"skip": "Skip",
-		"experience": "Experience"
+		"experience": "Experience",
+		"copy": "Copy",
+		"copied": "Copied",
+		"retry": "Retry",
+		"send": "Send",
+		"pause": "Pause"
 	},
 	"onboarding": {
 		"donkin": {
