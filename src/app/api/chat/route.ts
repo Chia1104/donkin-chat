@@ -1,9 +1,10 @@
-import { openai } from '@ai-sdk/openai';
+import { createOpenAI } from '@ai-sdk/openai';
 import { streamText } from 'ai';
 import { NextResponse } from 'next/server';
 import { z } from 'zod';
 
 import { ChatDTOSchema } from '@/libs/ai/validators/chat';
+import { env } from '@/utils/env';
 import { ParseJSONError } from '@/utils/error';
 import { aiChatFlag } from '@/utils/flags';
 
@@ -28,6 +29,11 @@ export async function POST(req: Request) {
 			});
 
 		const parsed = ChatDTOSchema.parse(dto);
+
+		const openai = createOpenAI({
+			baseURL: env.OPENROUTER_API_KEY ? 'https://openrouter.ai/api/v1' : undefined,
+			apiKey: env.OPENROUTER_API_KEY || env.OPENAI_API_KEY,
+		});
 
 		const result = streamText({
 			model: openai('gpt-4o-mini'),

@@ -19,6 +19,7 @@ export const env = createEnv({
 		BIRDEYE_API_KEY: z.string().optional(),
 		FLAGS_AI_CHAT: z.string().optional(),
 		AI_TOKEN: z.string().optional(),
+		OPENROUTER_API_KEY: z.string().optional(),
 	},
 
 	client: {
@@ -52,6 +53,7 @@ export const env = createEnv({
 			process.env.NEXT_PUBLIC_APP_ENV === 'production' ? process.env.NEXT_PUBLIC_DEBUG_ZUSTAND_DEVTOOLS : 'true',
 		FLAGS_AI_CHAT: process.env.FLAGS_AI_CHAT,
 		AI_TOKEN: process.env.AI_TOKEN,
+		OPENROUTER_API_KEY: process.env.OPENROUTER_API_KEY,
 	},
 
 	skipValidation: process.env.SKIP_ENV_VALIDATION === 'true' || process.env.SKIP_ENV_VALIDATION === '1',
