@@ -5,6 +5,7 @@ import type { TextAreaProps } from '@heroui/input';
 import { Textarea } from '@heroui/input';
 import { useTranslations } from 'next-intl';
 
+import { ChatStatus } from '@/libs/ai/enums/chatStatus.enum';
 import { useChatStore } from '@/stores/chat/store';
 import { cn } from '@/utils/cn';
 
@@ -23,15 +24,25 @@ export interface Props {
 const PromptInput = ({ onSubmit, value, onChange, props }: Props) => {
 	const t = useTranslations('chat');
 	const enabled = useChatStore(state => state.enabled);
+	const status = useChatStore(state => state.status);
+	const handleCancel = useChatStore(state => state.handleCancel);
+	const handleSubmit = (e: React.FormEvent<HTMLFormElement>) => {
+		e.preventDefault();
+		if (status === ChatStatus.Streaming) {
+			handleCancel();
+		} else {
+			onSubmit?.(e);
+		}
+	};
 	return (
 		<Form
 			aria-label="Prompt Form"
 			{...props?.form}
 			className={cn('w-full', props?.form?.className)}
-			onSubmit={onSubmit}
+			onSubmit={handleSubmit}
 		>
 			<Textarea
-				isDisabled={!enabled}
+				isDisabled={!enabled || status === ChatStatus.Streaming}
 				aria-label="Prompt"
 				minRows={4}
 				maxRows={4}
@@ -49,7 +60,11 @@ const PromptInput = ({ onSubmit, value, onChange, props }: Props) => {
 							type="submit"
 							className="self-end"
 						>
-							<Image src="/assets/images/send.svg" width={24} height={24} />
+							{status === ChatStatus.Streaming ? (
+								<Image src="/assets/images/pause-stream.svg" width={24} height={24} />
+							) : (
+								<Image src="/assets/images/send.svg" width={24} height={24} />
+							)}
 						</HeroButton>
 					</>
 				}

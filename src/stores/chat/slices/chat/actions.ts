@@ -5,7 +5,9 @@ import { ChatStatus } from '@/libs/ai/enums/chatStatus.enum';
 import type { MessageItem } from '@/libs/ai/types/message';
 import { setNamespace } from '@/stores/utils/storeDebug';
 import dayjs from '@/utils/dayjs';
+import { isAbortError } from '@/utils/is';
 import { fetchStream } from '@/utils/request/stream';
+import { tryCatch } from '@/utils/try-catch';
 import { uuid } from '@/utils/uuid';
 
 import type { ChatStore } from '../../store';
@@ -14,7 +16,6 @@ const nameSpace = setNamespace('chat/chat');
 
 export interface ChatAction<TMessageItem extends MessageItem> {
 	setInput: (input: string) => void;
-	submit: () => void;
 	setStatus: (status: ChatStatus) => void;
 	pushMessage: (messages: TMessageItem[]) => void;
 	deleteMessage: (id: string) => void;
@@ -25,11 +26,14 @@ export interface ChatAction<TMessageItem extends MessageItem> {
 	updateLastMessageContent: (content: string) => void;
 	handleSubmit: (content?: string, parts?: unknown[]) => void;
 	handleRetry: (id: string, handler?: (message: TMessageItem) => void) => void;
+	handleCancel: () => void;
 
 	/**
 	 * INTERNAL USE ONLY
 	 */
 	internal_setStream: (stream: string) => void;
+	internal_stream: (messages: TMessageItem[]) => ReturnType<typeof fetchStream>;
+	internal_abort: () => void;
 	internal_handleSSE: (messages: TMessageItem[]) => void | Promise<void>;
 }
 
@@ -41,14 +45,6 @@ export const chatActions: StateCreator<
 > = (set, get, ctx) => ({
 	setInput: (input: string) => {
 		set({ input }, false, nameSpace('setInput', input));
-	},
-	submit: () => {
-		const current = get().input;
-		const validated = z.string().min(1).safeParse(current);
-		if (!validated.success) {
-			return;
-		}
-		set({ status: ChatStatus.Streaming }, false, nameSpace('submit'));
 	},
 	setStatus: (status: ChatStatus) => {
 		set({ status }, false, nameSpace('setStatus', status));
@@ -87,7 +83,7 @@ export const chatActions: StateCreator<
 		return get().items[get().items.length - 1];
 	},
 	handleSubmit: content => {
-		if (!get().input && !content) {
+		if ((!get().input && !content) || get().status === ChatStatus.Streaming) {
 			return;
 		}
 		const userId = uuid();
@@ -133,6 +129,14 @@ export const chatActions: StateCreator<
 		set({ status: ChatStatus.Streaming }, false, nameSpace('handleRetry', id));
 		void get().internal_handleSSE(get().items);
 	},
+	handleCancel: () => {
+		set({ status: ChatStatus.Idle }, false, nameSpace('handleCancel'));
+		try {
+			get().internal_abort();
+		} catch (error) {
+			console.warn(error);
+		}
+	},
 
 	/**
 	 * INTERNAL USE ONLY
@@ -143,9 +147,53 @@ export const chatActions: StateCreator<
 	/**
 	 * INTERNAL USE ONLY
 	 */
+	internal_stream: async messages => {
+		let abortController = get().abortController;
+		if (!abortController || abortController.signal.aborted) {
+			abortController = new AbortController();
+			set({ abortController }, false, nameSpace('internal_stream'));
+		}
+		return await fetchStream(
+			get().endpoint,
+			{ messages, id: get().threadId },
+			{
+				signal: abortController.signal,
+			},
+		);
+	},
+	/**
+	 * INTERNAL USE ONLY
+	 */
+	internal_abort: () => {
+		const abortController = get().abortController;
+		if (abortController && !abortController.signal.aborted) {
+			abortController.abort();
+			set({ abortController: undefined }, false, nameSpace('internal_abort'));
+		}
+	},
+	/**
+	 * INTERNAL USE ONLY
+	 */
 	internal_handleSSE: async _messages => {
 		const messages = z.array(get().messageSchema).parse(_messages);
-		const response = await fetchStream(get().endpoint, { messages, id: get().threadId });
-		await get().messageProcessor({ set, get, ctx, response });
+		try {
+			const { data: response, error } = await tryCatch(get().internal_stream(messages));
+			if (error) {
+				if (isAbortError(error)) {
+					console.info('Request was aborted');
+					return;
+				}
+				set({ status: ChatStatus.Error }, false, nameSpace('internal_handleSSE'));
+				return;
+			}
+			await get().messageProcessor({ set, get, ctx, response });
+		} catch (error) {
+			if (isAbortError(error)) {
+				console.info('Request was aborted');
+				return;
+			}
+			console.error('Error in internal_handleSSE:', error);
+			set({ status: ChatStatus.Error }, false, nameSpace('internal_handleSSE'));
+		}
 	},
 });

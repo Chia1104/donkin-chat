@@ -19,3 +19,7 @@ export const isURL = (value: unknown): value is URL => {
 export const isString = (value: unknown): value is string => {
 	return z.string().safeParse(value).success;
 };
+
+export function isAbortError(error: unknown): error is DOMException {
+	return error instanceof DOMException && (error.name === 'AbortError' || error.name === 'TimeoutError');
+}
