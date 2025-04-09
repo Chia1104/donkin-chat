@@ -1,3 +1,5 @@
+import setSearchParams from '../set-search-params';
+
 /**
  * Fetches a stream response from the provided input URL with the specified payload.
  *
@@ -16,17 +18,28 @@
  * }
  * ```
  */
-export const fetchStream = async <T = unknown>(input: RequestInfo, payload: T, init?: RequestInit) => {
-	const response = await fetch(input, {
-		method: 'POST',
-		headers: {
-			'Content-Type': 'application/json',
-			Accept: 'text/event-stream',
+export const fetchStream = async <T = unknown>(
+	input: RequestInfo,
+	payload: T,
+	init?: RequestInit & {
+		searchParams?: Record<string, string>;
+	},
+) => {
+	const response = await fetch(
+		setSearchParams(init?.searchParams, {
+			baseUrl: input as string,
+		}),
+		{
+			method: 'POST',
+			headers: {
+				'Content-Type': 'application/json',
+				Accept: 'text/event-stream',
+			},
+			body: init?.method === 'GET' ? undefined : JSON.stringify(payload),
+			credentials: 'include',
+			...init,
 		},
-		body: JSON.stringify(payload),
-		credentials: 'include',
-		...init,
-	});
+	);
 
 	if (!response.ok) throw new Error('Stream request failed');
 

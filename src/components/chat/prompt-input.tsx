@@ -7,7 +7,7 @@ import { Tooltip } from '@heroui/tooltip';
 import { useTranslations } from 'next-intl';
 
 import { ChatStatus } from '@/libs/ai/enums/chatStatus.enum';
-import { useChatStore } from '@/stores/chat/store';
+import { useChatStore } from '@/stores/chat';
 import { cn } from '@/utils/cn';
 
 import { HeroButton } from '../ui/hero-button';

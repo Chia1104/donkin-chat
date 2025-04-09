@@ -5,6 +5,7 @@ import { Card, CardHeader, CardBody, CardFooter } from '@heroui/card';
 import { Image } from '@heroui/image';
 import { useTranslations } from 'next-intl';
 
+import { useChatStore } from '@/stores/chat';
 import { useGlobalStore } from '@/stores/global/store';
 
 const OnboardingTooltip = () => {
@@ -12,10 +13,14 @@ const OnboardingTooltip = () => {
 	const action = useGlobalStore(state => state.toggleDonkin);
 	const t = useTranslations('onboarding.donkin');
 	const tAction = useTranslations('action');
+	const handleSubmit = useChatStore(state => state.handleSubmit);
 
-	const handleOpen = () => {
+	const handleOpen = (ask?: string) => {
 		action(true);
 		onboarding();
+		if (ask) {
+			handleSubmit(ask);
+		}
 	};
 	const handleClose = () => {
 		onboarding();
@@ -28,13 +33,13 @@ const OnboardingTooltip = () => {
 			</CardHeader>
 			<CardBody className="flex flex-col gap-3">
 				<p className="text-description text-xs font-light">{t('description')}</p>
-				<Button size="sm" className="w-fit" onPress={() => handleOpen()}>
+				<Button size="sm" className="w-fit" onPress={() => handleOpen(t('button.hot-tokens'))}>
 					{t('button.hot-tokens')}
 				</Button>
-				<Button size="sm" className="w-fit" onPress={() => handleOpen()}>
+				<Button size="sm" className="w-fit" onPress={() => handleOpen(t('button.smart-wallets'))}>
 					{t('button.smart-wallets')}
 				</Button>
-				<Button size="sm" className="w-fit" onPress={() => handleOpen()}>
+				<Button size="sm" className="w-fit" onPress={() => handleOpen(t('button.whale-addresses'))}>
 					{t('button.whale-addresses')}
 				</Button>
 			</CardBody>

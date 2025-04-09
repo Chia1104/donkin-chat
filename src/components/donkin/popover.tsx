@@ -10,7 +10,7 @@ import { Divider } from '@heroui/divider';
 import { Listbox, ListboxItem } from '@heroui/listbox';
 import { useTranslations } from 'next-intl';
 
-import { useChatStore } from '@/stores/chat/store';
+import { useChatStore } from '@/stores/chat';
 import { useGlobalStore } from '@/stores/global/store';
 import { cn } from '@/utils/cn';
 

@@ -19,7 +19,7 @@ import NextImage from 'next/image';
 import XIcon from '@/components/icons/x-icon';
 import { ChatStatus } from '@/libs/ai/enums/chatStatus.enum';
 import { useAskToken } from '@/libs/ai/hooks/useAskToken';
-import { useChatStore } from '@/stores/chat/store';
+import { useChatStore } from '@/stores/chat';
 import { cn } from '@/utils/cn';
 import { formatLargeNumber, roundDecimal } from '@/utils/format';
 import { isNumber, isPositiveNumber, isNegativeNumber } from '@/utils/is';

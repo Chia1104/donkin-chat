@@ -2,7 +2,7 @@ import { useTranslations } from 'next-intl';
 
 import { useAISearchParams } from '@/libs/ai/hooks/useAISearchParams';
 import { useGetTokenInfo } from '@/libs/ai/hooks/useGetTokenInfo';
-import { useChatStore } from '@/stores/chat/store';
+import { useChatStore } from '@/stores/chat';
 
 import { ChatStatus } from '../enums/chatStatus.enum';
 import { useGetTokenTrends } from './useGetTokenTrends';

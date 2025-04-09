@@ -3,17 +3,11 @@
 import type { ReactNode } from 'react';
 import { createContext, use, useRef } from 'react';
 
-import { processDataStream } from 'ai';
 import { useStore } from 'zustand';
-import { subscribeWithSelector } from 'zustand/middleware';
-import { shallow } from 'zustand/shallow';
-import { createWithEqualityFn } from 'zustand/traditional';
 import type { StateCreator, StoreApi } from 'zustand/vanilla';
 import { createStore } from 'zustand/vanilla';
 
-import { ChatStatus } from '@/libs/ai/enums/chatStatus.enum';
 import type { MessageItem } from '@/libs/ai/types/message';
-import { isAbortError } from '@/utils/is';
 
 import { createDevtools } from '../middleware/create-devtools';
 import { initialChatState } from './initial-state';
@@ -21,30 +15,37 @@ import type { ChatState } from './initial-state';
 import { chatActions } from './slices/chat/actions';
 import type { ChatAction } from './slices/chat/actions';
 
-export type ChatStore<TMessageItem extends MessageItem> = ChatState<TMessageItem> & ChatAction<TMessageItem>;
+export type ChatStore<TMessageItem extends MessageItem, TStreamRequestDTO, TContext> = ChatState<
+	TMessageItem,
+	TStreamRequestDTO,
+	TContext
+> &
+	ChatAction<TMessageItem>;
 
-export type ChatStoreApi<TMessageItem extends MessageItem> = StateCreator<
-	ChatStore<TMessageItem>,
+export type ChatStoreApi<TMessageItem extends MessageItem, TStreamRequestDTO, TContext> = StateCreator<
+	ChatStore<TMessageItem, TStreamRequestDTO, TContext>,
 	[['zustand/devtools', never]],
 	[],
-	ChatStore<TMessageItem>
+	ChatStore<TMessageItem, TStreamRequestDTO, TContext>
 >;
 
-export interface ChatStoreProviderProps<TMessageItem extends MessageItem> {
+export interface ChatStoreProviderProps<TMessageItem extends MessageItem, TStreamRequestDTO, TContext> {
 	children: ReactNode;
-	values?: Partial<ChatState<TMessageItem>>;
+	values?: Partial<ChatState<TMessageItem, TStreamRequestDTO, TContext>>;
 }
 
-export interface DefineChatStoreProps<TMessageItem extends MessageItem> {
-	initState?: Partial<ChatState<TMessageItem>>;
-	messageProcessor: ChatStore<TMessageItem>['messageProcessor'];
+export interface DefineChatStoreProps<TMessageItem extends MessageItem, TStreamRequestDTO, TContext> {
+	initState?: Partial<ChatState<TMessageItem, TStreamRequestDTO, TContext>>;
+	messageProcessor: ChatStore<TMessageItem, TStreamRequestDTO, TContext>['messageProcessor'];
 	enableDevtools?: boolean;
 }
 
 const devtools = createDevtools('chat.store');
 
 const createChatStore =
-	<TMessageItem extends MessageItem>(initState?: Partial<ChatState<TMessageItem>>): ChatStoreApi<TMessageItem> =>
+	<TMessageItem extends MessageItem, TStreamRequestDTO = unknown, TContext = unknown>(
+		initState?: Partial<ChatState<TMessageItem, TStreamRequestDTO, TContext>>,
+	): ChatStoreApi<TMessageItem, TStreamRequestDTO, TContext> =>
 	(...params) =>
 		({
 			...initialChatState,
@@ -53,34 +54,31 @@ const createChatStore =
 
 			// @ts-expect-error - fix actions generic type
 			...chatActions(...params),
-		}) as ChatStore<TMessageItem>;
+		}) as ChatStore<TMessageItem, TStreamRequestDTO, TContext>;
 
-/**
- * @deprecated use `useChatStore` from `defineChatStore` instead
- */
-export const legacy_useChatStore = createWithEqualityFn<ChatStore<MessageItem>>()(
-	subscribeWithSelector(devtools(createChatStore)),
-	shallow,
-);
-
-export const defineChatStore = <TMessageItem extends MessageItem>({
+export const defineChatStore = <TMessageItem extends MessageItem, TStreamRequestDTO, TContext>({
 	initState,
 	messageProcessor,
 	enableDevtools,
-}: DefineChatStoreProps<TMessageItem>) => {
-	const creator = (state?: Partial<ChatState<TMessageItem>>) => {
+}: DefineChatStoreProps<TMessageItem, TStreamRequestDTO, TContext>) => {
+	const creator = (state?: Partial<ChatState<TMessageItem, TStreamRequestDTO, TContext>>) => {
 		const _state = Object.assign({ ...initState }, state, { messageProcessor });
-		return createStore<ChatStore<TMessageItem>, [['zustand/devtools', never]]>(
-			devtools(createChatStore<TMessageItem>(_state), {
+		return createStore<ChatStore<TMessageItem, TStreamRequestDTO, TContext>, [['zustand/devtools', never]]>(
+			devtools(createChatStore<TMessageItem, TStreamRequestDTO, TContext>(_state), {
 				enabled: enableDevtools,
 			}),
 		);
 	};
 
-	const ChatStoreContext = createContext<StoreApi<ChatStore<TMessageItem>> | undefined>(undefined);
+	const ChatStoreContext = createContext<StoreApi<ChatStore<TMessageItem, TStreamRequestDTO, TContext>> | undefined>(
+		undefined,
+	);
 
-	const ChatStoreProvider = ({ children, values }: ChatStoreProviderProps<TMessageItem>) => {
-		const storeRef = useRef<StoreApi<ChatStore<TMessageItem>>>(null);
+	const ChatStoreProvider = ({
+		children,
+		values,
+	}: ChatStoreProviderProps<TMessageItem, TStreamRequestDTO, TContext>) => {
+		const storeRef = useRef<StoreApi<ChatStore<TMessageItem, TStreamRequestDTO, TContext>>>(null);
 		if (!storeRef.current) {
 			storeRef.current = creator(values);
 		}
@@ -88,7 +86,7 @@ export const defineChatStore = <TMessageItem extends MessageItem>({
 		return <ChatStoreContext value={storeRef.current}>{children}</ChatStoreContext>;
 	};
 
-	const useChatStore = <T,>(selector: (store: ChatStore<TMessageItem>) => T): T => {
+	const useChatStore = <T,>(selector: (store: ChatStore<TMessageItem, TStreamRequestDTO, TContext>) => T): T => {
 		const chatStoreContext = use(ChatStoreContext);
 		if (!chatStoreContext) {
 			throw new Error(`useChatStore must be used within ChatStoreProvider`);
@@ -99,49 +97,3 @@ export const defineChatStore = <TMessageItem extends MessageItem>({
 
 	return { ChatStoreProvider, useChatStore, ChatStoreContext, creator };
 };
-
-const { ChatStoreProvider, useChatStore, ChatStoreContext, creator } = defineChatStore({
-	async messageProcessor({ get, response }) {
-		let text = '';
-		try {
-			await processDataStream({
-				stream: response.stream,
-				onTextPart: part => {
-					text += part;
-					get().internal_setStream(text);
-					get().updateLastMessageContent(text);
-				},
-				onErrorPart: error => {
-					get().setStatus(ChatStatus.Error);
-					const lastMessage = get().getLastMessage();
-					if (lastMessage) {
-						get().updateMessage(lastMessage.id, {
-							error,
-						});
-					}
-				},
-				onFinishStepPart: () => {
-					get().setStatus(ChatStatus.Success);
-				},
-				onStartStepPart: () => {
-					get().setStatus(ChatStatus.Streaming);
-				},
-			});
-		} catch (error) {
-			if (isAbortError(error)) {
-				console.info('Stream processing was aborted');
-				return;
-			}
-			console.error('Error processing stream:', error);
-			get().setStatus(ChatStatus.Error);
-			const lastMessage = get().getLastMessage();
-			if (lastMessage) {
-				get().updateMessage(lastMessage.id, {
-					error: error instanceof Error ? error.message : 'Unknown error occurred',
-				});
-			}
-		}
-	},
-});
-
-export { ChatStoreProvider, useChatStore, ChatStoreContext, creator };

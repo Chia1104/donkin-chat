@@ -7,9 +7,9 @@ import type { ChatConfig } from './slices/config/initial-state';
 import { initialMessageState } from './slices/message/initial-state';
 import type { MessageState } from './slices/message/initial-state';
 
-export type ChatState<TMessageItem extends MessageItem> = _ChatState &
+export type ChatState<TMessageItem extends MessageItem, TStreamRequestDTO = unknown, TContext = unknown> = _ChatState &
 	MessageState<TMessageItem> &
-	ChatConfig<TMessageItem>;
+	ChatConfig<TMessageItem, TStreamRequestDTO, TContext>;
 
 export const initialChatState: ChatState<MessageItem> = {
 	..._initialChatState,

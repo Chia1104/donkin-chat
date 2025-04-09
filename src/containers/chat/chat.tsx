@@ -1,6 +1,6 @@
 'use client';
 
-import { memo, useRef } from 'react';
+import { memo, useRef, useEffect } from 'react';
 
 import { Card, CardBody, CardFooter } from '@heroui/card';
 import { ScrollShadow } from '@heroui/scroll-shadow';
@@ -13,7 +13,8 @@ import PromptInput from '@/components/chat/prompt-input';
 import Logo from '@/components/donkin/logo';
 import { DonkinStatus } from '@/enums/donkin.enum';
 import { ChatStatus } from '@/libs/ai/enums/chatStatus.enum';
-import { useChatStore } from '@/stores/chat/store';
+import { useAISearchParams } from '@/libs/ai/hooks/useAISearchParams';
+import { useChatStore } from '@/stores/chat';
 import { useGlobalStore } from '@/stores/global/store';
 import { cn } from '@/utils/cn';
 
@@ -21,9 +22,10 @@ const Messages = ({ children }: { children?: React.ReactNode }) => {
 	const messages = useChatStore(state => state.items);
 	const status = useChatStore(state => state.status);
 	const handleRetry = useChatStore(state => state.handleRetry);
+	const handleSubmit = useChatStore(state => state.handleSubmit);
 
 	if (!messages || messages.length === 0) {
-		return <DefaultPrompt />;
+		return <DefaultPrompt onAction={handleSubmit} />;
 	}
 
 	return (
@@ -127,6 +129,17 @@ const ChatFooter = memo(() => {
 	);
 });
 
+const ThreadId = () => {
+	const threadId = useChatStore(state => state.threadId);
+	const [, setSearchParams] = useAISearchParams();
+	useEffect(() => {
+		if (threadId && threadId !== 'inbox') {
+			void setSearchParams({ threadId });
+		}
+	}, [setSearchParams, threadId]);
+	return null;
+};
+
 const Chat = () => {
 	const isOpen = useGlobalStore(state => state.donkin.isOpen);
 
@@ -155,6 +168,7 @@ const Chat = () => {
 					</motion.div>
 				)}
 			</AnimatePresence>
+			<ThreadId />
 		</Card>
 	);
 };
