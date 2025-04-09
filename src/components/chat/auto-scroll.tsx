@@ -2,7 +2,6 @@ import { useCallback, useEffect, useRef, useState } from 'react';
 
 import type { ButtonProps } from '@heroui/button';
 import { Button } from '@heroui/button';
-import ArrowDownwardIcon from '@mui/icons-material/ArrowDownward';
 import type { MotionProps } from 'framer-motion';
 import { motion, AnimatePresence } from 'framer-motion';
 
@@ -146,12 +145,7 @@ export function AutoScroll<TContainer extends HTMLElement>({
 						onPress={clickToScrollToBottom}
 						className={cn('w-8 min-w-8 h-8 min-h-8', props.className)}
 					>
-						<ArrowDownwardIcon
-							sx={{
-								width: '16px',
-								height: '16px',
-							}}
-						/>
+						<span className="i-material-symbols-arrow-downward text-default-600 size-4" />
 					</Button>
 				</motion.span>
 			)}

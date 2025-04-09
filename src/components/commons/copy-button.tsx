@@ -3,9 +3,6 @@
 import type { ButtonProps, PressEvent } from '@heroui/button';
 import { Button } from '@heroui/button';
 import { useClipboard } from '@heroui/use-clipboard';
-import ContentCopyRoundedIcon from '@mui/icons-material/ContentCopyRounded';
-import DoneAllIcon from '@mui/icons-material/DoneAll';
-import type { SvgIconProps } from '@mui/material/SvgIcon';
 
 import { cn } from '@/utils/cn';
 
@@ -13,7 +10,7 @@ interface Props extends Omit<ButtonProps, 'onPress' | 'onCopy'> {
 	content: string;
 	timeout?: number;
 	onCopy?: (e: PressEvent) => void;
-	iconProps?: Partial<SvgIconProps>;
+	iconProps?: React.ComponentPropsWithoutRef<'span'>;
 }
 
 const CopyButton = ({ content, onCopy, timeout, iconProps, ...props }: Props) => {
@@ -33,9 +30,9 @@ const CopyButton = ({ content, onCopy, timeout, iconProps, ...props }: Props) =>
 			}}
 		>
 			{copied ? (
-				<DoneAllIcon sx={{ width: 12, height: 12 }} {...iconProps} />
+				<span {...iconProps} className={cn('i-material-symbols-done-all size-3', iconProps?.className)} />
 			) : (
-				<ContentCopyRoundedIcon sx={{ width: 12, height: 12 }} {...iconProps} />
+				<span {...iconProps} className={cn('i-material-symbols-content-copy size-3', iconProps?.className)} />
 			)}
 		</Button>
 	);

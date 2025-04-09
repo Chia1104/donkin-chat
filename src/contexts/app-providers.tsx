@@ -1,7 +1,6 @@
 'use client';
 
 import { HeroUIProvider as _HeroUIProvider } from '@heroui/system';
-import { ThemeProvider as MuiThemeProvider } from '@mui/material/styles';
 import { QueryClientProvider } from '@tanstack/react-query';
 import type { AbstractIntlMessages } from 'next-intl';
 import { NextIntlClientProvider, useLocale } from 'next-intl';
@@ -13,7 +12,6 @@ import type { State as WagmiSessionState } from 'wagmi';
 
 import { wagmiConfig } from '@/config/wagmi';
 import { useRouter } from '@/libs/i18n/routing';
-import defaultTheme from '@/themes/default';
 import { getQueryClient } from '@/utils/query-client';
 
 import SolanaWalletProvider from './solana-wallet-provider';
@@ -45,9 +43,7 @@ const AppProviders = (props: Props) => {
 					<QueryClientProvider client={queryClient}>
 						<NuqsAdapter>
 							<NextThemeProvider forcedTheme="dark" defaultTheme="dark" enableSystem attribute="class">
-								<MuiThemeProvider theme={defaultTheme}>
-									<HeroUIProvider>{props.children}</HeroUIProvider>
-								</MuiThemeProvider>
+								<HeroUIProvider>{props.children}</HeroUIProvider>
 							</NextThemeProvider>
 						</NuqsAdapter>
 					</QueryClientProvider>

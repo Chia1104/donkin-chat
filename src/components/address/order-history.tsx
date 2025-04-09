@@ -11,17 +11,15 @@ import { ScrollShadow } from '@heroui/scroll-shadow';
 import { Spinner } from '@heroui/spinner';
 import { Tabs, Tab } from '@heroui/tabs';
 import { Tooltip } from '@heroui/tooltip';
-import TrendingDownIcon from '@mui/icons-material/TrendingDown';
-import TrendingUpIcon from '@mui/icons-material/TrendingUp';
 import { ColorType, HistogramSeries, AreaSeries } from 'lightweight-charts';
 import type { Time, ISeriesApi } from 'lightweight-charts';
 import { useLocale } from 'next-intl';
 import { useTranslations } from 'next-intl';
 
-import { experimental_useTailwindTheme as useTailwindTheme } from '@/hooks/useTailwindTheme';
 import { DisplayFilter as TDisplayFilter } from '@/libs/address/enums/display-filter.enum';
 import { IntervalFilter } from '@/libs/address/enums/interval-filter.enum';
 import { useAddressSearchParams } from '@/libs/address/hooks/useAddressSearchParams';
+import { theme as twTheme } from '@/themes/tw.theme';
 import { cn } from '@/utils/cn';
 import { truncateMiddle, roundDecimal, formatLargeNumber } from '@/utils/format';
 import { isPositiveNumber, isNumber } from '@/utils/is';
@@ -191,9 +189,9 @@ const Meta = () => {
 						{isNumber(meta.profit) ? roundDecimal(meta.profit, 2) : meta.profit}%
 					</p>
 					{isPositive ? (
-						<TrendingUpIcon sx={{ width: 12, height: 12 }} color="success" />
+						<span className="i-material-symbols-trending-up size-3 text-success" />
 					) : (
-						<TrendingDownIcon sx={{ width: 12, height: 12 }} color="error" />
+						<span className="i-material-symbols-trending-down size-3 text-danger" />
 					)}
 				</span>
 			</div>
@@ -253,7 +251,6 @@ const OrderChart = () => {
 			timeVisible: true,
 		},
 	});
-	const twTheme = useTailwindTheme();
 	const areaSeriesRef = useRef<ISeriesApi<'Area'>>(null);
 	const histogramSeriesRef = useRef<ISeriesApi<'Histogram'>>(null);
 
@@ -263,9 +260,9 @@ const OrderChart = () => {
 		return profitLossData.map(item => ({
 			time: item.time,
 			value: item.value,
-			color: item.isProfit ? twTheme.theme.colors.buy.DEFAULT : twTheme.theme.colors.sell.DEFAULT,
+			color: item.isProfit ? twTheme.extend.colors.buy.DEFAULT : twTheme.extend.colors.sell.DEFAULT,
 		}));
-	}, [profitLossData, twTheme.theme.colors]);
+	}, [profitLossData]);
 
 	if (isPending) {
 		return (

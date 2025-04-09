@@ -8,7 +8,6 @@ import type { CardProps } from '@heroui/card';
 import { Card, CardHeader, CardBody } from '@heroui/card';
 import { Divider } from '@heroui/divider';
 import { Listbox, ListboxItem } from '@heroui/listbox';
-import CloseIcon from '@mui/icons-material/Close';
 import { useTranslations } from 'next-intl';
 
 import { useChatStore } from '@/stores/chat/store';
@@ -52,12 +51,7 @@ const DonkinPopover = forwardRef<HTMLDivElement | null, Props>((props, ref) => {
 							radius="full"
 							onPress={onClose}
 						>
-							<CloseIcon
-								sx={{
-									width: '18px',
-									height: '18px',
-								}}
-							/>
+							<span className="text-default-600 i-material-symbols-close size-[18px]" />
 						</Button>
 					)}
 				</CardHeader>
@@ -72,12 +66,7 @@ const DonkinPopover = forwardRef<HTMLDivElement | null, Props>((props, ref) => {
 						radius="full"
 						onPress={onClose}
 					>
-						<CloseIcon
-							sx={{
-								width: '18px',
-								height: '18px',
-							}}
-						/>
+						<span className="text-default-600 i-material-symbols-close size-[18px]" />
 					</Button>
 				)}
 				{body}

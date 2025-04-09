@@ -10,7 +10,6 @@ import { RadioGroup, Radio } from '@heroui/radio';
 import { ScrollShadow } from '@heroui/scroll-shadow';
 import { Spinner } from '@heroui/spinner';
 import { useDisclosure } from '@heroui/use-disclosure';
-import SvgIcon from '@mui/material/SvgIcon';
 import { AnimatePresence, motion } from 'framer-motion';
 import { ArrowUpDownIcon } from 'lucide-react';
 import { useTranslations } from 'next-intl';
@@ -109,9 +108,9 @@ const SortFilter = () => {
 						}}
 						color={searchParams.order === 'asc' ? 'primary' : 'default'}
 					>
-						<SvgIcon
+						<AscIcon
 							viewBox="0 0 16 17"
-							sx={{
+							style={{
 								fontSize: '16px',
 								path: {
 									fill: searchParams.order === 'asc' ? 'rgba(53, 205, 255, 1)' : '#fff',
@@ -120,9 +119,7 @@ const SortFilter = () => {
 									stroke: searchParams.order === 'asc' ? 'rgba(53, 205, 255, 1)' : '#fff',
 								},
 							}}
-						>
-							<AscIcon />
-						</SvgIcon>
+						/>
 						{t('up-time.asc')}
 					</HeroButton>
 					<HeroButton
@@ -135,9 +132,9 @@ const SortFilter = () => {
 						}}
 						color={searchParams.order === 'desc' ? 'primary' : 'default'}
 					>
-						<SvgIcon
+						<DscIcon
 							viewBox="0 0 16 17"
-							sx={{
+							style={{
 								fontSize: '16px',
 								path: {
 									fill: searchParams.order === 'desc' ? 'rgba(53, 205, 255, 1)' : '#fff',
@@ -146,9 +143,7 @@ const SortFilter = () => {
 									stroke: searchParams.order === 'desc' ? 'rgba(53, 205, 255, 1)' : '#fff',
 								},
 							}}
-						>
-							<DscIcon />
-						</SvgIcon>
+						/>
 						{t('up-time.des')}
 					</HeroButton>
 				</ButtonGroup>
