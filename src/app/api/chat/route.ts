@@ -4,9 +4,9 @@ import { NextResponse } from 'next/server';
 import { z } from 'zod';
 
 import { ChatDTOSchema } from '@/libs/ai/validators/chat';
+import { aiChatFlag } from '@/libs/flags/services/flags';
 import { env } from '@/utils/env';
 import { ParseJSONError } from '@/utils/error';
-import { aiChatFlag } from '@/utils/flags';
 
 export const maxDuration = 60;
 

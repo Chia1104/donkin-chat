@@ -1,6 +1,6 @@
 import { useTranslations } from 'next-intl';
 
-import { Link } from '@/i18n/routing';
+import { Link } from '@/libs/i18n/routing';
 
 const Footer = () => {
 	const t = useTranslations('footer');

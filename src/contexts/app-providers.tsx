@@ -12,7 +12,7 @@ import { WagmiProvider } from 'wagmi';
 import type { State as WagmiSessionState } from 'wagmi';
 
 import { wagmiConfig } from '@/config/wagmi';
-import { useRouter } from '@/i18n/routing';
+import { useRouter } from '@/libs/i18n/routing';
 import defaultTheme from '@/themes/default';
 import { getQueryClient } from '@/utils/query-client';
 

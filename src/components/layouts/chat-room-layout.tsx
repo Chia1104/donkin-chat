@@ -6,8 +6,8 @@ import { useTranslations } from 'next-intl';
 import dynamic from 'next/dynamic';
 
 import Footer from '@/components/commons/footer';
-import { useRouter } from '@/i18n/routing';
 import { QueryType } from '@/libs/ai/enums/queryType.enum';
+import { useRouter } from '@/libs/i18n/routing';
 import { useGlobalStore } from '@/stores/global/store';
 import { noto_sans } from '@/themes/fonts';
 import { cn } from '@/utils/cn';

@@ -11,7 +11,7 @@ import AppPlugins from '@/components/commons/app-plugins';
 import AppLayout from '@/components/layouts/app-layout';
 import { wagmiConfig } from '@/config/wagmi';
 import AppProviders from '@/contexts/app-providers';
-import { routing } from '@/i18n/routing';
+import { routing } from '@/libs/i18n/routing';
 import { initDayjs } from '@/utils/dayjs';
 import { env } from '@/utils/env';
 

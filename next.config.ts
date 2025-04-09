@@ -14,6 +14,7 @@ const withNextIntl = createNextIntlPlugin({
 		// Provide the path to the messages that you're using in `AppConfig`
 		createMessagesDeclaration: './messages/en-US.json',
 	},
+	requestConfig: './src/libs/i18n/request.ts',
 });
 
 const securityHeaders = [
