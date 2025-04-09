@@ -13,6 +13,7 @@ import { createStore } from 'zustand/vanilla';
 
 import { ChatStatus } from '@/libs/ai/enums/chatStatus.enum';
 import type { MessageItem } from '@/libs/ai/types/message';
+import { isAbortError } from '@/utils/is';
 
 import { createDevtools } from '../middleware/create-devtools';
 import { initialChatState } from './initial-state';
@@ -127,8 +128,7 @@ const { ChatStoreProvider, useChatStore, ChatStoreContext, creator } = defineCha
 				},
 			});
 		} catch (error) {
-			// 處理因為取消請求而產生的AbortError
-			if (error instanceof Error && error.name === 'AbortError') {
+			if (isAbortError(error)) {
 				console.info('Stream processing was aborted');
 				return;
 			}
