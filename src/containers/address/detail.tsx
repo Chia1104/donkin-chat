@@ -11,12 +11,13 @@ import type { OrderHistoryDataItem } from '@/components/address/order-history';
 import OrderHistory from '@/components/address/order-history';
 import { AsyncQuery } from '@/components/commons/async-query';
 import { ErrorBoundary } from '@/components/commons/error-boundary';
+import { useGlobalSearchParams } from '@/hooks/useGlobalSearchParams';
 import { useAddressSearchParams } from '@/libs/address/hooks/useAddressSearchParams';
 import { useQueryAddress } from '@/libs/address/hooks/useQueryAddress';
 import dayjs from '@/utils/dayjs';
 import { isPositiveNumber } from '@/utils/is';
 
-const _mockData = {
+const MOCK_DATA = {
 	meta: {
 		winRate: 99.6,
 		profitRate: 15.92,
@@ -43,13 +44,23 @@ const _mockData = {
 const Detail = () => {
 	const params = useParams<{ chain: string; address: string }>();
 	const [searchParams] = useAddressSearchParams();
+	const [globalSearchParams] = useGlobalSearchParams();
 
-	const queryResult = useQueryAddress({
-		address: params.address,
-		interval: searchParams.interval,
-	});
+	const queryResult = useQueryAddress(
+		{
+			address: params.address,
+			interval: searchParams.interval,
+		},
+		{
+			enabled: !globalSearchParams.mock,
+		},
+	);
 
 	const balanceData: OrderHistoryDataItem[] = useMemo(() => {
+		if (globalSearchParams.mock) {
+			return MOCK_DATA.balanceData;
+		}
+
 		if (!queryResult.data) {
 			return [];
 		}
@@ -58,9 +69,13 @@ const Detail = () => {
 			time: item.date,
 			value: Number(item.balance_usd),
 		}));
-	}, [queryResult.data]);
+	}, [queryResult.data, globalSearchParams.mock]);
 
 	const profitLossData: OrderHistoryDataItem[] = useMemo(() => {
+		if (globalSearchParams.mock) {
+			return MOCK_DATA.profitLossData;
+		}
+
 		if (!queryResult.data) {
 			return [];
 		}
@@ -70,13 +85,13 @@ const Detail = () => {
 			value: Number(item.daily_return),
 			isProfit: isPositiveNumber(Number(item.daily_return_rate)),
 		}));
-	}, [queryResult.data]);
+	}, [queryResult.data, globalSearchParams.mock]);
 
 	return (
 		<div className="w-full h-full flex flex-col">
 			<AsyncQuery queryResult={queryResult} isInfinite={false}>
 				{({ data }) =>
-					data && (
+					data ? (
 						<ScrollShadow className="w-full h-[calc(100vh-72px)]">
 							<div className="flex flex-col gap-10 w-full">
 								<ErrorBoundary>
@@ -84,15 +99,15 @@ const Detail = () => {
 										meta={{
 											avatar: '',
 											address: params.address,
-											volume: Number(data.balance_usd),
-											profit: data.daily_return_rate.toString(),
+											volume: globalSearchParams.mock ? 1523268 : Number(data.balance_usd),
+											profit: globalSearchParams.mock ? '-0.87' : data.daily_return_rate.toString(),
 										}}
 										win={{
-											rate: Number(data.win_rate),
+											rate: globalSearchParams.mock ? 99.6 : Number(data.win_rate),
 										}}
 										profit={{
-											rate: data.daily_return_rate,
-											amount: Number(data.daily_return),
+											rate: globalSearchParams.mock ? 15.92 : data.daily_return_rate,
+											amount: globalSearchParams.mock ? 4000000 : Number(data.daily_return),
 										}}
 										balanceData={balanceData}
 										profitLossData={profitLossData}
@@ -101,7 +116,36 @@ const Detail = () => {
 									/>
 								</ErrorBoundary>
 								<ErrorBoundary>
-									<OrderDetails data={data} />
+									<OrderDetails data={data} mock={globalSearchParams.mock} />
+								</ErrorBoundary>
+							</div>
+						</ScrollShadow>
+					) : (
+						<ScrollShadow className="w-full h-[calc(100vh-72px)]">
+							<div className="flex flex-col gap-10 w-full">
+								<ErrorBoundary>
+									<OrderHistory
+										meta={{
+											avatar: '',
+											address: params.address,
+											volume: 1523268,
+											profit: '-0.87',
+										}}
+										win={{
+											rate: 99.6,
+										}}
+										profit={{
+											rate: 15.92,
+											amount: 4000000,
+										}}
+										balanceData={balanceData}
+										profitLossData={profitLossData}
+										isPending={false}
+										isMetaPending={false}
+									/>
+								</ErrorBoundary>
+								<ErrorBoundary>
+									<OrderDetails mock data={undefined} />
 								</ErrorBoundary>
 							</div>
 						</ScrollShadow>
