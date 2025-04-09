@@ -187,7 +187,13 @@ const Cell = memo(({ item, columnKey }: { item: Data; columnKey: keyof Data }) =
 	}
 });
 
-const OrderDetails = ({ data }: { data: Address }) => {
+const OrderDetails = <TMock extends boolean = false>({
+	data,
+	mock,
+}: {
+	data: TMock extends true ? undefined : Address;
+	mock?: TMock;
+}) => {
 	const columns = useColumns();
 	const [searchParams] = useAddressSearchParams();
 	const t = useTranslations('address.order-details');
@@ -214,6 +220,18 @@ const OrderDetails = ({ data }: { data: Address }) => {
 
 	const list = useAsyncList({
 		load() {
+			if (mock) {
+				return {
+					items: MOCK_ROWS,
+				};
+			}
+
+			if (!data) {
+				return {
+					items: [],
+				};
+			}
+
 			return {
 				items: data.token_pnls.map(
 					token =>
