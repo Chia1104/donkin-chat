@@ -16,8 +16,8 @@ import { useParams } from 'next/navigation';
 import Candlestick from '@/components/token/candlestick';
 import { FilterAction } from '@/components/token/filter-action';
 import { HeaderPrimitive } from '@/components/token/info-card';
-import { HotspotProgress } from '@/components/token/info-card';
 import Card from '@/components/ui/card';
+import { MarketSentiment } from '@/components/ui/market-sentiment';
 import { useQueryOhlcv } from '@/libs/birdeye/hooks/useQueryOhlcv';
 import { IntervalFilter } from '@/libs/token/enums/interval-filter.enum';
 import { useQueryToken } from '@/libs/token/hooks/useQueryToken';
@@ -31,18 +31,11 @@ import { isNegativeNumber } from '@/utils/is';
 
 const Hotspot = ({ x }: { x: number }) => {
 	const t = useTranslations('preview.ai-signal');
+	const bull = x ?? 0;
+	const bear = x ? 100 - x : 0;
 	return (
 		<CardBody className="col-span-2 items-center">
-			<HotspotProgress
-				classNames={{
-					labelWrapper: 'mb-0',
-					label: 'py-2',
-				}}
-				className="flex flex-col"
-				label={t('card.x-hotspot')}
-				value={x}
-				colorDirection="green-to-red"
-			/>
+			<MarketSentiment showValues bullValue={bull} bearValue={bear} segments={10} label={t('card.x-hotspot')} />
 		</CardBody>
 	);
 };

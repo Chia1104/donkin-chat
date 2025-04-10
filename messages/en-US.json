@@ -208,6 +208,10 @@
 			"total-volume": "Liquidate",
 			"order-success": "Order success times",
 			"ask-more": "You want to know..."
+		},
+		"market-sentiment": {
+			"bull": "Bullish",
+			"bear": "Bearish"
 		}
 	},
 	"donkin": {
