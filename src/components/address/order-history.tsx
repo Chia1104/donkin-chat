@@ -152,8 +152,8 @@ const DateFilter = () => {
 				}}
 				isDisabled={isPending || isMetaPending}
 			>
-				<Tab key={IntervalFilter.OneWeek} title={IntervalFilter.OneWeek} className="px-2 py-0" />
-				<Tab key={IntervalFilter.OneMonth} title={IntervalFilter.OneMonth} className="px-2 py-0" />
+				<Tab key={IntervalFilter.OneWeek} title={IntervalFilter.OneWeek} className="px-2 py-0 h-6" />
+				<Tab key={IntervalFilter.OneMonth} title={IntervalFilter.OneMonth} className="px-2 py-0 h-6" />
 			</Tabs>
 		</ScrollShadow>
 	);
@@ -168,7 +168,7 @@ const Meta = () => {
 		return (
 			<div className="flex items-center justify-between w-full">
 				<div className="flex items-center gap-4">
-					<Avatar size="md" className="w-12 h-12" />
+					<Avatar size="md" className="w-[32px] h-[32px]" />
 					<span className="flex items-center gap-2">
 						<Skeleton className="w-20 h-4 rounded-full" />
 					</span>
@@ -190,7 +190,7 @@ const Meta = () => {
 	return (
 		<div className="flex items-center justify-between w-full">
 			<div className="flex items-center gap-4">
-				<Avatar src={meta.avatar} size="md" className="w-12 h-12" />
+				<Avatar src={meta.avatar} size="md" className="w-[32px] h-[32px]" />
 				<span className="flex items-center gap-2">
 					<Tooltip
 						classNames={{
@@ -203,7 +203,7 @@ const Meta = () => {
 							/>
 						}
 					>
-						<p className="text-sm font-normal">{truncateMiddle(meta.address ?? '', 10)}</p>
+						<p className="text-[22px] font-normal">{truncateMiddle(meta.address ?? '', 10)}</p>
 					</Tooltip>
 					<CopyButton content={meta.address} />
 				</span>
@@ -223,7 +223,6 @@ const Meta = () => {
 					)}
 				</span>
 			</div>
-			<DateFilter />
 		</div>
 	);
 };
@@ -232,11 +231,10 @@ const Header = () => {
 	const { win, profit, isMetaPending } = useOrderHistory();
 
 	return (
-		<div className="flex justify-between items-center w-full">
-			<div className="flex items-center gap-2">
-				<h3 className="text-[16px] font-normal text-white/65">{t('title')}</h3>
-				<DisplayFilter />
-			</div>
+		<div className="flex items-center gap-4 w-full">
+			<h3 className="text-[16px] font-normal text-white/65">{t('title')}</h3>
+			<Divider orientation="vertical" className="h-4" />
+			<DateFilter />
 			<div className="flex items-center gap-4">
 				<span className="flex items-center gap-2">
 					<p className="text-description text-xs font-normal">{t('win-rate')}</p>
@@ -246,7 +244,6 @@ const Header = () => {
 						<p className="text-sm font-normal">{isNumber(win.rate) ? roundDecimal(win.rate, 2) : '-'}%</p>
 					)}
 				</span>
-				<Divider orientation="vertical" className="h-4" />
 				<span className="flex items-center gap-2">
 					<p className="text-description text-xs font-normal">{t('profit-loss-rate')}</p>
 					{isMetaPending || !profit ? (
@@ -359,10 +356,12 @@ const OrderHistory = (props: OrderHistoryProps) => {
 		<OrderHistoryProvider {...props}>
 			<section className="w-full rounded-lg flex flex-col gap-6">
 				<Meta />
+				<Divider orientation="horizontal" className="w-full" />
 				<Header />
 				<ErrorBoundary>
 					<MarkerTooltipProvider>
 						<OrderChart />
+						<DisplayFilter />
 						<MarkerTooltip />
 					</MarkerTooltipProvider>
 				</ErrorBoundary>
