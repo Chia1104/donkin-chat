@@ -135,6 +135,7 @@ export const chatActions: StateCreator<
 		set({ status: ChatStatus.Idle }, false, nameSpace('handleCancel'));
 		try {
 			get().internal_abort();
+			void get().onCancel?.({ set, get, ctx });
 		} catch (error) {
 			console.warn(error);
 		}

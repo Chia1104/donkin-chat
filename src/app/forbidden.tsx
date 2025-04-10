@@ -3,7 +3,7 @@
 import Error from 'next/error';
 
 import AppLayout from '@/components/layouts/app-layout';
-import { Locale } from '@/types/locale';
+import { Locale } from '@/enums/locale.enum';
 
 const Forbidden = () => {
 	return (

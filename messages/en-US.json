@@ -1,6 +1,8 @@
 {
 	"meta": {
-		"title": "Donkin"
+		"title": "Donkin",
+		"subtitle": "Always stay updated with the latest cryptocurrency news and seize investment opportunities",
+		"description": "Donkin is the most professional AI investment consultant in the cryptocurrency circle, providing real-time information and intelligent investment advice."
 	},
 	"theme": {
 		"label": "Theme",
@@ -10,8 +12,26 @@
 	},
 	"locale": {
 		"label": "Language",
-		"zh-tw": "Traditional Chinese",
-		"en": "English"
+		"zh-TW": "Traditional Chinese",
+		"zh-CN": "Simplified Chinese",
+		"en-US": "English"
+	},
+	"routes": {
+		"home": {
+			"title": "Hot Tokens"
+		},
+		"token": {
+			"title": "Token Information",
+			"utils": {
+				"title-with-item": "{item} Tokens"
+			}
+		},
+		"wallet": {
+			"title": "Smart Wallets",
+			"utils": {
+				"title-with-item": "{item} Smart Wallets"
+			}
+		}
 	},
 	"action": {
 		"confirm": "Confirm",

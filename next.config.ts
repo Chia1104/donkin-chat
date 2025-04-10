@@ -58,7 +58,6 @@ const nextConfig: NextConfig = {
 				},
 			},
 		},
-		// @ts-expect-error next types are not updated
 		clientInstrumentationHook: true,
 	},
 	webpack(config) {

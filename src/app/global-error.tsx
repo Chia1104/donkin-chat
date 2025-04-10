@@ -3,8 +3,8 @@
 import Error from 'next/error';
 
 import AppLayout from '@/components/layouts/app-layout';
+import { Locale } from '@/enums/locale.enum';
 import { withError } from '@/hocs/with-error';
-import { Locale } from '@/types/locale';
 
 const GlobalError = withError(() => {
 	return (

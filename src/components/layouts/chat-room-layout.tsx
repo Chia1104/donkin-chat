@@ -3,16 +3,17 @@
 import { Navbar, NavbarContent, NavbarItem } from '@heroui/navbar';
 import { Skeleton } from '@heroui/skeleton';
 import { useTranslations } from 'next-intl';
+import { useTransitionRouter as useRouter } from 'next-view-transitions';
 import dynamic from 'next/dynamic';
 
 import Footer from '@/components/commons/footer';
 import { QueryType } from '@/libs/ai/enums/queryType.enum';
-import { useRouter } from '@/libs/i18n/routing';
 import { useGlobalStore } from '@/stores/global/store';
 import { noto_sans } from '@/themes/fonts';
 import { cn } from '@/utils/cn';
 
 import SearchAddress from '../commons/search-address';
+import { Settings } from '../commons/settings';
 import Logo from '../donkin/logo';
 import Donkin from '../donkin/title';
 import WalletConnect from '../web3/wallet-connect';
@@ -25,6 +26,7 @@ const ChainSelector = dynamic(() => import('@/components/web3/chain-selector'), 
 interface Props {
 	children: React.ReactNode;
 	chatBot?: React.ReactNode;
+	enableSettings?: boolean;
 }
 
 const ChatRoomLayout = (props: Props) => {
@@ -72,6 +74,11 @@ const ChatRoomLayout = (props: Props) => {
 					</NavbarItem>
 				</NavbarContent>
 				<NavbarContent aria-label="Main Navigation Content" justify="end" className="gap-10">
+					{props.enableSettings && (
+						<NavbarItem aria-label="Settings">
+							<Settings />
+						</NavbarItem>
+					)}
 					<NavbarItem aria-label="Connect Wallet">
 						<WalletConnect />
 					</NavbarItem>

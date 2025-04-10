@@ -9,7 +9,6 @@ import tz from 'dayjs/plugin/timezone';
 import utc from 'dayjs/plugin/utc';
 import weekOfYear from 'dayjs/plugin/weekOfYear';
 
-import { Locale } from '@/types/locale';
 import { env } from '@/utils/env';
 
 dayjs.extend(localizedFormat);
@@ -20,7 +19,7 @@ dayjs.extend(relativeTime);
 dayjs.extend(weekOfYear);
 dayjs.extend(advancedFormat);
 
-const initDayjs = (locale: Locale = Locale.ZH_TW, timezone = env.NEXT_PUBLIC_DEFAULT_TIME_ZONE) => {
+const initDayjs = (locale: Locale = env.NEXT_PUBLIC_DEFAULT_LOCALE, timezone = env.NEXT_PUBLIC_DEFAULT_TIME_ZONE) => {
 	dayjs.tz.setDefault(timezone);
 	dayjs.locale(locale);
 };

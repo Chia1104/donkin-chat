@@ -1,6 +1,8 @@
 {
 	"meta": {
-		"title": "Donkin"
+		"title": "Donkin",
+		"subtitle": "隨時掌握幣圈最新動態，掌握投資先機",
+		"description": "Donkin 是幣圈最專業的 AI 投顧，提供即時的幣圈資訊和智能的投資建議。"
 	},
 	"theme": {
 		"label": "主題",
@@ -10,13 +12,31 @@
 	},
 	"locale": {
 		"label": "語言",
-		"zh-tw": "繁體中文",
-		"en": "英文"
+		"zh-TW": "繁體中文",
+		"zh-CN": "簡體中文",
+		"en-US": "英文"
+	},
+	"routes": {
+		"home": {
+			"title": "熱門代幣"
+		},
+		"token": {
+			"title": "代幣訊息",
+			"utils": {
+				"title-with-item": "{item} 代幣"
+			}
+		},
+		"wallet": {
+			"title": "聰明錢包",
+			"utils": {
+				"title-with-item": "{item} 聰明錢包"
+			}
+		}
 	},
 	"action": {
 		"confirm": "確認",
 		"cancel": "取消",
-		"connect-wallet": "连接钱包",
+		"connect-wallet": "連接錢包",
 		"reset": "重置",
 		"active": "應用",
 		"clear": "清除",
@@ -25,20 +45,20 @@
 		"back-to-home": "返回首頁",
 		"skip": "略過",
 		"experience": "立即體驗",
-		"copy": "复制",
-		"copied": "已复制",
-		"retry": "重试",
-		"send": "发送",
-		"pause": "暂停"
+		"copy": "複製",
+		"copied": "已複製",
+		"retry": "重試",
+		"send": "發送",
+		"pause": "暫停"
 	},
 	"onboarding": {
 		"donkin": {
-			"title": "币圈最专业的",
-			"description": "用智能化的方式帮助客户更好地投资加密货币，提升投资效率和决策质量。",
+			"title": "幣圈最專業的",
+			"description": "用智能化的方式幫助客戶更好地投資加密貨幣，提升投資效率和決策質量。",
 			"button": {
-				"hot-tokens": "KOL 都在喊单什么Token？",
-				"smart-wallets": "聪明钱地址都在买什么",
-				"whale-addresses": "最近巨鲸地址都在买什么？"
+				"hot-tokens": "KOL 都在喊單什麼Token？",
+				"smart-wallets": "聰明錢地址都在買什麼",
+				"whale-addresses": "最近巨鯨地址都在買什麼？"
 			}
 		}
 	},
@@ -78,34 +98,34 @@
 		"all-tokens": "所有Token"
 	},
 	"footer": {
-		"about": "关于 Donkin",
-		"privacy": "隐私权",
-		"contact": "联络我们",
+		"about": "關於 Donkin",
+		"privacy": "隱私權",
+		"contact": "聯絡我們",
 		"copyright": "Copyright © {year} Donkin. • All Rights Reserved"
 	},
 	"chat": {
-		"prompt-placeholder": "你想知道什么",
-		"donkin-title": "币圈最专业AI投顾",
-		"donkin-subtitle": "你好！我是 Donkin。你可以随时查询币圈即時信息。请告诉我你感兴趣的内容吧！",
+		"prompt-placeholder": "你想知道什麼",
+		"donkin-title": "幣圈最專業AI投顧",
+		"donkin-subtitle": "你好！我是 Donkin。你可以隨時查詢幣圈即時信息。請告訴我你感興趣的內容吧！",
 		"donkin-warning": "Donkin 可能提供不精確的資訊，請查證重要訊息",
 		"default-prompt": {
 			"title": "例子：",
-			"latest-coins": "最近最火的代币有哪些",
-			"smart-wallet-recommendations": "聪明钱地址都在买什么",
-			"largest-whales": "最近巨鲸地址都在买什么",
-			"info-about": "我想了解 {item} 代币的信息"
+			"latest-coins": "最近最火的代幣有哪些",
+			"smart-wallet-recommendations": "聰明錢地址都在買什麼",
+			"largest-whales": "最近巨鯨地址都在買什麼",
+			"info-about": "我想了解 {item} 代幣的信息"
 		},
 		"search": {
 			"title": "Donkin 搜尋中...",
-			"error": "搜索时发生错误，请重新输入。"
+			"error": "搜索時發生錯誤，請重新輸入。"
 		}
 	},
 	"preview": {
 		"ai-signal": {
 			"title": "AI 精選信號",
 			"card": {
-				"x-hotspot": "X 热点指数",
-				"tg-hotspot": "TG 热点指数",
+				"x-hotspot": "X 熱點指數",
+				"tg-hotspot": "TG 熱點指數",
 				"stock": {
 					"marketCap": "市值",
 					"price": "價格",
@@ -117,26 +137,26 @@
 				"date": "上線時間"
 			},
 			"action": {
-				"more": "显示更多币种"
+				"more": "顯示更多幣種"
 			}
 		},
 		"tree-map": {
 			"title": "熱力圖",
 			"action": {
-				"more": "显示更多币种"
+				"more": "顯示更多幣種"
 			}
 		},
 		"tokens-list": {
 			"filter": {
-				"hot": "热度",
+				"hot": "熱度",
 				"up-time": {
-					"label": "上线时间",
+					"label": "上線時間",
 					"des": "遞減",
 					"asc": "遞增"
 				},
 				"market-cap": "市值",
 				"change": {
-					"label": "涨幅",
+					"label": "漲幅",
 					"1H": "1H",
 					"6H": "6H",
 					"24H": "24H"
@@ -164,16 +184,16 @@
 				"transaction-more-100": "> 100",
 				"favorite-only": "僅顯示我的收藏",
 				"filter-title": "篩選顯示",
-				"filter-recommend": "推荐",
-				"filter-manual": "自选",
+				"filter-recommend": "推薦",
+				"filter-manual": "自選",
 				"type-title": "聰明錢類型",
 				"type-smart-money": "聰明錢",
-				"type-whale": "巨鲸",
+				"type-whale": "巨鯨",
 				"type-kol": "KOL",
-				"transaction-title": "交易金额",
+				"transaction-title": "交易金額",
 				"profit-title": "利潤",
 				"order-title": "喊單數量",
-				"kol-order": "KOL 喊单次数"
+				"kol-order": "KOL 喊單次數"
 			}
 		},
 		"holder": "持有人",
@@ -183,11 +203,11 @@
 			"description": "您嘗試訪問的代幣不存在或已被移除。請檢查您的鏈接是否正確，或嘗試連接您的錢包查看您的代幣。"
 		},
 		"order-popover": {
-			"total-buy": "总买入金额",
-			"total-sell": "总卖出金额",
-			"total-volume": "清仓",
-			"order-success": "喊单成功次数",
-			"ask-more": "你还想知道..."
+			"total-buy": "總買入金額",
+			"total-sell": "總賣出金額",
+			"total-volume": "清倉",
+			"order-success": "喊單成功次數",
+			"ask-more": "你還想知道..."
 		}
 	},
 	"donkin": {
@@ -197,43 +217,43 @@
 			"thinking": "Donkin 正在思考中..."
 		},
 		"action": {
-			"open": "展開 AI 投顾",
-			"close": "收合 AI 投顾"
+			"open": "展開 AI 投顧",
+			"close": "收合 AI 投顧"
 		},
 		"ask-more": {
 			"kol-order": {
-				"smart-wallet": "哪些聪明钱在此 K 线上交易？",
-				"kol-order": "哪些 KOL 喊单？成效如何？"
+				"smart-wallet": "哪些聰明錢在此 K 線上交易？",
+				"kol-order": "哪些 KOL 喊單？成效如何？"
 			},
 			"token-name": {
 				"basic-info": "Token 基本信息分析",
 				"basic-info-with-item": "{item} 基本信息分析",
-				"price-analysis": "涨跌原因分析",
-				"kol-order": "KOL 喊单分析",
-				"kol-order-with-item": "{item} KOL 喊单分析",
-				"kol-order-error": "找不到喊单信息",
-				"smart-wallet": "聪明钱买入分析"
+				"price-analysis": "漲跌原因分析",
+				"kol-order": "KOL 喊單分析",
+				"kol-order-with-item": "{item} KOL 喊單分析",
+				"kol-order-error": "找不到喊單信息",
+				"smart-wallet": "聰明錢買入分析"
 			},
 			"address-detail": {
-				"history-analysis": "地址分析（历史胜率/PnL）",
-				"current-holdings": "当前持仓分析"
+				"history-analysis": "地址分析（歷史勝率/PnL）",
+				"current-holdings": "當前持倉分析"
 			}
 		}
 	},
 	"address": {
 		"order-details": {
-			"symbol": "资产",
+			"symbol": "資產",
 			"amount": "數量",
 			"price": "價格",
-			"value": "价值",
-			"profit": "盈亏",
+			"value": "價值",
+			"profit": "盈虧",
 			"transaction-count": "交易筆數",
-			"title": "总盈亏明细"
+			"title": "總盈虧明細"
 		},
 		"order-history": {
-			"balance-history": "馀額历史",
-			"profit-loss": "每日盈亏",
-			"title": "馀額历史＆盈亏",
+			"balance-history": "餘額歷史",
+			"profit-loss": "每日盈虧",
+			"title": "餘額歷史＆盈虧",
 			"win-rate": "勝率",
 			"profit-loss-rate": "盈虧"
 		},
