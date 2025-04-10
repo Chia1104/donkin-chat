@@ -1,4 +1,4 @@
-import { CircularProgress } from '@heroui/progress';
+import { Spinner } from '@heroui/spinner';
 import { useTranslations } from 'next-intl';
 
 import { TextPath } from '@/components/ui/text-path';
@@ -24,7 +24,7 @@ const AppLoading = (props: Props) => {
 					/>
 				</span>
 			)}
-			<CircularProgress aria-label="Loading..." />
+			<Spinner aria-label="Loading..." />
 		</div>
 	);
 };

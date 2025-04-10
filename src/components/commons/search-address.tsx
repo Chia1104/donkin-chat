@@ -9,6 +9,7 @@ import { asyncDebounce } from '@tanstack/react-pacer/async-debouncer';
 import { useTranslations } from 'next-intl';
 
 import { useCMD } from '@/hooks/useCMD';
+import { logger } from '@/utils/logger';
 
 interface Data {
 	symbol: string;
@@ -24,7 +25,7 @@ const SearchAddress = () => {
 
 	const debouncedSetSearch = asyncDebounce(
 		(value?: string) => {
-			console.log(value);
+			logger(value, { type: 'log' });
 			return Promise.resolve([]);
 		},
 		{

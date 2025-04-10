@@ -8,6 +8,7 @@ import { Button, ButtonGroup } from '@heroui/button';
 import { Divider } from '@heroui/divider';
 import { Image } from '@heroui/image';
 import { ScrollShadow } from '@heroui/scroll-shadow';
+import { Skeleton } from '@heroui/skeleton';
 import { Spinner } from '@heroui/spinner';
 import { Tabs, Tab } from '@heroui/tabs';
 import { Tooltip } from '@heroui/tooltip';
@@ -28,6 +29,7 @@ import { Chart } from '../chart/trading-chart/chart';
 import { MarkerTooltipProvider, MarkerTooltip } from '../chart/trading-chart/plugins/clickable-marker/marker-tooltip';
 import { Series } from '../chart/trading-chart/series';
 import CopyButton from '../commons/copy-button';
+import { ErrorBoundary } from '../commons/error-boundary';
 import DonkinPopover from '../donkin/popover';
 
 export interface OrderHistoryDataItem {
@@ -36,17 +38,17 @@ export interface OrderHistoryDataItem {
 	isProfit?: boolean;
 }
 
-interface OrderHistoryProps {
-	meta: {
+export interface OrderHistoryProps {
+	meta?: {
 		avatar?: string;
 		address: string;
 		volume: number | string;
-		profit: string;
+		profit: number | string;
 	};
-	win: {
-		rate: number;
+	win?: {
+		rate: number | string;
 	};
-	profit: {
+	profit?: {
 		rate: number;
 		amount: number;
 	};
@@ -134,6 +136,7 @@ const DisplayFilter = () => {
 
 const DateFilter = () => {
 	const [searchParams, setSearchParams] = useAddressSearchParams();
+	const { isPending, isMetaPending } = useOrderHistory();
 
 	return (
 		<ScrollShadow orientation="horizontal" className="w-fit">
@@ -147,6 +150,7 @@ const DateFilter = () => {
 						interval: key as IntervalFilter,
 					});
 				}}
+				isDisabled={isPending || isMetaPending}
 			>
 				<Tab key={IntervalFilter.OneWeek} title={IntervalFilter.OneWeek} className="px-2 py-0" />
 				<Tab key={IntervalFilter.OneMonth} title={IntervalFilter.OneMonth} className="px-2 py-0" />
@@ -158,6 +162,28 @@ const DateFilter = () => {
 const Meta = () => {
 	const { meta } = useOrderHistory();
 	const tAskMore = useTranslations('donkin.ask-more');
+	const { isMetaPending } = useOrderHistory();
+
+	if (isMetaPending || !meta) {
+		return (
+			<div className="flex items-center justify-between w-full">
+				<div className="flex items-center gap-4">
+					<Avatar size="md" className="w-12 h-12" />
+					<span className="flex items-center gap-2">
+						<Skeleton className="w-20 h-4 rounded-full" />
+					</span>
+					<Divider orientation="vertical" className="h-4" />
+					<p className="text-[22px] font-normal">
+						<Skeleton className="w-20 h-4 rounded-full" />
+					</p>
+					<span className="flex items-center gap-1">
+						<Skeleton className="w-20 h-4 rounded-full" />
+					</span>
+				</div>
+				<DateFilter />
+			</div>
+		);
+	}
 
 	const isPositive = isPositiveNumber(meta.profit) || (typeof meta.profit === 'string' && meta.profit.startsWith('+'));
 
@@ -182,7 +208,9 @@ const Meta = () => {
 					<CopyButton content={meta.address} />
 				</span>
 				<Divider orientation="vertical" className="h-4" />
-				<p className="text-[22px] font-normal">${isNumber(meta.volume) ? roundDecimal(meta.volume, 0) : meta.volume}</p>
+				<p className="text-[22px] font-normal">
+					${isNumber(meta.volume) ? formatLargeNumber(meta.volume, 2) : meta.volume}
+				</p>
 				<span className="flex items-center gap-1">
 					<p className={cn('text-xs font-normal', isPositive ? 'text-success' : 'text-danger')}>
 						{isPositive && '+'}
@@ -201,7 +229,8 @@ const Meta = () => {
 };
 const Header = () => {
 	const t = useTranslations('address.order-history');
-	const { win, profit } = useOrderHistory();
+	const { win, profit, isMetaPending } = useOrderHistory();
+
 	return (
 		<div className="flex justify-between items-center w-full">
 			<div className="flex items-center gap-2">
@@ -211,15 +240,24 @@ const Header = () => {
 			<div className="flex items-center gap-4">
 				<span className="flex items-center gap-2">
 					<p className="text-description text-xs font-normal">{t('win-rate')}</p>
-					<p className="text-sm font-normal">{win.rate}%</p>
+					{isMetaPending || !win ? (
+						<Skeleton className="w-20 h-4 rounded-full" />
+					) : (
+						<p className="text-sm font-normal">{isNumber(win.rate) ? roundDecimal(win.rate, 2) : '-'}%</p>
+					)}
 				</span>
 				<Divider orientation="vertical" className="h-4" />
 				<span className="flex items-center gap-2">
 					<p className="text-description text-xs font-normal">{t('profit-loss-rate')}</p>
-					<p className="text-sm font-normal">
-						{profit.rate}% ({isPositiveNumber(profit.amount) ? '+' : '-'}$
-						{isNumber(profit.amount) ? formatLargeNumber(profit.amount) : profit.amount})
-					</p>
+					{isMetaPending || !profit ? (
+						<Skeleton className="w-20 h-4 rounded-full" />
+					) : (
+						<p className="text-sm font-normal">
+							{isNumber(profit.rate) ? roundDecimal(profit.rate, 2) : '-'}% (
+							{isPositiveNumber(profit.amount) ? '+' : ''}
+							{isNumber(profit.amount) ? formatLargeNumber(profit.amount) : profit.amount})
+						</p>
+					)}
 				</span>
 			</div>
 		</div>
@@ -322,10 +360,12 @@ const OrderHistory = (props: OrderHistoryProps) => {
 			<section className="w-full rounded-lg flex flex-col gap-6">
 				<Meta />
 				<Header />
-				<MarkerTooltipProvider>
-					<OrderChart />
-					<MarkerTooltip />
-				</MarkerTooltipProvider>
+				<ErrorBoundary>
+					<MarkerTooltipProvider>
+						<OrderChart />
+						<MarkerTooltip />
+					</MarkerTooltipProvider>
+				</ErrorBoundary>
 			</section>
 		</OrderHistoryProvider>
 	);

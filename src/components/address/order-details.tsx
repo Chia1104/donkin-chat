@@ -1,9 +1,9 @@
 'use client';
 
-import { useMemo, memo } from 'react';
+import { useMemo, memo, useEffect } from 'react';
 
 import { Avatar } from '@heroui/avatar';
-import { Tooltip } from '@heroui/react';
+import { Spinner, Tooltip } from '@heroui/react';
 import { Table, TableHeader, TableBody, TableColumn, TableRow, TableCell } from '@heroui/table';
 import { useAsyncList } from '@react-stately/data';
 import { useTranslations } from 'next-intl';
@@ -11,6 +11,7 @@ import { useTranslations } from 'next-intl';
 import { IntervalFilter } from '@/libs/address/enums/interval-filter.enum';
 import { useAddressSearchParams } from '@/libs/address/hooks/useAddressSearchParams';
 import type { Address } from '@/libs/address/pipes/address.pipe';
+import { useAskToken } from '@/libs/ai/hooks/useAskToken';
 import dayjs from '@/utils/dayjs';
 import { formatLargeNumber, roundDecimal } from '@/utils/format';
 import { isNumber, isPositiveNumber } from '@/utils/is';
@@ -128,24 +129,13 @@ export const MOCK_ROWS: Data[] = [
 ];
 
 const Cell = memo(({ item, columnKey }: { item: Data; columnKey: keyof Data }) => {
-	const tAskMore = useTranslations('donkin.ask-more');
+	const askToken = useAskToken(item.symbol);
 
 	switch (columnKey) {
 		case 'symbol':
 			return (
 				<Tooltip
-					content={
-						<DonkinPopover
-							onAskMore={console.log}
-							className="w-[220px]"
-							askMore={[
-								tAskMore('token-name.basic-info'),
-								tAskMore('token-name.price-analysis'),
-								tAskMore('token-name.kol-order'),
-								tAskMore('token-name.smart-wallet'),
-							]}
-						/>
-					}
+					content={<DonkinPopover className="w-[220px]" {...askToken} />}
 					classNames={{
 						base: 'shadow-none',
 						content: 'bg-transparent shadow-none p-0',
@@ -190,13 +180,16 @@ const Cell = memo(({ item, columnKey }: { item: Data; columnKey: keyof Data }) =
 const OrderDetails = <TMock extends boolean = false>({
 	data,
 	mock,
+	isPending,
 }: {
 	data: TMock extends true ? undefined : Address;
 	mock?: TMock;
+	isPending?: boolean;
 }) => {
 	const columns = useColumns();
 	const [searchParams] = useAddressSearchParams();
 	const t = useTranslations('address.order-details');
+	const tUtils = useTranslations('utils');
 
 	const date = useMemo(() => {
 		switch (searchParams.interval) {
@@ -237,7 +230,7 @@ const OrderDetails = <TMock extends boolean = false>({
 					token =>
 						({
 							symbol: token.symbol,
-							avatar: token.symbol,
+							avatar: token.url,
 							amount: Number(token.amount),
 							price: Number(token.price),
 							value: Number(token.value),
@@ -273,6 +266,14 @@ const OrderDetails = <TMock extends boolean = false>({
 		},
 	});
 
+	/**
+	 * This is a workaround to reload the list when the data changes.
+	 */
+	useEffect(() => {
+		list.reload();
+		// eslint-disable-next-line react-hooks/exhaustive-deps
+	}, [data]);
+
 	return (
 		<section className="bg-[#FFFFFF08] rounded-md p-6 flex flex-col gap-3">
 			<span className="flex items-center gap-2">
@@ -299,7 +300,12 @@ const OrderDetails = <TMock extends boolean = false>({
 						</TableColumn>
 					)}
 				</TableHeader>
-				<TableBody emptyContent="No data" items={list.items}>
+				<TableBody
+					emptyContent={tUtils('no-data')}
+					items={list.items}
+					isLoading={isPending}
+					loadingContent={<Spinner />}
+				>
 					{item => (
 						<TableRow key={item.symbol}>
 							{columnKey => (

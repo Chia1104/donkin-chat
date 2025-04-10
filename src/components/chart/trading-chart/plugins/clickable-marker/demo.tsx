@@ -6,6 +6,8 @@ import dayjs from 'dayjs';
 import type { Time } from 'lightweight-charts';
 import { CandlestickSeries, createChart } from 'lightweight-charts';
 
+import { logger } from '@/utils/logger';
+
 import type { ClickableMarker } from './core';
 import { createClickableMarkers } from './core';
 import { MarkerTooltipProvider, MarkerTooltip, useMarkerTooltipStore } from './marker-tooltip';
@@ -84,7 +86,7 @@ const Chart = () => {
 		// 創建可點擊標記
 		createClickableMarkers<Time>(chart, series, mockMarkers, {
 			onClick: marker => {
-				console.log('標記被點擊:', marker);
+				logger(['標記被點擊:', marker], { type: 'log' });
 			},
 			onOpenTooltip: openTooltip,
 			onCloseTooltip: closeTooltip,
