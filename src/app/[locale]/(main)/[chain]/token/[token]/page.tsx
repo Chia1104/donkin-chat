@@ -1,4 +1,6 @@
 import { HydrationBoundary, dehydrate } from '@tanstack/react-query';
+import type { Metadata } from 'next';
+import { getTranslations } from 'next-intl/server';
 import { notFound } from 'next/navigation';
 
 import Detail from '@/containers/token/detail';
@@ -6,6 +8,13 @@ import { getToken } from '@/libs/token/resources/token.resource';
 import { loadGlobalSearchParams } from '@/services/loadGlobalSearchParams';
 import { IS_DEV } from '@/utils/env';
 import { getQueryClient } from '@/utils/query-client';
+
+export async function generateMetadata(): Promise<Metadata> {
+	const tRoutes = await getTranslations('routes');
+	return {
+		title: tRoutes('token.title'),
+	};
+}
 
 const Page = async (props: PagePropsWithLocale<{ token: string }>) => {
 	const queryClient = getQueryClient();

@@ -3,6 +3,7 @@ import type { ReactNode } from 'react';
 import type { Metadata } from 'next';
 import { getMessages, getTimeZone } from 'next-intl/server';
 import { setRequestLocale } from 'next-intl/server';
+import { getTranslations } from 'next-intl/server';
 import { headers } from 'next/headers';
 import { notFound } from 'next/navigation';
 import { cookieToInitialState } from 'wagmi';
@@ -15,15 +16,17 @@ import { routing } from '@/libs/i18n/routing';
 import { initDayjs } from '@/utils/dayjs';
 import { env } from '@/utils/env';
 
-export const metadata: Metadata = {
-	metadataBase: new URL(env.NEXT_PUBLIC_SITE_URL),
-	title: {
-		default: `Home | Donkin`,
-		template: `%s | Donkin`,
-	},
-	description: 'This is Donkin',
-	creator: 'Donkin',
-};
+export async function generateMetadata(): Promise<Metadata> {
+	const [tMeta, tRoutes] = await Promise.all([getTranslations('meta'), getTranslations('routes')]);
+	return {
+		metadataBase: new URL(env.NEXT_PUBLIC_SITE_URL),
+		title: {
+			default: `${tRoutes('home.title')} | ${tMeta('title')}`,
+			template: `%s | ${tMeta('title')}`,
+		},
+		description: tMeta('description'),
+	};
+}
 
 export function generateStaticParams() {
 	return routing.locales.map(locale => ({ locale }));
