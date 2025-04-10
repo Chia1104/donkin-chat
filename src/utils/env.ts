@@ -1,6 +1,8 @@
 import { createEnv } from '@t3-oss/env-nextjs';
 import { z } from 'zod';
 
+import { Locale } from '@/enums/locale.enum';
+
 export const getAppEnv = () => {
 	if (process.env.NEXT_PUBLIC_APP_ENV) {
 		return process.env.NEXT_PUBLIC_APP_ENV;
@@ -31,7 +33,7 @@ export const env = createEnv({
 		NEXT_PUBLIC_APP_API_HOST: z.string().min(1),
 		NEXT_PUBLIC_APP_AI_API_HOST: z.string().min(1),
 		NEXT_PUBLIC_DEFAULT_TIME_ZONE: z.string().min(1),
-		NEXT_PUBLIC_DEFAULT_LOCALE: z.enum(['zh-TW', 'zh-CN', 'en-US']),
+		NEXT_PUBLIC_DEFAULT_LOCALE: z.nativeEnum(Locale),
 		NEXT_PUBLIC_DEBUG_ZUSTAND_DEVTOOLS: z.string().optional(),
 	},
 
