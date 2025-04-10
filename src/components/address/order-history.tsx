@@ -13,7 +13,7 @@ import { Spinner } from '@heroui/spinner';
 import { Tabs, Tab } from '@heroui/tabs';
 import { Tooltip } from '@heroui/tooltip';
 import { ColorType, HistogramSeries, AreaSeries } from 'lightweight-charts';
-import type { Time, ISeriesApi } from 'lightweight-charts';
+import type { Time, ISeriesApi, DeepPartial, TimeChartOptions } from 'lightweight-charts';
 import { useLocale } from 'next-intl';
 import { useTranslations } from 'next-intl';
 
@@ -264,7 +264,7 @@ const Header = () => {
 const OrderChart = () => {
 	const locale = useLocale();
 	const [searchParams] = useAddressSearchParams();
-	const [initOptions] = useState({
+	const [initOptions] = useState<DeepPartial<TimeChartOptions>>({
 		autoSize: true,
 		layout: {
 			textColor: 'rgba(255, 255, 255, 0.25)',
@@ -284,6 +284,16 @@ const OrderChart = () => {
 		},
 		timeScale: {
 			timeVisible: true,
+		},
+		// 設置右側價格軸顯示
+		rightPriceScale: {
+			visible: true,
+			borderVisible: false,
+		},
+		// 設置左側價格軸顯示
+		leftPriceScale: {
+			visible: true,
+			borderVisible: false,
 		},
 	});
 	const areaSeriesRef = useRef<ISeriesApi<'Area'>>(null);
@@ -344,6 +354,7 @@ const OrderChart = () => {
 							precision: 2,
 							minMove: 0.01,
 						},
+						priceScaleId: 'left',
 					}}
 				/>
 			)}
