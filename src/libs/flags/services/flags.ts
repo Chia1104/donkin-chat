@@ -32,9 +32,13 @@ type CookieFeatures = z.infer<typeof cookieFeaturesSchema>;
 export const cookieFeaturesFlag = flag<CookieFeatures, CookieFeatures>({
 	key: FlagID.CookieFeatures,
 	identify({ cookies }) {
-		const value = cookies.get(FlagID.CookieFeatures)?.value;
-		if (!value) return undefined;
-		return cookieFeaturesSchema.parse(JSON.parse(value));
+		try {
+			const value = cookies.get(FlagID.CookieFeatures)?.value;
+			if (!value) return undefined;
+			return cookieFeaturesSchema.parse(JSON.parse(value));
+		} catch {
+			return DEFAULT_COOKIE_FEATURES;
+		}
 	},
 	decide({ entities }) {
 		if (!entities) return DEFAULT_COOKIE_FEATURES;
