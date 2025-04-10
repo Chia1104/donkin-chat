@@ -7,9 +7,9 @@ import { Popover, PopoverContent, PopoverTrigger } from '@heroui/popover';
 import { useLocale } from 'next-intl';
 
 import FilterForm from '@/components/token/filter-form';
+import { Locale } from '@/enums/locale.enum';
 import { DEFAULT_FILTER_FORM_DATA } from '@/libs/token/hooks/useFilterFormSchema';
 import { useTokenSearchParams } from '@/libs/token/hooks/useTokenSearchParams';
-import { Locale } from '@/types/locale';
 import { cn } from '@/utils/cn';
 
 export const FilterAction = () => {

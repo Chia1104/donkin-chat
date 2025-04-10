@@ -31,6 +31,7 @@ export const env = createEnv({
 		NEXT_PUBLIC_APP_API_HOST: z.string().min(1),
 		NEXT_PUBLIC_APP_AI_API_HOST: z.string().min(1),
 		NEXT_PUBLIC_DEFAULT_TIME_ZONE: z.string().min(1),
+		NEXT_PUBLIC_DEFAULT_LOCALE: z.enum(['zh-TW', 'zh-CN', 'en-US']),
 		NEXT_PUBLIC_DEBUG_ZUSTAND_DEVTOOLS: z.string().optional(),
 	},
 
@@ -46,7 +47,8 @@ export const env = createEnv({
 		NEXT_PUBLIC_GA_ID: process.env.NEXT_PUBLIC_GA_ID,
 		NEXT_PUBLIC_APP_API_HOST: process.env.NEXT_PUBLIC_APP_API_HOST,
 		NEXT_PUBLIC_APP_AI_API_HOST: process.env.NEXT_PUBLIC_APP_AI_API_HOST,
-		NEXT_PUBLIC_DEFAULT_TIME_ZONE: process.env.NEXT_PUBLIC_DEFAULT_TIME_ZONE || 'Asia/Taipei',
+		NEXT_PUBLIC_DEFAULT_TIME_ZONE: process.env.NEXT_PUBLIC_DEFAULT_TIME_ZONE || 'Asia/Shanghai',
+		NEXT_PUBLIC_DEFAULT_LOCALE: process.env.NEXT_PUBLIC_DEFAULT_LOCALE || 'zh-CN',
 		OPENAI_API_KEY: process.env.OPENAI_API_KEY,
 		BIRDEYE_API_KEY: process.env.BIRDEYE_API_KEY,
 		NEXT_PUBLIC_DEBUG_ZUSTAND_DEVTOOLS:

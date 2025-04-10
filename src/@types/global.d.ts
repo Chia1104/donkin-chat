@@ -2,9 +2,8 @@ import type { formats } from '@/libs/i18n/request';
 import type { routing } from '@/libs/i18n/routing';
 
 import type en_us from '~/messages/en-US.json';
-import type zh_tw from '~/messages/zh-TW.json';
 
-type Messages = typeof en_us & typeof zh_tw;
+type Messages = typeof en_us;
 
 declare module 'next-intl' {
 	interface AppConfig {

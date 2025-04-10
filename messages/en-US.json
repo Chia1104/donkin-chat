@@ -10,8 +10,26 @@
 	},
 	"locale": {
 		"label": "Language",
-		"zh-tw": "Traditional Chinese",
-		"en": "English"
+		"zh-TW": "Traditional Chinese",
+		"zh-CN": "Simplified Chinese",
+		"en-US": "English"
+	},
+	"routes": {
+		"home": {
+			"title": "Hot Tokens"
+		},
+		"token": {
+			"title": "Token Information",
+			"utils": {
+				"title-with-item": "{item} Tokens"
+			}
+		},
+		"wallet": {
+			"title": "Smart Wallets",
+			"utils": {
+				"title-with-item": "{item} Smart Wallets"
+			}
+		}
 	},
 	"action": {
 		"confirm": "Confirm",

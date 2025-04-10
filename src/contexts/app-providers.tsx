@@ -6,12 +6,12 @@ import type { AbstractIntlMessages } from 'next-intl';
 import { NextIntlClientProvider, useLocale } from 'next-intl';
 import type { Locale } from 'next-intl';
 import { ThemeProvider as NextThemeProvider } from 'next-themes';
+import { useTransitionRouter as useRouter } from 'next-view-transitions';
 import { NuqsAdapter } from 'nuqs/adapters/next/app';
 import { WagmiProvider } from 'wagmi';
 import type { State as WagmiSessionState } from 'wagmi';
 
 import { wagmiConfig } from '@/config/wagmi';
-import { useRouter } from '@/libs/i18n/routing';
 import { getQueryClient } from '@/utils/query-client';
 
 import SolanaWalletProvider from './solana-wallet-provider';
