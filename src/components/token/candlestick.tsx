@@ -1,13 +1,9 @@
 'use client';
 
-import { memo, createContext, use, useMemo, useState, useCallback, useRef, useEffect } from 'react';
+import { createContext, use, useMemo, useState, useCallback, useRef, useEffect } from 'react';
 import type { PropsWithChildren } from 'react';
 
-import { Chip } from '@heroui/chip';
-import { ScrollShadow } from '@heroui/scroll-shadow';
-import { Skeleton } from '@heroui/skeleton';
 import { Spinner } from '@heroui/spinner';
-import { Tabs, Tab } from '@heroui/tabs';
 import { useQueryClient } from '@tanstack/react-query';
 import { ColorType, HistogramSeries, CandlestickSeries, createTextWatermark } from 'lightweight-charts';
 import type { Time, ISeriesApi } from 'lightweight-charts';
@@ -20,8 +16,6 @@ import { IntervalFilter } from '@/libs/token/enums/interval-filter.enum';
 import { useTokenSearchParams } from '@/libs/token/hooks/useTokenSearchParams';
 import { theme as twTheme } from '@/themes/tw.theme';
 import dayjs from '@/utils/dayjs';
-import { formatLargeNumber, roundDecimal } from '@/utils/format';
-import { isPositiveNumber, isNegativeNumber, isNumber } from '@/utils/is';
 
 import { useChart } from '../chart/trading-chart/chart';
 import { Chart as TradingChart } from '../chart/trading-chart/chart';
@@ -59,61 +53,6 @@ const useCandlestick = () => {
 		throw new Error('CandlestickProvider must be used within CandlestickProvider');
 	}
 	return context;
-};
-
-const DateFilter = memo(() => {
-	const [searchParams, setSearchParams] = useTokenSearchParams();
-	return (
-		<ScrollShadow orientation="horizontal" className="w-fit">
-			<Tabs
-				aria-label="filter time"
-				size="sm"
-				variant="light"
-				selectedKey={searchParams.interval}
-				onSelectionChange={key => {
-					void setSearchParams({
-						interval: key as IntervalFilter,
-					});
-				}}
-			>
-				{Object.values(IntervalFilter).map(interval => (
-					<Tab key={interval} title={interval} className="px-2 py-0" />
-				))}
-			</Tabs>
-		</ScrollShadow>
-	);
-});
-
-const MetaInfo = () => {
-	const { meta, isMetaPending } = useCandlestick();
-	const isPositiveChange =
-		isPositiveNumber(meta.change) || (typeof meta.change === 'string' && meta.change.startsWith('+'));
-	const isNegativeChange =
-		isNegativeNumber(meta.change) || (typeof meta.change === 'string' && meta.change.startsWith('-'));
-	return (
-		<div className="flex items-center gap-2">
-			<h3 className="text-[22px] font-medium">
-				{!isMetaPending ? `$ ${formatLargeNumber(meta.price)}` : <Skeleton className="w-20 h-5 rounded-full" />}
-			</h3>
-			{!isMetaPending ? (
-				<Chip
-					color={isPositiveChange ? 'success' : isNegativeChange ? 'danger' : 'default'}
-					variant="flat"
-					radius="sm"
-					size="sm"
-				>
-					{isNumber(meta.change)
-						? isPositiveChange
-							? `+${roundDecimal(meta.change, 2)}`
-							: roundDecimal(meta.change, 2)
-						: meta.change}
-					%
-				</Chip>
-			) : (
-				<Skeleton className="w-10 h-3 rounded-full" />
-			)}
-		</div>
-	);
 };
 
 const SubscribeCandlestick = ({
@@ -395,18 +334,12 @@ const Chart = () => {
 const Candlestick = (props: CandlestickProps) => {
 	return (
 		<CandlestickProvider {...props}>
-			<section className="w-full rounded-lg flex flex-col gap-10">
-				<header className="flex items-center justify-between">
-					<MetaInfo />
-					<DateFilter />
-				</header>
-				<ErrorBoundary>
-					<MarkerTooltipProvider>
-						<Chart />
-						<MarkerTooltip />
-					</MarkerTooltipProvider>
-				</ErrorBoundary>
-			</section>
+			<ErrorBoundary>
+				<MarkerTooltipProvider>
+					<Chart />
+					<MarkerTooltip />
+				</MarkerTooltipProvider>
+			</ErrorBoundary>
 		</CandlestickProvider>
 	);
 };
