@@ -1,8 +1,10 @@
-import { init, replayIntegration } from '@sentry/nextjs';
+import { init, replayIntegration, captureRouterTransitionStart } from '@sentry/nextjs';
 
 import { env } from '@/utils/env';
 
 console.log('Client instrumentation initialized');
+
+export const onRouterTransitionStart = captureRouterTransitionStart;
 
 init({
 	dsn: env.NEXT_PUBLIC_SENTRY_DSN,
