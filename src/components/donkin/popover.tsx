@@ -40,7 +40,7 @@ const DonkinPopover = forwardRef<HTMLDivElement | null, Props>((props, ref) => {
 			className={cn('w-full max-w-[220px] shadow-none bg-[#1C2633]', className)}
 		>
 			{header && (
-				<CardHeader className="flex flex-row items-center">
+				<CardHeader className="flex flex-row items-center justify-between">
 					{header}
 					{onClose && (
 						<Button
@@ -77,6 +77,7 @@ const DonkinPopover = forwardRef<HTMLDivElement | null, Props>((props, ref) => {
 								current={status === 'streaming' ? 'thinking' : 'open'}
 								isActivatable={false}
 								className="size-[14px]"
+								enableEffect
 							/>
 							<span className="font-normal text-xs text-primary">{t('ask-more')}</span>
 						</div>

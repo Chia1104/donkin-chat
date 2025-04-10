@@ -51,6 +51,7 @@ const Detail = () => {
 		{
 			address: params.address,
 			interval: searchParams.interval,
+			timeout: 60_000,
 		},
 		{
 			enabled: !globalSearchParams.mock,
@@ -69,6 +70,7 @@ const Detail = () => {
 		return queryResult.data.daily_data.map(item => ({
 			time: dayjs(item.date).unix() as Time,
 			value: Number(item.balance_usd),
+			tokens: item.token_pnls,
 		}));
 	}, [queryResult.data, globalSearchParams.mock]);
 
@@ -85,6 +87,7 @@ const Detail = () => {
 			time: dayjs(item.date).unix() as Time,
 			value: Number(item.daily_return),
 			isProfit: isPositiveNumber(Number(item.daily_return_rate)),
+			tokens: item.token_pnls,
 		}));
 	}, [queryResult.data, globalSearchParams.mock]);
 

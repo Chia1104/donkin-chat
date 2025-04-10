@@ -208,6 +208,10 @@
 			"total-volume": "清倉",
 			"order-success": "喊單成功次數",
 			"ask-more": "你還想知道..."
+		},
+		"market-sentiment": {
+			"bull": "看漲",
+			"bear": "看跌"
 		}
 	},
 	"donkin": {
@@ -255,7 +259,9 @@
 			"profit-loss": "每日盈虧",
 			"title": "餘額歷史＆盈虧",
 			"win-rate": "勝率",
-			"profit-loss-rate": "盈虧"
+			"profit-loss-rate": "盈虧",
+			"daily-profit-loss": "單日盈亏",
+			"date-format": "YYYY-MM-DD"
 		},
 		"not-found": {
 			"title": "找不到地址",

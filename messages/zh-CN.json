@@ -208,6 +208,10 @@
             "total-volume": "清仓",
             "order-success": "喊单成功次数",
             "ask-more": "你还想知道..."
+        },
+        "market-sentiment": {
+            "bull": "看涨",
+            "bear": "看跌"
         }
     },
     "donkin": {

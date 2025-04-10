@@ -9,7 +9,6 @@ import { Button } from '@heroui/button';
 import type { CardProps as HCardProps } from '@heroui/card';
 import { Card as HCard, CardBody, CardHeader as HCardHeader } from '@heroui/card';
 import { Image } from '@heroui/image';
-import { Progress } from '@heroui/progress';
 import { Skeleton } from '@heroui/skeleton';
 import { Tooltip } from '@heroui/tooltip';
 import { useClipboard } from '@heroui/use-clipboard';
@@ -17,6 +16,7 @@ import { useTranslations } from 'next-intl';
 import NextImage from 'next/image';
 
 import XIcon from '@/components/icons/x-icon';
+import { ProgressSlider } from '@/components/ui/progress-slider';
 import { ChatStatus } from '@/libs/ai/enums/chatStatus.enum';
 import { useAskToken } from '@/libs/ai/hooks/useAskToken';
 import { useChatStore } from '@/stores/chat';
@@ -205,6 +205,7 @@ export const HotspotProgress = ({
 	value,
 	className,
 	classNames,
+	colorDirection = 'red-to-green',
 }: {
 	label: ReactNode;
 	value: number;
@@ -214,6 +215,7 @@ export const HotspotProgress = ({
 		label?: string;
 		progressWrapper?: string;
 	};
+	colorDirection?: 'red-to-green' | 'green-to-red';
 }) => {
 	const convert = (value: number) => {
 		if (!isNumber(value)) {
@@ -239,20 +241,19 @@ export const HotspotProgress = ({
 						className="m-0"
 					/>
 				) : null}
-				<span className="text-default-600 i-material-symbols-info size-4" />
+				<span className="text-default-600 i-material-symbols-info-outline size-4" />
 			</div>
 			<div className={cn('w-full flex items-center justify-between gap-1', classNames?.progressWrapper)}>
 				<div className="w-[90%]">
-					<Progress
-						aria-label="tg-hotspot"
-						classNames={{
-							base: '',
-							track: '',
-							indicator: 'dc-bg-rainbow',
-						}}
+					<ProgressSlider
+						aria-label="hotspot"
 						value={convert(value)}
-						className="h-[6px]"
-						radius="full"
+						segments={10}
+						classNames={{
+							base: 'h-[6px]',
+							segment: 'h-[6px]',
+						}}
+						colorDirection={colorDirection}
 					/>
 				</div>
 				<span>{roundDecimal(convert(value) / 10, 0)}</span>

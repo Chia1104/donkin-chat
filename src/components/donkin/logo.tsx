@@ -22,6 +22,7 @@ interface Props {
 	hiddenOnStatus?: DonkinStatus;
 	forceCloseOnOpen?: boolean;
 	delay?: number;
+	enableEffect?: boolean;
 }
 
 const ActiveLogo = (props: Props) => {
@@ -43,6 +44,7 @@ const ActiveLogo = (props: Props) => {
 		hiddenOnStatus,
 		forceCloseOnOpen = false,
 		delay = 0.2,
+		enableEffect = false,
 	} = props;
 
 	const isActive = useMemo(() => {
@@ -147,33 +149,39 @@ const ActiveLogo = (props: Props) => {
 					<circle cx="20" cy="20" r="20" fill={`url(#${id}-highlightGradient)`} opacity="0.7" />
 
 					{/* 水平矩形 - 較短的橫線 */}
-					<motion.rect
-						variants={horizontalVariant}
-						initial="hidden"
-						animate={!isActive ? 'visible' : 'hidden'}
-						y="24"
-						height="1.5"
-						rx="1.5"
-						fill={`url(#${id}-lineGradient)`}
-					/>
+					{enableEffect && (
+						<motion.rect
+							variants={horizontalVariant}
+							initial="hidden"
+							animate={!isActive ? 'visible' : 'hidden'}
+							y="24"
+							height="1.5"
+							rx="1.5"
+							fill={`url(#${id}-lineGradient)`}
+						/>
+					)}
 
 					{/* 左側豎線 */}
-					<motion.rect
-						variants={leftLineVariant}
-						initial="hidden"
-						animate={isActive ? 'visible' : 'hidden'}
-						rx="1.25"
-						fill={`url(#${id}-lineGradient)`}
-					/>
+					{enableEffect && (
+						<motion.rect
+							variants={leftLineVariant}
+							initial="hidden"
+							animate={isActive ? 'visible' : 'hidden'}
+							rx="1.25"
+							fill={`url(#${id}-lineGradient)`}
+						/>
+					)}
 
 					{/* 右側豎線 */}
-					<motion.rect
-						variants={rightLineVariant}
-						initial="hidden"
-						animate={isActive ? 'visible' : 'hidden'}
-						rx="1.25"
-						fill={`url(#${id}-lineGradient)`}
-					/>
+					{enableEffect && (
+						<motion.rect
+							variants={rightLineVariant}
+							initial="hidden"
+							animate={isActive ? 'visible' : 'hidden'}
+							rx="1.25"
+							fill={`url(#${id}-lineGradient)`}
+						/>
+					)}
 
 					<defs>
 						{/* 底色漸變 */}

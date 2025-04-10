@@ -208,6 +208,10 @@
 			"total-volume": "Liquidate",
 			"order-success": "Order success times",
 			"ask-more": "You want to know..."
+		},
+		"market-sentiment": {
+			"bull": "Bullish",
+			"bear": "Bearish"
 		}
 	},
 	"donkin": {
@@ -255,7 +259,9 @@
 			"profit-loss": "Daily P&L",
 			"title": "Balance History & P&L",
 			"win-rate": "Win Rate",
-			"profit-loss-rate": "P&L"
+			"profit-loss-rate": "P&L",
+			"daily-profit-loss": "Daily Profit & Loss",
+			"date-format": "YYYY-MM-DD"
 		},
 		"not-found": {
 			"title": "Address not found",
