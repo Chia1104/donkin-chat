@@ -1,9 +1,9 @@
 'use client';
 
-import { useMemo, memo } from 'react';
+import { useMemo, memo, useEffect } from 'react';
 
 import { Avatar } from '@heroui/avatar';
-import { Tooltip } from '@heroui/react';
+import { Spinner, Tooltip } from '@heroui/react';
 import { Table, TableHeader, TableBody, TableColumn, TableRow, TableCell } from '@heroui/table';
 import { useAsyncList } from '@react-stately/data';
 import { useTranslations } from 'next-intl';
@@ -180,9 +180,11 @@ const Cell = memo(({ item, columnKey }: { item: Data; columnKey: keyof Data }) =
 const OrderDetails = <TMock extends boolean = false>({
 	data,
 	mock,
+	isPending,
 }: {
 	data: TMock extends true ? undefined : Address;
 	mock?: TMock;
+	isPending?: boolean;
 }) => {
 	const columns = useColumns();
 	const [searchParams] = useAddressSearchParams();
@@ -263,6 +265,14 @@ const OrderDetails = <TMock extends boolean = false>({
 		},
 	});
 
+	/**
+	 * This is a workaround to reload the list when the data changes.
+	 */
+	useEffect(() => {
+		list.reload();
+		// eslint-disable-next-line react-hooks/exhaustive-deps
+	}, [data]);
+
 	return (
 		<section className="bg-[#FFFFFF08] rounded-md p-6 flex flex-col gap-3">
 			<span className="flex items-center gap-2">
@@ -289,7 +299,7 @@ const OrderDetails = <TMock extends boolean = false>({
 						</TableColumn>
 					)}
 				</TableHeader>
-				<TableBody emptyContent="No data" items={list.items}>
+				<TableBody emptyContent="No data" items={list.items} isLoading={isPending} loadingContent={<Spinner />}>
 					{item => (
 						<TableRow key={item.symbol}>
 							{columnKey => (

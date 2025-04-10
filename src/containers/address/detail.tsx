@@ -3,11 +3,12 @@
 import { useMemo } from 'react';
 
 import { ScrollShadow } from '@heroui/scroll-shadow';
+import { Spinner } from '@heroui/spinner';
 import type { Time } from 'lightweight-charts';
 import { useParams } from 'next/navigation';
 
 import OrderDetails from '@/components/address/order-details';
-import type { OrderHistoryDataItem } from '@/components/address/order-history';
+import type { OrderHistoryDataItem, OrderHistoryProps } from '@/components/address/order-history';
 import OrderHistory from '@/components/address/order-history';
 import { AsyncQuery } from '@/components/commons/async-query';
 import { ErrorBoundary } from '@/components/commons/error-boundary';
@@ -87,70 +88,76 @@ const Detail = () => {
 		}));
 	}, [queryResult.data, globalSearchParams.mock]);
 
+	const orderHistoryProps: Pick<OrderHistoryProps, 'meta' | 'win' | 'profit'> = useMemo(() => {
+		if (globalSearchParams.mock) {
+			return {
+				meta: {
+					avatar: '',
+					address: params.address,
+					volume: 1523268,
+					profit: '-0.87',
+				},
+				win: {
+					rate: 99.6,
+				},
+				profit: {
+					rate: 15.92,
+					amount: 4000000,
+				},
+			};
+		}
+
+		return {
+			meta: queryResult.data
+				? {
+						avatar: '',
+						address: params.address,
+						volume: queryResult.data.balance_usd,
+						profit: queryResult.data.daily_return_rate,
+					}
+				: undefined,
+			win: queryResult.data
+				? {
+						rate: queryResult.data.win_rate ?? '-',
+					}
+				: undefined,
+			profit: queryResult.data
+				? {
+						rate: queryResult.data.daily_return_rate,
+						amount: queryResult.data.daily_return,
+					}
+				: undefined,
+		};
+	}, [queryResult.data, params.address, globalSearchParams.mock]);
+
 	return (
 		<div className="w-full h-full flex flex-col">
-			<AsyncQuery queryResult={queryResult} isInfinite={false}>
-				{({ data }) =>
-					data ? (
-						<ScrollShadow className="w-full h-[calc(100vh-72px)]">
-							<div className="flex flex-col gap-10 w-full">
-								<ErrorBoundary>
-									<OrderHistory
-										meta={{
-											avatar: '',
-											address: params.address,
-											volume: globalSearchParams.mock ? 1523268 : Number(data.balance_usd),
-											profit: globalSearchParams.mock ? '-0.87' : data.daily_return_rate.toString(),
-										}}
-										win={{
-											rate: globalSearchParams.mock ? 99.6 : Number(data.win_rate),
-										}}
-										profit={{
-											rate: globalSearchParams.mock ? 15.92 : data.daily_return_rate,
-											amount: globalSearchParams.mock ? 4000000 : Number(data.daily_return),
-										}}
-										balanceData={balanceData}
-										profitLossData={profitLossData}
-										isPending={false}
-										isMetaPending={false}
-									/>
-								</ErrorBoundary>
-								<ErrorBoundary>
-									<OrderDetails data={data} mock={globalSearchParams.mock} />
-								</ErrorBoundary>
-							</div>
-						</ScrollShadow>
-					) : (
-						<ScrollShadow className="w-full h-[calc(100vh-72px)]">
-							<div className="flex flex-col gap-10 w-full">
-								<ErrorBoundary>
-									<OrderHistory
-										meta={{
-											avatar: '',
-											address: params.address,
-											volume: 1523268,
-											profit: '-0.87',
-										}}
-										win={{
-											rate: 99.6,
-										}}
-										profit={{
-											rate: 15.92,
-											amount: 4000000,
-										}}
-										balanceData={balanceData}
-										profitLossData={profitLossData}
-										isPending={false}
-										isMetaPending={false}
-									/>
-								</ErrorBoundary>
-								<ErrorBoundary>
-									<OrderDetails mock data={undefined} />
-								</ErrorBoundary>
-							</div>
-						</ScrollShadow>
-					)
+			<AsyncQuery
+				queryResult={queryResult}
+				isInfinite={false}
+				loadingFallback={
+					<div className="w-full h-[calc(100vh-72px)] flex items-center justify-center">
+						<Spinner />
+					</div>
 				}
+				enable={false}
+			>
+				<ScrollShadow className="w-full h-[calc(100vh-72px)]">
+					<div className="flex flex-col gap-10 w-full">
+						<ErrorBoundary>
+							<OrderHistory
+								{...orderHistoryProps}
+								balanceData={balanceData}
+								profitLossData={profitLossData}
+								isPending={queryResult.isLoading}
+								isMetaPending={queryResult.isLoading}
+							/>
+						</ErrorBoundary>
+						<ErrorBoundary>
+							<OrderDetails data={queryResult.data} mock={globalSearchParams.mock} isPending={queryResult.isLoading} />
+						</ErrorBoundary>
+					</div>
+				</ScrollShadow>
 			</AsyncQuery>
 		</div>
 	);
