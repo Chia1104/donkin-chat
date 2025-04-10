@@ -11,7 +11,7 @@ import { Tabs, Tab } from '@heroui/tabs';
 import { useQueryClient } from '@tanstack/react-query';
 import { ColorType, HistogramSeries, CandlestickSeries, createTextWatermark } from 'lightweight-charts';
 import type { Time, ISeriesApi } from 'lightweight-charts';
-import { useLocale } from 'next-intl';
+import { useLocale, useTranslations } from 'next-intl';
 import { toast } from 'sonner';
 
 import { useMutationOhlcv } from '@/libs/birdeye/hooks/useQueryOhlcv';
@@ -283,6 +283,7 @@ const NoDataWatermark = ({ data, text = 'No data' }: { data: OlcvResponseDTO; te
 };
 
 const Chart = () => {
+	const tUtils = useTranslations('utils');
 	const locale = useLocale();
 	const [searchParams] = useTokenSearchParams();
 	const [initOptions] = useState({
@@ -351,7 +352,7 @@ const Chart = () => {
 				}
 			}}
 		>
-			<NoDataWatermark data={data} />
+			<NoDataWatermark data={data} text={tUtils('no-data')} />
 			<Series
 				series={CandlestickSeries}
 				data={initData.map(item => ({

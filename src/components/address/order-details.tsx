@@ -189,6 +189,7 @@ const OrderDetails = <TMock extends boolean = false>({
 	const columns = useColumns();
 	const [searchParams] = useAddressSearchParams();
 	const t = useTranslations('address.order-details');
+	const tUtils = useTranslations('utils');
 
 	const date = useMemo(() => {
 		switch (searchParams.interval) {
@@ -299,7 +300,12 @@ const OrderDetails = <TMock extends boolean = false>({
 						</TableColumn>
 					)}
 				</TableHeader>
-				<TableBody emptyContent="No data" items={list.items} isLoading={isPending} loadingContent={<Spinner />}>
+				<TableBody
+					emptyContent={tUtils('no-data')}
+					items={list.items}
+					isLoading={isPending}
+					loadingContent={<Spinner />}
+				>
 					{item => (
 						<TableRow key={item.symbol}>
 							{columnKey => (
