@@ -66,7 +66,7 @@ const Detail = () => {
 		}
 
 		return queryResult.data.daily_data.map(item => ({
-			time: item.date,
+			time: dayjs(item.date).unix() as Time,
 			value: Number(item.balance_usd),
 		}));
 	}, [queryResult.data, globalSearchParams.mock]);
@@ -81,7 +81,7 @@ const Detail = () => {
 		}
 
 		return queryResult.data.daily_data.map(item => ({
-			time: item.date,
+			time: dayjs(item.date).unix() as Time,
 			value: Number(item.daily_return),
 			isProfit: isPositiveNumber(Number(item.daily_return_rate)),
 		}));

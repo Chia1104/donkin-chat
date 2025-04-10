@@ -11,6 +11,7 @@ import { useTranslations } from 'next-intl';
 import { IntervalFilter } from '@/libs/address/enums/interval-filter.enum';
 import { useAddressSearchParams } from '@/libs/address/hooks/useAddressSearchParams';
 import type { Address } from '@/libs/address/pipes/address.pipe';
+import { useAskToken } from '@/libs/ai/hooks/useAskToken';
 import dayjs from '@/utils/dayjs';
 import { formatLargeNumber, roundDecimal } from '@/utils/format';
 import { isNumber, isPositiveNumber } from '@/utils/is';
@@ -128,24 +129,13 @@ export const MOCK_ROWS: Data[] = [
 ];
 
 const Cell = memo(({ item, columnKey }: { item: Data; columnKey: keyof Data }) => {
-	const tAskMore = useTranslations('donkin.ask-more');
+	const askToken = useAskToken(item.symbol);
 
 	switch (columnKey) {
 		case 'symbol':
 			return (
 				<Tooltip
-					content={
-						<DonkinPopover
-							onAskMore={console.log}
-							className="w-[220px]"
-							askMore={[
-								tAskMore('token-name.basic-info'),
-								tAskMore('token-name.price-analysis'),
-								tAskMore('token-name.kol-order'),
-								tAskMore('token-name.smart-wallet'),
-							]}
-						/>
-					}
+					content={<DonkinPopover className="w-[220px]" {...askToken} />}
 					classNames={{
 						base: 'shadow-none',
 						content: 'bg-transparent shadow-none p-0',
@@ -237,7 +227,7 @@ const OrderDetails = <TMock extends boolean = false>({
 					token =>
 						({
 							symbol: token.symbol,
-							avatar: token.symbol,
+							avatar: token.url,
 							amount: Number(token.amount),
 							price: Number(token.price),
 							value: Number(token.value),

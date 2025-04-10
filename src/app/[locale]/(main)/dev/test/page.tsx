@@ -5,6 +5,7 @@ import { useTranslations } from 'next-intl';
 
 import OrderPopover from '@/components/token/order-popover';
 import { useChatStore } from '@/stores/chat';
+import { logger } from '@/utils/logger';
 
 const TestOrderPopover = () => {
 	const t = useTranslations('donkin.ask-more.kol-order');
@@ -25,7 +26,7 @@ const TestOrderPopover = () => {
 				success: 3,
 			}}
 			askMore={[t('smart-wallet'), t('kol-order')]}
-			onAskMore={console.log}
+			onAskMore={logger}
 		/>
 	);
 };

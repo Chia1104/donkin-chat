@@ -10,7 +10,7 @@ export const addressQueryStates = {
 		DisplayFilter.BalanceHistory,
 		DisplayFilter.ProfitLoss,
 	]),
-	[FilterColumn.Interval]: parseAsStringEnum(Object.values(IntervalFilter)).withDefault(IntervalFilter.OneMonth),
+	[FilterColumn.Interval]: parseAsStringEnum(Object.values(IntervalFilter)).withDefault(IntervalFilter.OneWeek),
 };
 
 export const loadAddressSearchParams = createLoader(addressQueryStates);

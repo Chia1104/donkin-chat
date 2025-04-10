@@ -8,6 +8,7 @@ import { getAddress } from '@/libs/address/resources/address.resource';
 import { loadAddressSearchParams } from '@/libs/address/services/loadAddressSearchParams';
 import { loadGlobalSearchParams } from '@/services/loadGlobalSearchParams';
 import { IS_DEV } from '@/utils/env';
+import { logger } from '@/utils/logger';
 import { getQueryClient } from '@/utils/query-client';
 
 export async function generateMetadata(): Promise<Metadata> {
@@ -36,7 +37,8 @@ const Page = async (props: PagePropsWithLocale<{ address: string }>) => {
 					},
 				}),
 		});
-	} catch {
+	} catch (error) {
+		logger(error, { type: 'error' });
 		if (!IS_DEV && !searchParams.debug) {
 			notFound();
 		}

@@ -1,8 +1,9 @@
 import { init, replayIntegration, captureRouterTransitionStart } from '@sentry/nextjs';
 
 import { env } from '@/utils/env';
+import { logger } from '@/utils/logger';
 
-console.log('Client instrumentation initialized');
+logger('Client instrumentation initialized');
 
 export const onRouterTransitionStart = captureRouterTransitionStart;
 
