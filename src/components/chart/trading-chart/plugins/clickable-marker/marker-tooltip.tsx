@@ -5,6 +5,8 @@ import { createPortal } from 'react-dom';
 import { createStore } from 'zustand';
 import { useStore } from 'zustand';
 
+import { cn } from '@/utils/cn';
+
 interface MarkerTooltipProps {
 	tooltip: React.ReactNode;
 	visible: boolean;
@@ -89,7 +91,7 @@ export function positionTooltip(tooltipElement: HTMLElement, x: number, y: numbe
 	tooltipElement.style.top = `${top}px`;
 }
 
-export const MarkerTooltip = () => {
+export const MarkerTooltip = ({ className }: { className?: string }) => {
 	const { tooltip, visible, position, container } = useMarkerTooltipStore(store => store);
 
 	const tooltipRef = useRef<HTMLDivElement>(null);
@@ -109,7 +111,7 @@ export const MarkerTooltip = () => {
 				exit={{ opacity: 0 }}
 				transition={{ duration: 0.2 }}
 				ref={tooltipRef}
-				className="absolute z-[1000] bg-[#1C2633] rounded-sm p-2"
+				className={cn('absolute z-[1000]', className)}
 				style={{ left: position.x, top: position.y }}
 			>
 				{tooltip}

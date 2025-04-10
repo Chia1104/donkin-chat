@@ -35,6 +35,7 @@ const Page = async (props: PagePropsWithLocale<{ address: string }>) => {
 					data: {
 						interval: addressSearchParams.interval,
 					},
+					timeout: 60_000,
 				}),
 		});
 	} catch (error) {

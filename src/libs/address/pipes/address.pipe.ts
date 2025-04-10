@@ -1,5 +1,7 @@
 import { z } from 'zod';
 
+import dayjs from '@/utils/dayjs';
+
 export const baseAddressSchema = z.object({
 	balance_usd: z.number(),
 	daily_return: z.number(),
@@ -18,17 +20,29 @@ export const addressTokenPnlSchema = z.object({
 	sell: z.number(),
 });
 
+export const dailyTokenPnlSchema = z.object({
+	symbol: z.string(),
+	url: z.string(),
+	return: z.number().optional(),
+	buy: z.number().optional(),
+	sell: z.number().optional(),
+});
+
+export type DailyTokenPnl = z.infer<typeof dailyTokenPnlSchema>;
+
 export const addressDailyDataSchema = z.object({
 	date: z.string(),
 	balance_usd: z.number(),
 	daily_return: z.number(),
 	daily_return_rate: z.number(),
-	token_pnls: z.array(addressTokenPnlSchema),
+	token_pnls: z.array(dailyTokenPnlSchema),
 });
 
 export const addressSchema = baseAddressSchema.extend({
 	token_pnls: z.array(addressTokenPnlSchema),
-	daily_data: z.array(addressDailyDataSchema),
+	daily_data: z
+		.array(addressDailyDataSchema)
+		.transform(data => data.sort((a, b) => (dayjs(a.date).isBefore(dayjs(b.date)) ? -1 : 1))),
 });
 
 export type Address = z.infer<typeof addressSchema>;

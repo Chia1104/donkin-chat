@@ -6,7 +6,7 @@ import type { Address } from '../pipes/address.pipe';
 import { addressSchema } from '../pipes/address.pipe';
 
 export const getAddress = async (address: string, options?: BaseRequestOptions<{ interval: IntervalFilter }>) => {
-	const response = await request()
+	const response = await request({ timeout: options?.timeout })
 		.get(`api/v1/wallet/current/${address}`, {
 			searchParams: {
 				interval: options?.data?.interval ?? '',

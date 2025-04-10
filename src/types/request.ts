@@ -1,6 +1,8 @@
 export interface BaseRequestOptions<TData = unknown> {
 	data?: TData;
 	signal?: AbortSignal;
+	headers?: Headers;
+	timeout?: number;
 }
 
 export interface ResponseData<TData = unknown> {

@@ -259,7 +259,9 @@
 			"profit-loss": "每日盈虧",
 			"title": "餘額歷史＆盈虧",
 			"win-rate": "勝率",
-			"profit-loss-rate": "盈虧"
+			"profit-loss-rate": "盈虧",
+			"daily-profit-loss": "單日盈亏",
+			"date-format": "YYYY-MM-DD"
 		},
 		"not-found": {
 			"title": "找不到地址",

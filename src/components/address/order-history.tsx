@@ -1,6 +1,6 @@
 'use client';
 
-import { createContext, use, useMemo, useState, useRef } from 'react';
+import { createContext, use, useMemo, useState, useRef, useCallback } from 'react';
 import type { PropsWithChildren } from 'react';
 
 import { Avatar } from '@heroui/avatar';
@@ -13,20 +13,26 @@ import { Spinner } from '@heroui/spinner';
 import { Tabs, Tab } from '@heroui/tabs';
 import { Tooltip } from '@heroui/tooltip';
 import { ColorType, HistogramSeries, AreaSeries } from 'lightweight-charts';
-import type { Time, ISeriesApi, DeepPartial, TimeChartOptions } from 'lightweight-charts';
+import type { Time, ISeriesApi, DeepPartial, TimeChartOptions, IChartApi } from 'lightweight-charts';
 import { useLocale } from 'next-intl';
 import { useTranslations } from 'next-intl';
 
 import { DisplayFilter as TDisplayFilter } from '@/libs/address/enums/display-filter.enum';
 import { IntervalFilter } from '@/libs/address/enums/interval-filter.enum';
 import { useAddressSearchParams } from '@/libs/address/hooks/useAddressSearchParams';
+import type { DailyTokenPnl } from '@/libs/address/pipes/address.pipe';
 import { theme as twTheme } from '@/themes/tw.theme';
 import { cn } from '@/utils/cn';
+import dayjs from '@/utils/dayjs';
 import { truncateMiddle, roundDecimal, formatLargeNumber } from '@/utils/format';
 import { isPositiveNumber, isNumber } from '@/utils/is';
 
 import { Chart } from '../chart/trading-chart/chart';
-import { MarkerTooltipProvider, MarkerTooltip } from '../chart/trading-chart/plugins/clickable-marker/marker-tooltip';
+import {
+	MarkerTooltipProvider,
+	MarkerTooltip,
+	useMarkerTooltipStore,
+} from '../chart/trading-chart/plugins/clickable-marker/marker-tooltip';
 import { Series } from '../chart/trading-chart/series';
 import CopyButton from '../commons/copy-button';
 import { ErrorBoundary } from '../commons/error-boundary';
@@ -36,6 +42,7 @@ export interface OrderHistoryDataItem {
 	time: Time;
 	value: number;
 	isProfit?: boolean;
+	tokens?: DailyTokenPnl[];
 }
 
 export interface OrderHistoryProps {
@@ -173,9 +180,7 @@ const Meta = () => {
 						<Skeleton className="w-20 h-4 rounded-full" />
 					</span>
 					<Divider orientation="vertical" className="h-4" />
-					<p className="text-[22px] font-normal">
-						<Skeleton className="w-20 h-4 rounded-full" />
-					</p>
+					<Skeleton className="w-20 h-4 rounded-full" />
 					<span className="flex items-center gap-1">
 						<Skeleton className="w-20 h-4 rounded-full" />
 					</span>
@@ -262,8 +267,12 @@ const Header = () => {
 };
 
 const OrderChart = () => {
+	const tAskMore = useTranslations('donkin.ask-more');
+	const t = useTranslations('address.order-history');
 	const locale = useLocale();
 	const [searchParams] = useAddressSearchParams();
+	const openTooltip = useMarkerTooltipStore(state => state.openTooltip);
+	const closeTooltip = useMarkerTooltipStore(state => state.closeTooltip);
 	const [initOptions] = useState<DeepPartial<TimeChartOptions>>({
 		autoSize: true,
 		layout: {
@@ -309,6 +318,76 @@ const OrderChart = () => {
 		}));
 	}, [profitLossData]);
 
+	// 處理柱狀圖點擊
+	const handleHistogramClick = useCallback(
+		(chart: IChartApi, _series: ISeriesApi<'Histogram'>) => {
+			chart.subscribeClick(param => {
+				// 如果沒有點擊到具體位置，則返回
+				if (!param.point || !param.time) {
+					return;
+				}
+
+				const clickedData = profitLossData.find(item => {
+					return dayjs.unix(item.time as number).isSame(dayjs.unix(param.time as number));
+				});
+
+				if (clickedData) {
+					openTooltip({
+						tooltip: (
+							<DonkinPopover
+								className="min-w-[200px]"
+								onClose={closeTooltip}
+								header={
+									<section className="flex flex-col gap-1">
+										<p className="text-xs font-normal text-foreground-400">
+											{dayjs.unix(clickedData.time as number).format('YYYY-MM-DD')}
+										</p>
+										<p className="text-xs font-normal text-foreground-500">
+											{t('daily-profit-loss')}{' '}
+											<span
+												className={cn(
+													'text-xs font-normal',
+													isPositiveNumber(clickedData.value) ? 'text-success' : 'text-danger',
+												)}
+											>
+												${isNumber(clickedData.value) ? formatLargeNumber(clickedData.value) : '0'}
+											</span>
+										</p>
+									</section>
+								}
+								body={
+									<section>
+										<ul className="flex flex-col gap-3">
+											{clickedData.tokens?.map((item, index) => (
+												<li key={`${item.symbol}-${index}`} className="text-xs font-normal flex justify-between">
+													<span className="flex items-center gap-2">
+														<Avatar src={item.url} className="w-4 h-4" />
+														{item.symbol}
+													</span>
+													<span className="flex items-center gap-2">
+														<span className="text-xs font-normal text-foreground-500">
+															<span className={cn(isPositiveNumber(item.buy) ? 'text-success' : '')}>{item.buy}</span>/
+															<span className={cn(isPositiveNumber(item.sell) ? 'text-danger' : '')}>{item.sell}</span>
+														</span>
+													</span>
+												</li>
+											))}
+										</ul>
+										<Divider className="my-4" />
+									</section>
+								}
+								askMore={[tAskMore('address-detail.history-analysis'), tAskMore('address-detail.current-holdings')]}
+							/>
+						),
+						position: { x: param.point.x, y: param.point.y + 150 },
+						container: chart.chartElement().parentElement || document.body,
+					});
+				}
+			});
+		},
+		[profitLossData, openTooltip, closeTooltip, tAskMore, t],
+	);
+
 	if (isPending) {
 		return (
 			<div className="flex items-center justify-center w-full h-[342px]">
@@ -336,7 +415,7 @@ const OrderChart = () => {
 						bottomColor: 'rgba(24, 25, 29, 0)',
 						lineWidth: 2,
 						priceFormat: {
-							type: 'price',
+							type: 'volume',
 							precision: 2,
 							minMove: 0.01,
 						},
@@ -350,11 +429,16 @@ const OrderChart = () => {
 					data={formattedHistogramData}
 					options={{
 						priceFormat: {
-							type: 'price',
+							type: 'volume',
 							precision: 2,
 							minMove: 0.01,
 						},
 						priceScaleId: 'left',
+					}}
+					onInit={(series, chart) => {
+						if (chart) {
+							handleHistogramClick(chart, series);
+						}
 					}}
 				/>
 			)}
