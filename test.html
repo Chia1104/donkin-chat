@@ -1,0 +1,66 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <title>Canvas Loudspeaker</title>
+    <style>
+        canvas {
+            border: 1px solid #ccc;
+        }
+    </style>
+</head>
+
+<body>
+    <canvas id="canvas" width="300" height="300"></canvas>
+
+    <script>
+        const canvas = document.getElementById("canvas");
+        const ctx = canvas.getContext("2d");
+        ctx.scale(20, 20); // 放大讓圖形更清楚
+
+        // Path 1
+        ctx.beginPath();
+        ctx.moveTo(9.064, 2.5);
+        ctx.bezierCurveTo(9.04856, 3.01042, 8.81978, 3.39576, 8.37814, 3.65011);
+        ctx.bezierCurveTo(7.90749, 3.92099, 7.39692, 4.08551, 6.86764, 4.1953);
+        ctx.bezierCurveTo(6.38685, 4.29511, 5.90045, 4.34517, 5.40984, 4.35655);
+        ctx.bezierCurveTo(5.35011, 4.35795, 5.32797, 4.36996, 5.32813, 4.43764);
+        ctx.bezierCurveTo(5.33093, 5.32405, 5.33078, 6.2103, 5.32844, 7.0967);
+        ctx.bezierCurveTo(5.32844, 7.15767, 5.34544, 7.17389, 5.40407, 7.1753);
+        ctx.bezierCurveTo(5.84244, 7.18528, 6.278, 7.22613, 6.70951, 7.30598);
+        ctx.bezierCurveTo(7.28214, 7.41202, 7.83373, 7.57936, 8.34601, 7.86318);
+        ctx.bezierCurveTo(8.78859, 8.10833, 9.03125, 8.48042, 9.06197, 8.98693);
+        ctx.bezierCurveTo(9.06431, 9.0253, 9.07616, 9.03372, 9.11172, 9.03309);
+        ctx.bezierCurveTo(9.22322, 9.03107, 9.33503, 9.02701, 9.44607, 9.03419);
+        ctx.fill();
+
+        // Path 2
+        ctx.beginPath();
+        ctx.moveTo(4.86587, 7.10725);
+        ctx.lineTo(4.86587, 4.42512);
+        ctx.lineTo(3.18913, 4.36758);
+        ctx.bezierCurveTo(2.87958, 4.36945, 2.61571, 4.57623, 2.52745, 4.87347);
+        ctx.lineTo(2.5, 4.94193);
+        ctx.lineTo(2.5, 6.5906);
+        ctx.lineTo(2.52558, 6.65158);
+        ctx.bezierCurveTo(2.61649, 6.9591, 2.87848, 7.16371, 3.19708, 7.16527);
+        ctx.lineTo(4.80677, 7.16729);
+        ctx.fill();
+
+        // Path 3
+        ctx.beginPath();
+        ctx.moveTo(5.0152, 7.68264);
+        ctx.lineTo(4.94783, 7.63133);
+        ctx.lineTo(3.65752, 7.63087);
+        ctx.bezierCurveTo(3.60403, 7.63055, 3.59467, 7.64194, 3.60559, 7.69512);
+        ctx.lineTo(3.95257, 9.42878);
+        ctx.bezierCurveTo(3.96458, 9.49054, 3.98875, 9.49989, 4.04287, 9.49958);
+        ctx.lineTo(5.05325, 9.49849);
+        ctx.lineTo(5.37247, 9.49849);
+        ctx.lineTo(5.37044, 9.46215);
+        ctx.fill();
+    </script>
+</body>
+
+</html>

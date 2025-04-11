@@ -10,7 +10,6 @@ import type { Time, ISeriesApi } from 'lightweight-charts';
 import { useLocale, useTranslations } from 'next-intl';
 import { toast } from 'sonner';
 
-import { useGlobalSearchParams } from '@/hooks/useGlobalSearchParams';
 import { useMutationOhlcv } from '@/libs/birdeye/hooks/useQueryOhlcv';
 import type { OlcvResponseDTO } from '@/libs/birdeye/hooks/useQueryOhlcv';
 import type { KolAlert } from '@/libs/kol/pipes/kol.pipe';
@@ -227,47 +226,46 @@ const NoDataWatermark = ({ data, text = 'No data' }: { data: OlcvResponseDTO; te
 };
 
 const ClickableMarkerSeries = () => {
-	const { kolAlerts } = useCandlestick();
+	const { kolAlerts, data } = useCandlestick();
 	const chart = useChart('ClickableMarker');
 	const series = useSeries('ClickableMarker');
 	const [searchParams] = useTokenSearchParams();
-	const [globalSearchParams] = useGlobalSearchParams();
-	const clickableMarkers: ClickableMarker<Time>[] = useMemo(() => {
+	const loudspeakerMarkers: ClickableMarker<Time>[] = useMemo(() => {
 		if (!kolAlerts) {
 			return [];
 		}
-		return kolAlerts.map(item => ({
-			time: dayjs(item.day).utc().unix() as Time,
-			position: 'aboveBar',
-			color: 'rgba(255, 255, 255, 0.45)',
-			size: 1,
-			src: '/assets/images/kol.svg',
-			text: item.kol_alerts.toString(),
-		}));
-		// .filter(item =>
-		// 	data.some(dataItem =>
-		// 		dayjs(item.time as number)
-		// 			.utc()
-		// 			.isBefore(dayjs(dataItem.unix).utc(), 'day'),
-		// 	),
-		// );
-	}, [kolAlerts]);
+
+		// 找出 data 中最早的 unix 時間
+		const earliestUnixTime = data.length > 0 ? Math.min(...data.map(item => item.unix)) : 0;
+
+		// 過濾掉早於 data 中最早時間的 kolAlerts
+		return kolAlerts
+			.filter(item => dayjs(item.day).utc().unix() >= earliestUnixTime)
+			.map(item => ({
+				time: dayjs(item.day).utc().unix() as Time,
+				position: 'aboveBar',
+				color: 'rgba(255, 181, 34, 1)',
+				size: 1,
+				type: 'loudspeaker',
+				text: `+${item.kol_alerts}`,
+			}));
+	}, [kolAlerts, data]);
 
 	useEffect(() => {
 		const chartApi = chart._api;
 		const seriesApi = series.api();
-		if (clickableMarkers.length > 0 && chartApi && seriesApi && globalSearchParams.debug) {
+		if (loudspeakerMarkers.length > 0 && chartApi && seriesApi) {
 			if (!searchParams.mark) {
 				createClickableMarkers<Time>(chartApi, seriesApi, []);
 				return;
 			}
-			createClickableMarkers<Time>(chartApi, seriesApi, clickableMarkers, {
+			createClickableMarkers<Time>(chartApi, seriesApi, loudspeakerMarkers, {
 				onClick: marker => {
 					console.log(marker);
 				},
 			});
 		}
-	}, [clickableMarkers, chart, series, searchParams.mark, globalSearchParams.debug]);
+	}, [loudspeakerMarkers, chart, series, searchParams.mark]);
 	return null;
 };
 

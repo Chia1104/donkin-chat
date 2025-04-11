@@ -170,6 +170,7 @@ export class SeriesMarkersPrimitive<HorzScaleItem> implements ISeriesPrimitive<H
 					size: marker.size,
 					originalTime: marker.time,
 					src: marker.src,
+					type: marker.type,
 				};
 			},
 		);
