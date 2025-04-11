@@ -1,4 +1,6 @@
+import { captureException } from '@sentry/nextjs';
 import { HydrationBoundary, dehydrate } from '@tanstack/react-query';
+import { HTTPError } from 'ky';
 import type { Metadata } from 'next';
 import { getTranslations } from 'next-intl/server';
 import { notFound } from 'next/navigation';
@@ -39,7 +41,10 @@ const Page = async (props: PagePropsWithLocale<{ address: string }>) => {
 				}),
 		});
 	} catch (error) {
-		logger(error, { type: 'error' });
+		logger(error, { type: 'error', enabled: typeof window === 'undefined' });
+		if (!(error instanceof HTTPError)) {
+			captureException(error);
+		}
 		if (!IS_DEV && !searchParams.debug) {
 			notFound();
 		}

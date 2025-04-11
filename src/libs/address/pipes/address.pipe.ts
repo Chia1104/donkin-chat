@@ -15,7 +15,7 @@ export const addressTokenPnlSchema = z.object({
 	amount: z.number(),
 	price: z.number(),
 	value: z.number(),
-	return: z.number(),
+	return: z.number().optional(),
 	buy: z.number(),
 	sell: z.number(),
 });
