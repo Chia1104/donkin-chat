@@ -14,7 +14,7 @@ export const tokenSchema = z
 		price: z.number(),
 		daily_volume: z.number(),
 		market_cap: z.number(),
-		price_change_24h: z.number(),
+		price_change_24h: z.number().nullish(),
 		volume_24h: z.number(),
 		liquidity: z.number(),
 		created_at: z.string(),
@@ -29,7 +29,7 @@ export const tokenSchema = z
 	.transform(data => ({
 		...data,
 		// 漲跌幅度
-		change: data.price_change_24h / 100,
+		change: data.price_change_24h ? data.price_change_24h / 100 : 0,
 	}));
 
 export const searchTokenSchema = z.object({

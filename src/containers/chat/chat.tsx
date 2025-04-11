@@ -14,7 +14,6 @@ import Logo from '@/components/donkin/logo';
 import { DonkinStatus } from '@/enums/donkin.enum';
 import { DEFAULT_THREAD_ID } from '@/libs/ai/constants';
 import { ChatStatus } from '@/libs/ai/enums/chatStatus.enum';
-import { SupportedTool } from '@/libs/ai/enums/supportedTool.enum';
 import { useAISearchParams } from '@/libs/ai/hooks/useAISearchParams';
 import { useChatStore } from '@/stores/chat';
 import { useGlobalStore } from '@/stores/global/store';
@@ -41,26 +40,7 @@ const Messages = ({ children }: { children?: React.ReactNode }) => {
 						showFeedback={message.role === 'assistant' && isLast}
 						isLoading={status === ChatStatus.Streaming && isLast}
 						status={status === ChatStatus.Error && isLast ? 'failed' : 'success'}
-						onRetry={message =>
-							handleRetry(
-								message.id,
-								message.toolCalls?.find(toolCall => toolCall.function.name === SupportedTool.GetTokenTrend)
-									? message => {
-											if (message.toolCalls) {
-												for (const toolCall of message.toolCalls) {
-													/**
-													 * TODO: Implement tool calls
-													 */
-													switch (toolCall.function.name) {
-														default:
-															break;
-													}
-												}
-											}
-										}
-									: undefined,
-							)
-						}
+						onRetry={message => handleRetry(message.id)}
 					/>
 				);
 			})}

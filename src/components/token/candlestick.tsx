@@ -12,6 +12,7 @@ import { toast } from 'sonner';
 
 import { useMutationOhlcv } from '@/libs/birdeye/hooks/useQueryOhlcv';
 import type { OlcvResponseDTO } from '@/libs/birdeye/hooks/useQueryOhlcv';
+import type { KolAlert } from '@/libs/kol/pipes/kol.pipe';
 import { IntervalFilter } from '@/libs/token/enums/interval-filter.enum';
 import { theme as twTheme } from '@/themes/tw.theme';
 import dayjs from '@/utils/dayjs';
@@ -36,6 +37,7 @@ interface CandlestickProps {
 		time_to: number;
 	};
 	data: OlcvResponseDTO;
+	kolAlerts?: KolAlert[];
 	isPending?: boolean;
 	isMetaPending?: boolean;
 }

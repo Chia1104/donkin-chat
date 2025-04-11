@@ -134,6 +134,20 @@ function processSSEChunk(
 ): string {
 	if (!chunk.trim()) return accumulatedText;
 
+	// 檢查是否為新的 ping 格式
+	if (chunk.trim().startsWith(': ping')) {
+		// 將 ping 視為 heartbeat 事件處理
+		try {
+			// 建立一個類似 heartbeat 的數據結構
+			const heartbeatData = { type: ChatEventType.System };
+			// 模擬 heartbeat 事件的處理流程，但不執行任何回調
+			heartbeatSchema.parse(heartbeatData);
+		} catch (error) {
+			console.warn('處理 ping 格式失敗:', error);
+		}
+		return accumulatedText;
+	}
+
 	// 嘗試使用不同的行分隔符
 	let eventLines = chunk.split('\n');
 	if (eventLines.length < 2) {
@@ -167,24 +181,6 @@ function processSSEChunk(
 	}
 
 	try {
-		// 檢查和清理 JSON 格式
-
-		// 檢查是否是單引號包裹的 JSON (應該是雙引號)
-		if (dataLine.startsWith("'") && dataLine.endsWith("'")) {
-			dataLine = dataLine.substring(1, dataLine.length - 1);
-		}
-
-		// 替換單引號為雙引號 (JSON 要求使用雙引號)
-		if (dataLine.includes("'") && !dataLine.includes('"')) {
-			dataLine = dataLine.replace(/'/g, '"');
-		}
-
-		// 嘗試修復常見的 JSON 錯誤
-		// 例如 {type: 'text'} 應該是 {"type": "text"}
-		if (dataLine.startsWith('{') && dataLine.includes(':') && !dataLine.includes('":')) {
-			dataLine = dataLine.replace(/([{,])\s*([a-zA-Z0-9_]+)\s*:/g, '$1"$2":');
-		}
-
 		// 檢查 JSON 格式是否有效
 		try {
 			JSON.parse(dataLine);
