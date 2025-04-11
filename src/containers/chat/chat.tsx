@@ -12,7 +12,9 @@ import MessageCard from '@/components/chat/message-card';
 import PromptInput from '@/components/chat/prompt-input';
 import Logo from '@/components/donkin/logo';
 import { DonkinStatus } from '@/enums/donkin.enum';
+import { DEFAULT_THREAD_ID } from '@/libs/ai/constants';
 import { ChatStatus } from '@/libs/ai/enums/chatStatus.enum';
+import { SupportedTool } from '@/libs/ai/enums/supportedTool.enum';
 import { useAISearchParams } from '@/libs/ai/hooks/useAISearchParams';
 import { useChatStore } from '@/stores/chat';
 import { useGlobalStore } from '@/stores/global/store';
@@ -42,7 +44,7 @@ const Messages = ({ children }: { children?: React.ReactNode }) => {
 						onRetry={message =>
 							handleRetry(
 								message.id,
-								message.toolCalls?.length
+								message.toolCalls?.find(toolCall => toolCall.function.name === SupportedTool.GetTokenTrend)
 									? message => {
 											if (message.toolCalls) {
 												for (const toolCall of message.toolCalls) {
@@ -133,7 +135,7 @@ const ThreadId = () => {
 	const threadId = useChatStore(state => state.threadId);
 	const [, setSearchParams] = useAISearchParams();
 	useEffect(() => {
-		if (threadId && threadId !== 'inbox') {
+		if (threadId && threadId !== DEFAULT_THREAD_ID) {
 			void setSearchParams({ threadId });
 		}
 	}, [setSearchParams, threadId]);

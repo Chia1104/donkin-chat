@@ -1,12 +1,22 @@
 'use client';
 
+import { z } from 'zod';
+
+import { DEFAULT_THREAD_ID } from '@/libs/ai/constants';
 import { ChatStatus } from '@/libs/ai/enums/chatStatus.enum';
+import { SupportedTool } from '@/libs/ai/enums/supportedTool.enum';
 import { processStreamEvents } from '@/libs/ai/services/chatMessageProcessor';
 import type { AIResponseData } from '@/types/request';
+import { env } from '@/utils/env';
 import { isAbortError } from '@/utils/is';
 import { withPrefixedUrl, request } from '@/utils/request';
 
 import { defineChatStore } from './store';
+
+export const tokenInfoArgsSchema = z.object({
+	userMessage: z.string().nullable(),
+	token: z.string(),
+});
 
 const { ChatStoreProvider, useChatStore, ChatStoreContext, creator } = defineChatStore({
 	async messageProcessor({ get, response, set }) {
@@ -75,7 +85,74 @@ const { ChatStoreProvider, useChatStore, ChatStoreContext, creator } = defineCha
 			const convId = get().context?.conv_id;
 			const userMessage = get().getLatestUserMessage();
 			const locale = get().context?.locale;
-			if (!convId || convId === 'inbox') {
+
+			if (userMessage?.toolCalls) {
+				for (const toolCall of userMessage.toolCalls) {
+					switch (toolCall.function.name) {
+						case SupportedTool.GetTokenInfo:
+							{
+								const args = tokenInfoArgsSchema.parse(JSON.parse(toolCall.function.arguments));
+								const data = await request({
+									requestMode: 'proxy-ai',
+								})
+									.post('api/v1/ai/chat/token_info', {
+										json: {
+											token: args.token,
+										},
+									})
+									.json<AIResponseData<{ conv_id: string; token: string; msg_id: string }>>();
+
+								if (data.code === 200) {
+									set(
+										{
+											context: {
+												conv_id: data.data.conv_id,
+												token: data.data.token,
+												locale: locale ?? env.NEXT_PUBLIC_DEFAULT_LOCALE,
+											},
+											threadId: data.data.conv_id,
+										},
+										false,
+										'preStreamWithToolCall/GetTokenInfo',
+									);
+								}
+							}
+							break;
+						case SupportedTool.GetTokenTrend:
+							{
+								const args = tokenInfoArgsSchema.parse(JSON.parse(toolCall.function.arguments));
+								const data = await request({
+									requestMode: 'proxy-ai',
+								})
+									.post('api/v1/ai/chat/token_trends', {
+										json: {
+											token: args.token,
+										},
+									})
+									.json<AIResponseData<{ conv_id: string; token: string; msg_id: string }>>();
+
+								if (data.code === 200) {
+									set(
+										{
+											context: {
+												conv_id: data.data.conv_id,
+												token: data.data.token,
+												locale: locale ?? env.NEXT_PUBLIC_DEFAULT_LOCALE,
+											},
+											threadId: data.data.conv_id,
+										},
+										false,
+										'preStreamWithToolCall/GetTokenTrend',
+									);
+								}
+							}
+							break;
+					}
+				}
+				return;
+			}
+
+			if (!convId || convId === DEFAULT_THREAD_ID) {
 				const data = await request({
 					requestMode: 'proxy-ai',
 				})
@@ -93,7 +170,11 @@ const { ChatStoreProvider, useChatStore, ChatStoreContext, creator } = defineCha
 				if (data.code === 200) {
 					set(
 						{
-							context: { conv_id: data.data.conv_id, token: data.data.token, locale: locale ?? 'zh-CN' },
+							context: {
+								conv_id: data.data.conv_id,
+								token: data.data.token,
+								locale: locale ?? env.NEXT_PUBLIC_DEFAULT_LOCALE,
+							},
 							threadId: data.data.conv_id,
 						},
 						false,
@@ -117,7 +198,13 @@ const { ChatStoreProvider, useChatStore, ChatStoreContext, creator } = defineCha
 
 				if (data.code === 200) {
 					set(
-						{ context: { conv_id: data.data.conv_id, token: data.data.token, locale: locale ?? 'zh-CN' } },
+						{
+							context: {
+								conv_id: data.data.conv_id,
+								token: data.data.token,
+								locale: locale ?? env.NEXT_PUBLIC_DEFAULT_LOCALE,
+							},
+						},
 						false,
 						'preStream',
 					);

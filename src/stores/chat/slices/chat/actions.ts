@@ -24,7 +24,12 @@ export interface ChatAction<TMessageItem extends MessageItem> {
 	getMessage: (id: string) => TMessageItem | undefined;
 	getLastMessage: () => TMessageItem | undefined;
 	updateLastMessageContent: (content: string) => void;
-	handleSubmit: (content?: string, parts?: unknown[]) => void;
+	handleSubmit: (
+		content?: string,
+		parts?: {
+			tools?: TMessageItem['toolCalls'];
+		},
+	) => void;
 	handleRetry: (id: string, handler?: (message: TMessageItem) => void) => void;
 	handleCancel: () => void;
 	getLatestUserMessage: () => TMessageItem | undefined;
@@ -83,7 +88,7 @@ export const chatActions: StateCreator<
 	getLastMessage: () => {
 		return get().items[get().items.length - 1];
 	},
-	handleSubmit: content => {
+	handleSubmit: (content, parts) => {
 		if ((!get().input && !content) || get().status === ChatStatus.Streaming) {
 			return;
 		}
@@ -99,6 +104,7 @@ export const chatActions: StateCreator<
 				parentId: lastMessage?.id ?? null,
 				reasoning: null,
 				threadId: get().threadId,
+				toolCalls: parts?.tools,
 			},
 			{
 				role: 'assistant',
@@ -108,6 +114,7 @@ export const chatActions: StateCreator<
 				parentId: userId,
 				reasoning: null,
 				threadId: get().threadId,
+				toolCalls: parts?.tools,
 			},
 		]);
 		set({ status: ChatStatus.Streaming, input: '' }, false, nameSpace('handleSubmit'));
@@ -184,7 +191,7 @@ export const chatActions: StateCreator<
 	internal_handleSSE: async _messages => {
 		const messages = z.array(get().messageSchema).parse(_messages);
 		try {
-			await get().preStream?.({ set, get, ctx });
+			await get().preStream?.({ set, get, ctx, messages });
 			const { data: response, error } = await tryCatch(get().internal_stream(messages));
 			if (error) {
 				console.error('Error in internal_handleSSE:', error);

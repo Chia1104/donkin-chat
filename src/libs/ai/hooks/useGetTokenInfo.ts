@@ -2,6 +2,7 @@ import type { UseMutationOptions } from '@tanstack/react-query';
 import { useMutation } from '@tanstack/react-query';
 import { useTranslations } from 'next-intl';
 
+import { tokenInfoArgsSchema } from '@/stores/chat';
 import { useChatStore } from '@/stores/chat';
 import dayjs from '@/utils/dayjs';
 import { uuid } from '@/utils/uuid';
@@ -17,6 +18,36 @@ interface GetTokenInfoRequest {
 	token: string;
 }
 
+/**
+ * @deprecated 請使用 `useChatStore` 中的 `handleSubmit` 並搭配 `SupportedTool.GetTokenInfo`
+ *
+ * @example
+ * ```ts
+ * handleSubmit(
+ *   tAskMore('token-name.basic-info-with-item', {
+ *     item: token,
+ *   }),
+ *   {
+ *     tools: [
+ *       {
+ *         id: SupportedTool.GetTokenInfo,
+ *         function: {
+ *           name: SupportedTool.GetTokenInfo,
+ *           arguments: JSON.stringify(
+ *             tokenInfoArgsSchema.parse({
+ *               userMessage: tAskMore('token-name.basic-info-with-item', {
+ *                 item: token,
+ *               }),
+ *               token,
+ *             }),
+ *           ),
+ *         },
+ *       },
+ *     ],
+ *   },
+ * );
+ * ```
+ */
 export const useGetTokenInfo = (
 	options?: Partial<
 		Omit<
@@ -42,6 +73,13 @@ export const useGetTokenInfo = (
 				deleteLastMessage();
 			}
 
+			const args = tokenInfoArgsSchema.parse({
+				userMessage: t('basic-info-with-item', {
+					item: dto.token,
+				}),
+				token: dto.token,
+			});
+
 			void pushMessage([
 				{
 					role: 'user',
@@ -53,6 +91,12 @@ export const useGetTokenInfo = (
 					parentId: null,
 					reasoning: null,
 					threadId: dto.threadId,
+					toolCalls: [
+						{
+							id: SupportedTool.GetTokenInfo,
+							function: { name: SupportedTool.GetTokenInfo, arguments: JSON.stringify(args) },
+						},
+					],
 				},
 				{
 					role: 'assistant',
@@ -65,7 +109,7 @@ export const useGetTokenInfo = (
 					toolCalls: [
 						{
 							id: SupportedTool.GetTokenInfo,
-							function: { name: SupportedTool.GetTokenInfo, arguments: '' },
+							function: { name: SupportedTool.GetTokenInfo, arguments: JSON.stringify(args) },
 						},
 					],
 				},

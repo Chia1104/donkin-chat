@@ -16,6 +16,14 @@
 		"zh-CN": "Simplified Chinese",
 		"en-US": "English"
 	},
+	"dev-mode": {
+		"label": "Dev Mode",
+		"enable": "Enable",
+		"disable": "Disable",
+		"toggle": "Toggle Dev Mode",
+		"debug": "Debug Mode",
+		"mock": "Mock Mode"
+	},
 	"routes": {
 		"home": {
 			"title": "Hot Tokens"

@@ -17,6 +17,36 @@ interface GetTokenInfoRequest {
 	token: string;
 }
 
+/**
+ * @deprecated 請使用 `useChatStore` 中的 `handleSubmit` 並搭配 `SupportedTool.GetTokenTrend`
+ *
+ * @example
+ * ```ts
+ * handleSubmit(
+ *   tAskMore('token-name.kol-order-with-item', {
+ *     item: token,
+ *   }),
+ *   {
+ *     tools: [
+ *       {
+ *         id: SupportedTool.GetTokenTrend,
+ *         function: {
+ *           name: SupportedTool.GetTokenTrend,
+ *           arguments: JSON.stringify(
+ *             tokenInfoArgsSchema.parse({
+ *               userMessage: tAskMore('token-name.kol-order-with-item', {
+ *                 item: token,
+ *               }),
+ *               token,
+ *             }),
+ *           ),
+ *         },
+ *       },
+ *     ],
+ *   },
+ * );
+ * ```
+ */
 export const useGetTokenTrends = (
 	options?: Partial<
 		Omit<
@@ -53,6 +83,12 @@ export const useGetTokenTrends = (
 					parentId: null,
 					reasoning: null,
 					threadId: dto.threadId,
+					toolCalls: [
+						{
+							id: SupportedTool.GetTokenTrend,
+							function: { name: SupportedTool.GetTokenTrend, arguments: '' },
+						},
+					],
 				},
 				{
 					role: 'assistant',

@@ -1,13 +1,17 @@
 'use client';
 
+import { useRef } from 'react';
+
 import { Navbar, NavbarContent, NavbarItem } from '@heroui/navbar';
 import { Skeleton } from '@heroui/skeleton';
 import { useTranslations } from 'next-intl';
 import { useTransitionRouter as useRouter } from 'next-view-transitions';
 import dynamic from 'next/dynamic';
+import { toast } from 'sonner';
 
 import Footer from '@/components/commons/footer';
 import { QueryType } from '@/libs/ai/enums/queryType.enum';
+import { setFeatureFlag } from '@/libs/flags/actions/feature.action';
 import { useGlobalStore } from '@/stores/global/store';
 import { noto_sans } from '@/themes/fonts';
 import { cn } from '@/utils/cn';
@@ -31,8 +35,37 @@ interface Props {
 
 const ChatRoomLayout = (props: Props) => {
 	const t = useTranslations('nav');
+	const tDevMode = useTranslations('dev-mode');
 	const router = useRouter();
 	const isOpen = useGlobalStore(state => state.donkin.isOpen);
+	const clickCountRef = useRef(0);
+	const clickTimerRef = useRef<NodeJS.Timeout | null>(null);
+
+	const handleClickFiveTimeToToggleFeatureFlag = () => {
+		void setFeatureFlag(!props.enableSettings);
+		toast.success(tDevMode('toggle'), {
+			position: 'top-center',
+		});
+	};
+
+	const handleDonkinClick = () => {
+		clickCountRef.current += 1;
+
+		if (clickTimerRef.current) {
+			clearTimeout(clickTimerRef.current);
+		}
+
+		if (clickCountRef.current === 5) {
+			handleClickFiveTimeToToggleFeatureFlag();
+			clickCountRef.current = 0;
+		} else {
+			clickTimerRef.current = setTimeout(() => {
+				clickCountRef.current = 0;
+			}, 1500);
+		}
+
+		router.push(`/?q=${QueryType.Heatmap}`);
+	};
 
 	return (
 		<>
@@ -51,20 +84,14 @@ const ChatRoomLayout = (props: Props) => {
 					className={cn('hidden sm:flex gap-10', noto_sans.className)}
 					justify="start"
 				>
-					<NavbarItem
-						className="cursor-pointer"
-						aria-label="Donkin"
-						onClick={() => {
-							router.push(`/?q=${QueryType.Heatmap}`);
-						}}
-					>
+					<NavbarItem className="cursor-pointer" aria-label="Donkin" onClick={handleDonkinClick}>
 						<Donkin />
 					</NavbarItem>
 					<NavbarItem
 						aria-label={t('all-tokens')}
 						className="cursor-pointer"
 						onClick={() => {
-							void router.push('/');
+							void router.push(`/?q=${QueryType.Tokens}`);
 						}}
 					>
 						{t('all-tokens')}

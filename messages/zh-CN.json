@@ -16,6 +16,14 @@
         "zh-CN": "简体中文",
         "en-US": "英文"
     },
+    "dev-mode": {
+        "label": "开发模式",
+        "enable": "开启",
+        "disable": "关闭",
+        "toggle": "切换开发模式",
+        "debug": "Debug 模试",
+        "mock": "Mock 模试"
+    },
     "routes": {
         "home": {
             "title": "热门代币"

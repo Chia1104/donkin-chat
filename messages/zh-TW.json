@@ -16,6 +16,14 @@
 		"zh-CN": "簡體中文",
 		"en-US": "英文"
 	},
+	"dev-mode": {
+		"label": "開發模式",
+		"enable": "開啟",
+		"disable": "關閉",
+		"toggle": "切換開發模式",
+		"debug": "Debug 模試",
+		"mock": "Mock 模試"
+	},
 	"routes": {
 		"home": {
 			"title": "熱門代幣"

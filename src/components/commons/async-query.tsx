@@ -1,6 +1,7 @@
 'use client';
 
 import type { UseQueryResult, UseInfiniteQueryResult, InfiniteData } from '@tanstack/react-query';
+import { HTTPError } from 'ky';
 
 import { Error } from './error';
 
@@ -40,7 +41,7 @@ export const AsyncQuery = <TData, TError extends Error, TInfinite extends boolea
 	if (queryResult.isError) {
 		return (
 			(typeof errorFallback === 'function' ? errorFallback(queryResult.error) : errorFallback) ?? (
-				<Error error={queryResult.error} />
+				<Error error={queryResult.error} enabledSentry={!(queryResult.error instanceof HTTPError)} />
 			)
 		);
 	}

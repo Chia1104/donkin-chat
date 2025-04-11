@@ -1,19 +1,31 @@
 'use client';
 
+import { useEffect } from 'react';
+
 import { Accordion, AccordionItem } from '@heroui/accordion';
 import { Button } from '@heroui/button';
+import { captureException } from '@sentry/nextjs';
 import { useTranslations } from 'next-intl';
 
+import { useGlobalSearchParams } from '@/hooks/useGlobalSearchParams';
 import { IS_PRODUCTION } from '@/utils/env';
 
 interface Props<TError extends Error> {
 	error?: TError | null;
 	fallback?: React.ReactNode;
 	onRetry?: () => void;
+	enabledSentry?: boolean;
 }
 
-export const Error = <TError extends Error>({ error, fallback, onRetry }: Props<TError>) => {
+export const Error = <TError extends Error>({ error, fallback, onRetry, enabledSentry = false }: Props<TError>) => {
 	const t = useTranslations('commons.error');
+	const [searchParams] = useGlobalSearchParams();
+
+	useEffect(() => {
+		if (enabledSentry && error) {
+			captureException(error);
+		}
+	}, [error, enabledSentry]);
 
 	return (
 		fallback ?? (
@@ -25,7 +37,7 @@ export const Error = <TError extends Error>({ error, fallback, onRetry }: Props<
 						{t('retry')}
 					</Button>
 				)}
-				{!IS_PRODUCTION && (
+				{(!IS_PRODUCTION || searchParams.debug) && (
 					<Accordion variant="bordered">
 						<AccordionItem title="Details" aria-label={t('title')}>
 							{error?.message}
