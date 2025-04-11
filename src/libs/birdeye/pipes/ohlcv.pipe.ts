@@ -8,9 +8,9 @@ import { Currency } from '../enums/currency.enum';
 
 export const ohlcvRequestSchema = z.object({
 	address: z.string().min(1),
-	chain: z.nativeEnum(Chain).default(Chain.Solana),
-	type: z.nativeEnum(IntervalFilter).default(IntervalFilter.FifteenMinutes),
-	currency: z.nativeEnum(Currency).default(Currency.USD),
+	chain: z.enum(Chain).default(Chain.Solana),
+	type: z.enum(IntervalFilter).default(IntervalFilter.FifteenMinutes),
+	currency: z.enum(Currency).default(Currency.USD),
 	time_from: numericString,
 	time_to: numericString,
 });

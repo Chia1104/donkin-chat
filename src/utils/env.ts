@@ -33,7 +33,7 @@ export const env = createEnv({
 		NEXT_PUBLIC_APP_API_HOST: z.string().min(1),
 		NEXT_PUBLIC_APP_AI_API_HOST: z.string().min(1),
 		NEXT_PUBLIC_DEFAULT_TIME_ZONE: z.string().min(1),
-		NEXT_PUBLIC_DEFAULT_LOCALE: z.nativeEnum(Locale),
+		NEXT_PUBLIC_DEFAULT_LOCALE: z.enum(Locale),
 		NEXT_PUBLIC_DEBUG_ZUSTAND_DEVTOOLS: z.string().optional(),
 		NEXT_PUBLIC_APP_NODE_ENDPOINT: z.string().optional(),
 	},

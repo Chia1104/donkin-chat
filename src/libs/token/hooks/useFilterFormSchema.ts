@@ -14,10 +14,8 @@ export const useFilterFormSchema = () => {
 
 	return z
 		.object({
-			[FilterColumn.Address]: z
-				.array(z.nativeEnum(Address, { message: messages.primitive.invalid_type_error }))
-				.nullable(),
-			[FilterColumn.Order]: z.array(z.nativeEnum(Order, { message: messages.primitive.invalid_type_error })).nullable(),
+			[FilterColumn.Address]: z.array(z.enum(Address, { message: messages.primitive.invalid_type_error })).nullable(),
+			[FilterColumn.Order]: z.array(z.enum(Order, { message: messages.primitive.invalid_type_error })).nullable(),
 			[FilterColumn.TransactionMin]: patterns.number.nullable(),
 			[FilterColumn.TransactionMax]: patterns.number.nullable(),
 			[FilterColumn.OrderCountMin]: patterns.number.nullable(),

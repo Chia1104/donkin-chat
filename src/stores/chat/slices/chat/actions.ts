@@ -105,6 +105,7 @@ export const chatActions: StateCreator<
 				reasoning: null,
 				threadId: get().threadId,
 				toolCalls: parts?.tools,
+				error: null,
 			},
 			{
 				role: 'assistant',
@@ -115,6 +116,7 @@ export const chatActions: StateCreator<
 				reasoning: null,
 				threadId: get().threadId,
 				toolCalls: parts?.tools,
+				error: null,
 			},
 		]);
 		set({ status: ChatStatus.Streaming, input: '' }, false, nameSpace('handleSubmit'));

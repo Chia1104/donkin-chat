@@ -24,7 +24,7 @@ export const messageItemSchema = z.object({
 	id: z.string(),
 	parentId: z.string().nullable(),
 	reasoning: modelReasoningSchema.nullable(),
-	role: z.nativeEnum(MessageRole),
+	role: z.enum(MessageRole),
 	threadId: z.string(),
 	toolCalls: z.array(toolCallSchema).optional(),
 });

@@ -37,7 +37,7 @@ interface BaseContext<TMessageItem extends MessageItem, TStreamRequestDTO = unkn
 
 export interface ChatConfig<TMessageItem extends MessageItem, TStreamRequestDTO = unknown, TContext = unknown> {
 	endpoint: string;
-	messageSchema: z.ZodType<TMessageItem, any, any>;
+	messageSchema: z.ZodType<TMessageItem, unknown>;
 	messageProcessor: (
 		context: BaseContext<TMessageItem, TStreamRequestDTO, TContext> & {
 			response: Awaited<ReturnType<typeof fetchStream>>;

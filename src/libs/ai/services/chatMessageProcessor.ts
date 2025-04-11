@@ -181,18 +181,6 @@ function processSSEChunk(
 	}
 
 	try {
-		// 檢查 JSON 格式是否有效
-		try {
-			JSON.parse(dataLine);
-		} catch {
-			// 嘗試使用正則表達式提取 JSON 部分
-			const jsonRegex = /({.*}|\[.*\])/;
-			const jsonMatch = jsonRegex.exec(dataLine);
-			if (jsonMatch) {
-				dataLine = jsonMatch[0];
-			}
-		}
-
 		const rawData = JSON.parse(dataLine) as unknown;
 
 		switch (eventType) {

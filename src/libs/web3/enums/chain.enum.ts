@@ -16,7 +16,7 @@ export const ChainID = {
 export type ChainID = (typeof ChainID)[keyof typeof ChainID];
 
 export const isChainID = (value: unknown): value is ChainID => {
-	return z.nativeEnum(ChainID).safeParse(value).success;
+	return z.enum(ChainID).safeParse(value).success;
 };
 
 export const EVMChainID = {
@@ -27,7 +27,7 @@ export const EVMChainID = {
 export type EVMChainID = (typeof EVMChainID)[keyof typeof EVMChainID];
 
 export const isEVMChainID = (value: unknown): value is EVMChainID => {
-	return z.nativeEnum(EVMChainID).safeParse(value).success;
+	return z.enum(EVMChainID).safeParse(value).success;
 };
 
 export const ChainSymbol = {
@@ -39,7 +39,7 @@ export const ChainSymbol = {
 export type ChainSymbol = (typeof ChainSymbol)[keyof typeof ChainSymbol];
 
 export const isChainSymbol = (value: unknown): value is ChainSymbol => {
-	return z.nativeEnum(ChainSymbol).safeParse(value).success;
+	return z.enum(ChainSymbol).safeParse(value).success;
 };
 
 export const EVMChainSymbol = {
@@ -50,7 +50,7 @@ export const EVMChainSymbol = {
 export type EVMChainSymbol = (typeof EVMChainSymbol)[keyof typeof EVMChainSymbol];
 
 export const isEVMChainSymbol = (value: unknown): value is EVMChainSymbol => {
-	return z.nativeEnum(EVMChainSymbol).safeParse(value).success;
+	return z.enum(EVMChainSymbol).safeParse(value).success;
 };
 
 export const SVMChainID = {
@@ -60,7 +60,7 @@ export const SVMChainID = {
 export type SVMChainID = (typeof SVMChainID)[keyof typeof SVMChainID];
 
 export const isSVMChainID = (value: unknown): value is SVMChainID => {
-	return z.nativeEnum(SVMChainID).safeParse(value).success;
+	return z.enum(SVMChainID).safeParse(value).success;
 };
 
 export const SVMChainSymbol = {
@@ -70,5 +70,5 @@ export const SVMChainSymbol = {
 export type SVMChainSymbol = (typeof SVMChainSymbol)[keyof typeof SVMChainSymbol];
 
 export const isSVMChainSymbol = (value: unknown): value is SVMChainSymbol => {
-	return z.nativeEnum(SVMChainSymbol).safeParse(value).success;
+	return z.enum(SVMChainSymbol).safeParse(value).success;
 };
