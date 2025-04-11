@@ -134,6 +134,20 @@ function processSSEChunk(
 ): string {
 	if (!chunk.trim()) return accumulatedText;
 
+	// 檢查是否為新的 ping 格式
+	if (chunk.trim().startsWith(': ping')) {
+		// 將 ping 視為 heartbeat 事件處理
+		try {
+			// 建立一個類似 heartbeat 的數據結構
+			const heartbeatData = { type: ChatEventType.System };
+			// 模擬 heartbeat 事件的處理流程，但不執行任何回調
+			heartbeatSchema.parse(heartbeatData);
+		} catch (error) {
+			console.warn('處理 ping 格式失敗:', error);
+		}
+		return accumulatedText;
+	}
+
 	// 嘗試使用不同的行分隔符
 	let eventLines = chunk.split('\n');
 	if (eventLines.length < 2) {
