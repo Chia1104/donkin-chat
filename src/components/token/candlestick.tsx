@@ -13,7 +13,6 @@ import { toast } from 'sonner';
 import { useMutationOhlcv } from '@/libs/birdeye/hooks/useQueryOhlcv';
 import type { OlcvResponseDTO } from '@/libs/birdeye/hooks/useQueryOhlcv';
 import { IntervalFilter } from '@/libs/token/enums/interval-filter.enum';
-import { useTokenSearchParams } from '@/libs/token/hooks/useTokenSearchParams';
 import { theme as twTheme } from '@/themes/tw.theme';
 import dayjs from '@/utils/dayjs';
 
@@ -224,7 +223,6 @@ const NoDataWatermark = ({ data, text = 'No data' }: { data: OlcvResponseDTO; te
 const Chart = () => {
 	const tUtils = useTranslations('utils');
 	const locale = useLocale();
-	const [searchParams] = useTokenSearchParams();
 	const [initOptions] = useState({
 		autoSize: true,
 		layout: {
@@ -299,11 +297,11 @@ const Chart = () => {
 					color: undefined,
 				}))}
 				options={{
-					upColor: searchParams.mark ? twTheme.extend.colors.buy.disabled : twTheme.extend.colors.buy.DEFAULT,
-					downColor: searchParams.mark ? twTheme.extend.colors.sell.disabled : twTheme.extend.colors.sell.DEFAULT,
+					upColor: twTheme.extend.colors.buy.DEFAULT,
+					downColor: twTheme.extend.colors.sell.DEFAULT,
 					borderVisible: false,
-					wickUpColor: searchParams.mark ? twTheme.extend.colors.buy.disabled : twTheme.extend.colors.buy.DEFAULT,
-					wickDownColor: searchParams.mark ? twTheme.extend.colors.sell.disabled : twTheme.extend.colors.sell.DEFAULT,
+					wickUpColor: twTheme.extend.colors.buy.DEFAULT,
+					wickDownColor: twTheme.extend.colors.sell.DEFAULT,
 				}}
 			>
 				<SubscribeCandlestick onLoad={handleSubscribeHistogram} />
