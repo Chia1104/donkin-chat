@@ -1,5 +1,6 @@
 'use client';
 
+import { DEFAULT_THREAD_ID } from '@/libs/ai/constants';
 import { ChatStatus } from '@/libs/ai/enums/chatStatus.enum';
 import { processStreamEvents } from '@/libs/ai/services/chatMessageProcessor';
 import type { AIResponseData } from '@/types/request';
@@ -75,7 +76,7 @@ const { ChatStoreProvider, useChatStore, ChatStoreContext, creator } = defineCha
 			const convId = get().context?.conv_id;
 			const userMessage = get().getLatestUserMessage();
 			const locale = get().context?.locale;
-			if (!convId || convId === 'inbox') {
+			if (!convId || convId === DEFAULT_THREAD_ID) {
 				const data = await request({
 					requestMode: 'proxy-ai',
 				})
