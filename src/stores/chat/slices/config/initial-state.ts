@@ -44,7 +44,11 @@ export interface ChatConfig<TMessageItem extends MessageItem, TStreamRequestDTO 
 		},
 	) => void | Promise<void>;
 	onCancel?: (context: BaseContext<TMessageItem, TStreamRequestDTO, TContext>) => void | Promise<void>;
-	preStream?: (context: BaseContext<TMessageItem, TStreamRequestDTO, TContext>) => void | Promise<void>;
+	preStream?: (
+		context: BaseContext<TMessageItem, TStreamRequestDTO, TContext> & {
+			messages: TMessageItem[];
+		},
+	) => void | Promise<void>;
 	postStream?: (context: BaseContext<TMessageItem, TStreamRequestDTO, TContext>) => void | Promise<void>;
 	streamRequestInit?: (context: BaseContext<TMessageItem, TStreamRequestDTO, TContext>) => RequestInit & {
 		searchParams?: Record<string, string>;

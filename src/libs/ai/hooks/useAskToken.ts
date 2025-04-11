@@ -1,18 +1,15 @@
 import { useTranslations } from 'next-intl';
 
-import { useAISearchParams } from '@/libs/ai/hooks/useAISearchParams';
-import { useGetTokenInfo } from '@/libs/ai/hooks/useGetTokenInfo';
 import { useChatStore } from '@/stores/chat';
+import { tokenInfoArgsSchema } from '@/stores/chat';
 
 import { ChatStatus } from '../enums/chatStatus.enum';
-import { useGetTokenTrends } from './useGetTokenTrends';
+import { SupportedTool } from '../enums/supportedTool.enum';
 
 export const useAskToken = (token: string) => {
 	const tAskMore = useTranslations('donkin.ask-more');
-	const { mutate: getTokenInfo } = useGetTokenInfo();
-	const { mutate: getTokenTrends } = useGetTokenTrends();
-	const [searchParams] = useAISearchParams();
 	const status = useChatStore(state => state.status);
+	const handleSubmit = useChatStore(state => state.handleSubmit);
 
 	return {
 		askMore: [
@@ -27,18 +24,54 @@ export const useAskToken = (token: string) => {
 			}
 			switch (item) {
 				case tAskMore('token-name.basic-info'):
-					getTokenInfo({
-						threadId: searchParams.threadId,
-						userMessage: item,
-						token,
-					});
+					handleSubmit(
+						tAskMore('token-name.basic-info-with-item', {
+							item: token,
+						}),
+						{
+							tools: [
+								{
+									id: SupportedTool.GetTokenInfo,
+									function: {
+										name: SupportedTool.GetTokenInfo,
+										arguments: JSON.stringify(
+											tokenInfoArgsSchema.parse({
+												userMessage: tAskMore('token-name.basic-info-with-item', {
+													item: token,
+												}),
+												token,
+											}),
+										),
+									},
+								},
+							],
+						},
+					);
 					break;
 				case tAskMore('token-name.kol-order'):
-					getTokenTrends({
-						threadId: searchParams.threadId,
-						userMessage: item,
-						token,
-					});
+					handleSubmit(
+						tAskMore('token-name.kol-order-with-item', {
+							item: token,
+						}),
+						{
+							tools: [
+								{
+									id: SupportedTool.GetTokenTrend,
+									function: {
+										name: SupportedTool.GetTokenTrend,
+										arguments: JSON.stringify(
+											tokenInfoArgsSchema.parse({
+												userMessage: tAskMore('token-name.kol-order-with-item', {
+													item: token,
+												}),
+												token,
+											}),
+										),
+									},
+								},
+							],
+						},
+					);
 					break;
 			}
 		},
