@@ -179,8 +179,4 @@ function drawShape(
 			drawSell(ctx, coordinates, item.size);
 			return;
 	}
-
-	drawLoudspeaker(ctx, coordinates, item.size);
-
-	// drawAvatar(ctx, coordinates, item.size, src, imageCache ?? null);
 }
