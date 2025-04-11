@@ -6,9 +6,7 @@ import { ToastProvider } from '@heroui/toast';
 import dynamic from 'next/dynamic';
 import { Toaster } from 'sonner';
 
-import type { Theme } from '@/enums/theme.enum';
 import { useCMD } from '@/hooks/useCMD';
-import useDarkMode from '@/hooks/useDarkMode';
 import { useGlobalStore } from '@/stores/global/store';
 import { useWeb3Store } from '@/stores/web3/store';
 
@@ -17,8 +15,7 @@ const ReactQueryDevtools = dynamic(() => import('@tanstack/react-query-devtools'
 });
 
 const ToasterPlugin = () => {
-	const { theme } = useDarkMode();
-	return <Toaster theme={theme as Theme} position="bottom-left" richColors />;
+	return <Toaster theme="dark" position="bottom-left" richColors />;
 };
 
 const Wb3StoreConsumer = () => {
