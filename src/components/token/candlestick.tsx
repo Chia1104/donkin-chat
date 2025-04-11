@@ -10,15 +10,19 @@ import type { Time, ISeriesApi } from 'lightweight-charts';
 import { useLocale, useTranslations } from 'next-intl';
 import { toast } from 'sonner';
 
+import { useGlobalSearchParams } from '@/hooks/useGlobalSearchParams';
 import { useMutationOhlcv } from '@/libs/birdeye/hooks/useQueryOhlcv';
 import type { OlcvResponseDTO } from '@/libs/birdeye/hooks/useQueryOhlcv';
 import type { KolAlert } from '@/libs/kol/pipes/kol.pipe';
 import { IntervalFilter } from '@/libs/token/enums/interval-filter.enum';
+import { useTokenSearchParams } from '@/libs/token/hooks/useTokenSearchParams';
 import { theme as twTheme } from '@/themes/tw.theme';
 import dayjs from '@/utils/dayjs';
 
 import { useChart } from '../chart/trading-chart/chart';
 import { Chart as TradingChart } from '../chart/trading-chart/chart';
+import type { ClickableMarker } from '../chart/trading-chart/plugins/clickable-marker/core';
+import { createClickableMarkers } from '../chart/trading-chart/plugins/clickable-marker/core';
 import { MarkerTooltipProvider, MarkerTooltip } from '../chart/trading-chart/plugins/clickable-marker/marker-tooltip';
 import { Series } from '../chart/trading-chart/series';
 import { useSeries } from '../chart/trading-chart/series';
@@ -222,6 +226,51 @@ const NoDataWatermark = ({ data, text = 'No data' }: { data: OlcvResponseDTO; te
 	return null;
 };
 
+const ClickableMarkerSeries = () => {
+	const { kolAlerts } = useCandlestick();
+	const chart = useChart('ClickableMarker');
+	const series = useSeries('ClickableMarker');
+	const [searchParams] = useTokenSearchParams();
+	const [globalSearchParams] = useGlobalSearchParams();
+	const clickableMarkers: ClickableMarker<Time>[] = useMemo(() => {
+		if (!kolAlerts) {
+			return [];
+		}
+		return kolAlerts.map(item => ({
+			time: dayjs(item.day).utc().unix() as Time,
+			position: 'aboveBar',
+			color: 'rgba(255, 255, 255, 0.45)',
+			size: 1,
+			src: '/assets/images/kol.svg',
+			text: item.kol_alerts.toString(),
+		}));
+		// .filter(item =>
+		// 	data.some(dataItem =>
+		// 		dayjs(item.time as number)
+		// 			.utc()
+		// 			.isBefore(dayjs(dataItem.unix).utc(), 'day'),
+		// 	),
+		// );
+	}, [kolAlerts]);
+
+	useEffect(() => {
+		const chartApi = chart._api;
+		const seriesApi = series.api();
+		if (clickableMarkers.length > 0 && chartApi && seriesApi && globalSearchParams.debug) {
+			if (!searchParams.mark) {
+				createClickableMarkers<Time>(chartApi, seriesApi, []);
+				return;
+			}
+			createClickableMarkers<Time>(chartApi, seriesApi, clickableMarkers, {
+				onClick: marker => {
+					console.log(marker);
+				},
+			});
+		}
+	}, [clickableMarkers, chart, series, searchParams.mark, globalSearchParams.debug]);
+	return null;
+};
+
 const Chart = () => {
 	const tUtils = useTranslations('utils');
 	const locale = useLocale();
@@ -307,6 +356,7 @@ const Chart = () => {
 				}}
 			>
 				<SubscribeCandlestick onLoad={handleSubscribeHistogram} />
+				<ClickableMarkerSeries />
 			</Series>
 			<Series
 				ref={histogramSeriesRef}
