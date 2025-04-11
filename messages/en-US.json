@@ -20,7 +20,9 @@
 		"label": "Dev Mode",
 		"enable": "Enable",
 		"disable": "Disable",
-		"toggle": "Toggle Dev Mode"
+		"toggle": "Toggle Dev Mode",
+		"debug": "Debug Mode",
+		"mock": "Mock Mode"
 	},
 	"routes": {
 		"home": {
