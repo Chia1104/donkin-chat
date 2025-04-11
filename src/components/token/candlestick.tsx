@@ -14,11 +14,14 @@ import { useMutationOhlcv } from '@/libs/birdeye/hooks/useQueryOhlcv';
 import type { OlcvResponseDTO } from '@/libs/birdeye/hooks/useQueryOhlcv';
 import type { KolAlert } from '@/libs/kol/pipes/kol.pipe';
 import { IntervalFilter } from '@/libs/token/enums/interval-filter.enum';
+import { useTokenSearchParams } from '@/libs/token/hooks/useTokenSearchParams';
 import { theme as twTheme } from '@/themes/tw.theme';
 import dayjs from '@/utils/dayjs';
 
 import { useChart } from '../chart/trading-chart/chart';
 import { Chart as TradingChart } from '../chart/trading-chart/chart';
+import type { ClickableMarker } from '../chart/trading-chart/plugins/clickable-marker/core';
+import { createClickableMarkers } from '../chart/trading-chart/plugins/clickable-marker/core';
 import { MarkerTooltipProvider, MarkerTooltip } from '../chart/trading-chart/plugins/clickable-marker/marker-tooltip';
 import { Series } from '../chart/trading-chart/series';
 import { useSeries } from '../chart/trading-chart/series';
@@ -222,6 +225,50 @@ const NoDataWatermark = ({ data, text = 'No data' }: { data: OlcvResponseDTO; te
 	return null;
 };
 
+const ClickableMarkerSeries = () => {
+	const { kolAlerts, data } = useCandlestick();
+	const chart = useChart('ClickableMarker');
+	const series = useSeries('ClickableMarker');
+	const [searchParams] = useTokenSearchParams();
+	const loudspeakerMarkers: ClickableMarker<Time>[] = useMemo(() => {
+		if (!kolAlerts) {
+			return [];
+		}
+
+		// 找出 data 中最早的 unix 時間
+		const earliestUnixTime = data.length > 0 ? Math.min(...data.map(item => item.unix)) : 0;
+
+		// 過濾掉早於 data 中最早時間的 kolAlerts
+		return kolAlerts
+			.filter(item => dayjs(item.day).utc().unix() >= earliestUnixTime)
+			.map(item => ({
+				time: dayjs(item.day).utc().unix() as Time,
+				position: 'aboveBar',
+				color: 'rgba(255, 181, 34, 1)',
+				size: 1,
+				type: 'loudspeaker',
+				text: `+${item.kol_alerts}`,
+			}));
+	}, [kolAlerts, data]);
+
+	useEffect(() => {
+		const chartApi = chart._api;
+		const seriesApi = series.api();
+		if (loudspeakerMarkers.length > 0 && chartApi && seriesApi) {
+			if (!searchParams.mark) {
+				createClickableMarkers<Time>(chartApi, seriesApi, []);
+				return;
+			}
+			createClickableMarkers<Time>(chartApi, seriesApi, loudspeakerMarkers, {
+				onClick: marker => {
+					console.log(marker);
+				},
+			});
+		}
+	}, [loudspeakerMarkers, chart, series, searchParams.mark]);
+	return null;
+};
+
 const Chart = () => {
 	const tUtils = useTranslations('utils');
 	const locale = useLocale();
@@ -307,6 +354,7 @@ const Chart = () => {
 				}}
 			>
 				<SubscribeCandlestick onLoad={handleSubscribeHistogram} />
+				<ClickableMarkerSeries />
 			</Series>
 			<Series
 				ref={histogramSeriesRef}

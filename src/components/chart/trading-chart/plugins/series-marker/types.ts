@@ -4,6 +4,11 @@
 export type SeriesMarkerPosition = 'aboveBar' | 'belowBar' | 'inBar';
 
 /**
+ * Represents the type of a series marker.
+ */
+export type SeriesMarkerType = 'loudspeaker' | 'avatar' | 'text' | 'buy' | 'sell';
+
+/**
  * Represents a series marker.
  */
 export interface SeriesMarker<TimeType> {
@@ -15,6 +20,10 @@ export interface SeriesMarker<TimeType> {
 	 * The position of the marker.
 	 */
 	position: SeriesMarkerPosition;
+	/**
+	 * The type of the marker.
+	 */
+	type: SeriesMarkerType;
 	/**
 	 * The color of the marker.
 	 */

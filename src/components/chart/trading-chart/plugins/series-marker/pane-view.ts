@@ -182,6 +182,7 @@ export class SeriesMarkersPaneView<HorzScaleItem> implements IPrimitivePaneView 
 					internalId: marker.internalId,
 					text: undefined,
 					src: marker.src,
+					type: marker.type,
 				}),
 			);
 			this._dataInvalidated = false;

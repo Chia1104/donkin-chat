@@ -19,15 +19,14 @@ import { HeaderPrimitive } from '@/components/token/info-card';
 import Card from '@/components/ui/card';
 import { MarketSentiment } from '@/components/ui/market-sentiment';
 import { useQueryOhlcv } from '@/libs/birdeye/hooks/useQueryOhlcv';
+import { useGetKolAlerts } from '@/libs/kol/hooks/useGetKolAlerts';
 import { IntervalFilter } from '@/libs/token/enums/interval-filter.enum';
 import { useQueryToken } from '@/libs/token/hooks/useQueryToken';
 import { useTokenSearchParams } from '@/libs/token/hooks/useTokenSearchParams';
 import { cn } from '@/utils/cn';
 import dayjs from '@/utils/dayjs';
 import { truncateMiddle, formatLargeNumber, roundDecimal } from '@/utils/format';
-import { isNumber } from '@/utils/is';
-import { isPositiveNumber } from '@/utils/is';
-import { isNegativeNumber } from '@/utils/is';
+import { isPositiveNumber, isNegativeNumber, isNumber } from '@/utils/is';
 
 const Hotspot = ({ x }: { x: number }) => {
 	const t = useTranslations('preview.ai-signal');
@@ -146,6 +145,7 @@ const Detail = () => {
 	const queryResult = useQueryToken(params.token);
 	const [searchParams] = useTokenSearchParams();
 	const currentUnix = useRef(dayjs().unix());
+	const { data: kolAlerts, isLoading: isKolAlertsLoading } = useGetKolAlerts(params.token);
 
 	const timeFrom = useMemo(() => {
 		switch (searchParams.interval) {
@@ -273,8 +273,9 @@ const Detail = () => {
 							time_to: currentUnix.current,
 						}}
 						data={ohlcvData}
-						isPending={ohlcv.isLoading}
+						isPending={ohlcv.isLoading || isKolAlertsLoading}
 						isMetaPending={queryResult.isLoading}
+						kolAlerts={kolAlerts}
 					/>
 				</div>
 			</ScrollShadow>

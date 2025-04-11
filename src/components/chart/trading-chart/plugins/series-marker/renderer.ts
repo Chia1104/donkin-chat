@@ -2,9 +2,13 @@ import type { BitmapCoordinatesRenderingScope, CanvasRenderingTarget2D } from 'f
 import type { Coordinate, IPrimitivePaneRenderer } from 'lightweight-charts';
 
 import { drawAvatar } from './series-markers-avatar';
+import { drawBuy } from './series-markers-buy';
+import { drawLoudspeaker } from './series-markers-loudspeaker';
+import { drawSell } from './series-markers-sell';
 import { drawText } from './series-markers-text';
 import { TextWidthCache } from './text-width-cache';
 import type { TimedValue, SeriesItemsIndexesRange } from './time-data';
+import type { SeriesMarkerType } from './types';
 import type { BitmapShapeItemCoordinates } from './utils';
 
 export interface SeriesMarkerText {
@@ -23,6 +27,7 @@ export interface SeriesMarkerRendererDataItem extends TimedValue {
 	externalId?: string;
 	text?: SeriesMarkerText;
 	src?: string;
+	type: SeriesMarkerType;
 }
 
 export interface SeriesMarkerRendererData {
@@ -154,9 +159,24 @@ function drawShape(
 	src?: string,
 	imageCache?: HTMLImageElement | null,
 ): void {
-	if (item.size === 0 || !src) {
+	if (item.size === 0) {
 		return;
 	}
 
-	drawAvatar(ctx, coordinates, item.size, src, imageCache ?? null);
+	switch (item.type) {
+		case 'loudspeaker':
+			drawLoudspeaker(ctx, coordinates, item.size);
+			return;
+		case 'avatar':
+			if (src) {
+				drawAvatar(ctx, coordinates, item.size, src, imageCache ?? null);
+			}
+			return;
+		case 'buy':
+			drawBuy(ctx, coordinates, item.size);
+			return;
+		case 'sell':
+			drawSell(ctx, coordinates, item.size);
+			return;
+	}
 }

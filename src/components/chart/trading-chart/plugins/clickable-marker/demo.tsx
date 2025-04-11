@@ -36,6 +36,7 @@ const mockMarkers: ClickableMarker<Time>[] = [
 				<p>test</p>
 			</div>
 		),
+		type: 'avatar',
 	},
 	{
 		time: dayjs().subtract(2, 'day').format('YYYY-MM-DD') as Time,
@@ -44,6 +45,7 @@ const mockMarkers: ClickableMarker<Time>[] = [
 		size: 1,
 		src: 'https://avatars.githubusercontent.com/u/38397958?v=4',
 		tooltip: 'test',
+		type: 'avatar',
 	},
 ];
 

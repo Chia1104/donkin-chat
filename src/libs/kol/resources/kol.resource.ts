@@ -11,6 +11,7 @@ export const getKolAlerts = async (options?: BaseRequestOptions<{ token_address:
 			searchParams: {
 				token_address: options?.data?.token_address ?? '',
 			},
+			credentials: undefined,
 		})
 		.json<ResponseData<KolAlert[]>>();
 
