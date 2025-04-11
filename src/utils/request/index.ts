@@ -7,7 +7,7 @@ type RequestOptions = {
 	requestMode?: RequestMode;
 } & Options;
 
-export type RequestMode = 'proxy' | 'self-api' | 'external' | 'ai' | 'proxy-ai';
+export type RequestMode = 'proxy' | 'self-api' | 'external' | 'ai' | 'proxy-ai' | 'node-endpoint';
 
 const getPrefixedUrl = (requestMode?: RequestMode) => {
 	const IS_SERVER = typeof window === 'undefined';
@@ -22,6 +22,8 @@ const getPrefixedUrl = (requestMode?: RequestMode) => {
 			return env.NEXT_PUBLIC_APP_AI_API_HOST;
 		case 'proxy-ai':
 			return !IS_SERVER ? '/proxy-ai-api' : env.NEXT_PUBLIC_APP_AI_API_HOST;
+		case 'node-endpoint':
+			return env.NEXT_PUBLIC_APP_NODE_ENDPOINT ?? '/';
 		default:
 			return !IS_SERVER ? '/' : env.NEXT_PUBLIC_APP_API_HOST;
 	}
