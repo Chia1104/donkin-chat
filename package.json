@@ -24,6 +24,7 @@
 		"@ai-sdk/react": "^1.2.8",
 		"@ai-sdk/ui-utils": "^1.2.7",
 		"@heroui/react": "^2.7.6",
+		"@heroui/use-infinite-scroll": "^2.2.7",
 		"@hookform/resolvers": "^5.0.1",
 		"@next/third-parties": "^15.3.0",
 		"@radix-ui/react-label": "^2.1.3",

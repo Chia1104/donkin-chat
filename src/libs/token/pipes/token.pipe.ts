@@ -32,10 +32,25 @@ export const tokenSchema = z
 		change: data.price_change_24h / 100,
 	}));
 
+export const searchTokenSchema = z.object({
+	address: z.string(),
+	symbol: z.string(),
+	name: z.string(),
+	logo_uri: z.string().nullish(),
+	market_cap: z.number(),
+});
+
 export const tokensSchema = z.array(tokenSchema);
+export const searchTokensSchema = z.array(searchTokenSchema);
 
 export const tokensPaginationSchema = paginationSchema.extend({
 	data: tokensSchema,
 });
+export const searchTokensPaginationSchema = paginationSchema.extend({
+	data: searchTokensSchema,
+});
 
 export type Token = z.infer<typeof tokenSchema>;
+export type SearchToken = z.infer<typeof searchTokenSchema>;
+export type TokensPagination = z.infer<typeof tokensPaginationSchema>;
+export type SearchTokensPagination = z.infer<typeof searchTokensPaginationSchema>;

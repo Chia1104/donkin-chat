@@ -25,7 +25,7 @@ export interface PaginationData<TData = unknown> {
 	data: TData[];
 }
 
-export interface PaginationRequestOptions<TSort extends string[]> {
+export interface PaginationRequestOptions<TSort extends string[] = []> {
 	page?: number;
 	page_size?: number;
 	sort_by?: TSort[number];
