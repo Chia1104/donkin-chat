@@ -181,24 +181,6 @@ function processSSEChunk(
 	}
 
 	try {
-		// 檢查和清理 JSON 格式
-
-		// 檢查是否是單引號包裹的 JSON (應該是雙引號)
-		if (dataLine.startsWith("'") && dataLine.endsWith("'")) {
-			dataLine = dataLine.substring(1, dataLine.length - 1);
-		}
-
-		// 替換單引號為雙引號 (JSON 要求使用雙引號)
-		if (dataLine.includes("'") && !dataLine.includes('"')) {
-			dataLine = dataLine.replace(/'/g, '"');
-		}
-
-		// 嘗試修復常見的 JSON 錯誤
-		// 例如 {type: 'text'} 應該是 {"type": "text"}
-		if (dataLine.startsWith('{') && dataLine.includes(':') && !dataLine.includes('":')) {
-			dataLine = dataLine.replace(/([{,])\s*([a-zA-Z0-9_]+)\s*:/g, '$1"$2":');
-		}
-
 		// 檢查 JSON 格式是否有效
 		try {
 			JSON.parse(dataLine);
