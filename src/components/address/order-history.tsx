@@ -185,7 +185,6 @@ const Meta = () => {
 						<Skeleton className="w-20 h-4 rounded-full" />
 					</span>
 				</div>
-				<DateFilter />
 			</div>
 		);
 	}
@@ -406,6 +405,7 @@ const OrderChart = () => {
 			onInit={c => {
 				c.timeScale().fitContent();
 			}}
+			key={searchParams.interval}
 		>
 			{searchParams.display.includes(TDisplayFilter.BalanceHistory) && (
 				<Series
