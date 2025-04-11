@@ -64,7 +64,7 @@ const ChatRoomLayout = (props: Props) => {
 						aria-label={t('all-tokens')}
 						className="cursor-pointer"
 						onClick={() => {
-							void router.push('/');
+							void router.push(`/?q=${QueryType.Tokens}`);
 						}}
 					>
 						{t('all-tokens')}
