@@ -340,7 +340,10 @@ const OrderChart = () => {
 								header={
 									<section className="flex flex-col gap-1">
 										<p className="text-xs font-normal text-foreground-400">
-											{dayjs.unix(clickedData.time as number).format('YYYY-MM-DD')}
+											{dayjs
+												.unix(clickedData.time as number)
+												.utc()
+												.format('YYYY-MM-DD')}
 										</p>
 										<p className="text-xs font-normal text-foreground-500">
 											{t('daily-profit-loss')}{' '}
