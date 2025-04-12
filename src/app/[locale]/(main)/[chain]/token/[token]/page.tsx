@@ -11,12 +11,16 @@ import { getQueryClient } from '@/utils/query-client';
 import { tryCatch } from '@/utils/try-catch';
 
 export async function generateMetadata(props: PagePropsWithLocale<{ token: string }>): Promise<Metadata> {
-	const [{ token }, tRoutes] = await Promise.all([props.params, getTranslations('routes')]);
+	const [{ token }, tRoutes, tToken] = await Promise.all([
+		props.params,
+		getTranslations('routes'),
+		getTranslations('token.not-found'),
+	]);
 	const { data, error } = await tryCatch(getToken(token));
 
 	if (error) {
 		return {
-			title: tRoutes('token.title'),
+			title: tToken('title'),
 		};
 	}
 
