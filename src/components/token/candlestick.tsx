@@ -463,7 +463,7 @@ const TransactionMarkers = () => {
 			}
 		});
 
-		return markers;
+		return markers.sort((a, b) => (a.time as number) - (b.time as number));
 	}, [internal_transactions, internal_data, query.type]);
 
 	useEffect(() => {
