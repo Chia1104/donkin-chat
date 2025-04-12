@@ -5,6 +5,7 @@ import { useEffect, useRef, useState } from 'react';
 
 import { Autocomplete, AutocompleteItem } from '@heroui/autocomplete';
 import { Avatar } from '@heroui/avatar';
+import { Spinner } from '@heroui/spinner';
 import { useInfiniteScroll } from '@heroui/use-infinite-scroll';
 import { useDebouncedValue } from '@tanstack/react-pacer/debouncer';
 import { isNumber } from 'lodash-es';
@@ -22,6 +23,7 @@ const SearchAddress = () => {
 	const tUtils = useTranslations('utils');
 	const tToken = useTranslations('preview.tokens-list');
 	const ref = useRef<HTMLInputElement>(null);
+	const selectedSnapshot = useRef<SearchToken | null>(null);
 	const [search, setSearch] = useState('');
 	const [selected, setSelected] = useState<SearchToken | null>(null);
 	const router = useTransitionRouter();
@@ -33,7 +35,8 @@ const SearchAddress = () => {
 	const handleSetSelected = (key: Key | null) => {
 		const current = flatData.find(item => item.address === key);
 		logger(current, { type: 'log' });
-		if (current) {
+		if (current && current.address !== selectedSnapshot.current?.address) {
+			selectedSnapshot.current = current;
 			setSelected(current);
 			router.push(`/${current.symbol}/token/${current.address}`);
 		}
@@ -70,14 +73,15 @@ const SearchAddress = () => {
 	return (
 		<Autocomplete
 			inputValue={search}
-			isLoading={isLoading}
 			items={flatData}
 			selectedKey={selected?.address}
 			onInputChange={setSearch}
 			placeholder={t('search-placeholder')}
 			aria-label={t('search-placeholder')}
 			variant="bordered"
-			endContent={<span className="text-default-600 i-material-symbols-search size-[22px]" />}
+			endContent={
+				isLoading ? <Spinner size="sm" /> : <span className="text-default-600 i-material-symbols-search size-[22px]" />
+			}
 			classNames={{
 				base: 'min-w-[200px]',
 				selectorButton: 'hidden',
@@ -92,12 +96,13 @@ const SearchAddress = () => {
 				ref,
 			}}
 			listboxProps={{
-				emptyContent: tUtils('no-data'),
+				emptyContent: isLoading ? tUtils('searching') : tUtils('no-result'),
 			}}
 			isVirtualized={flatData.length > 10}
 			isClearable={false}
 			onSelectionChange={handleSetSelected}
 			scrollRef={scrollerRef}
+			itemHeight={45}
 		>
 			{item => (
 				<AutocompleteItem

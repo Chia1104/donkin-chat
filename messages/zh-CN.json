@@ -85,7 +85,9 @@
     "utils": {
         "more-then-item": "大于 {item}",
         "enter": "请输入",
-        "no-data": "找不到任何结果"
+        "no-data": "无数据",
+        "no-result": "找不到任何结果",
+        "searching": "搜寻中..."
     },
     "commons": {
         "error": {
