@@ -6,18 +6,26 @@ import { getTranslations } from 'next-intl/server';
 import { notFound } from 'next/navigation';
 
 import Detail from '@/containers/address/detail';
-import { getAddress } from '@/libs/address/resources/address.resource';
+import { getAddress } from '@/libs/address/resources/address.resource.rsc';
 import { loadAddressSearchParams } from '@/libs/address/services/loadAddressSearchParams';
 import { loadGlobalSearchParams } from '@/services/loadGlobalSearchParams';
 import { IS_DEV } from '@/utils/env';
+import { truncateMiddle } from '@/utils/format';
 import { logger } from '@/utils/logger';
 import { getQueryClient } from '@/utils/query-client';
 
-export async function generateMetadata(): Promise<Metadata> {
-	const tRoutes = await getTranslations('routes');
-	return {
-		title: tRoutes('wallet.title'),
-	};
+export async function generateMetadata(props: PagePropsWithLocale<{ address: string }>): Promise<Metadata> {
+	const [{ address }, tRoutes] = await Promise.all([props.params, getTranslations('routes')]);
+	try {
+		return {
+			title: `${truncateMiddle(address, 10)} | ${tRoutes('wallet.title')}`,
+		};
+	} catch (error) {
+		logger(error, { type: 'error' });
+		return {
+			title: tRoutes('wallet.title'),
+		};
+	}
 }
 
 const Page = async (props: PagePropsWithLocale<{ address: string }>) => {

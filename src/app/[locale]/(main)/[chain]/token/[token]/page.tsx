@@ -4,15 +4,24 @@ import { getTranslations } from 'next-intl/server';
 import { notFound } from 'next/navigation';
 
 import Detail from '@/containers/token/detail';
-import { getToken } from '@/libs/token/resources/token.resource';
+import { getToken } from '@/libs/token/resources/token.resource.rsc';
 import { loadGlobalSearchParams } from '@/services/loadGlobalSearchParams';
 import { IS_DEV } from '@/utils/env';
 import { getQueryClient } from '@/utils/query-client';
+import { tryCatch } from '@/utils/try-catch';
 
-export async function generateMetadata(): Promise<Metadata> {
-	const tRoutes = await getTranslations('routes');
+export async function generateMetadata(props: PagePropsWithLocale<{ token: string }>): Promise<Metadata> {
+	const [{ token }, tRoutes] = await Promise.all([props.params, getTranslations('routes')]);
+	const { data, error } = await tryCatch(getToken(token));
+
+	if (error) {
+		return {
+			title: tRoutes('token.title'),
+		};
+	}
+
 	return {
-		title: tRoutes('token.title'),
+		title: `${data.name} | ${tRoutes('token.title')}`,
 	};
 }
 
