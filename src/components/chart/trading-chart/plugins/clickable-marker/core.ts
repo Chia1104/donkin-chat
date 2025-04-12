@@ -4,13 +4,14 @@ import { createSeriesMarkers } from '../series-marker';
 import type { SeriesMarker } from '../series-marker/types';
 
 export interface ClickableMarkerOptions {
-	onClick?: (marker: ClickableMarker<Time>, event: MouseEvent) => void;
+	onClick?: (marker: ClickableMarker<Time>, event: MouseEventParams<Time>) => void;
 	onOpenTooltip?: (option: {
 		tooltip: React.ReactNode;
 		visible: true;
 		position: { x: number; y: number };
 		container: HTMLElement;
 		activeMarker: ClickableMarker<Time>;
+		marker: ClickableMarker<Time>;
 	}) => void;
 	onCloseTooltip?: (option: { visible: false }) => void;
 }
@@ -123,7 +124,7 @@ export function createClickableMarkers<TimeType>(
 			const pointX = param.point?.x || 0;
 			const pointY = param.point?.y || 0;
 			const dx = pointX - coord;
-			const dy = (pointY - priceCoord) * 0.5;
+			const dy = (pointY - priceCoord) * 0.1;
 
 			return Math.sqrt(dx * dx + dy * dy) <= markerSize;
 		});
@@ -138,12 +139,12 @@ export function createClickableMarkers<TimeType>(
 				},
 				container: chartContainer,
 				activeMarker: clickedMarker as unknown as ClickableMarker<Time>,
+				marker: clickedMarker as unknown as ClickableMarker<Time>,
 			});
 
 			// 調用點擊回調
 			if (options?.onClick) {
-				const event = new MouseEvent('click');
-				options.onClick(clickedMarker as unknown as ClickableMarker<Time>, event);
+				options.onClick(clickedMarker as unknown as ClickableMarker<Time>, param);
 			}
 		} else {
 			// 隱藏彈出窗口

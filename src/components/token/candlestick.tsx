@@ -10,6 +10,7 @@ import type { Time, ISeriesApi } from 'lightweight-charts';
 import { useLocale, useTranslations } from 'next-intl';
 import { toast } from 'sonner';
 
+import OrderPopover from '@/components/token/order-popover';
 import { useMutationOhlcv } from '@/libs/birdeye/hooks/useQueryOhlcv';
 import type { OlcvResponseDTO } from '@/libs/birdeye/hooks/useQueryOhlcv';
 import type { KolAlert } from '@/libs/kol/pipes/kol.pipe';
@@ -25,7 +26,11 @@ import { useChart } from '../chart/trading-chart/chart';
 import { Chart as TradingChart } from '../chart/trading-chart/chart';
 import type { ClickableMarker } from '../chart/trading-chart/plugins/clickable-marker/core';
 import { createClickableMarkers } from '../chart/trading-chart/plugins/clickable-marker/core';
-import { MarkerTooltipProvider, MarkerTooltip } from '../chart/trading-chart/plugins/clickable-marker/marker-tooltip';
+import {
+	MarkerTooltipProvider,
+	MarkerTooltip,
+	useMarkerTooltipStore,
+} from '../chart/trading-chart/plugins/clickable-marker/marker-tooltip';
 import { Series } from '../chart/trading-chart/series';
 import { useSeries } from '../chart/trading-chart/series';
 import { SubscribeVisibleLogicalRange } from '../chart/trading-chart/subscrib-visible-logical-range';
@@ -165,7 +170,7 @@ const SubscribeCandlestick = ({
 
 	const handleSubscribeTransactions = useCallback(
 		(data: Transactions, timeFrom: number) => {
-			queryClient.setQueryData<Transactions>(['token', 'transactions', meta.address], prev => {
+			queryClient.setQueryData<Transactions>(['token', 'transactions', meta.address, query.type], prev => {
 				if (!prev) {
 					return data;
 				}
@@ -181,7 +186,7 @@ const SubscribeCandlestick = ({
 				return newData;
 			});
 		},
-		[meta.address, queryClient, internal_setTransactions],
+		[queryClient, meta.address, query.type, internal_setTransactions],
 	);
 
 	const handleSubscribeVisibleLogicalRange = useCallback(
@@ -288,71 +293,27 @@ const NoDataWatermark = ({ data, text = 'No data' }: { data: OlcvResponseDTO; te
 	return null;
 };
 
-const ClickableMarkerSeries = () => {
-	const { kolAlerts, internal_data } = useCandlestick();
-	const chart = useChart('ClickableMarker');
-	const series = useSeries('ClickableMarker');
-	const [searchParams] = useTokenSearchParams();
-	const loudspeakerMarkers: ClickableMarker<Time>[] = useMemo(() => {
-		if (!kolAlerts) {
-			return [];
-		}
-
-		// 找出 data 中最早的 unix 時間
-		const earliestUnixTime = internal_data.length > 0 ? Math.min(...internal_data.map(item => item.unix)) : 0;
-
-		// 過濾掉早於 data 中最早時間的 kolAlerts
-		const markers = kolAlerts
-			.filter(item => dayjs(item.day).utc().unix() >= earliestUnixTime)
-			.map(item => ({
-				time: dayjs(item.day).utc().unix() as Time,
-				position: 'aboveBar',
-				color: 'rgba(255, 181, 34, 1)',
-				size: 1,
-				type: 'loudspeaker',
-				text: `+${item.kol_alerts}`,
-			}));
-
-		return markers.sort((a, b) => (a.time as number) - (b.time as number)) as ClickableMarker<Time>[];
-	}, [kolAlerts, internal_data]);
-
-	useEffect(() => {
-		const chartApi = chart._api;
-		const seriesApi = series._api;
-		let clean: (() => void) | undefined;
-		if (loudspeakerMarkers.length > 0 && chartApi && seriesApi && searchParams.mark) {
-			const seriesMarkers = createClickableMarkers<Time>(chartApi, seriesApi, loudspeakerMarkers, {
-				onClick: marker => {
-					logger(marker);
-				},
-			});
-			clean = seriesMarkers.detach;
-		}
-
-		return () => {
-			if (!series.isDisposed()) {
-				clean?.();
-			}
-		};
-	}, [loudspeakerMarkers, chart, series, searchParams.mark]);
-	return null;
-};
-
 const TransactionMarkers = () => {
-	const { internal_transactions, internal_data, query } = useCandlestick();
+	const { internal_transactions, internal_data, query, kolAlerts } = useCandlestick();
 	const chart = useChart('TransactionMarkers');
 	const series = useSeries('TransactionMarkers');
 	const [searchParams] = useTokenSearchParams();
+	const openTooltip = useMarkerTooltipStore(state => state.openTooltip);
+	const closeTooltip = useMarkerTooltipStore(state => state.closeTooltip);
+	const [groupedTransactions, setGroupedTransactions] = useState<
+		| Map<
+				number,
+				{
+					buys: Transaction[];
+					sells: Transaction[];
+					kolAlerts?: KolAlert[];
+					text?: string;
+				}
+		  >
+		| undefined
+	>();
 
 	const transactionMarkers: ClickableMarker<Time>[] = useMemo(() => {
-		if (
-			!internal_transactions ||
-			(!internal_transactions.buy_groups && !internal_transactions.sell_groups) ||
-			internal_data.length === 0
-		) {
-			return [];
-		}
-
 		// 找出 data 中最早和最晚的 unix 時間
 		const earliestUnixTime = Math.min(...internal_data.map(item => item.unix));
 		const latestUnixTime = Math.max(...internal_data.map(item => item.unix));
@@ -360,7 +321,7 @@ const TransactionMarkers = () => {
 		const allTransactions: { type: 'buy' | 'sell'; transaction: Transaction }[] = [];
 
 		// 處理買入交易
-		if (internal_transactions.buy_groups) {
+		if (internal_transactions?.buy_groups) {
 			internal_transactions.buy_groups.forEach(group => {
 				group.transactions.forEach(tx => {
 					allTransactions.push({
@@ -372,7 +333,7 @@ const TransactionMarkers = () => {
 		}
 
 		// 處理賣出交易
-		if (internal_transactions.sell_groups) {
+		if (internal_transactions?.sell_groups) {
 			internal_transactions.sell_groups.forEach(group => {
 				group.transactions.forEach(tx => {
 					allTransactions.push({
@@ -385,7 +346,15 @@ const TransactionMarkers = () => {
 
 		// 根據 IntervalFilter 篩選和聚合交易
 		// 將交易依據時間間隔進行分組
-		const groupedTransactions = new Map<number, { buys: Transaction[]; sells: Transaction[] }>();
+		const groupedTransactions = new Map<
+			number,
+			{
+				buys: Transaction[];
+				sells: Transaction[];
+				kolAlerts?: KolAlert[];
+				text?: string;
+			}
+		>();
 
 		allTransactions.forEach(({ type, transaction }) => {
 			const txTime = dayjs(transaction.timestamp).unix();
@@ -438,10 +407,66 @@ const TransactionMarkers = () => {
 			}
 		});
 
+		// 整合 kolAlerts 數據到 groupedTransactions 中
+		if (kolAlerts) {
+			kolAlerts.forEach(alert => {
+				const alertTime = dayjs(alert.day).utc().unix();
+
+				// 檢查 alert 是否在圖表時間範圍內
+				if (alertTime < earliestUnixTime || alertTime > latestUnixTime) {
+					return;
+				}
+
+				// 根據不同的時間間隔將 alert 分組到相應的 K 線蠟燭中
+				let groupKey = alertTime;
+				switch (query.type) {
+					case IntervalFilter.OneMinute:
+						groupKey = Math.floor(alertTime / 60) * 60;
+						break;
+					case IntervalFilter.FiveMinutes:
+						groupKey = Math.floor(alertTime / (5 * 60)) * (5 * 60);
+						break;
+					case IntervalFilter.FifteenMinutes:
+						groupKey = Math.floor(alertTime / (15 * 60)) * (15 * 60);
+						break;
+					case IntervalFilter.ThirtyMinutes:
+						groupKey = Math.floor(alertTime / (30 * 60)) * (30 * 60);
+						break;
+					case IntervalFilter.OneHour:
+						groupKey = Math.floor(alertTime / (60 * 60)) * (60 * 60);
+						break;
+					case IntervalFilter.FourHours:
+						groupKey = Math.floor(alertTime / (4 * 60 * 60)) * (4 * 60 * 60);
+						break;
+					case IntervalFilter.OneDay:
+						groupKey = Math.floor(alertTime / (24 * 60 * 60)) * (24 * 60 * 60);
+						break;
+					case IntervalFilter.OneWeek:
+						groupKey = Math.floor(alertTime / (7 * 24 * 60 * 60)) * (7 * 24 * 60 * 60);
+						break;
+				}
+
+				if (!groupedTransactions.has(groupKey)) {
+					groupedTransactions.set(groupKey, { buys: [], sells: [], kolAlerts: [alert] });
+				} else {
+					const group = groupedTransactions.get(groupKey);
+					if (!group) return;
+					if (!group.kolAlerts) {
+						group.kolAlerts = [alert];
+					} else {
+						group.kolAlerts.push(alert);
+					}
+				}
+			});
+		}
+
 		// 將分組後的交易轉換為標記
 		const markers: ClickableMarker<Time>[] = [];
 
 		groupedTransactions.forEach((group, time) => {
+			let totalBuy = 0;
+			let totalSell = 0;
+			let totalKolAlerts = 0;
 			// 添加買入標記
 			if (group.buys.length > 0) {
 				markers.push({
@@ -451,6 +476,7 @@ const TransactionMarkers = () => {
 					size: 1,
 					type: 'buy',
 				});
+				totalBuy = group.buys.length;
 			}
 
 			// 添加賣出標記
@@ -462,11 +488,37 @@ const TransactionMarkers = () => {
 					size: 1,
 					type: 'sell',
 				});
+				totalSell = group.sells.length;
 			}
+
+			// 添加 kolAlerts 標記
+			if (group.kolAlerts && group.kolAlerts.length > 0) {
+				totalKolAlerts = group.kolAlerts.length;
+				markers.push({
+					time: time as Time,
+					position: 'aboveBar',
+					color: 'rgba(255, 181, 34, 1)',
+					size: 1,
+					type: 'loudspeaker',
+				});
+			}
+
+			const total = totalKolAlerts + totalBuy + totalSell;
+
+			markers.push({
+				time: time as Time,
+				position: 'aboveBar',
+				color: total > 100 ? 'rgba(255, 255, 255, 0.85)' : 'rgba(255, 255, 255, 0.45)',
+				size: total > 100 ? 1.5 : 1,
+				type: 'text',
+				text: total > 100 ? `99+` : `+${total}`,
+			});
 		});
 
+		setGroupedTransactions(groupedTransactions);
+
 		return markers.sort((a, b) => (a.time as number) - (b.time as number));
-	}, [internal_transactions, internal_data, query.type]);
+	}, [internal_transactions, internal_data, query.type, kolAlerts]);
 
 	useEffect(() => {
 		const chartApi = chart._api;
@@ -474,8 +526,38 @@ const TransactionMarkers = () => {
 		let clean: (() => void) | undefined;
 		if (chartApi && seriesApi && searchParams.mark) {
 			const seriesMarkers = createClickableMarkers<Time>(chartApi, seriesApi, transactionMarkers, {
-				onClick: marker => {
-					logger(['TransactionMarkers', marker]);
+				onOpenTooltip(option) {
+					const currentGroup = groupedTransactions?.get(option.marker.time as number);
+					openTooltip({
+						...option,
+						tooltip: (
+							<OrderPopover
+								meta={{
+									buy: currentGroup?.buys.length ?? 0,
+									sell: currentGroup?.sells.length ?? 0,
+									order: currentGroup?.kolAlerts?.reduce((sum, alert) => sum + alert.kol_alerts, 0) ?? 0,
+								}}
+								total={{
+									buy: currentGroup?.buys.reduce((acc, tx) => acc + Number(tx.amount), 0) ?? 0,
+									sell: currentGroup?.sells.reduce((acc, tx) => acc + Number(tx.amount), 0) ?? 0,
+									volume:
+										(currentGroup?.buys.reduce((acc, tx) => acc + Number(tx.amount), 0) ?? 0) +
+										(currentGroup?.sells.reduce((acc, tx) => acc + Number(tx.amount), 0) ?? 0),
+								}}
+								order={{
+									total: currentGroup?.kolAlerts?.reduce((sum, alert) => sum + alert.kol_alerts, 0) ?? 0,
+									success: 0,
+								}}
+								onClose={closeTooltip}
+							/>
+						),
+					});
+				},
+				onCloseTooltip() {
+					closeTooltip();
+				},
+				onClick(marker) {
+					logger(['onClick', marker]);
 				},
 			});
 			clean = seriesMarkers.detach;
@@ -486,7 +568,7 @@ const TransactionMarkers = () => {
 				clean?.();
 			}
 		};
-	}, [transactionMarkers, chart, series, searchParams.mark]);
+	}, [transactionMarkers, chart, series, searchParams.mark, openTooltip, closeTooltip, groupedTransactions]);
 
 	return null;
 };
@@ -575,7 +657,6 @@ const Chart = () => {
 				}}
 			>
 				<SubscribeCandlestick onLoad={handleSubscribeHistogram} />
-				<ClickableMarkerSeries />
 				<TransactionMarkers />
 			</Series>
 			<Series

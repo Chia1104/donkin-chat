@@ -106,6 +106,7 @@ export class SeriesMarkersRenderer implements IPrimitivePaneRenderer {
 				item.text.width = this._textWidthCache.measureText(ctx, item.text.content);
 				item.text.height = this._fontSize;
 				item.text.x = (item.x - item.text.width / 2) as Coordinate;
+				item.text.y = (item.y + item.text.height / 3) as Coordinate;
 			}
 			let imageCache = item.src ? this.getImageCacheBySrc(item.src) : null;
 			if (!imageCache && item.src) {
