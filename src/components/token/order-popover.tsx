@@ -34,6 +34,7 @@ const OrderPopover = (props: Props) => {
 	const t = useTranslations('token.order-popover');
 	return (
 		<DonkinPopover
+			className="min-w-[220px]"
 			onClose={onClose}
 			askMore={askMore}
 			onAskMore={onAskMore}

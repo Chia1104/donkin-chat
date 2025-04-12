@@ -10,6 +10,7 @@ import type { Time, ISeriesApi } from 'lightweight-charts';
 import { useLocale, useTranslations } from 'next-intl';
 import { toast } from 'sonner';
 
+import OrderPopover from '@/components/token/order-popover';
 import { useMutationOhlcv } from '@/libs/birdeye/hooks/useQueryOhlcv';
 import type { OlcvResponseDTO } from '@/libs/birdeye/hooks/useQueryOhlcv';
 import type { KolAlert } from '@/libs/kol/pipes/kol.pipe';
@@ -25,7 +26,11 @@ import { useChart } from '../chart/trading-chart/chart';
 import { Chart as TradingChart } from '../chart/trading-chart/chart';
 import type { ClickableMarker } from '../chart/trading-chart/plugins/clickable-marker/core';
 import { createClickableMarkers } from '../chart/trading-chart/plugins/clickable-marker/core';
-import { MarkerTooltipProvider, MarkerTooltip } from '../chart/trading-chart/plugins/clickable-marker/marker-tooltip';
+import {
+	MarkerTooltipProvider,
+	MarkerTooltip,
+	useMarkerTooltipStore,
+} from '../chart/trading-chart/plugins/clickable-marker/marker-tooltip';
 import { Series } from '../chart/trading-chart/series';
 import { useSeries } from '../chart/trading-chart/series';
 import { SubscribeVisibleLogicalRange } from '../chart/trading-chart/subscrib-visible-logical-range';
@@ -343,6 +348,18 @@ const TransactionMarkers = () => {
 	const chart = useChart('TransactionMarkers');
 	const series = useSeries('TransactionMarkers');
 	const [searchParams] = useTokenSearchParams();
+	const openTooltip = useMarkerTooltipStore(state => state.openTooltip);
+	const closeTooltip = useMarkerTooltipStore(state => state.closeTooltip);
+	const [groupedTransactions, setGroupedTransactions] = useState<
+		| Map<
+				number,
+				{
+					buys: Transaction[];
+					sells: Transaction[];
+				}
+		  >
+		| undefined
+	>();
 
 	const transactionMarkers: ClickableMarker<Time>[] = useMemo(() => {
 		if (
@@ -385,7 +402,13 @@ const TransactionMarkers = () => {
 
 		// 根據 IntervalFilter 篩選和聚合交易
 		// 將交易依據時間間隔進行分組
-		const groupedTransactions = new Map<number, { buys: Transaction[]; sells: Transaction[] }>();
+		const groupedTransactions = new Map<
+			number,
+			{
+				buys: Transaction[];
+				sells: Transaction[];
+			}
+		>();
 
 		allTransactions.forEach(({ type, transaction }) => {
 			const txTime = dayjs(transaction.timestamp).unix();
@@ -465,6 +488,8 @@ const TransactionMarkers = () => {
 			}
 		});
 
+		setGroupedTransactions(groupedTransactions);
+
 		return markers.sort((a, b) => (a.time as number) - (b.time as number));
 	}, [internal_transactions, internal_data, query.type]);
 
@@ -474,8 +499,35 @@ const TransactionMarkers = () => {
 		let clean: (() => void) | undefined;
 		if (chartApi && seriesApi && searchParams.mark) {
 			const seriesMarkers = createClickableMarkers<Time>(chartApi, seriesApi, transactionMarkers, {
-				onClick: marker => {
-					logger(['TransactionMarkers', marker]);
+				onOpenTooltip(option) {
+					const currentGroup = groupedTransactions?.get(option.marker.time as number);
+					openTooltip({
+						...option,
+						tooltip: (
+							<OrderPopover
+								meta={{
+									buy: currentGroup?.buys.length ?? 0,
+									sell: currentGroup?.sells.length ?? 0,
+									order: 0,
+								}}
+								total={{
+									buy: currentGroup?.buys.reduce((acc, tx) => acc + Number(tx.amount), 0) ?? 0,
+									sell: currentGroup?.sells.reduce((acc, tx) => acc + Number(tx.amount), 0) ?? 0,
+									volume:
+										(currentGroup?.buys.reduce((acc, tx) => acc + Number(tx.amount), 0) ?? 0) +
+										(currentGroup?.sells.reduce((acc, tx) => acc + Number(tx.amount), 0) ?? 0),
+								}}
+								order={{
+									total: 0,
+									success: 0,
+								}}
+								onClose={closeTooltip}
+							/>
+						),
+					});
+				},
+				onCloseTooltip() {
+					closeTooltip();
 				},
 			});
 			clean = seriesMarkers.detach;
@@ -486,7 +538,7 @@ const TransactionMarkers = () => {
 				clean?.();
 			}
 		};
-	}, [transactionMarkers, chart, series, searchParams.mark]);
+	}, [transactionMarkers, chart, series, searchParams.mark, openTooltip, closeTooltip, groupedTransactions]);
 
 	return null;
 };
