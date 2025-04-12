@@ -20,6 +20,7 @@ export interface SeriesContext<T extends SeriesType> {
 	_api: ISeriesApi<T> | null;
 	api: () => ISeriesApi<T>;
 	free: (chart?: IChartApi) => void;
+	isDisposed: () => boolean;
 }
 
 interface Props<T extends SeriesType> {
@@ -55,6 +56,9 @@ const SeriesWithGeneric = <T extends SeriesType>(
 				chart.free(this._api);
 				this._api = null;
 			}
+		},
+		isDisposed() {
+			return this._api === null;
 		},
 	});
 

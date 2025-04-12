@@ -236,8 +236,8 @@ export class SeriesMarkersPaneView<HorzScaleItem> implements IPrimitivePaneView 
 				};
 			}
 
-			const dataAt = ensureNotNull(this._series.dataByIndex(marker.time, -1));
-			if (dataAt === null) {
+			const dataAt = this._series.dataByIndex(marker.time, -1);
+			if (!dataAt) {
 				continue;
 			}
 			fillSizeAndY<HorzScaleItem>(

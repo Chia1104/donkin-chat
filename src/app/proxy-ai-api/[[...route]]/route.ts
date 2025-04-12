@@ -3,6 +3,7 @@ import { proxy } from 'hono/proxy';
 import { handle } from 'hono/vercel';
 
 import { env } from '@/utils/env';
+import { logger } from '@/utils/logger';
 
 const app = new Hono();
 
@@ -13,7 +14,7 @@ app.all('/proxy-ai-api/*', c => {
 		.map(([key, value]) => `${key}=${value}`)
 		.join('&')}`;
 
-	console.log('PROXY URL: ', url);
+	logger(['PROXY URL: ', url], { type: 'log' });
 
 	return proxy(url, {
 		...c.req, // optional, specify only when forwarding all the request data (including credentials) is necessary.

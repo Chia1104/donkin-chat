@@ -5,6 +5,8 @@ import type { ErrorInfo, ReactNode } from 'react';
 
 import { captureException } from '@sentry/nextjs';
 
+import { logger } from '@/utils/logger';
+
 import { Error } from './error';
 
 interface Props<TError> {
@@ -32,7 +34,7 @@ export class ErrorBoundary<TError extends Error> extends Component<Props<TError>
 	}
 
 	public componentDidCatch(error: TError, errorInfo: ErrorInfo) {
-		console.error('Uncaught error:', error, errorInfo);
+		logger(['Uncaught error:', error, errorInfo], { type: 'error' });
 		this.props.onError?.(error, errorInfo);
 		this.setState({ error });
 		captureException(error, {

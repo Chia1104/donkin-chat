@@ -1,4 +1,5 @@
 import { isAbortError } from '@/utils/is';
+import { logger } from '@/utils/logger';
 
 import { ChatEvent, ChatEventType } from '../enums/chatEvent.enum';
 import {
@@ -17,6 +18,7 @@ interface StreamEventProcessor {
 	onThinking?: (content: string) => void;
 	onMessageStart?: (convId: string, msgId: string) => void;
 	onMessageEnd?: (convId: string, msgId: string, content?: string) => void;
+	enableLogger?: boolean;
 }
 
 /**
@@ -32,6 +34,7 @@ export async function processStreamEvents({
 	onThinking,
 	onMessageStart,
 	onMessageEnd,
+	enableLogger = true,
 }: {
 	stream: ReadableStream<Uint8Array>;
 } & StreamEventProcessor): Promise<void> {
@@ -103,6 +106,7 @@ export async function processStreamEvents({
 						onMessageEnd,
 						onFinishStepPart,
 						accumulatedText,
+						enableLogger,
 					);
 				}
 			} else {
@@ -111,7 +115,7 @@ export async function processStreamEvents({
 		}
 	} catch (error) {
 		if (!isAbortError(error)) {
-			console.error('處理流時發生錯誤:', error);
+			logger(['處理流時發生錯誤:', error], { type: 'error', enabled: enableLogger });
 		}
 		onErrorPart?.(error instanceof Error ? error.message : 'Unknown error', error instanceof Error ? error : undefined);
 	} finally {
@@ -131,6 +135,7 @@ function processSSEChunk(
 	onMessageEnd: ((convId: string, msgId: string, content?: string) => void) | undefined,
 	onFinishStepPart: (() => void) | undefined,
 	accumulatedText: string,
+	enableLogger = true,
 ): string {
 	if (!chunk.trim()) return accumulatedText;
 
@@ -143,7 +148,7 @@ function processSSEChunk(
 			// 模擬 heartbeat 事件的處理流程，但不執行任何回調
 			heartbeatSchema.parse(heartbeatData);
 		} catch (error) {
-			console.warn('處理 ping 格式失敗:', error);
+			logger(['處理 ping 格式失敗:', error], { type: 'warn', enabled: enableLogger });
 		}
 		return accumulatedText;
 	}
@@ -155,7 +160,7 @@ function processSSEChunk(
 	}
 
 	if (eventLines.length < 2) {
-		console.warn('事件格式不正確，缺少數據行:', chunk);
+		logger(['事件格式不正確，缺少數據行:', chunk], { type: 'warn', enabled: enableLogger });
 		return accumulatedText;
 	}
 
@@ -176,7 +181,7 @@ function processSSEChunk(
 	}
 
 	if (!eventType || !dataLine) {
-		console.warn('未能正確解析事件類型或數據行:', chunk);
+		logger(['未能正確解析事件類型或數據行:', chunk], { type: 'warn', enabled: enableLogger });
 		return accumulatedText;
 	}
 
@@ -289,10 +294,10 @@ function processSSEChunk(
 			}
 
 			default:
-				console.warn(`未知事件類型: ${eventType}`);
+				logger([`未知事件類型: ${eventType}`], { type: 'warn', enabled: enableLogger });
 		}
 	} catch (error) {
-		console.error('解析事件數據失敗:', error, '原始數據行:', dataLine);
+		logger(['解析事件數據失敗:', error, '原始數據行:', dataLine], { type: 'error', enabled: enableLogger });
 		onErrorPart?.(error instanceof Error ? error.message : 'Unknown error', error instanceof Error ? error : undefined);
 	}
 

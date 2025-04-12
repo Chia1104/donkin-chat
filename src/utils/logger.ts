@@ -4,7 +4,7 @@ export const logger = (
 	message?: any,
 	{
 		type = 'log',
-		enabled = IS_DEV,
+		enabled = IS_DEV || typeof window === 'undefined',
 	}: {
 		type?: 'log' | 'error' | 'warn' | 'info' | 'debug';
 		enabled?: boolean;

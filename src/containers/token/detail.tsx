@@ -6,6 +6,7 @@ import { useMemo, useRef, memo } from 'react';
 import { CardBody } from '@heroui/card';
 import { Checkbox } from '@heroui/checkbox';
 import { Divider } from '@heroui/divider';
+import { Spinner } from '@heroui/react';
 import { ScrollShadow } from '@heroui/scroll-shadow';
 import { Skeleton } from '@heroui/skeleton';
 import { Tabs, Tab } from '@heroui/tabs';
@@ -22,6 +23,7 @@ import { useQueryOhlcv } from '@/libs/birdeye/hooks/useQueryOhlcv';
 import { useGetKolAlerts } from '@/libs/kol/hooks/useGetKolAlerts';
 import { IntervalFilter } from '@/libs/token/enums/interval-filter.enum';
 import { useQueryToken } from '@/libs/token/hooks/useQueryToken';
+import { useQueryTransactions } from '@/libs/token/hooks/useQueryTransactions';
 import { useTokenSearchParams } from '@/libs/token/hooks/useTokenSearchParams';
 import { cn } from '@/utils/cn';
 import dayjs from '@/utils/dayjs';
@@ -191,6 +193,12 @@ const Detail = () => {
 		return ohlcv.data;
 	}, [ohlcv.data]);
 
+	const { data: transactions, isLoading: isTransactionsLoading } = useQueryTransactions({
+		token_address: params.token,
+		start_time: dayjs.unix(timeFrom).format('YYYY-MM-DD'),
+		end_time: dayjs.unix(currentUnix.current).format('YYYY-MM-DD'),
+	});
+
 	return (
 		<div className="w-full h-full flex flex-col">
 			<ScrollShadow className="w-full h-[calc(100vh-72px)]">
@@ -261,22 +269,29 @@ const Detail = () => {
 						<DateFilter />
 						<Marker />
 					</section>
-					<Candlestick
-						meta={{
-							price: queryResult.data?.price ?? 0,
-							change: queryResult.data?.change ?? 0,
-							address: params.token,
-						}}
-						query={{
-							type: searchParams.interval,
-							time_from: timeFrom,
-							time_to: currentUnix.current,
-						}}
-						data={ohlcvData}
-						isPending={ohlcv.isLoading || isKolAlertsLoading}
-						isMetaPending={queryResult.isLoading}
-						kolAlerts={kolAlerts}
-					/>
+					{ohlcv.isLoading || isKolAlertsLoading || isTransactionsLoading ? (
+						<div className="flex items-center justify-center w-full h-[55dvh]">
+							<Spinner />
+						</div>
+					) : (
+						<Candlestick
+							meta={{
+								price: queryResult.data?.price ?? 0,
+								change: queryResult.data?.change ?? 0,
+								address: params.token,
+							}}
+							query={{
+								type: searchParams.interval,
+								time_from: timeFrom,
+								time_to: currentUnix.current,
+							}}
+							data={ohlcvData}
+							isPending={ohlcv.isLoading || isKolAlertsLoading || isTransactionsLoading}
+							isMetaPending={queryResult.isLoading}
+							kolAlerts={kolAlerts}
+							transactions={transactions}
+						/>
+					)}
 				</div>
 			</ScrollShadow>
 		</div>

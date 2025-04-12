@@ -22,6 +22,19 @@ export interface ClickableMarker<TimeType> extends Omit<SeriesMarker<TimeType>, 
 export interface ClickableMarkerPluginApi<TimeType> {
 	setMarkers: (markers: ClickableMarker<TimeType>[]) => void;
 	markers: () => readonly ClickableMarker<TimeType>[];
+	/**
+	 * WARNING: It may cause error with `seriesMarkers.detach()` - `Error: Object is disposed`
+	 * If you want to remove the markers, check the series is disposed or not before calling this method.
+	 *
+	 * @example
+	 * ```ts
+	 * const { detach } = createClickableMarkers(chart, series, markers);
+	 *
+	 * if (!series.isDisposed()) {
+	 * 	detach();
+	 * }
+	 * ```
+	 */
 	detach: () => void;
 }
 
@@ -146,6 +159,9 @@ export function createClickableMarkers<TimeType>(
 		},
 		markers: () => seriesMarkers.markers() as unknown as readonly ClickableMarker<TimeType>[],
 		detach: () => {
+			/**
+			 * WARNING: It may cause error `Error: Object is disposed`
+			 */
 			seriesMarkers.detach();
 			chart.unsubscribeClick(handleClick);
 		},
