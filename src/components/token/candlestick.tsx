@@ -15,6 +15,7 @@ import type { OlcvResponseDTO } from '@/libs/birdeye/hooks/useQueryOhlcv';
 import type { KolAlert } from '@/libs/kol/pipes/kol.pipe';
 import { IntervalFilter } from '@/libs/token/enums/interval-filter.enum';
 import { useTokenSearchParams } from '@/libs/token/hooks/useTokenSearchParams';
+import type { Transactions } from '@/libs/token/pipes/transactions.pipe';
 import { theme as twTheme } from '@/themes/tw.theme';
 import dayjs from '@/utils/dayjs';
 
@@ -43,6 +44,7 @@ interface CandlestickProps {
 	kolAlerts?: KolAlert[];
 	isPending?: boolean;
 	isMetaPending?: boolean;
+	transactions?: Transactions;
 }
 
 const CandlestickContext = createContext<CandlestickProps | null>(null);
@@ -59,20 +61,7 @@ const useCandlestick = () => {
 	return context;
 };
 
-const SubscribeCandlestick = ({
-	enable = true,
-	onLoad,
-}: {
-	enable?: boolean;
-	onLoad?: (data: OlcvResponseDTO) => void;
-}) => {
-	const { mutate, isPending, isError } = useMutationOhlcv();
-	const { meta, query } = useCandlestick();
-	const [timeFrom, setTimeFrom] = useState(query.time_from);
-	const series = useSeries('SubscribeCandlestick');
-	const [isNoData, setIsNoData] = useState(false);
-	const queryClient = useQueryClient();
-
+const useGenerateTimeWithInterval = () => {
 	const handleGenerateTimeWithInterval = useCallback(
 		(current: number, interval: IntervalFilter, range: number): number => {
 			switch (interval) {
@@ -110,6 +99,25 @@ const SubscribeCandlestick = ({
 		},
 		[],
 	);
+
+	return handleGenerateTimeWithInterval;
+};
+
+const SubscribeCandlestick = ({
+	enable = true,
+	onLoad,
+}: {
+	enable?: boolean;
+	onLoad?: (data: OlcvResponseDTO) => void;
+}) => {
+	const { mutate, isPending, isError } = useMutationOhlcv();
+	const { meta, query } = useCandlestick();
+	const [timeFrom, setTimeFrom] = useState(query.time_from);
+	const series = useSeries('SubscribeCandlestick');
+	const [isNoData, setIsNoData] = useState(false);
+	const queryClient = useQueryClient();
+
+	const handleGenerateTimeWithInterval = useGenerateTimeWithInterval();
 
 	const handleSubscribe = useCallback(
 		(data: OlcvResponseDTO) => {

@@ -22,6 +22,7 @@ import { useQueryOhlcv } from '@/libs/birdeye/hooks/useQueryOhlcv';
 import { useGetKolAlerts } from '@/libs/kol/hooks/useGetKolAlerts';
 import { IntervalFilter } from '@/libs/token/enums/interval-filter.enum';
 import { useQueryToken } from '@/libs/token/hooks/useQueryToken';
+import { useQueryTransactions } from '@/libs/token/hooks/useQueryTransactions';
 import { useTokenSearchParams } from '@/libs/token/hooks/useTokenSearchParams';
 import { cn } from '@/utils/cn';
 import dayjs from '@/utils/dayjs';
@@ -191,6 +192,12 @@ const Detail = () => {
 		return ohlcv.data;
 	}, [ohlcv.data]);
 
+	const { data: transactions, isLoading: isTransactionsLoading } = useQueryTransactions({
+		token_address: params.token,
+		start_time: dayjs.unix(timeFrom).format('YYYY-MM-DD'),
+		end_time: dayjs.unix(currentUnix.current).format('YYYY-MM-DD'),
+	});
+
 	return (
 		<div className="w-full h-full flex flex-col">
 			<ScrollShadow className="w-full h-[calc(100vh-72px)]">
@@ -273,9 +280,10 @@ const Detail = () => {
 							time_to: currentUnix.current,
 						}}
 						data={ohlcvData}
-						isPending={ohlcv.isLoading || isKolAlertsLoading}
+						isPending={ohlcv.isLoading || isKolAlertsLoading || isTransactionsLoading}
 						isMetaPending={queryResult.isLoading}
 						kolAlerts={kolAlerts}
+						transactions={transactions}
 					/>
 				</div>
 			</ScrollShadow>

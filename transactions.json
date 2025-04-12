@@ -1,0 +1,99 @@
+{
+    "token_address": "So11111111111111111111111111111111111111112",
+    "token_symbol": "SOL",
+    "token_name": "Wrapped SOL",
+    "buy_groups": [
+        {
+            "wallet_address": "HPkQu4osTzt3reYjYX8CHufGCGgHesc7PqG6WdhcY4p9",
+            "transaction_cnt": 70,
+            "total_amount": 152.61878202799997,
+            "total_usd_value": 16332.66634210335,
+            "transactions": [
+                {
+                    "transaction_hash": "rYbHA7LJju2ZBsS2FTVsWjAUNtnjBwJVmofbxW25obw2Vv3QwcEcgc5nTCG3Ep7S3dKXyLw1VBvdioiJZ4oPkrv",
+                    "timestamp": "2025-04-08T06:06:20Z",
+                    "amount": 0.00001,
+                    "usd_value": 0.001099115579780141,
+                    "price_at_time": 109.91155797801407
+                },
+                {
+                    "transaction_hash": "k7FWiXoVcgqKUhbGGaWmFQcgJhxoL2W7GzRXHNyHCN1eUGdp4Pnj5a2PDAiADYNywXixeXvt3iHEVic7M2ts5NS",
+                    "timestamp": "2025-04-08T06:20:54Z",
+                    "amount": 0.00001,
+                    "usd_value": 0.0010930479909271684,
+                    "price_at_time": 109.30479909271683
+                }
+            ]
+        },
+        {
+            "wallet_address": "Hnnw2hAgPgGiFKouRWvM3fSk3HnYgRv4Xq1PjUEBEuWM",
+            "transaction_cnt": 56,
+            "total_amount": 91.12085705900002,
+            "total_usd_value": 10535.677196263065,
+            "transactions": [
+                {
+                    "transaction_hash": "jnMmTZQyxqXCMCUgFANogVdco6Da5H9D7Eoni4a71q6QJGDuy7irWsJHhzecy1DapH9d5P3JxyzUUouGUP3b2oE",
+                    "timestamp": "2025-04-10T13:32:35Z",
+                    "amount": 1e-9,
+                    "usd_value": 1.128752575350773e-7,
+                    "price_at_time": 112.8752575350773
+                },
+                {
+                    "transaction_hash": "4LkKXpqNqD8Ti1KgUywwB5MTMas5LqyidzXxeN7TUfZLxZnDBNbRNHvHE5PyT2SgKvEx3vajtjJfBDjpo8Rdfz1H",
+                    "timestamp": "2025-04-10T13:32:35Z",
+                    "amount": 1e-9,
+                    "usd_value": 1.128752575350773e-7,
+                    "price_at_time": 112.8752575350773
+                }
+            ]
+        }
+    ],
+    "sell_groups": [
+        {
+            "wallet_address": "6FNbu3i6vpigXMatC6SyWKibUAdJyyX8nM8WDtZCNcEz",
+            "transaction_cnt": 8,
+            "total_amount": 55.170040199999995,
+            "total_usd_value": 7955.424451679468,
+            "transactions": [
+                {
+                    "transaction_hash": "66b8RTS6qZVjUmo2Yg5yqyseCzu2PNfJm4dPTtQi8yPTKmt9wjcmoTYFzq1dSbPCdodRHarL1QDQUTWtPZrXYABm",
+                    "timestamp": "2025-03-26T09:38:57Z",
+                    "amount": 0.110005,
+                    "usd_value": 15.880629071541392,
+                    "price_at_time": 144.36279325068307
+                },
+                {
+                    "transaction_hash": "5C63f1pE2UZBFzmTt5DkAtuZ5bGgggDttE34YiUyKD8oECgEJdDECJjceJ4xA7Gz3bqjR2ubHqtiJG8EfUvDc85D",
+                    "timestamp": "2025-03-26T09:38:57Z",
+                    "amount": 0.010005,
+                    "usd_value": 1.4443497464730841,
+                    "price_at_time": 144.36279325068307
+                }
+            ]
+        },
+        {
+            "wallet_address": "Hnnw2hAgPgGiFKouRWvM3fSk3HnYgRv4Xq1PjUEBEuWM",
+            "transaction_cnt": 25,
+            "total_amount": 56.277949879000005,
+            "total_usd_value": 6590.5068666887355,
+            "transactions": [
+                {
+                    "transaction_hash": "53LMZENhThMcUzwuZNjSgZukgLReThZwaDEU5iDSquQQeFnhLBhm66oQ85nKnWdtVLesTL574KFYXDYihU3Ukv1k",
+                    "timestamp": "2025-04-10T14:21:08Z",
+                    "amount": 2.05704428,
+                    "usd_value": 232.92185861189427,
+                    "price_at_time": 113.23132947429517
+                },
+                {
+                    "transaction_hash": "25bAXP8gzXA6kCpnnuko7VX5kM4jzudA7dVRpndugHi5siTJmJAjAWCzjuAYtnjXuVYTqF645EXw58kwy2x56yj4",
+                    "timestamp": "2025-04-10T14:24:05Z",
+                    "amount": 2.05704428,
+                    "usd_value": 233.5008577494336,
+                    "price_at_time": 113.51280087633
+                }
+            ]
+        }
+    ],
+    "start_time": "2024-01-01",
+    "end_time": "2025-04-12"
+}
