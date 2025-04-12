@@ -165,7 +165,7 @@ const SubscribeCandlestick = ({
 
 	const handleSubscribeTransactions = useCallback(
 		(data: Transactions, timeFrom: number) => {
-			queryClient.setQueryData<Transactions>(['token', 'transactions', meta.address], prev => {
+			queryClient.setQueryData<Transactions>(['token', 'transactions', meta.address, query.type], prev => {
 				if (!prev) {
 					return data;
 				}
@@ -181,7 +181,7 @@ const SubscribeCandlestick = ({
 				return newData;
 			});
 		},
-		[meta.address, queryClient, internal_setTransactions],
+		[queryClient, meta.address, query.type, internal_setTransactions],
 	);
 
 	const handleSubscribeVisibleLogicalRange = useCallback(
