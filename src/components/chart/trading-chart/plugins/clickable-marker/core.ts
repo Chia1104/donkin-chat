@@ -22,6 +22,9 @@ export interface ClickableMarker<TimeType> extends Omit<SeriesMarker<TimeType>, 
 export interface ClickableMarkerPluginApi<TimeType> {
 	setMarkers: (markers: ClickableMarker<TimeType>[]) => void;
 	markers: () => readonly ClickableMarker<TimeType>[];
+	/**
+	 * 移除插件
+	 */
 	detach: () => void;
 }
 

@@ -315,15 +315,21 @@ const ClickableMarkerSeries = () => {
 	}, [kolAlerts, internal_data]);
 
 	useEffect(() => {
-		const chartApi = chart._api;
+		const chartApi = chart.api();
 		const seriesApi = series.api();
+		let clean: (() => void) | undefined;
 		if (loudspeakerMarkers.length > 0 && chartApi && seriesApi && searchParams.mark) {
-			createClickableMarkers<Time>(chartApi, seriesApi, loudspeakerMarkers, {
+			const { detach } = createClickableMarkers<Time>(chartApi, seriesApi, loudspeakerMarkers, {
 				onClick: marker => {
 					logger(marker);
 				},
 			});
+			clean = detach;
 		}
+
+		return () => {
+			clean?.();
+		};
 	}, [loudspeakerMarkers, chart, series, searchParams.mark]);
 	return null;
 };
@@ -459,15 +465,21 @@ const TransactionMarkers = () => {
 	}, [internal_transactions, internal_data, query.type]);
 
 	useEffect(() => {
-		const chartApi = chart._api;
+		const chartApi = chart.api();
 		const seriesApi = series.api();
+		let clean: (() => void) | undefined;
 		if (chartApi && seriesApi && searchParams.mark) {
-			createClickableMarkers<Time>(chartApi, seriesApi, transactionMarkers, {
+			const { detach } = createClickableMarkers<Time>(chartApi, seriesApi, transactionMarkers, {
 				onClick: marker => {
 					logger(['TransactionMarkers', marker]);
 				},
 			});
+			clean = detach;
 		}
+
+		return () => {
+			clean?.();
+		};
 	}, [transactionMarkers, chart, series, searchParams.mark]);
 
 	return null;
