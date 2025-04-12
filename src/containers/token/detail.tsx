@@ -6,6 +6,7 @@ import { useMemo, useRef, memo } from 'react';
 import { CardBody } from '@heroui/card';
 import { Checkbox } from '@heroui/checkbox';
 import { Divider } from '@heroui/divider';
+import { Spinner } from '@heroui/react';
 import { ScrollShadow } from '@heroui/scroll-shadow';
 import { Skeleton } from '@heroui/skeleton';
 import { Tabs, Tab } from '@heroui/tabs';
@@ -268,23 +269,29 @@ const Detail = () => {
 						<DateFilter />
 						<Marker />
 					</section>
-					<Candlestick
-						meta={{
-							price: queryResult.data?.price ?? 0,
-							change: queryResult.data?.change ?? 0,
-							address: params.token,
-						}}
-						query={{
-							type: searchParams.interval,
-							time_from: timeFrom,
-							time_to: currentUnix.current,
-						}}
-						data={ohlcvData}
-						isPending={ohlcv.isLoading || isKolAlertsLoading || isTransactionsLoading}
-						isMetaPending={queryResult.isLoading}
-						kolAlerts={kolAlerts}
-						transactions={transactions}
-					/>
+					{ohlcv.isLoading || isKolAlertsLoading || isTransactionsLoading ? (
+						<div className="flex items-center justify-center w-full h-[55dvh]">
+							<Spinner />
+						</div>
+					) : (
+						<Candlestick
+							meta={{
+								price: queryResult.data?.price ?? 0,
+								change: queryResult.data?.change ?? 0,
+								address: params.token,
+							}}
+							query={{
+								type: searchParams.interval,
+								time_from: timeFrom,
+								time_to: currentUnix.current,
+							}}
+							data={ohlcvData}
+							isPending={ohlcv.isLoading || isKolAlertsLoading || isTransactionsLoading}
+							isMetaPending={queryResult.isLoading}
+							kolAlerts={kolAlerts}
+							transactions={transactions}
+						/>
+					)}
 				</div>
 			</ScrollShadow>
 		</div>
