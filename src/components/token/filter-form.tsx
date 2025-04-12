@@ -50,7 +50,6 @@ const FilterForm = (props: Props) => {
 	};
 
 	const handleNumberChange = (e: React.ChangeEvent<HTMLInputElement>, onChange: (...event: any[]) => void) => {
-		console.log(e.target.value);
 		if (!e.target.value) {
 			onChange(null);
 			return;

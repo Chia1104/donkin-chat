@@ -19,6 +19,7 @@ import { useTokenSearchParams } from '@/libs/token/hooks/useTokenSearchParams';
 import type { Transactions, Transaction } from '@/libs/token/pipes/transactions.pipe';
 import { theme as twTheme } from '@/themes/tw.theme';
 import dayjs from '@/utils/dayjs';
+import { logger } from '@/utils/logger';
 
 import { useChart } from '../chart/trading-chart/chart';
 import { Chart as TradingChart } from '../chart/trading-chart/chart';
@@ -224,7 +225,7 @@ const SubscribeCandlestick = ({
 										handleSubscribeTransactions(data, newTimeFrom);
 									},
 									onError: error => {
-										console.error(error);
+										logger(error, { type: 'error' });
 										toast.error('Failed to load transactions');
 									},
 								},
@@ -232,7 +233,7 @@ const SubscribeCandlestick = ({
 						}
 					},
 					onError: error => {
-						console.error(error);
+						logger(error, { type: 'error' });
 						toast.error('Failed to load data');
 					},
 				},
@@ -319,7 +320,7 @@ const ClickableMarkerSeries = () => {
 		if (loudspeakerMarkers.length > 0 && chartApi && seriesApi && searchParams.mark) {
 			createClickableMarkers<Time>(chartApi, seriesApi, loudspeakerMarkers, {
 				onClick: marker => {
-					console.log(marker);
+					logger(marker);
 				},
 			});
 		}
@@ -461,10 +462,9 @@ const TransactionMarkers = () => {
 		const chartApi = chart._api;
 		const seriesApi = series.api();
 		if (chartApi && seriesApi && searchParams.mark) {
-			console.log('transactionMarkers', transactionMarkers);
 			createClickableMarkers<Time>(chartApi, seriesApi, transactionMarkers, {
 				onClick: marker => {
-					console.log('TransactionMarkers', marker);
+					logger(['TransactionMarkers', marker]);
 				},
 			});
 		}

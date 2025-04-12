@@ -6,6 +6,7 @@ import type { MessageItem } from '@/libs/ai/types/message';
 import { setNamespace } from '@/stores/utils/storeDebug';
 import dayjs from '@/utils/dayjs';
 import { isAbortError } from '@/utils/is';
+import { logger } from '@/utils/logger';
 import { fetchStream } from '@/utils/request/stream';
 import { tryCatch } from '@/utils/try-catch';
 import { uuid } from '@/utils/uuid';
@@ -144,7 +145,7 @@ export const chatActions: StateCreator<
 			get().internal_abort();
 			void get().onCancel?.({ set, get, ctx });
 		} catch (error) {
-			console.warn(error);
+			logger(['Error in handleCancel:', error], { type: 'error' });
 		}
 	},
 	getLatestUserMessage: () => {
@@ -194,9 +195,9 @@ export const chatActions: StateCreator<
 			await get().preStream?.({ set, get, ctx, messages });
 			const { data: response, error } = await tryCatch(get().internal_stream(messages));
 			if (error) {
-				console.error('Error in internal_handleSSE:', error);
+				logger(['Error in internal_handleSSE:', error], { type: 'error' });
 				if (isAbortError(error)) {
-					console.info('Request was aborted');
+					logger('Request was aborted', { type: 'info' });
 					return;
 				}
 				set({ status: ChatStatus.Error }, false, nameSpace('internal_handleSSE'));
@@ -206,10 +207,10 @@ export const chatActions: StateCreator<
 			await get().postStream?.({ set, get, ctx });
 		} catch (error) {
 			if (isAbortError(error)) {
-				console.info('Request was aborted');
+				logger('Request was aborted', { type: 'info' });
 				return;
 			}
-			console.error('Error in internal_handleSSE:', error);
+			logger(['Error in internal_handleSSE:', error], { type: 'error' });
 			set({ status: ChatStatus.Error }, false, nameSpace('internal_handleSSE'));
 		}
 	},

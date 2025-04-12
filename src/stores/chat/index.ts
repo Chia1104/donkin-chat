@@ -9,6 +9,7 @@ import { processStreamEvents } from '@/libs/ai/services/chatMessageProcessor';
 import type { AIResponseData } from '@/types/request';
 import { env } from '@/utils/env';
 import { isAbortError } from '@/utils/is';
+import { logger } from '@/utils/logger';
 import { withPrefixedUrl, request } from '@/utils/request';
 
 import { defineChatStore } from './store';
@@ -29,7 +30,7 @@ const { ChatStoreProvider, useChatStore, ChatStoreContext, creator } = defineCha
 				},
 				onErrorPart: (message, error) => {
 					if (isAbortError(error)) {
-						console.info('Stream processing was aborted');
+						logger('Stream processing was aborted', { type: 'info' });
 						return;
 					}
 					get().setStatus(ChatStatus.Error);
@@ -52,10 +53,10 @@ const { ChatStoreProvider, useChatStore, ChatStoreContext, creator } = defineCha
 			});
 		} catch (error) {
 			if (isAbortError(error)) {
-				console.info('Stream processing was aborted');
+				logger('Stream processing was aborted', { type: 'info' });
 				return;
 			}
-			console.error('Error processing stream:', error);
+			logger(['Error processing stream:', error], { type: 'error' });
 			get().setStatus(ChatStatus.Error);
 			const lastMessage = get().getLastMessage();
 			if (lastMessage) {

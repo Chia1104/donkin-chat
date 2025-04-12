@@ -8,6 +8,7 @@ import { ohlcvResponseSchema } from '@/libs/birdeye/pipes/ohlcv.pipe';
 import { getOhlcv } from '@/libs/birdeye/services/ohlcv.service';
 import type { BirdeyeResponse } from '@/libs/birdeye/types';
 import type { ResponseData } from '@/types/request';
+import { logger } from '@/utils/logger';
 
 export async function GET(request: NextRequest) {
 	try {
@@ -32,7 +33,7 @@ export async function GET(request: NextRequest) {
 			data: parsed.items,
 		});
 	} catch (error) {
-		console.error(error);
+		logger(['Error in GET /api/birdeye/defi/ohlcv:', error], { type: 'error' });
 		if (error instanceof HTTPError) {
 			const res = await error.response.json<BirdeyeResponse>();
 			if (res.success) {
