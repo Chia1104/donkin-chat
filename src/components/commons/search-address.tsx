@@ -1,6 +1,5 @@
 'use client';
 
-import type { Key } from 'react';
 import { useEffect, useRef, useState } from 'react';
 
 import { Autocomplete, AutocompleteItem } from '@heroui/autocomplete';
@@ -23,7 +22,6 @@ const SearchAddress = () => {
 	const tUtils = useTranslations('utils');
 	const tToken = useTranslations('preview.tokens-list');
 	const ref = useRef<HTMLInputElement>(null);
-	const selectedSnapshot = useRef<SearchToken | null>(null);
 	const [search, setSearch] = useState('');
 	const [selected, setSelected] = useState<SearchToken | null>(null);
 	const router = useTransitionRouter();
@@ -31,16 +29,6 @@ const SearchAddress = () => {
 	const [debouncedSearch] = useDebouncedValue(search, {
 		wait: 800,
 	});
-
-	const handleSetSelected = (key: Key | null) => {
-		const current = flatData.find(item => item.address === key);
-		logger(current, { type: 'log' });
-		if (current && current.address !== selectedSnapshot.current?.address) {
-			selectedSnapshot.current = current;
-			setSelected(current);
-			router.push(`/${current.symbol}/token/${current.address}`);
-		}
-	};
 
 	const { flatData, isLoading, isError, error, fetchNextPage, hasNextPage } = useQueryTokenSearch(
 		{ token_keyword: debouncedSearch },
@@ -100,7 +88,6 @@ const SearchAddress = () => {
 			}}
 			isVirtualized={flatData.length > 10}
 			isClearable={false}
-			onSelectionChange={handleSetSelected}
 			scrollRef={scrollerRef}
 			itemHeight={45}
 		>
@@ -111,6 +98,11 @@ const SearchAddress = () => {
 						base: 'px-3 py-2',
 						wrapper: 'my-1 min-h-fit mx-0',
 						selectedIcon: 'hidden',
+					}}
+					onPress={() => {
+						setSearch('');
+						setSelected(item);
+						router.push(`/${item.symbol}/token/${item.address}`);
 					}}
 				>
 					<div className="flex justify-between gap-2">
