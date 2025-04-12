@@ -302,7 +302,7 @@ const ClickableMarkerSeries = () => {
 		const earliestUnixTime = internal_data.length > 0 ? Math.min(...internal_data.map(item => item.unix)) : 0;
 
 		// 過濾掉早於 data 中最早時間的 kolAlerts
-		return kolAlerts
+		const markers = kolAlerts
 			.filter(item => dayjs(item.day).utc().unix() >= earliestUnixTime)
 			.map(item => ({
 				time: dayjs(item.day).utc().unix() as Time,
@@ -312,6 +312,8 @@ const ClickableMarkerSeries = () => {
 				type: 'loudspeaker',
 				text: `+${item.kol_alerts}`,
 			}));
+
+		return markers.sort((a, b) => (a.time as number) - (b.time as number)) as ClickableMarker<Time>[];
 	}, [kolAlerts, internal_data]);
 
 	useEffect(() => {
