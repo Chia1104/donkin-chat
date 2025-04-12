@@ -315,20 +315,22 @@ const ClickableMarkerSeries = () => {
 	}, [kolAlerts, internal_data]);
 
 	useEffect(() => {
-		const chartApi = chart.api();
-		const seriesApi = series.api();
+		const chartApi = chart._api;
+		const seriesApi = series._api;
 		let clean: (() => void) | undefined;
 		if (loudspeakerMarkers.length > 0 && chartApi && seriesApi && searchParams.mark) {
-			const { detach } = createClickableMarkers<Time>(chartApi, seriesApi, loudspeakerMarkers, {
+			const seriesMarkers = createClickableMarkers<Time>(chartApi, seriesApi, loudspeakerMarkers, {
 				onClick: marker => {
 					logger(marker);
 				},
 			});
-			clean = detach;
+			clean = seriesMarkers.detach;
 		}
 
 		return () => {
-			clean?.();
+			if (!series.isDisposed()) {
+				clean?.();
+			}
 		};
 	}, [loudspeakerMarkers, chart, series, searchParams.mark]);
 	return null;
@@ -465,20 +467,22 @@ const TransactionMarkers = () => {
 	}, [internal_transactions, internal_data, query.type]);
 
 	useEffect(() => {
-		const chartApi = chart.api();
-		const seriesApi = series.api();
+		const chartApi = chart._api;
+		const seriesApi = series._api;
 		let clean: (() => void) | undefined;
 		if (chartApi && seriesApi && searchParams.mark) {
-			const { detach } = createClickableMarkers<Time>(chartApi, seriesApi, transactionMarkers, {
+			const seriesMarkers = createClickableMarkers<Time>(chartApi, seriesApi, transactionMarkers, {
 				onClick: marker => {
 					logger(['TransactionMarkers', marker]);
 				},
 			});
-			clean = detach;
+			clean = seriesMarkers.detach;
 		}
 
 		return () => {
-			clean?.();
+			if (!series.isDisposed()) {
+				clean?.();
+			}
 		};
 	}, [transactionMarkers, chart, series, searchParams.mark]);
 
@@ -512,7 +516,7 @@ const Chart = () => {
 	});
 	const histogramSeriesRef = useRef<ISeriesApi<'Histogram'>>(null);
 
-	const { data, isPending, query } = useCandlestick();
+	const { data, isPending } = useCandlestick();
 
 	const initData = useMemo(() => {
 		return data.map(item => ({
@@ -545,7 +549,6 @@ const Chart = () => {
 
 	return (
 		<TradingChart
-			key={query.type}
 			className="h-[55dvh]"
 			initOptions={initOptions}
 			onInit={c => {
@@ -609,7 +612,7 @@ const Candlestick = (props: CandlestickProps) => {
 		>
 			<ErrorBoundary>
 				<MarkerTooltipProvider>
-					<Chart />
+					<Chart key={props.query.type} />
 					<MarkerTooltip />
 				</MarkerTooltipProvider>
 			</ErrorBoundary>
