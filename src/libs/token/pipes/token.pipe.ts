@@ -15,7 +15,7 @@ export const tokenSchema = z
 		daily_volume: z.number(),
 		market_cap: z.number(),
 		price_change_24h: z.number().nullish(),
-		volume_24h: z.number(),
+		volume_24h: z.number().nullish(),
 		liquidity: z.number(),
 		created_at: z.string(),
 		updated_at: z.string(),
