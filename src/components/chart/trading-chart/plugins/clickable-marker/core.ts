@@ -124,7 +124,7 @@ export function createClickableMarkers<TimeType>(
 			const pointX = param.point?.x || 0;
 			const pointY = param.point?.y || 0;
 			const dx = pointX - coord;
-			const dy = (pointY - priceCoord) * 0.5;
+			const dy = (pointY - priceCoord) * 0.1;
 
 			return Math.sqrt(dx * dx + dy * dy) <= markerSize;
 		});

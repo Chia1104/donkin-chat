@@ -556,6 +556,9 @@ const TransactionMarkers = () => {
 				onCloseTooltip() {
 					closeTooltip();
 				},
+				onClick(marker) {
+					logger(['onClick', marker]);
+				},
 			});
 			clean = seriesMarkers.detach;
 		}
