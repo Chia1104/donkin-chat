@@ -197,6 +197,7 @@ const Detail = () => {
 		token_address: params.token,
 		start_time: dayjs.unix(timeFrom).format('YYYY-MM-DD'),
 		end_time: dayjs.unix(currentUnix.current).format('YYYY-MM-DD'),
+		interval: searchParams.interval,
 	});
 
 	return (

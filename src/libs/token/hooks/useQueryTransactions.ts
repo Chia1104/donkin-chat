@@ -10,7 +10,7 @@ type QueryOPtions = Omit<UseQueryOptions<Transactions, Error, Transactions>, 'qu
 export const useQueryTransactions = (request: RequestDTO, options?: QueryOPtions) => {
 	return useQuery({
 		...options,
-		queryKey: ['token', 'transactions', request.token_address],
+		queryKey: ['token', 'transactions', request.token_address, request.interval],
 		queryFn: ({ signal }) => getTransactions({ data: request, signal }),
 	});
 };

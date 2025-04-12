@@ -8,6 +8,7 @@ export interface RequestDTO {
 	token_address: string;
 	start_time: string;
 	end_time: string;
+	interval?: string;
 }
 
 export const getTransactions = async (options?: BaseRequestOptions<RequestDTO>) => {
