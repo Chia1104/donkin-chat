@@ -12,7 +12,7 @@ export interface RequestDTO {
 
 export const getTransactions = async (options?: BaseRequestOptions<RequestDTO>) => {
 	const res = await request()
-		.get('/api/v1/analytics/token/transactions', {
+		.get('api/v1/analytics/token/transactions', {
 			searchParams: {
 				token_address: options?.data?.token_address ?? '',
 				start_time: options?.data?.start_time ?? '',
