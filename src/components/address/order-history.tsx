@@ -358,23 +358,28 @@ const OrderChart = () => {
 									</section>
 								}
 								body={
-									<section>
-										<ul className="flex flex-col gap-3">
-											{clickedData.tokens?.map((item, index) => (
-												<li key={`${item.symbol}-${index}`} className="text-xs font-normal flex justify-between">
-													<span className="flex items-center gap-2">
-														<Avatar src={item.url} className="w-4 h-4" />
-														{item.symbol}
-													</span>
-													<span className="flex items-center gap-2">
-														<span className="text-xs font-normal text-foreground-500">
-															<span className={cn(isPositiveNumber(item.buy) ? 'text-success' : '')}>{item.buy}</span>/
-															<span className={cn(isPositiveNumber(item.sell) ? 'text-danger' : '')}>{item.sell}</span>
+									<section className="w-full">
+										<ScrollShadow className="w-full h-[210px] max-h-[210px]">
+											<ul className="flex flex-col gap-3">
+												{clickedData.tokens?.map((item, index) => (
+													<li key={`${item.symbol}-${index}`} className="text-xs font-normal flex justify-between">
+														<span className="flex items-center gap-2">
+															<Avatar src={item.url} className="w-4 h-4" />
+															{item.symbol}
 														</span>
-													</span>
-												</li>
-											))}
-										</ul>
+														<span className="flex items-center gap-2">
+															<span className="text-xs font-normal text-foreground-500">
+																<span className={cn(isPositiveNumber(item.buy) ? 'text-success' : '')}>{item.buy}</span>
+																/
+																<span className={cn(isPositiveNumber(item.sell) ? 'text-danger' : '')}>
+																	{item.sell}
+																</span>
+															</span>
+														</span>
+													</li>
+												))}
+											</ul>
+										</ScrollShadow>
 										<Divider className="my-4" />
 									</section>
 								}

@@ -22,7 +22,8 @@
 		"disable": "Disable",
 		"toggle": "Toggle Dev Mode",
 		"debug": "Debug Mode",
-		"mock": "Mock Mode"
+		"mock": "Mock Mode",
+		"disableSSR": "Disable SSR"
 	},
 	"routes": {
 		"home": {

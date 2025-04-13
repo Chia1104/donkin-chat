@@ -12,8 +12,9 @@ import { useTranslations } from 'next-intl';
 import { useTransitionRouter } from 'next-view-transitions';
 
 import { useCMD } from '@/hooks/useCMD';
+import { IntervalFilter } from '@/libs/address/enums/interval-filter.enum';
+import { useQueryAddress } from '@/libs/address/hooks/useQueryAddress';
 import { useQueryTokenSearch } from '@/libs/token/hooks/useQueryToken';
-import type { SearchToken } from '@/libs/token/pipes/token.pipe';
 import { formatLargeNumber, truncateMiddle } from '@/utils/format';
 import { logger } from '@/utils/logger';
 
@@ -23,17 +24,34 @@ const SearchAddress = () => {
 	const tToken = useTranslations('preview.tokens-list');
 	const ref = useRef<HTMLInputElement>(null);
 	const [search, setSearch] = useState('');
-	const [selected, setSelected] = useState<SearchToken | null>(null);
+	const [selected, setSelected] = useState<{ address: string; symbol: string } | null>(null);
 	const router = useTransitionRouter();
 
 	const [debouncedSearch] = useDebouncedValue(search, {
 		wait: 800,
 	});
 
-	const { flatData, isLoading, isError, error, fetchNextPage, hasNextPage } = useQueryTokenSearch(
+	const {
+		flatData,
+		isLoading: isTokenLoading,
+		isError,
+		error,
+		fetchNextPage,
+		hasNextPage,
+	} = useQueryTokenSearch(
 		{ token_keyword: debouncedSearch },
 		{
 			enabled: !!debouncedSearch,
+		},
+	);
+
+	const { data: _addressData, isLoading: isAddressLoading } = useQueryAddress(
+		{
+			address: debouncedSearch,
+			interval: IntervalFilter.OneWeek,
+		},
+		{
+			enabled: false,
 		},
 	);
 
@@ -57,6 +75,8 @@ const SearchAddress = () => {
 			void fetchNextPage();
 		},
 	});
+
+	const isLoading = isTokenLoading || isAddressLoading;
 
 	return (
 		<Autocomplete

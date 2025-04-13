@@ -36,10 +36,12 @@ const Page = async (props: PagePropsWithLocale<{ token: string }>) => {
 	const searchParams = await loadGlobalSearchParams(props.searchParams);
 
 	try {
-		await queryClient.fetchQuery({
-			queryKey: ['token', token],
-			queryFn: () => getToken(token),
-		});
+		if (!searchParams.disableSSR) {
+			await queryClient.fetchQuery({
+				queryKey: ['token', token],
+				queryFn: () => getToken(token),
+			});
+		}
 	} catch {
 		if (!IS_DEV && !searchParams.debug) {
 			notFound();
