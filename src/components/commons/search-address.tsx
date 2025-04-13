@@ -1,6 +1,6 @@
 'use client';
 
-import { Fragment, useEffect, useRef, useState } from 'react';
+import { useEffect, useRef, useState } from 'react';
 
 import { Autocomplete, AutocompleteItem } from '@heroui/autocomplete';
 import { Avatar } from '@heroui/avatar';
