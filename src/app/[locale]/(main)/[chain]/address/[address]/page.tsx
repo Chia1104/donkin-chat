@@ -49,6 +49,7 @@ const Page = async (props: PagePropsWithLocale<{ address: string }>) => {
 					getAddress(address, {
 						data: {
 							interval: addressSearchParams.interval,
+							include_transactions: true,
 						},
 						timeout: 60_000,
 					}),
