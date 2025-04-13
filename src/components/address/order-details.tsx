@@ -3,7 +3,7 @@
 import { useMemo, memo, useEffect } from 'react';
 
 import { Avatar } from '@heroui/avatar';
-import { Spinner, Tooltip } from '@heroui/react';
+import { ScrollShadow, Spinner, Tooltip } from '@heroui/react';
 import { Table, TableHeader, TableBody, TableColumn, TableRow, TableCell } from '@heroui/table';
 import { useAsyncList } from '@react-stately/data';
 import { useTranslations } from 'next-intl';
@@ -153,7 +153,7 @@ const Cell = memo(({ item, columnKey }: { item: Data; columnKey: keyof Data }) =
 			);
 		case 'price':
 			return (
-				<span className="text-white">{`$${isNumber(item[columnKey]) ? roundDecimal(item[columnKey], 6) : item[columnKey]}`}</span>
+				<span className="text-white">{`$${isNumber(item[columnKey]) ? roundDecimal(item[columnKey], 10) : item[columnKey]}`}</span>
 			);
 		case 'value':
 			return (
@@ -161,8 +161,18 @@ const Cell = memo(({ item, columnKey }: { item: Data; columnKey: keyof Data }) =
 			);
 		case 'profit':
 			return (
-				<span className={isPositiveNumber(item[columnKey]) ? 'text-success' : 'text-danger'}>
-					{`$${isNumber(item[columnKey]) ? roundDecimal(item[columnKey], 2) : item[columnKey]}`}
+				<span
+					className={
+						isNumber(item[columnKey])
+							? isPositiveNumber(item[columnKey])
+								? 'text-success'
+								: 'text-danger'
+							: 'text-white'
+					}
+				>
+					{isNumber(item[columnKey])
+						? `$${isNumber(item[columnKey]) ? roundDecimal(item[columnKey], 2) : item[columnKey]}`
+						: '-'}
 				</span>
 			);
 		case 'transaction-count':
@@ -246,8 +256,14 @@ const OrderDetails = <TMock extends boolean = false>({
 		sort({ items, sortDescriptor }) {
 			return {
 				items: items.sort((a, b) => {
-					const first = a[sortDescriptor.column as keyof typeof a];
-					const second = b[sortDescriptor.column as keyof typeof b];
+					let first = a[sortDescriptor.column as keyof typeof a];
+					let second = b[sortDescriptor.column as keyof typeof b];
+					if (typeof first === 'string' && first.startsWith('$')) {
+						first = first.slice(1);
+					}
+					if (typeof second === 'string' && second.startsWith('$')) {
+						second = second.slice(1);
+					}
 					let cmp = (
 						typeof first === 'string' && typeof second === 'string'
 							? (parseInt(first) || first) < (parseInt(second) || second)
@@ -282,41 +298,45 @@ const OrderDetails = <TMock extends boolean = false>({
 					{date.start} ~ {date.end}
 				</span>
 			</span>
-			<Table
-				classNames={{
-					base: 'bg-transparent',
-					th: 'bg-transparent',
-					td: 'group-aria-[selected=false]/tr:group-data-[hover=true]/tr:before:bg-[#FFFFFF05] data-[selected=true]:text-white',
-				}}
-				removeWrapper
-				selectionMode="single"
-				sortDescriptor={list.sortDescriptor}
-				onSortChange={descriptor => list.sort(descriptor)}
-			>
-				<TableHeader columns={columns}>
-					{column => (
-						<TableColumn key={column.key} allowsSorting={column.allowsSorting} className="data-[hover=true]:text-white">
-							{column.label}
-						</TableColumn>
-					)}
-				</TableHeader>
-				<TableBody
-					emptyContent={tUtils('no-data')}
-					items={list.items}
-					isLoading={isPending}
-					loadingContent={<Spinner />}
+			<ScrollShadow className="max-h-[calc(100vh-250px)] w-full" visibility="bottom">
+				<Table
+					classNames={{
+						base: 'bg-transparent',
+						thead: '[&>tr]:first:shadow-none',
+						th: 'bg-[rgb(22,29,42)]',
+						td: 'group-aria-[selected=false]/tr:group-data-[hover=true]/tr:before:bg-[#FFFFFF05] data-[selected=true]:text-white',
+					}}
+					removeWrapper
+					selectionMode="single"
+					sortDescriptor={list.sortDescriptor}
+					onSortChange={descriptor => list.sort(descriptor)}
+					rowHeight={40}
+					isHeaderSticky
 				>
-					{item => (
-						<TableRow key={item.symbol}>
-							{columnKey => (
-								<TableCell>
-									<Cell item={item} columnKey={columnKey as keyof Data} />
-								</TableCell>
-							)}
-						</TableRow>
-					)}
-				</TableBody>
-			</Table>
+					<TableHeader columns={columns}>
+						{column => (
+							<TableColumn
+								key={column.key}
+								allowsSorting={column.allowsSorting}
+								className="data-[hover=true]:text-white"
+							>
+								{column.label}
+							</TableColumn>
+						)}
+					</TableHeader>
+					<TableBody emptyContent={tUtils('no-data')} isLoading={isPending} loadingContent={<Spinner />}>
+						{list.items.map((item, index) => (
+							<TableRow key={index}>
+								{columnKey => (
+									<TableCell>
+										<Cell item={item} columnKey={columnKey as keyof Data} />
+									</TableCell>
+								)}
+							</TableRow>
+						))}
+					</TableBody>
+				</Table>
+			</ScrollShadow>
 		</section>
 	);
 };
