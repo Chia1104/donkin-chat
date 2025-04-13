@@ -42,16 +42,18 @@ const Page = async (props: PagePropsWithLocale<{ address: string }>) => {
 	]);
 
 	try {
-		await queryClient.fetchQuery({
-			queryKey: ['address', address, addressSearchParams.interval],
-			queryFn: () =>
-				getAddress(address, {
-					data: {
-						interval: addressSearchParams.interval,
-					},
-					timeout: 60_000,
-				}),
-		});
+		if (!searchParams.disableSSR) {
+			await queryClient.fetchQuery({
+				queryKey: ['address', address, addressSearchParams.interval],
+				queryFn: () =>
+					getAddress(address, {
+						data: {
+							interval: addressSearchParams.interval,
+						},
+						timeout: 60_000,
+					}),
+			});
+		}
 	} catch (error) {
 		logger(error, { type: 'error', enabled: typeof window === 'undefined' });
 		if (!(error instanceof HTTPError)) {

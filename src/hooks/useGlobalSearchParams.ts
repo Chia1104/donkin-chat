@@ -4,6 +4,7 @@ import { parseAsBoolean, useQueryStates } from 'nuqs';
 export const globalQueryState = {
 	debug: parseAsBoolean.withDefault(false),
 	mock: parseAsBoolean.withDefault(false),
+	disableSSR: parseAsBoolean.withDefault(false),
 };
 
 export const useGlobalSearchParams = () => {

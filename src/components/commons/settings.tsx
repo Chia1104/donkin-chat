@@ -38,6 +38,13 @@ export const Settings = ({ enableTheme = true, enableLocale = true }: Props) => 
 				<Switch isSelected={searchParams.mock} onValueChange={value => setSearchParams({ mock: value })} size="sm">
 					{tDevMode('mock')}
 				</Switch>
+				<Switch
+					isSelected={searchParams.disableSSR}
+					onValueChange={value => setSearchParams({ disableSSR: value })}
+					size="sm"
+				>
+					{tDevMode('disableSSR')}
+				</Switch>
 			</PopoverContent>
 		</Popover>
 	);

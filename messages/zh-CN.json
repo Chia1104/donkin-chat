@@ -22,7 +22,8 @@
         "disable": "关闭",
         "toggle": "切换开发模式",
         "debug": "Debug 模试",
-        "mock": "Mock 模试"
+        "mock": "Mock 模试",
+        "disableSSR": "禁用 SSR"
     },
     "routes": {
         "home": {
