@@ -10,6 +10,7 @@ export const useQueryAddress = (
 		address: string;
 		interval: IntervalFilter;
 		timeout?: number;
+		include_transactions?: boolean;
 	},
 	options?: Partial<UseQueryOptions<Address, Error, Address>>,
 ) => {
@@ -19,6 +20,7 @@ export const useQueryAddress = (
 			getAddress(requestOptions.address, {
 				data: {
 					interval: requestOptions.interval,
+					include_transactions: requestOptions.include_transactions,
 				},
 				signal,
 				timeout: requestOptions.timeout,

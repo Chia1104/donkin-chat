@@ -52,6 +52,7 @@ const Detail = () => {
 			address: params.address,
 			interval: searchParams.interval,
 			timeout: 60_000,
+			include_transactions: true,
 		},
 		{
 			enabled: !globalSearchParams.mock,
