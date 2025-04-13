@@ -160,7 +160,7 @@ const DateFilter = () => {
 				isDisabled={isPending || isMetaPending}
 			>
 				<Tab key={IntervalFilter.OneWeek} title={IntervalFilter.OneWeek} className="px-2 py-0 h-6" />
-				<Tab key={IntervalFilter.OneMonth} title={IntervalFilter.OneMonth} className="px-2 py-0 h-6" />
+				{/* <Tab key={IntervalFilter.OneMonth} title={IntervalFilter.OneMonth} className="px-2 py-0 h-6" /> */}
 			</Tabs>
 		</ScrollShadow>
 	);

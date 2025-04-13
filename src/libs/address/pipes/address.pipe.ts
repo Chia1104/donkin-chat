@@ -12,12 +12,12 @@ export const baseAddressSchema = z.object({
 export const addressTokenPnlSchema = z.object({
 	symbol: z.string(),
 	url: z.string(),
-	amount: z.number(),
-	price: z.number(),
-	value: z.number(),
+	amount: z.number().optional(),
+	price: z.number().optional(),
+	value: z.number().optional(),
 	return: z.number().optional(),
-	buy: z.number(),
-	sell: z.number(),
+	buy: z.number().optional(),
+	sell: z.number().optional(),
 });
 
 export const dailyTokenPnlSchema = z.object({
