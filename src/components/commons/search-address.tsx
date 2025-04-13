@@ -2,7 +2,7 @@
 
 import { useEffect, useRef, useState } from 'react';
 
-import { Autocomplete, AutocompleteItem, AutocompleteSection } from '@heroui/autocomplete';
+import { Autocomplete, AutocompleteItem } from '@heroui/autocomplete';
 import { Avatar } from '@heroui/avatar';
 import { Spinner } from '@heroui/spinner';
 import { useInfiniteScroll } from '@heroui/use-infinite-scroll';
@@ -15,7 +15,6 @@ import { useCMD } from '@/hooks/useCMD';
 import { IntervalFilter } from '@/libs/address/enums/interval-filter.enum';
 import { useQueryAddress } from '@/libs/address/hooks/useQueryAddress';
 import { useQueryTokenSearch } from '@/libs/token/hooks/useQueryToken';
-import type { SearchToken } from '@/libs/token/pipes/token.pipe';
 import { formatLargeNumber, truncateMiddle } from '@/utils/format';
 import { logger } from '@/utils/logger';
 
