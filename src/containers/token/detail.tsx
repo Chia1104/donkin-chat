@@ -244,6 +244,12 @@ const Detail = () => {
 									chain: queryResult.data?.symbol ?? '',
 									token: queryResult.data?.address ?? '',
 								}}
+								link={{
+									website: undefined,
+									x: undefined,
+									telegram: undefined,
+									copy: params.token,
+								}}
 							/>
 						</section>
 						<Divider orientation="vertical" className="h-4" />
