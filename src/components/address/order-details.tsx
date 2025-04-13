@@ -229,14 +229,14 @@ const OrderDetails = <TMock extends boolean = false>({
 				};
 			}
 
-			if (!data) {
+			if (!data?.token_pnls) {
 				return {
 					items: [],
 				};
 			}
 
 			return {
-				items: data.token_pnls.map(
+				items: data.token_pnls?.map(
 					token =>
 						({
 							symbol: token.symbol,
