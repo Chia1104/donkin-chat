@@ -35,11 +35,11 @@ export const addressDailyDataSchema = z.object({
 	balance_usd: z.number(),
 	daily_return: z.number(),
 	daily_return_rate: z.number(),
-	token_pnls: z.array(dailyTokenPnlSchema),
+	token_pnls: z.array(dailyTokenPnlSchema).nullish(),
 });
 
 export const addressSchema = baseAddressSchema.extend({
-	token_pnls: z.array(addressTokenPnlSchema),
+	token_pnls: z.array(addressTokenPnlSchema).nullish(),
 	daily_data: z
 		.array(addressDailyDataSchema)
 		.transform(data => data.sort((a, b) => (dayjs(a.date).isBefore(dayjs(b.date)) ? -1 : 1))),
