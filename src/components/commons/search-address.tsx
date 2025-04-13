@@ -22,6 +22,7 @@ const SearchAddress = () => {
 	const t = useTranslations('nav');
 	const tUtils = useTranslations('utils');
 	const tToken = useTranslations('preview.tokens-list');
+	const tRoutes = useTranslations('routes');
 	const ref = useRef<HTMLInputElement>(null);
 	const [search, setSearch] = useState('');
 	const [selected, setSelected] = useState<{ address: string; symbol: string } | null>(null);
@@ -45,13 +46,13 @@ const SearchAddress = () => {
 		},
 	);
 
-	const { data: _addressData, isLoading: isAddressLoading } = useQueryAddress(
+	const { data: addressData, isLoading: isAddressLoading } = useQueryAddress(
 		{
 			address: debouncedSearch,
 			interval: IntervalFilter.OneWeek,
 		},
 		{
-			enabled: false,
+			enabled: !!debouncedSearch,
 		},
 	);
 
@@ -78,10 +79,24 @@ const SearchAddress = () => {
 
 	const isLoading = isTokenLoading || isAddressLoading;
 
+	const concatData = flatData.concat(
+		addressData
+			? [
+					{
+						address: debouncedSearch,
+						symbol: 'sol',
+						name: tRoutes('wallet.title'),
+						market_cap: 0,
+						logo_uri: '',
+					},
+				]
+			: [],
+	);
+
 	return (
 		<Autocomplete
 			inputValue={search}
-			items={flatData}
+			items={concatData}
 			selectedKey={selected?.address}
 			onInputChange={setSearch}
 			placeholder={t('search-placeholder')}
@@ -111,39 +126,47 @@ const SearchAddress = () => {
 			scrollRef={scrollerRef}
 			itemHeight={45}
 		>
-			{item => (
-				<AutocompleteItem
-					key={item.address}
-					classNames={{
-						base: 'px-3 py-2',
-						wrapper: 'my-1 min-h-fit mx-0',
-						selectedIcon: 'hidden',
-					}}
-					onPress={() => {
-						setSearch('');
-						setSelected(item);
-						router.push(`/${item.symbol}/token/${item.address}`);
-					}}
-				>
-					<div className="flex justify-between gap-2">
-						<div className="flex items-center gap-1">
-							<Avatar src={item.logo_uri ?? item.name} className="w-6 h-6 min-w-6 min-h-6" />
-							<div className="flex flex-col">
-								<span className="text-xs line-clamp-1 leading-tight">{item.name}</span>
-								<span className="text-[8px] text-foreground-500 line-clamp-1 leading-tight">
-									{truncateMiddle(item.address, item.address.length / 3)}
-								</span>
+			{concatData.map((item, index) => {
+				return (
+					<AutocompleteItem
+						key={`${item.address}-${index}`}
+						classNames={{
+							base: 'px-3 py-2',
+							wrapper: 'my-1 min-h-fit mx-0',
+							selectedIcon: 'hidden',
+						}}
+						onPress={() => {
+							setSearch('');
+							setSelected(item);
+							router.push(
+								item.name === tRoutes('wallet.title')
+									? `/${item.symbol}/address/${item.address}`
+									: `/${item.symbol}/token/${item.address}`,
+							);
+						}}
+					>
+						<div className="flex justify-between gap-2">
+							<div className="flex items-center gap-1">
+								<Avatar src={item.logo_uri ?? item.name} className="w-6 h-6 min-w-6 min-h-6" />
+								<div className="flex flex-col">
+									<span className="text-xs line-clamp-1 leading-tight">{item.name}</span>
+									<span className="text-[8px] text-foreground-500 line-clamp-1 leading-tight">
+										{truncateMiddle(item.address, item.address.length / 3)}
+									</span>
+								</div>
 							</div>
+							{item.name !== tRoutes('wallet.title') && (
+								<div className="flex flex-col items-end">
+									<span className="text-xs leading-tight">
+										{isNumber(item.market_cap) ? formatLargeNumber(item.market_cap) : '-'}
+									</span>
+									<span className="text-[8px] text-foreground-500 leading-tight">{tToken('filter.market-cap')}</span>
+								</div>
+							)}
 						</div>
-						<div className="flex flex-col items-end">
-							<span className="text-xs leading-tight">
-								{isNumber(item.market_cap) ? formatLargeNumber(item.market_cap) : '-'}
-							</span>
-							<span className="text-[8px] text-foreground-500 leading-tight">{tToken('filter.market-cap')}</span>
-						</div>
-					</div>
-				</AutocompleteItem>
-			)}
+					</AutocompleteItem>
+				);
+			})}
 		</Autocomplete>
 	);
 };

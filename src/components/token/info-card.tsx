@@ -116,16 +116,16 @@ export const MOCK_DATA: CardProps = {
 export const LinkIcon = (props: LinkIconProps) => {
 	switch (props.provider) {
 		case 'website':
-			return <span className="text-default-600 i-material-symbols-language size-4" />;
+			return <span className="text-default-600 i-material-symbols-language size-3" />;
 		case 'x':
 			return <XIcon className="size-2" />;
 		case 'telegram':
-			return <span className="text-default-600 i-material-symbols-telegram size-4" />;
+			return <span className="text-default-600 i-material-symbols-telegram size-3" />;
 		case 'copy':
 			return props.copied ? (
-				<span className="text-default-600 i-material-symbols-done-all size-4" />
+				<span className="text-default-600 i-material-symbols-done-all size-3" />
 			) : (
-				<span className="text-default-600 i-material-symbols-content-copy size-4" />
+				<span className="text-default-600 i-material-symbols-content-copy-outline rotate-180 size-3" />
 			);
 	}
 };
@@ -171,21 +171,23 @@ export const HeaderPrimitive = (props: HeaderPrimitiveProps) => {
 				)}
 				{props.injects?.afterLabel}
 				<div className={cn('flex items-center gap-1 z-20', props.classNames?.linkWrapper)}>
-					{Object.entries(props.link ?? {}).map(([key, value]) => (
-						<Button
-							aria-label={key}
-							as={key === 'copy' ? 'span' : 'a'}
-							href={value}
-							onPress={() => key === 'copy' && value && copy(value)}
-							isIconOnly
-							key={key}
-							radius="full"
-							size="sm"
-							className="bg-background max-w-5 h-5 max-h-5 w-5 min-w-5 min-h-5 p-0"
-						>
-							{value && <LinkIcon provider={key as LinkProvider} link={value} copied={copied} />}
-						</Button>
-					))}
+					{Object.entries(props.link ?? {})
+						.filter(([_, value]) => value)
+						.map(([key, value]) => (
+							<Button
+								aria-label={key}
+								as={key === 'copy' ? 'span' : 'a'}
+								href={value}
+								onPress={() => key === 'copy' && value && copy(value)}
+								isIconOnly
+								key={key}
+								radius="full"
+								size="sm"
+								className="bg-background max-w-5 h-5 max-h-5 w-5 min-w-5 min-h-5 p-0"
+							>
+								{value && <LinkIcon provider={key as LinkProvider} link={value} copied={copied} />}
+							</Button>
+						))}
 				</div>
 			</div>
 		</>
