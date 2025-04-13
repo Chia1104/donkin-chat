@@ -160,7 +160,7 @@ const DateFilter = () => {
 				isDisabled={isPending || isMetaPending}
 			>
 				<Tab key={IntervalFilter.OneWeek} title={IntervalFilter.OneWeek} className="px-2 py-0 h-6" />
-				<Tab key={IntervalFilter.OneMonth} title={IntervalFilter.OneMonth} className="px-2 py-0 h-6" />
+				{/* <Tab key={IntervalFilter.OneMonth} title={IntervalFilter.OneMonth} className="px-2 py-0 h-6" /> */}
 			</Tabs>
 		</ScrollShadow>
 	);
@@ -266,6 +266,7 @@ const Header = () => {
 };
 
 const OrderChart = () => {
+	const { meta } = useOrderHistory();
 	const tAskMore = useTranslations('donkin.ask-more');
 	const t = useTranslations('address.order-history');
 	const locale = useLocale();
@@ -427,6 +428,9 @@ const OrderChart = () => {
 		);
 	}
 
+	const isPositive =
+		isPositiveNumber(meta?.profit) || (typeof meta?.profit === 'string' && meta?.profit.startsWith('+'));
+
 	return (
 		<Chart
 			className="h-[55dvh]"
@@ -442,8 +446,8 @@ const OrderChart = () => {
 					series={AreaSeries}
 					data={balanceData}
 					options={{
-						lineColor: '#38AF75',
-						topColor: 'rgba(69, 146, 109, 0.4)',
+						lineColor: isPositive ? '#38AF75' : '#FF4D4F',
+						topColor: isPositive ? 'rgba(69, 146, 109, 0.4)' : 'rgba(255, 77, 79, 0.4)',
 						bottomColor: 'rgba(24, 25, 29, 0)',
 						lineWidth: 2,
 						priceFormat: {
