@@ -138,15 +138,64 @@ const ActiveLogo = (props: Props) => {
 				})}
 				onClick={handleToggle}
 			>
-				<svg width="100%" height="100%" viewBox="0 0 40 40" fill="none" xmlns="http://www.w3.org/2000/svg">
+				<svg width="100%" height="100%" viewBox="-4 -4 48 48" fill="none" xmlns="http://www.w3.org/2000/svg">
+					{/* 外部暈眩光效果 */}
+					<motion.circle
+						cx="20"
+						cy="20"
+						r="21"
+						initial={{ opacity: 0.7 }}
+						animate={{
+							opacity: [0.7, 0.9, 0.7],
+							scale: [1, 1.02, 1],
+						}}
+						transition={{
+							duration: 5,
+							repeat: Infinity,
+							ease: 'easeInOut',
+						}}
+						fill={`url(#${id}-outerGlowGradient)`}
+					/>
+
 					{/* 主要圓形 */}
 					<circle cx="20" cy="20" r="20" fill="url(#baseGradient)" filter={`url(#${id}-glowEffect)`} />
 
 					{/* 藍色漸變光效 */}
-					<circle cx="20" cy="20" r="20" fill={`url(#${id}-blueGradient)`} opacity="0.85" />
+					<motion.circle
+						cx="20"
+						cy="20"
+						r="20"
+						fill={`url(#${id}-blueGradient)`}
+						initial={{ opacity: 0.85 }}
+						animate={{
+							opacity: [0.85, 0.7, 0.85],
+							scale: [1, 1.02, 1],
+						}}
+						transition={{
+							duration: 3,
+							repeat: Infinity,
+							ease: 'easeInOut',
+						}}
+					/>
 
 					{/* 高光效果 */}
-					<circle cx="20" cy="20" r="20" fill={`url(#${id}-highlightGradient)`} opacity="0.7" />
+					<motion.circle
+						cx="20"
+						cy="20"
+						r="20"
+						fill={`url(#${id}-highlightGradient)`}
+						initial={{ opacity: 0.7 }}
+						animate={{
+							opacity: [0.7, 0.4, 0.7],
+							scale: [1, 1.03, 1],
+						}}
+						transition={{
+							duration: 3.5,
+							repeat: Infinity,
+							ease: 'easeInOut',
+							delay: 0.5,
+						}}
+					/>
 
 					{/* 水平矩形 - 較短的橫線 */}
 					{enableEffect && (
@@ -216,8 +265,19 @@ const ActiveLogo = (props: Props) => {
 
 						{/* 外發光效果 */}
 						<filter id={`${id}-glowEffect`} x="-2" y="-1" width="44" height="44" filterUnits="userSpaceOnUse">
-							<feDropShadow dx="0" dy="1" stdDeviation="1.5" floodColor="#9DF2FF" floodOpacity="0.25" />
+							<feDropShadow dx="0" dy="1" stdDeviation="1.5" floodColor="#9DF2FF" floodOpacity="0.25">
+								<animate attributeName="flood-opacity" values="0.25;0.55;0.25" dur="4s" repeatCount="indefinite" />
+								<animate attributeName="stdDeviation" values="1.5;3;1.5" dur="4s" repeatCount="indefinite" />
+							</feDropShadow>
 						</filter>
+
+						{/* 外部暈眩光漸變 */}
+						<radialGradient id={`${id}-outerGlowGradient`} cx="0.5" cy="0.5" r="0.5" gradientUnits="objectBoundingBox">
+							<stop offset="0" stopColor="#35E4FF" stopOpacity="1" />
+							<stop offset="0.25" stopColor="#35E4FF" stopOpacity="0.8" />
+							<stop offset="0.6" stopColor="#2474FF" stopOpacity="0.5" />
+							<stop offset="1" stopColor="#2474FF" stopOpacity="0" />
+						</radialGradient>
 					</defs>
 				</svg>
 			</motion.div>
