@@ -15,6 +15,7 @@ export const getAddress = async (
 				interval: options?.data?.interval ?? '',
 				include_transactions: options?.data?.include_transactions ? 'true' : '',
 			},
+			timeout: 120_000,
 		})
 		.json<ResponseData<Address>>();
 	return addressSchema.parse(response.data);
