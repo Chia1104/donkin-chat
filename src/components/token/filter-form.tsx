@@ -1,5 +1,7 @@
 'use client';
 
+import { ChangeEvent } from 'react';
+
 import { CheckboxGroup, Checkbox } from '@heroui/checkbox';
 import { Divider } from '@heroui/divider';
 import { NumberInput } from '@heroui/number-input';
@@ -49,7 +51,17 @@ const FilterForm = (props: Props) => {
 		}
 	};
 
-	console.log(form.getValues());
+	const handleNumberInputChange = (
+		value: number | ChangeEvent<HTMLInputElement>,
+		onChange: (value: number | null) => void,
+	) => {
+		if (isNaN(value as number)) {
+			onChange(null);
+			return;
+		}
+
+		onChange(value as number);
+	};
 
 	return (
 		<Form {...form}>
@@ -129,7 +141,7 @@ const FilterForm = (props: Props) => {
 												}}
 												{...field}
 												value={(field.value as number) ?? undefined}
-												onChange={field.onChange}
+												onChange={value => handleNumberInputChange(value, field.onChange)}
 												isInvalid={fieldState.invalid}
 												variant="bordered"
 												hideStepper
@@ -157,7 +169,7 @@ const FilterForm = (props: Props) => {
 												}}
 												{...field}
 												value={(field.value as number) ?? undefined}
-												onChange={field.onChange}
+												onChange={value => handleNumberInputChange(value, field.onChange)}
 												isInvalid={fieldState.invalid}
 												variant="bordered"
 												hideStepper
@@ -230,7 +242,7 @@ const FilterForm = (props: Props) => {
 												}}
 												{...field}
 												value={(field.value as number) ?? undefined}
-												onChange={field.onChange}
+												onChange={value => handleNumberInputChange(value, field.onChange)}
 												isInvalid={fieldState.invalid}
 												variant="bordered"
 												hideStepper
@@ -258,7 +270,7 @@ const FilterForm = (props: Props) => {
 												}}
 												{...field}
 												value={(field.value as number) ?? undefined}
-												onChange={field.onChange}
+												onChange={value => handleNumberInputChange(value, field.onChange)}
 												isInvalid={fieldState.invalid}
 												variant="bordered"
 												hideStepper
