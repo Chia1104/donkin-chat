@@ -480,7 +480,7 @@ const TransactionMarkers = () => {
 				const buyMin = searchParams.tmin;
 				const buyMax = searchParams.tmax;
 
-				const _check = () => {
+				const check = () => {
 					if (buyMin == null && buyMax == null) {
 						return true;
 					}
@@ -499,25 +499,18 @@ const TransactionMarkers = () => {
 					return false;
 				};
 
-				// if (check()) {
-				// 	markers.push({
-				// 		time: time as Time,
-				// 		position: 'aboveBar',
-				// 		color: twTheme.extend.colors.buy.DEFAULT,
-				// 		size: 1,
-				// 		type: 'buy',
-				// 	});
-				// 	totalBuy += 1;
-				// } else {
-				// 	totalBuy = 0;
-				// }
-				markers.push({
-					time: time as Time,
-					position: 'aboveBar',
-					color: twTheme.extend.colors.buy.DEFAULT,
-					size: 1,
-					type: 'buy',
-				});
+				if (check()) {
+					markers.push({
+						time: time as Time,
+						position: 'aboveBar',
+						color: twTheme.extend.colors.buy.DEFAULT,
+						size: 1,
+						type: 'buy',
+					});
+					totalBuy += 1;
+				} else {
+					totalBuy = 0;
+				}
 			}
 
 			// 添加賣出標記
@@ -609,20 +602,44 @@ const TransactionMarkers = () => {
 			const seriesMarkers = createClickableMarkers<Time>(chartApi, seriesApi, transactionMarkers, {
 				onOpenTooltip(option) {
 					const currentGroup = groupedTransactions?.get(option.marker.time as number);
+
+					// 過濾條件
+					const buyMin = searchParams.tmin;
+					const buyMax = searchParams.tmax;
+
+					// 過濾 buy 交易
+					const filteredBuys =
+						currentGroup?.buys.filter(tx => {
+							const amount = Number(tx.amount);
+							if (buyMin == null && buyMax == null) {
+								return true;
+							}
+							if (buyMin != null && buyMax != null) {
+								return amount >= buyMin && amount <= buyMax;
+							}
+							if (buyMin != null && buyMax == null) {
+								return amount >= buyMin;
+							}
+							if (buyMin == null && buyMax != null) {
+								return amount <= buyMax;
+							}
+							return false;
+						}) || [];
+
 					openTooltip({
 						...option,
 						tooltip: (
 							<OrderPopover
 								meta={{
-									buy: currentGroup?.buys.length ?? 0,
+									buy: filteredBuys.length,
 									sell: currentGroup?.sells.length ?? 0,
 									order: currentGroup?.kolAlerts?.length ?? 0,
 								}}
 								total={{
-									buy: currentGroup?.buys.reduce((acc, tx) => acc + Number(tx.amount), 0) ?? 0,
+									buy: filteredBuys.reduce((acc, tx) => acc + Number(tx.amount), 0),
 									sell: currentGroup?.sells.reduce((acc, tx) => acc + Number(tx.amount), 0) ?? 0,
 									volume:
-										(currentGroup?.buys.reduce((acc, tx) => acc + Number(tx.amount), 0) ?? 0) +
+										filteredBuys.reduce((acc, tx) => acc + Number(tx.amount), 0) +
 										(currentGroup?.sells.reduce((acc, tx) => acc + Number(tx.amount), 0) ?? 0),
 								}}
 								order={{
@@ -651,7 +668,7 @@ const TransactionMarkers = () => {
 				clean?.();
 			}
 		};
-	}, [transactionMarkers, chart, series, searchParams.mark, openTooltip, closeTooltip, groupedTransactions]);
+	}, [transactionMarkers, chart, series, searchParams.mark, openTooltip, closeTooltip, groupedTransactions, tAskMore]);
 
 	return null;
 };
