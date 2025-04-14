@@ -60,8 +60,8 @@ interface Data {
 	value: number;
 	profit: number;
 	'transaction-count': {
-		buy: number;
-		sell: number;
+		buy?: number | null;
+		sell?: number | null;
 	};
 }
 
@@ -149,15 +149,15 @@ const Cell = memo(({ item, columnKey }: { item: Data; columnKey: keyof Data }) =
 			);
 		case 'amount':
 			return (
-				<span className="text-white">{`$${isNumber(item[columnKey]) ? formatLargeNumber(item[columnKey]) : item[columnKey]}`}</span>
+				<span className="text-white">{isNumber(item[columnKey]) ? `$${formatLargeNumber(item[columnKey])}` : '-'}</span>
 			);
 		case 'price':
 			return (
-				<span className="text-white">{`$${isNumber(item[columnKey]) ? roundDecimal(item[columnKey], 10) : item[columnKey]}`}</span>
+				<span className="text-white">{isNumber(item[columnKey]) ? `$${roundDecimal(item[columnKey], 10)}` : '-'}</span>
 			);
 		case 'value':
 			return (
-				<span className="text-white">{`$${isNumber(item[columnKey]) ? roundDecimal(item[columnKey], 2) : item[columnKey]}`}</span>
+				<span className="text-white">{isNumber(item[columnKey]) ? `$${roundDecimal(item[columnKey], 2)}` : '-'}</span>
 			);
 		case 'profit':
 			return (
@@ -215,8 +215,8 @@ const OrderDetails = <TMock extends boolean = false>({
 				};
 			default:
 				return {
-					start: dayjs().subtract(1, 'month').startOf('day').format('YYYY-MM'),
-					end: dayjs().endOf('day').format('YYYY-MM'),
+					start: dayjs().subtract(1, 'week').startOf('day').format('YYYY-MM-DD'),
+					end: dayjs().endOf('day').format('YYYY-MM-DD'),
 				};
 		}
 	}, [searchParams]);
@@ -258,6 +258,10 @@ const OrderDetails = <TMock extends boolean = false>({
 				items: items.sort((a, b) => {
 					let first = a[sortDescriptor.column as keyof typeof a];
 					let second = b[sortDescriptor.column as keyof typeof b];
+
+					if (!first) return 1;
+					if (!second) return -1;
+
 					if (typeof first === 'string' && first.startsWith('$')) {
 						first = first.slice(1);
 					}

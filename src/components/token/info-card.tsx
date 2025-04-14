@@ -269,8 +269,8 @@ export const Hotspots = memo(
 		const t = useTranslations('preview.ai-signal');
 		return (
 			<CardBody aria-label="Hotspots" className="rounded-none prose prose-invert gap-4 p-0">
-				<HotspotProgress label={t('card.x-hotspot')} value={hotspots.x} />
-				<HotspotProgress label={t('card.tg-hotspot')} value={hotspots.telegram} />
+				<HotspotProgress label={t('card.x-hotspot')} value={hotspots.x} colorDirection="green-to-red" />
+				<HotspotProgress label={t('card.tg-hotspot')} value={hotspots.telegram} colorDirection="green-to-red" />
 			</CardBody>
 		);
 	},

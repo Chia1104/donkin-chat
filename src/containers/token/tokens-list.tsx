@@ -22,6 +22,7 @@ import { AscIcon } from '@/components/icons/asc-icon';
 import { DescIcon } from '@/components/icons/desc-icon';
 import InfoCard from '@/components/token/info-card';
 import { HeroButton } from '@/components/ui/hero-button';
+import { useGlobalSearchParams } from '@/hooks/useGlobalSearchParams';
 import { useMediaQuery } from '@/hooks/useMediaQuery';
 import { TokenSort } from '@/libs/ai/enums/tokenSort.enum';
 import { useAISearchParams } from '@/libs/ai/hooks/useAISearchParams';
@@ -154,6 +155,7 @@ const List = ({ display }: { display: 'group' | 'single' }) => {
 	});
 	const isOpen = useGlobalStore(state => state.donkin.isOpen);
 	const router = useTransitionRouter();
+	const [globalSearchParams] = useGlobalSearchParams();
 
 	const { isLgWidth, isMdWidth, isSmWidth } = useMediaQuery();
 
@@ -297,8 +299,8 @@ const List = ({ display }: { display: 'group' | 'single' }) => {
 								change: _.change,
 							}}
 							hotspots={{
-								x: 0,
-								telegram: 0,
+								x: globalSearchParams.mock ? 60 : 0,
+								telegram: globalSearchParams.mock ? 70 : 0,
 							}}
 							display={getItemDisplay(index, length)}
 							onPress={data => {
