@@ -164,9 +164,9 @@ const Detail = () => {
 			case IntervalFilter.FourHours:
 				return dayjs.unix(currentUnix.current).subtract(1, 'month').unix();
 			case IntervalFilter.OneDay:
-				return dayjs.unix(currentUnix.current).subtract(1, 'month').unix();
+				return dayjs.unix(currentUnix.current).subtract(6, 'month').unix();
 			case IntervalFilter.OneWeek:
-				return dayjs.unix(currentUnix.current).subtract(1, 'month').unix();
+				return dayjs.unix(currentUnix.current).subtract(6, 'month').unix();
 			default:
 				return dayjs.unix(currentUnix.current).subtract(1, 'day').unix();
 		}
