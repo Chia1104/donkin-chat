@@ -668,7 +668,18 @@ const TransactionMarkers = () => {
 				clean?.();
 			}
 		};
-	}, [transactionMarkers, chart, series, searchParams.mark, openTooltip, closeTooltip, groupedTransactions, tAskMore]);
+	}, [
+		transactionMarkers,
+		chart,
+		series,
+		searchParams.mark,
+		openTooltip,
+		closeTooltip,
+		groupedTransactions,
+		tAskMore,
+		searchParams.tmin,
+		searchParams.tmax,
+	]);
 
 	return null;
 };
