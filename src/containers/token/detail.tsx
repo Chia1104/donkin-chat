@@ -200,6 +200,31 @@ const Detail = () => {
 		interval: searchParams.interval,
 	});
 
+	const diff = useMemo(() => {
+		if (!queryResult.data?.created_at) {
+			return '-';
+		}
+		const base = dayjs(queryResult.data?.created_at);
+		// min
+		if (dayjs().diff(base, 'minutes') < 60) {
+			return `${dayjs().diff(base, 'minutes')}m`;
+		}
+		// hour
+		if (dayjs().diff(base, 'hours') > 24) {
+			return `${dayjs().diff(base, 'days')}d`;
+		}
+		// month
+		else if (dayjs().diff(base, 'days') > 30) {
+			return `${dayjs().diff(base, 'months')}M`;
+		}
+		// year
+		else if (dayjs().diff(base, 'days') > 365) {
+			return `${dayjs().diff(base, 'years')}y`;
+		}
+
+		return `${dayjs().diff(base, 'hours')}h`;
+	}, [queryResult.data?.created_at]);
+
 	return (
 		<div className="w-full h-full flex flex-col">
 			<ScrollShadow className="w-full h-[calc(100vh-72px)]">
@@ -218,9 +243,7 @@ const Detail = () => {
 								injects={{
 									afterLabel: (
 										<span className="flex items-center gap-3">
-											<p className="text-success text-[12px] font-normal">
-												{dayjs().diff(dayjs(queryResult.data?.created_at), 'hours')}h
-											</p>
+											<p className="text-success text-[12px] font-normal">{diff}</p>
 											<Tooltip
 												content={dayjs(queryResult.data?.created_at).format('YYYY-MM-DD HH:mm:ss')}
 												showArrow
