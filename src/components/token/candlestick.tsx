@@ -14,7 +14,9 @@ import OrderPopover from '@/components/token/order-popover';
 import { useMutationOhlcv } from '@/libs/birdeye/hooks/useQueryOhlcv';
 import type { OlcvResponseDTO } from '@/libs/birdeye/hooks/useQueryOhlcv';
 import type { KolAlert } from '@/libs/kol/pipes/kol.pipe';
+import { Address } from '@/libs/token/enums/address.enum';
 import { IntervalFilter } from '@/libs/token/enums/interval-filter.enum';
+import { Order } from '@/libs/token/enums/order.enum';
 import { useMutationTransactions } from '@/libs/token/hooks/useQueryTransactions';
 import { useTokenSearchParams } from '@/libs/token/hooks/useTokenSearchParams';
 import type { Transactions, Transaction } from '@/libs/token/pipes/transactions.pipe';
@@ -469,19 +471,53 @@ const TransactionMarkers = () => {
 			let totalSell = 0;
 			let totalKolAlerts = 0;
 			// 添加買入標記
-			if (group.buys.length > 0) {
-				markers.push({
-					time: time as Time,
-					position: 'aboveBar',
-					color: twTheme.extend.colors.buy.DEFAULT,
-					size: 1,
-					type: 'buy',
-				});
+			if (
+				group.buys.length > 0 &&
+				(searchParams.address.includes(Address.SmartMoney) || searchParams.address.includes(Address.Whale))
+			) {
 				totalBuy = group.buys.length;
+
+				const buyMin = searchParams.tmin;
+				const buyMax = searchParams.tmax;
+
+				const check = () => {
+					if (buyMin == null && buyMax == null) {
+						return true;
+					}
+					if (buyMin != null && buyMax != null) {
+						const filteredBuys = group.buys.filter(tx => Number(tx.amount) >= buyMin && Number(tx.amount) <= buyMax);
+						return filteredBuys.length > 0;
+					}
+					if (buyMin != null && buyMax == null) {
+						const filteredBuys = group.buys.filter(tx => Number(tx.amount) >= buyMin);
+						return filteredBuys.length > 0;
+					}
+					if (buyMin == null && buyMax != null) {
+						const filteredBuys = group.buys.filter(tx => Number(tx.amount) <= buyMax);
+						return filteredBuys.length > 0;
+					}
+					return false;
+				};
+
+				if (check()) {
+					markers.push({
+						time: time as Time,
+						position: 'aboveBar',
+						color: twTheme.extend.colors.buy.DEFAULT,
+						size: 1,
+						type: 'buy',
+					});
+					totalBuy += 1;
+				} else {
+					totalBuy = 0;
+				}
 			}
 
 			// 添加賣出標記
-			if (group.sells.length > 0) {
+			if (
+				group.sells.length > 0 &&
+				(searchParams.address.includes(Address.SmartMoney) || searchParams.address.includes(Address.Whale))
+			) {
 				markers.push({
 					time: time as Time,
 					position: 'aboveBar',
@@ -493,33 +529,70 @@ const TransactionMarkers = () => {
 			}
 
 			// 添加 kolAlerts 標記
-			if (group.kolAlerts && group.kolAlerts.length > 0) {
+			if (group.kolAlerts && group.kolAlerts.length > 0 && searchParams.order.includes(Order.KOL)) {
 				totalKolAlerts = group.kolAlerts.length;
-				markers.push({
-					time: time as Time,
-					position: 'aboveBar',
-					color: 'rgba(255, 181, 34, 1)',
-					size: 1,
-					type: 'loudspeaker',
-				});
+				const orderMin = searchParams.ocmin;
+				const orderMax = searchParams.ocmax;
+
+				const check = () => {
+					if (orderMin == null && orderMax == null) {
+						return true;
+					}
+					if (orderMin != null && orderMax != null) {
+						return totalKolAlerts >= orderMin && totalKolAlerts <= orderMax;
+					}
+					if (orderMin == null && orderMax != null) {
+						return totalKolAlerts <= orderMax;
+					}
+					if (orderMin != null && orderMax == null) {
+						return totalKolAlerts >= orderMin;
+					}
+					return false;
+				};
+
+				if (check()) {
+					markers.push({
+						time: time as Time,
+						position: 'aboveBar',
+						color: 'rgba(255, 181, 34, 1)',
+						size: 1,
+						type: 'loudspeaker',
+					});
+				} else {
+					totalKolAlerts = 0;
+				}
 			}
 
 			const total = totalKolAlerts + totalBuy + totalSell;
 
-			markers.push({
-				time: time as Time,
-				position: 'aboveBar',
-				color: total > 100 ? 'rgba(255, 255, 255, 0.85)' : 'rgba(255, 255, 255, 0.45)',
-				size: total > 100 ? 1.5 : 1,
-				type: 'text',
-				text: total > 100 ? `99+` : `+${total}`,
-			});
+			if (total > 0) {
+				markers.push({
+					time: time as Time,
+					position: 'aboveBar',
+					color: total > 100 ? 'rgba(255, 255, 255, 0.85)' : 'rgba(255, 255, 255, 0.45)',
+					size: total > 100 ? 1.5 : 1,
+					type: 'text',
+					text: total > 100 ? `99+` : `+${total}`,
+				});
+			}
 		});
 
 		setGroupedTransactions(groupedTransactions);
 
 		return markers.sort((a, b) => (a.time as number) - (b.time as number));
-	}, [internal_transactions, internal_data, query.type, kolAlerts]);
+	}, [
+		internal_data,
+		internal_transactions?.buy_groups,
+		internal_transactions?.sell_groups,
+		kolAlerts,
+		query.type,
+		searchParams.address,
+		searchParams.order,
+		searchParams.tmin,
+		searchParams.tmax,
+		searchParams.ocmin,
+		searchParams.ocmax,
+	]);
 
 	useEffect(() => {
 		const chartApi = chart._api;
@@ -529,20 +602,44 @@ const TransactionMarkers = () => {
 			const seriesMarkers = createClickableMarkers<Time>(chartApi, seriesApi, transactionMarkers, {
 				onOpenTooltip(option) {
 					const currentGroup = groupedTransactions?.get(option.marker.time as number);
+
+					// 過濾條件
+					const buyMin = searchParams.tmin;
+					const buyMax = searchParams.tmax;
+
+					// 過濾 buy 交易
+					const filteredBuys =
+						currentGroup?.buys.filter(tx => {
+							const amount = Number(tx.amount);
+							if (buyMin == null && buyMax == null) {
+								return true;
+							}
+							if (buyMin != null && buyMax != null) {
+								return amount >= buyMin && amount <= buyMax;
+							}
+							if (buyMin != null && buyMax == null) {
+								return amount >= buyMin;
+							}
+							if (buyMin == null && buyMax != null) {
+								return amount <= buyMax;
+							}
+							return false;
+						}) || [];
+
 					openTooltip({
 						...option,
 						tooltip: (
 							<OrderPopover
 								meta={{
-									buy: currentGroup?.buys.length ?? 0,
+									buy: filteredBuys.length,
 									sell: currentGroup?.sells.length ?? 0,
 									order: currentGroup?.kolAlerts?.length ?? 0,
 								}}
 								total={{
-									buy: currentGroup?.buys.reduce((acc, tx) => acc + Number(tx.amount), 0) ?? 0,
+									buy: filteredBuys.reduce((acc, tx) => acc + Number(tx.amount), 0),
 									sell: currentGroup?.sells.reduce((acc, tx) => acc + Number(tx.amount), 0) ?? 0,
 									volume:
-										(currentGroup?.buys.reduce((acc, tx) => acc + Number(tx.amount), 0) ?? 0) +
+										filteredBuys.reduce((acc, tx) => acc + Number(tx.amount), 0) +
 										(currentGroup?.sells.reduce((acc, tx) => acc + Number(tx.amount), 0) ?? 0),
 								}}
 								order={{
@@ -571,7 +668,7 @@ const TransactionMarkers = () => {
 				clean?.();
 			}
 		};
-	}, [transactionMarkers, chart, series, searchParams.mark, openTooltip, closeTooltip, groupedTransactions]);
+	}, [transactionMarkers, chart, series, searchParams.mark, openTooltip, closeTooltip, groupedTransactions, tAskMore]);
 
 	return null;
 };
