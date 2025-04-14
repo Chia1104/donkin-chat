@@ -535,7 +535,7 @@ const TransactionMarkers = () => {
 								meta={{
 									buy: currentGroup?.buys.length ?? 0,
 									sell: currentGroup?.sells.length ?? 0,
-									order: currentGroup?.kolAlerts?.reduce((sum, alert) => sum + alert.kol_alerts, 0) ?? 0,
+									order: currentGroup?.kolAlerts?.length ?? 0,
 								}}
 								total={{
 									buy: currentGroup?.buys.reduce((acc, tx) => acc + Number(tx.amount), 0) ?? 0,
@@ -545,7 +545,7 @@ const TransactionMarkers = () => {
 										(currentGroup?.sells.reduce((acc, tx) => acc + Number(tx.amount), 0) ?? 0),
 								}}
 								order={{
-									total: currentGroup?.kolAlerts?.reduce((sum, alert) => sum + alert.kol_alerts, 0) ?? 0,
+									total: currentGroup?.kolAlerts?.length ?? 0,
 									success: 0,
 								}}
 								onClose={closeTooltip}
