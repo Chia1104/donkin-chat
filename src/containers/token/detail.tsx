@@ -218,7 +218,9 @@ const Detail = () => {
 								injects={{
 									afterLabel: (
 										<span className="flex items-center gap-3">
-											<p className="text-success text-[12px] font-normal">2h</p>
+											<p className="text-success text-[12px] font-normal">
+												{dayjs().diff(dayjs(queryResult.data?.created_at), 'hours')}h
+											</p>
 											<Tooltip
 												content={dayjs(queryResult.data?.created_at).format('YYYY-MM-DD HH:mm:ss')}
 												showArrow
