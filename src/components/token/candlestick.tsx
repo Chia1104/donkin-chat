@@ -297,6 +297,7 @@ const TransactionMarkers = () => {
 	const { internal_transactions, internal_data, query, kolAlerts } = useCandlestick();
 	const chart = useChart('TransactionMarkers');
 	const series = useSeries('TransactionMarkers');
+	const tAskMore = useTranslations('donkin.ask-more.kol-order');
 	const [searchParams] = useTokenSearchParams();
 	const openTooltip = useMarkerTooltipStore(state => state.openTooltip);
 	const closeTooltip = useMarkerTooltipStore(state => state.closeTooltip);
@@ -549,6 +550,8 @@ const TransactionMarkers = () => {
 									success: 0,
 								}}
 								onClose={closeTooltip}
+								askMore={[tAskMore('smart-wallet'), tAskMore('kol-order')]}
+								onAskMore={logger}
 							/>
 						),
 					});
