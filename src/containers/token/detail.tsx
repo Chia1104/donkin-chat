@@ -19,6 +19,7 @@ import { FilterAction } from '@/components/token/filter-action';
 import { HeaderPrimitive } from '@/components/token/info-card';
 import Card from '@/components/ui/card';
 import { MarketSentiment } from '@/components/ui/market-sentiment';
+import { useGlobalSearchParams } from '@/hooks/useGlobalSearchParams';
 import { useQueryOhlcv } from '@/libs/birdeye/hooks/useQueryOhlcv';
 import { useGetKolAlerts } from '@/libs/kol/hooks/useGetKolAlerts';
 import { IntervalFilter } from '@/libs/token/enums/interval-filter.enum';
@@ -32,6 +33,8 @@ import { isPositiveNumber, isNegativeNumber, isNumber } from '@/utils/is';
 
 const Hotspot = ({ x }: { x: number }) => {
 	const t = useTranslations('preview.ai-signal');
+	const [searchParams] = useGlobalSearchParams();
+	x = searchParams.mock ? 60 : x;
 	const bull = x ?? 0;
 	const bear = x ? 100 - x : 0;
 	return (
@@ -58,10 +61,7 @@ const Stock = ({
 }) => {
 	return (
 		<div
-			className={cn(
-				'flex flex-col items-start justify-center gap-2 text-start bg-transparent border-l-1 border-divider pl-4',
-				classNames?.base,
-			)}
+			className={cn('flex flex-col items-start justify-center gap-2 text-start bg-transparent pl-4', classNames?.base)}
 		>
 			<h4 className={cn('text-foreground-500 text-xs font-normal leading-3', classNames?.label)}>{label}</h4>
 			{isPending ? (
@@ -164,9 +164,9 @@ const Detail = () => {
 			case IntervalFilter.FourHours:
 				return dayjs.unix(currentUnix.current).subtract(1, 'month').unix();
 			case IntervalFilter.OneDay:
-				return dayjs.unix(currentUnix.current).subtract(1, 'month').unix();
+				return dayjs.unix(currentUnix.current).subtract(6, 'month').unix();
 			case IntervalFilter.OneWeek:
-				return dayjs.unix(currentUnix.current).subtract(1, 'month').unix();
+				return dayjs.unix(currentUnix.current).subtract(6, 'month').unix();
 			default:
 				return dayjs.unix(currentUnix.current).subtract(1, 'day').unix();
 		}
@@ -259,6 +259,9 @@ const Detail = () => {
 						<Hotspot x={0} />
 						<CardBody className="col-span-4 grid grid-cols-4 gap-2">
 							<Stock
+								classNames={{
+									base: 'border-l-1 border-divider',
+								}}
 								label={t('card.stock.marketCap')}
 								value={`$ ${formatLargeNumber(queryResult.data?.market_cap ?? 0)}`}
 								isPending={queryResult.isLoading}

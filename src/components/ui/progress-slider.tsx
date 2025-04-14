@@ -74,7 +74,7 @@ const ProgressSlider = ({
 						<div
 							key={index}
 							className={cn(
-								'h-2 flex-1 transition-all duration-300 bg-foreground/10',
+								'h-[6px] flex-1 transition-all duration-300 bg-foreground/10',
 								isFirstSegment && 'rounded-l-full',
 								isLastSegment && 'rounded-r-full',
 								isActive && 'opacity-100',

@@ -72,7 +72,7 @@ const BullBearSlider = ({
 						<div
 							key={index}
 							className={cn(
-								'h-2 flex-1 transition-all duration-300',
+								'h-[6px] flex-1 transition-all duration-300',
 								isBull ? classNames?.bullSegment : classNames?.bearSegment,
 								isFirstSegment && 'rounded-l-full',
 								isLastSegment && 'rounded-r-full',
