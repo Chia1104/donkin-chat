@@ -2,7 +2,7 @@
 
 import { CheckboxGroup, Checkbox } from '@heroui/checkbox';
 import { Divider } from '@heroui/divider';
-import { Input } from '@heroui/input';
+import { NumberInput } from '@heroui/number-input';
 import { zodResolver } from '@hookform/resolvers/zod';
 import { useTranslations } from 'next-intl';
 import { useForm } from 'react-hook-form';
@@ -12,7 +12,7 @@ import SubmitForm from '@/components/ui/submit-form';
 import { Address } from '@/libs/token/enums/address.enum';
 import { FilterColumn } from '@/libs/token/enums/filter-column.enum';
 import { Order } from '@/libs/token/enums/order.enum';
-import type { FilterFormData } from '@/libs/token/hooks/useFilterFormSchema';
+import type { FilterFormData, TransformedFilterFormData } from '@/libs/token/hooks/useFilterFormSchema';
 import { DEFAULT_FILTER_FORM_DATA } from '@/libs/token/hooks/useFilterFormSchema';
 import { useFilterFormSchema } from '@/libs/token/hooks/useFilterFormSchema';
 
@@ -31,7 +31,7 @@ const FilterForm = (props: Props) => {
 	const tAction = useTranslations('action');
 	const tUtils = useTranslations('utils');
 	const schema = useFilterFormSchema();
-	const form = useForm<FilterFormData>({
+	const form = useForm<TransformedFilterFormData, any, FilterFormData>({
 		defaultValues: props.defaultValues,
 		resolver: zodResolver(schema),
 	});
@@ -49,20 +49,13 @@ const FilterForm = (props: Props) => {
 		}
 	};
 
-	const handleNumberChange = (e: React.ChangeEvent<HTMLInputElement>, onChange: (...event: any[]) => void) => {
-		if (!e.target.value) {
-			onChange(null);
-			return;
-		}
-		const value = Number(e.target.value);
-		onChange(value);
-	};
+	console.log(form.getValues());
 
 	return (
 		<Form {...form}>
 			<form onSubmit={onSubmit} className="w-full">
 				<div className="p-2 flex flex-col gap-4 w-full items-start">
-					<FormField<FilterFormData, typeof FilterColumn.Address>
+					<FormField<TransformedFilterFormData, typeof FilterColumn.Address>
 						control={form.control}
 						name={FilterColumn.Address}
 						render={({ field }) => (
@@ -89,6 +82,7 @@ const FilterForm = (props: Props) => {
 											}}
 											size="sm"
 											value={Address.SmartMoney}
+											aria-label={t('ranking.filter.type-smart-money')}
 										>
 											<span className="flex items-center gap-2">{t('ranking.filter.type-smart-money')} </span>
 										</Checkbox>
@@ -102,6 +96,7 @@ const FilterForm = (props: Props) => {
 											radius="md"
 											size="sm"
 											value={Address.Whale}
+											aria-label={t('ranking.filter.type-whale')}
 										>
 											<span className="flex items-center gap-2">{t('ranking.filter.type-whale')} </span>
 										</Checkbox>
@@ -117,52 +112,56 @@ const FilterForm = (props: Props) => {
 							</FormLabel>
 						</FormItem>
 						<div className="flex gap-1 items-center">
-							<FormField<FilterFormData, typeof FilterColumn.TransactionMin>
+							<FormField<TransformedFilterFormData, typeof FilterColumn.TransactionMin>
 								control={form.control}
 								name={FilterColumn.TransactionMin}
 								render={({ field, fieldState }) => (
 									<FormItem className="w-full">
 										<FormControl className="w-full">
-											<Input
+											<NumberInput
 												size="sm"
 												radius="md"
-												type="number"
 												className="w-full"
 												placeholder={tUtils('enter')}
 												classNames={{
-													inputWrapper:
-														'bg-background data-[hover=true]:bg-background-200 group-data-[focus=true]:bg-background-100',
+													mainWrapper: 'h-8',
+													inputWrapper: 'min-h-full max-h-full px-1.5',
 												}}
 												{...field}
-												value={field.value != null ? field.value.toString() : ''}
-												onChange={e => handleNumberChange(e, field.onChange)}
+												value={(field.value as number) ?? undefined}
+												onChange={field.onChange}
 												isInvalid={fieldState.invalid}
+												variant="bordered"
+												hideStepper
+												aria-label={t('ranking.filter.transaction-title')}
 											/>
 										</FormControl>
 									</FormItem>
 								)}
 							/>
 							<Divider className="w-2" />
-							<FormField<FilterFormData, typeof FilterColumn.TransactionMax>
+							<FormField<TransformedFilterFormData, typeof FilterColumn.TransactionMax>
 								control={form.control}
 								name={FilterColumn.TransactionMax}
 								render={({ field, fieldState }) => (
 									<FormItem className="w-full">
 										<FormControl className="w-full">
-											<Input
+											<NumberInput
 												size="sm"
 												radius="md"
-												type="number"
 												className="w-full"
 												placeholder={tUtils('enter')}
 												classNames={{
-													inputWrapper:
-														'bg-background data-[hover=true]:bg-background-200 group-data-[focus=true]:bg-background-100',
+													mainWrapper: 'h-8',
+													inputWrapper: 'min-h-full max-h-full px-1.5',
 												}}
 												{...field}
-												value={field.value != null ? field.value.toString() : ''}
-												onChange={e => handleNumberChange(e, field.onChange)}
+												value={(field.value as number) ?? undefined}
+												onChange={field.onChange}
 												isInvalid={fieldState.invalid}
+												variant="bordered"
+												hideStepper
+												aria-label={t('ranking.filter.transaction-title')}
 											/>
 										</FormControl>
 									</FormItem>
@@ -171,7 +170,7 @@ const FilterForm = (props: Props) => {
 						</div>
 					</div>
 					<Divider />
-					<FormField<FilterFormData, typeof FilterColumn.Order>
+					<FormField<TransformedFilterFormData, typeof FilterColumn.Order>
 						control={form.control}
 						name={FilterColumn.Order}
 						render={({ field }) => (
@@ -200,6 +199,7 @@ const FilterForm = (props: Props) => {
 											size="sm"
 											radius="md"
 											value={Order.KOL}
+											aria-label={t('ranking.filter.type-kol')}
 										>
 											<span className="flex items-center gap-2">{t('ranking.filter.type-kol')} </span>
 										</Checkbox>
@@ -213,52 +213,56 @@ const FilterForm = (props: Props) => {
 							<FormLabel className="text-xs font-normal text-description">{t('ranking.filter.kol-order')}</FormLabel>
 						</FormItem>
 						<div className="flex gap-1 items-center">
-							<FormField<FilterFormData, typeof FilterColumn.OrderCountMin>
+							<FormField<TransformedFilterFormData, typeof FilterColumn.OrderCountMin>
 								control={form.control}
 								name={FilterColumn.OrderCountMin}
 								render={({ field, fieldState }) => (
 									<FormItem className="w-full">
 										<FormControl className="w-full">
-											<Input
+											<NumberInput
 												size="sm"
 												radius="md"
-												type="number"
 												className="w-full"
 												placeholder={tUtils('enter')}
 												classNames={{
-													inputWrapper:
-														'bg-background data-[hover=true]:bg-background-200 group-data-[focus=true]:bg-background-100',
+													mainWrapper: 'h-8',
+													inputWrapper: 'min-h-full max-h-full px-1.5',
 												}}
 												{...field}
-												value={field.value != null ? field.value.toString() : ''}
-												onChange={e => handleNumberChange(e, field.onChange)}
+												value={(field.value as number) ?? undefined}
+												onChange={field.onChange}
 												isInvalid={fieldState.invalid}
+												variant="bordered"
+												hideStepper
+												aria-label={t('ranking.filter.kol-order')}
 											/>
 										</FormControl>
 									</FormItem>
 								)}
 							/>
 							<Divider className="w-2" />
-							<FormField<FilterFormData, typeof FilterColumn.OrderCountMax>
+							<FormField<TransformedFilterFormData, typeof FilterColumn.OrderCountMax>
 								control={form.control}
 								name={FilterColumn.OrderCountMax}
 								render={({ field, fieldState }) => (
 									<FormItem className="w-full">
 										<FormControl className="w-full">
-											<Input
+											<NumberInput
 												size="sm"
 												radius="md"
-												type="number"
 												className="w-full"
 												placeholder={tUtils('enter')}
 												classNames={{
-													inputWrapper:
-														'bg-background data-[hover=true]:bg-background-200 group-data-[focus=true]:bg-background-100',
+													mainWrapper: 'h-8',
+													inputWrapper: 'min-h-full max-h-full px-1.5',
 												}}
 												{...field}
-												value={field.value != null ? field.value.toString() : ''}
-												onChange={e => handleNumberChange(e, field.onChange)}
+												value={(field.value as number) ?? undefined}
+												onChange={field.onChange}
 												isInvalid={fieldState.invalid}
+												variant="bordered"
+												hideStepper
+												aria-label={t('ranking.filter.kol-order')}
 											/>
 										</FormControl>
 									</FormItem>

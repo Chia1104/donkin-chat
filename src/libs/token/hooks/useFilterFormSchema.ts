@@ -18,10 +18,10 @@ export const useFilterFormSchema = () => {
 				.array(z.nativeEnum(Address, { message: messages.primitive.invalid_type_error }))
 				.nullable(),
 			[FilterColumn.Order]: z.array(z.nativeEnum(Order, { message: messages.primitive.invalid_type_error })).nullable(),
-			[FilterColumn.TransactionMin]: patterns.number.nullable(),
-			[FilterColumn.TransactionMax]: patterns.number.nullable(),
-			[FilterColumn.OrderCountMin]: patterns.number.nullable(),
-			[FilterColumn.OrderCountMax]: patterns.number.nullable(),
+			[FilterColumn.TransactionMin]: patterns.numericString.or(patterns.number).nullable(),
+			[FilterColumn.TransactionMax]: patterns.numericString.or(patterns.number).nullable(),
+			[FilterColumn.OrderCountMin]: patterns.numericString.or(patterns.number).nullable(),
+			[FilterColumn.OrderCountMax]: patterns.numericString.or(patterns.number).nullable(),
 		})
 		.refine(
 			data => {
@@ -71,3 +71,9 @@ export const DEFAULT_FILTER_FORM_DATA: FilterFormData = {
 };
 
 export type FilterFormData = z.infer<ReturnType<typeof useFilterFormSchema>>;
+export type TransformedFilterFormData = Omit<FilterFormData, 'tmin' | 'tmax' | 'ocmin' | 'ocmax'> & {
+	tmin: string | number | null;
+	tmax: string | number | null;
+	ocmin: string | number | null;
+	ocmax: string | number | null;
+};
