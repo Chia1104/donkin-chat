@@ -1,4 +1,5 @@
 import { createEnv } from '@t3-oss/env-nextjs';
+import { vercel } from '@t3-oss/env-nextjs/presets-zod';
 import { z } from 'zod';
 
 import { Locale } from '@/enums/locale.enum';
@@ -9,6 +10,18 @@ export const getAppEnv = () => {
 	}
 
 	return 'development';
+};
+
+export const getSiteUrl = () => {
+	if (process.env.NEXT_PUBLIC_SITE_URL) {
+		return process.env.NEXT_PUBLIC_SITE_URL;
+	}
+
+	if (process.env.VERCEL_URL) {
+		return `https://${process.env.VERCEL_URL}`;
+	}
+
+	return 'http://localhost:3000';
 };
 
 export const env = createEnv({
@@ -41,7 +54,7 @@ export const env = createEnv({
 	runtimeEnv: {
 		NODE_ENV: process.env.NODE_ENV,
 		NEXT_PUBLIC_APP_ENV: getAppEnv(),
-		NEXT_PUBLIC_SITE_URL: process.env.NEXT_PUBLIC_SITE_URL || 'https://donkin.verce.app',
+		NEXT_PUBLIC_SITE_URL: getSiteUrl(),
 		SENTRY_AUTH_TOKEN: process.env.SENTRY_AUTH_TOKEN,
 		NEXT_PUBLIC_SENTRY_DSN: process.env.NEXT_PUBLIC_SENTRY_DSN,
 		SENTRY_ORG: process.env.SENTRY_ORG,
@@ -66,7 +79,7 @@ export const env = createEnv({
 
 	emptyStringAsUndefined: true,
 
-	extends: [],
+	extends: [vercel()],
 });
 
 export const IS_PRODUCTION = env.NEXT_PUBLIC_APP_ENV === 'production';
