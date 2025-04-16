@@ -35,6 +35,7 @@ export const env = createEnv({
 		FLAGS_AI_CHAT: z.string().optional(),
 		AI_TOKEN: z.string().optional(),
 		OPENROUTER_API_KEY: z.string().optional(),
+		PRIVY_SECRET: z.string().min(1),
 	},
 
 	client: {
@@ -49,6 +50,8 @@ export const env = createEnv({
 		NEXT_PUBLIC_DEFAULT_LOCALE: z.nativeEnum(Locale),
 		NEXT_PUBLIC_DEBUG_ZUSTAND_DEVTOOLS: z.string().optional(),
 		NEXT_PUBLIC_APP_NODE_ENDPOINT: z.string().optional(),
+		NEXT_PUBLIC_PRIVY_APP_ID: z.string().min(1),
+		NEXT_PUBLIC_PRIVY_CLIENT_ID: z.string().min(1),
 	},
 
 	runtimeEnv: {
@@ -73,6 +76,9 @@ export const env = createEnv({
 		AI_TOKEN: process.env.AI_TOKEN,
 		OPENROUTER_API_KEY: process.env.OPENROUTER_API_KEY,
 		NEXT_PUBLIC_APP_NODE_ENDPOINT: process.env.NEXT_PUBLIC_APP_NODE_ENDPOINT,
+		NEXT_PUBLIC_PRIVY_APP_ID: process.env.NEXT_PUBLIC_PRIVY_APP_ID,
+		NEXT_PUBLIC_PRIVY_CLIENT_ID: process.env.NEXT_PUBLIC_PRIVY_CLIENT_ID,
+		PRIVY_SECRET: process.env.PRIVY_SECRET,
 	},
 
 	skipValidation: process.env.SKIP_ENV_VALIDATION === 'true' || process.env.SKIP_ENV_VALIDATION === '1',

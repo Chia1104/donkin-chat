@@ -279,6 +279,10 @@
             "description": "您尝试访问的地址不存在或已被移除。请检查您的链接是否正确，或尝试连接您的钱包查看您的地址。"
         }
     },
+    "wallet-profile": {
+        "address": "我的钱包",
+        "disconnect": "断开连接"
+    },
     "ChartExamples": {
         "title": "图表范例",
         "candlestickTitle": "K 线图",
