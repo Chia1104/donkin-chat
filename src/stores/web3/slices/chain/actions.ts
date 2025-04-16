@@ -11,7 +11,7 @@ import type { Web3Store } from '../../store';
 const nameSpace = setNamespace('web3/chain');
 
 export interface Web3ChainAction {
-	switchChain: (chainId: ChainID) => void;
+	switchChain: (chainId: ChainID, privy?: boolean) => void;
 	/**
 	 * TODO: Work In Progress
 	 */
@@ -22,13 +22,15 @@ export const web3ChainActions: StateCreator<Web3Store, [['zustand/devtools', nev
 	set,
 	get,
 ) => ({
-	switchChain: (chainId: ChainID) => {
+	switchChain: (chainId, privy = true) => {
 		const { wagmiConfig, supportedEVM } = get();
 
 		if (isEVMChainID(chainId)) {
 			const evm = supportedEVM.find(evm => evm.chainId === chainId);
 			if (!evm) return;
-			void switchChain(wagmiConfig, { chainId: chainId });
+			if (!privy) {
+				void switchChain(wagmiConfig, { chainId: chainId });
+			}
 			set({ ...evm, vm: 'EVM' }, false, nameSpace('switchChain', evm));
 			return;
 		} else if (isSVMChainID(chainId)) {

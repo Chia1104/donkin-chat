@@ -84,7 +84,7 @@ const DisplayFilter = () => {
 	const t = useTranslations('address.order-history');
 
 	return (
-		<ButtonGroup variant="light" size="sm">
+		<ButtonGroup variant="light" size="sm" aria-label="Display Filter">
 			<Button
 				className="text-description px-2 py-0"
 				onPress={() => {
@@ -106,8 +106,10 @@ const DisplayFilter = () => {
 						height={16}
 						removeWrapper
 						className="rounded-none"
+						aria-label={t('balance-history')}
 					/>
 				}
+				aria-label={t('balance-history')}
 			>
 				{t('balance-history')}
 			</Button>
@@ -134,6 +136,7 @@ const DisplayFilter = () => {
 						className="rounded-none"
 					/>
 				}
+				aria-label={t('profit-loss')}
 			>
 				{t('profit-loss')}
 			</Button>
@@ -146,7 +149,7 @@ const DateFilter = () => {
 	const { isPending, isMetaPending } = useOrderHistory();
 
 	return (
-		<ScrollShadow orientation="horizontal" className="w-fit">
+		<ScrollShadow orientation="horizontal" className="w-fit" aria-label="Interval Filter">
 			<Tabs
 				aria-label="interval"
 				size="sm"
@@ -159,8 +162,13 @@ const DateFilter = () => {
 				}}
 				isDisabled={isPending || isMetaPending}
 			>
-				<Tab key={IntervalFilter.OneWeek} title={IntervalFilter.OneWeek} className="px-2 py-0 h-6" />
-				{/* <Tab key={IntervalFilter.OneMonth} title={IntervalFilter.OneMonth} className="px-2 py-0 h-6" /> */}
+				<Tab
+					key={IntervalFilter.OneWeek}
+					title={IntervalFilter.OneWeek}
+					className="px-2 py-0 h-6"
+					aria-label={IntervalFilter.OneWeek}
+				/>
+				{/* <Tab key={IntervalFilter.OneMonth} title={IntervalFilter.OneMonth} className="px-2 py-0 h-6" aria-label={IntervalFilter.OneMonth} /> */}
 			</Tabs>
 		</ScrollShadow>
 	);
@@ -175,7 +183,7 @@ const Meta = () => {
 		return (
 			<div className="flex items-center justify-between w-full">
 				<div className="flex items-center gap-4">
-					<Avatar size="md" className="w-[32px] h-[32px]" />
+					<Avatar size="md" className="w-[32px] h-[32px]" aria-label="Avatar" />
 					<span className="flex items-center gap-2">
 						<Skeleton className="w-20 h-4 rounded-full" />
 					</span>

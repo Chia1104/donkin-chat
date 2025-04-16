@@ -40,6 +40,23 @@ const securityHeaders = [
 	},
 ];
 
+const privyCSPHeader = `
+	  default-src 'self';
+	  script-src 'self' https://challenges.cloudflare.com;
+	  style-src 'self' 'unsafe-inline';
+	  img-src 'self' data: blob:;
+	  font-src 'self';
+	  object-src 'none';
+	  base-uri 'self';
+	  form-action 'self';
+	  frame-ancestors 'none';
+	  child-src https://auth.privy.io https://verify.walletconnect.com https://verify.walletconnect.org;
+	  frame-src https://auth.privy.io https://verify.walletconnect.com https://verify.walletconnect.org https://challenges.cloudflare.com;
+	  connect-src 'self' https://auth.privy.io wss://relay.walletconnect.com wss://relay.walletconnect.org wss://www.walletlink.org https://*.rpc.privy.systems;
+	  worker-src 'self';
+	  manifest-src 'self'
+	`;
+
 const nextConfig: NextConfig = {
 	output: 'standalone',
 	reactStrictMode: true,
@@ -84,6 +101,15 @@ const nextConfig: NextConfig = {
 			{
 				source: '/:path*',
 				headers: securityHeaders,
+			},
+			{
+				source: '/(zh-TW|en-US|zh-CN)/:path*',
+				headers: [
+					{
+						key: 'Content-Security-Policy',
+						value: privyCSPHeader.replace(/\n/g, ''),
+					},
+				],
 			},
 		];
 	},
