@@ -48,7 +48,7 @@ export const UserPopover = () => {
 					onAction={key => {
 						switch (key) {
 							case 'profile':
-								router.push(`${vm}/address/${user?.wallet?.address}`);
+								router.push(`/${vm}/address/${user?.wallet?.address}`);
 								break;
 							case 'logout':
 								void logout();
