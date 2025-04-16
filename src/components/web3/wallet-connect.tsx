@@ -3,6 +3,8 @@ import { useMemo } from 'react';
 import { Button } from '@heroui/button';
 import { Image } from '@heroui/image';
 import { Modal, useDisclosure, ModalContent, ModalBody } from '@heroui/modal';
+import { useLogin } from '@privy-io/react-auth';
+import { usePrivy } from '@privy-io/react-auth';
 import { useWallet } from '@solana/wallet-adapter-react';
 import NextImage from 'next/image';
 import { useConnect } from 'wagmi';
@@ -16,6 +18,7 @@ import MetaMaskIcon from '../icons/meta-mask-icon';
 
 interface Props {
 	vm?: SupportedVM;
+	privy?: boolean;
 }
 
 const Icon = ({ id }: { id: string }) => {
@@ -43,12 +46,14 @@ const Icon = ({ id }: { id: string }) => {
 const WalletConnect = (props: Props) => {
 	const { vm: currentVM } = useWeb3Store();
 
-	const { vm = currentVM } = props;
-
+	const { vm = currentVM, privy = true } = props;
 	const { isOpen, onOpen, onOpenChange } = useDisclosure();
 	const { connectors, connect, reset } = useConnect();
 	// eslint-disable-next-line @typescript-eslint/unbound-method
 	const { wallets, select: solanaSelect, connect: solanaConnect, disconnect: solanaDisconnect } = useWallet();
+
+	const { ready: privyReady, authenticated: privyAuthenticated } = usePrivy();
+	const { login: privyLogin } = useLogin();
 
 	const walletList = useMemo(() => {
 		switch (vm) {
@@ -97,9 +102,29 @@ const WalletConnect = (props: Props) => {
 		}
 	}, [connect, connectors, reset, solanaConnect, solanaDisconnect, solanaSelect, vm, wallets]);
 
+	const handleConnect = () => {
+		if (privy) {
+			privyLogin({
+				loginMethods: ['wallet'],
+				walletChainType: vm === 'SVM' ? 'solana-only' : 'ethereum-only',
+				disableSignup: false,
+			});
+			return;
+		}
+
+		onOpen();
+	};
+
 	return (
 		<>
-			<Button onPress={onOpen} aria-label="Connect Wallet" className="rounded-full" isIconOnly variant="bordered">
+			<Button
+				onPress={handleConnect}
+				isDisabled={privy && (!privyReady || (privyReady && privyAuthenticated))}
+				aria-label="Connect Wallet"
+				className="rounded-full"
+				isIconOnly
+				variant="bordered"
+			>
 				<Image src="/assets/images/wallet.svg" width={24} height={24} alt="wallet" aria-label="wallet" />
 			</Button>
 			<Modal isOpen={isOpen} onOpenChange={onOpenChange}>

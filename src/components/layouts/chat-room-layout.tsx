@@ -4,6 +4,7 @@ import { useRef } from 'react';
 
 import { Navbar, NavbarContent, NavbarItem } from '@heroui/navbar';
 import { Skeleton } from '@heroui/skeleton';
+import { usePrivy } from '@privy-io/react-auth';
 import { useTranslations } from 'next-intl';
 import { useTransitionRouter as useRouter } from 'next-view-transitions';
 import dynamic from 'next/dynamic';
@@ -20,6 +21,7 @@ import SearchAddress from '../commons/search-address';
 import { Settings } from '../commons/settings';
 import Logo from '../donkin/logo';
 import Donkin from '../donkin/title';
+import { UserPopover } from '../web3/user-popover';
 import WalletConnect from '../web3/wallet-connect';
 
 const ChainSelector = dynamic(() => import('@/components/web3/chain-selector'), {
@@ -40,6 +42,7 @@ const ChatRoomLayout = (props: Props) => {
 	const isOpen = useGlobalStore(state => state.donkin.isOpen);
 	const clickCountRef = useRef(0);
 	const clickTimerRef = useRef<NodeJS.Timeout | null>(null);
+	const { ready, authenticated } = usePrivy();
 
 	const handleClickFiveTimeToToggleFeatureFlag = () => {
 		void setFeatureFlag(!props.enableSettings);
@@ -100,18 +103,26 @@ const ChatRoomLayout = (props: Props) => {
 						<SearchAddress />
 					</NavbarItem>
 				</NavbarContent>
-				<NavbarContent aria-label="Main Navigation Content" justify="end" className="gap-10">
+				<NavbarContent aria-label="Main Navigation Content" justify="end" className="gap-4">
 					{props.enableSettings && (
 						<NavbarItem aria-label="Settings">
 							<Settings />
 						</NavbarItem>
 					)}
-					<NavbarItem aria-label="Connect Wallet">
-						<WalletConnect />
-					</NavbarItem>
-					<NavbarItem aria-label="Network Selector">
-						<ChainSelector />
-					</NavbarItem>
+					{ready && authenticated ? (
+						<NavbarItem aria-label="User">
+							<UserPopover />
+						</NavbarItem>
+					) : (
+						<>
+							<NavbarItem aria-label="Connect Wallet">
+								<WalletConnect />
+							</NavbarItem>
+							<NavbarItem aria-label="Network Selector">
+								<ChainSelector />
+							</NavbarItem>
+						</>
+					)}
 				</NavbarContent>
 			</Navbar>
 			<main className="gap-10 overflow-hidden w-full relative flex items-center justify-center min-h-[calc(100dvh-72px)]">

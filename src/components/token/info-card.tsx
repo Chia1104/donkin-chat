@@ -31,6 +31,7 @@ type LinkProvider = 'website' | 'x' | 'telegram' | 'copy';
 interface MetaProps {
 	meta: {
 		name: string;
+		symbol: string;
 		avatar?: string;
 		chain: string;
 		token: string;
@@ -88,31 +89,6 @@ interface LinkIconProps {
 	copied?: boolean;
 }
 
-export const MOCK_DATA: CardProps = {
-	meta: {
-		name: 'Solana',
-		avatar: 'https://solana.com/favicon.ico',
-		chain: 'sol',
-		token: '0x1234567890',
-	},
-	link: {
-		website: 'https://solana.com',
-		x: 'https://x.com',
-		telegram: 'https://t.me/solana',
-		copy: 'https://solana.com',
-	},
-	stock: {
-		marketCap: 100000000,
-		price: 100,
-		pool: 1000000,
-		change: '+10%',
-	},
-	hotspots: {
-		x: 90,
-		telegram: 50,
-	},
-};
-
 export const LinkIcon = (props: LinkIconProps) => {
 	switch (props.provider) {
 		case 'website':
@@ -133,7 +109,7 @@ export const LinkIcon = (props: LinkIconProps) => {
 export const HeaderPrimitive = (props: HeaderPrimitiveProps) => {
 	const { copied, copy } = useClipboard();
 	const status = useChatStore(state => state.status);
-	const askToken = useAskToken(props.meta.name);
+	const askToken = useAskToken(props.meta.symbol);
 	const [isError, setIsError] = useState(false);
 
 	return (

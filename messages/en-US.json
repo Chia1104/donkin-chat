@@ -279,6 +279,10 @@
 			"description": "The address you are trying to access does not exist or has been removed. Please check your link is correct, or try connecting your wallet to view your address."
 		}
 	},
+	"wallet-profile": {
+		"address": "My Wallet",
+		"disconnect": "Disconnect"
+	},
 	"ChartExamples": {
 		"title": "Chart Examples",
 		"candlestickTitle": "Candlestick Chart (K-Line)",
