@@ -14,6 +14,7 @@ import { Tooltip } from '@heroui/tooltip';
 import { useTranslations } from 'next-intl';
 import { useParams } from 'next/navigation';
 
+import CopyButton from '@/components/commons/copy-button';
 import Candlestick from '@/components/token/candlestick';
 import { FilterAction } from '@/components/token/filter-action';
 import { HeaderPrimitive } from '@/components/token/info-card';
@@ -60,9 +61,7 @@ const Stock = ({
 	isPending?: boolean;
 }) => {
 	return (
-		<div
-			className={cn('flex flex-col items-start justify-center gap-2 text-start bg-transparent pl-4', classNames?.base)}
-		>
+		<div className={cn('flex flex-col items-start justify-center gap-2 text-start bg-transparent', classNames?.base)}>
 			<h4 className={cn('text-foreground-500 text-xs font-normal leading-3', classNames?.label)}>{label}</h4>
 			{isPending ? (
 				<Skeleton className="w-10 h-3 rounded-full" />
@@ -82,7 +81,7 @@ const Marker = () => {
 			radius="sm"
 			size="sm"
 			classNames={{
-				base: 'items-center',
+				base: 'items-center ml-0',
 				label: 'items-center flex mt-1',
 			}}
 			isSelected={searchParams.mark}
@@ -121,8 +120,8 @@ const MetaInfo = ({ price, change }: { price: number; change: number | string })
 	const isPositiveChange = isPositiveNumber(change) || (typeof change === 'string' && change.startsWith('+'));
 	const isNegativeChange = isNegativeNumber(change) || (typeof change === 'string' && change.startsWith('-'));
 	return (
-		<>
-			<h3 className="text-[22px] font-medium">{`$ ${formatLargeNumber(price ?? 0)}`}</h3>
+		<div className="flex flex-col lg:flex-row lg:items-center">
+			<h3 className="text-[22px] font-medium lg:mr-5">{`$ ${formatLargeNumber(price ?? 0)}`}</h3>
 			<span
 				className={cn(
 					'text-xs flex items-center gap-1',
@@ -136,7 +135,7 @@ const MetaInfo = ({ price, change }: { price: number; change: number | string })
 					<span className="i-material-symbols-trending-down size-3 text-danger" />
 				)}
 			</span>
-		</>
+		</div>
 	);
 };
 
@@ -229,7 +228,7 @@ const Detail = () => {
 		<div className="w-full h-full flex flex-col">
 			<ScrollShadow className="w-full h-[calc(100vh-72px)]">
 				<div className="flex flex-col gap-6 w-full">
-					<header className="flex items-center gap-5">
+					<header className="flex items-center gap-5 justify-between lg:justify-start">
 						<section className="flex items-center gap-5">
 							<HeaderPrimitive
 								avatarProps={{
@@ -238,7 +237,7 @@ const Detail = () => {
 								}}
 								classNames={{
 									label: 'text-[22px] font-normal mr-2',
-									labelWrapper: 'flex-row items-center',
+									labelWrapper: 'lg:flex-row flex-col lg:items-center lg:gap-2 gap-0',
 								}}
 								injects={{
 									afterLabel: (
@@ -259,6 +258,7 @@ const Detail = () => {
 													)}
 												</p>
 											</Tooltip>
+											<CopyButton content={params.token} />
 										</span>
 									),
 								}}
@@ -270,38 +270,49 @@ const Detail = () => {
 									symbol: queryResult.data?.symbol ?? '',
 									token: queryResult.data?.address ?? '',
 								}}
-								link={{
-									website: undefined,
-									x: undefined,
-									telegram: undefined,
-									copy: params.token,
-								}}
 							/>
 						</section>
-						<Divider orientation="vertical" className="h-4" />
+						<Divider orientation="vertical" className="h-4 hidden lg:block" />
 						<MetaInfo price={queryResult.data?.price ?? 0} change={queryResult.data?.change ?? 0} />
 					</header>
-					<Card className="grid grid-cols-6 gap-2 mb-8">
+					<Card className="grid grid-cols-2 lg:grid-cols-6 gap-2 mb-8">
 						<Hotspot x={0} />
-						<CardBody className="col-span-4 grid grid-cols-4 gap-2">
+						<CardBody className="col-span-4 grid grid-cols-2 lg:grid-cols-4 gap-2 space-y-2 lg:space-y-0">
 							<Stock
 								classNames={{
-									base: 'border-l-1 border-divider',
+									base: 'lg:border-l-1 lg:border-divider lg:pl-4',
 								}}
 								label={t('card.stock.marketCap')}
 								value={`$ ${formatLargeNumber(queryResult.data?.market_cap ?? 0)}`}
 								isPending={queryResult.isLoading}
 							/>
 							<Stock
+								classNames={{
+									base: 'lg:pl-4',
+								}}
 								label={t('card.stock.pool')}
 								value={`$ ${formatLargeNumber(queryResult.data?.liquidity ?? 0)}`}
 								isPending={queryResult.isLoading}
 							/>
-							<Stock label={tToken('holder')} value={formatLargeNumber(0)} isPending={queryResult.isLoading} />
-							<Stock label={tToken('wallets')} value={formatLargeNumber(0)} isPending={queryResult.isLoading} />
+							<Stock
+								classNames={{
+									base: 'lg:pl-4',
+								}}
+								label={tToken('holder')}
+								value={formatLargeNumber(0)}
+								isPending={queryResult.isLoading}
+							/>
+							<Stock
+								classNames={{
+									base: 'lg:pl-4',
+								}}
+								label={tToken('wallets')}
+								value={formatLargeNumber(0)}
+								isPending={queryResult.isLoading}
+							/>
 						</CardBody>
 					</Card>
-					<section className="flex items-center justify-between">
+					<section className="flex flex-col md:flex-row md:items-center md:justify-between">
 						<DateFilter />
 						<Marker />
 					</section>

@@ -11,6 +11,7 @@ import dynamic from 'next/dynamic';
 import { toast } from 'sonner';
 
 import Footer from '@/components/commons/footer';
+import { useMediaQuery } from '@/hooks/useMediaQuery';
 import { QueryType } from '@/libs/ai/enums/queryType.enum';
 import { setFeatureFlag } from '@/libs/flags/actions/feature.action';
 import { useGlobalStore } from '@/stores/global/store';
@@ -43,6 +44,7 @@ const ChatRoomLayout = (props: Props) => {
 	const clickCountRef = useRef(0);
 	const clickTimerRef = useRef<NodeJS.Timeout | null>(null);
 	const { ready, authenticated } = usePrivy();
+	const { isSmWidth } = useMediaQuery();
 
 	const handleClickFiveTimeToToggleFeatureFlag = () => {
 		void setFeatureFlag(!props.enableSettings);
@@ -84,7 +86,7 @@ const ChatRoomLayout = (props: Props) => {
 			>
 				<NavbarContent
 					aria-label="Main Navigation Content"
-					className={cn('hidden sm:flex gap-10', noto_sans.className)}
+					className={cn('flex lg:gap-10 gap-4', noto_sans.className)}
 					justify="start"
 				>
 					<NavbarItem className="cursor-pointer" aria-label="Donkin" onClick={handleDonkinClick}>
@@ -92,14 +94,14 @@ const ChatRoomLayout = (props: Props) => {
 					</NavbarItem>
 					<NavbarItem
 						aria-label={t('all-tokens')}
-						className="cursor-pointer"
+						className="cursor-pointer hidden md:block"
 						onClick={() => {
 							void router.push(`/?q=${QueryType.Tokens}`);
 						}}
 					>
 						{t('all-tokens')}
 					</NavbarItem>
-					<NavbarItem aria-label={t('search-placeholder')}>
+					<NavbarItem aria-label={t('search-placeholder')} className="hidden md:block">
 						<SearchAddress />
 					</NavbarItem>
 				</NavbarContent>
@@ -129,12 +131,12 @@ const ChatRoomLayout = (props: Props) => {
 				<section
 					className={cn(
 						'p-5 overflow-y-auto h-[calc(100vh-72px)] flex items-center justify-center',
-						isOpen ? 'w-full lg:w-2/3 pr-0' : 'w-full',
+						isOpen && isSmWidth ? 'w-full lg:w-2/3 pr-0' : 'w-full',
 					)}
 				>
 					{props.children}
 				</section>
-				{isOpen && (
+				{isOpen && isSmWidth ? (
 					<section
 						className={cn(
 							'h-[calc(100vh-72px)] p-5 md:pl-0 md:py-5 transition-width ease-in-out duration-1000 w-full md:w-1/2 lg:w-1/3',
@@ -142,7 +144,9 @@ const ChatRoomLayout = (props: Props) => {
 					>
 						{props.chatBot}
 					</section>
-				)}
+				) : isOpen ? (
+					<>{props.chatBot}</>
+				) : null}
 			</main>
 			<Footer />
 			<Logo className="fixed bottom-5 right-5 z-[99] size-16" opacityOnStatus="close" hiddenOnStatus="open" />
