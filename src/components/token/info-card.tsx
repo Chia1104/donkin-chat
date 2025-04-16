@@ -1,7 +1,7 @@
 'use client';
 
 import type { ReactNode } from 'react';
-import { memo } from 'react';
+import { memo, useState } from 'react';
 
 import type { AvatarProps } from '@heroui/avatar';
 import { Avatar } from '@heroui/avatar';
@@ -134,22 +134,24 @@ export const HeaderPrimitive = (props: HeaderPrimitiveProps) => {
 	const { copied, copy } = useClipboard();
 	const status = useChatStore(state => state.status);
 	const askToken = useAskToken(props.meta.name);
+	const [isError, setIsError] = useState(false);
 
 	return (
 		<>
 			<Avatar
 				aria-label="avatar"
 				size="sm"
-				fallback={<Skeleton className="w-12 h-12 rounded-full" />}
-				// showFallback={isError}
+				fallback={!isError ? <Skeleton className="w-12 h-12 rounded-full" /> : null}
+				showFallback={isError}
 				name={props.meta.name}
 				imgProps={{
 					crossOrigin: 'anonymous',
-					// onError: () => setIsError(true),
+					onError: () => setIsError(true),
 				}}
+				onError={() => setIsError(true)}
 				{...props.avatarProps}
 				className={cn('w-12 h-12 min-w-12 min-h-12', props.avatarProps?.className)}
-				src={props.meta.avatar}
+				src={!isError ? props.meta.avatar : ''}
 			/>
 			<div
 				className={cn('flex flex-col gap-2 items-start w-full max-w-[calc(100%-3rem)]', props.classNames?.labelWrapper)}
