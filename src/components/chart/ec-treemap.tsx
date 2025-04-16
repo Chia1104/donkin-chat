@@ -2,7 +2,7 @@
 
 import { useMemo, useRef, useState, useCallback, useEffect, forwardRef } from 'react';
 
-import type { TreemapSeriesOption, EChartsOption } from 'echarts';
+import type { TreemapSeriesOption, EChartsOption, ECElementEvent, DefaultLabelFormatterCallbackParams } from 'echarts';
 import ReactECharts from 'echarts-for-react';
 import { createPortal } from 'react-dom';
 
@@ -260,13 +260,15 @@ const ECTreemap = (props: Props) => {
 	const containerRef = useRef<HTMLDivElement>(null);
 	const tooltipRef = useRef<HTMLDivElement>(null);
 
-	const handleChartClick = useCallback((params: any) => {
+	const handleChartClick = useCallback((params: ECElementEvent) => {
 		if (params.componentType === 'series') {
-			const domEvent = params.event.event;
-			setTooltipInfo({
-				data: params.data,
-				position: { x: domEvent.clientX, y: domEvent.clientY },
-			});
+			const domEvent = params.event?.event;
+			if (domEvent?.zrX && domEvent?.zrY) {
+				setTooltipInfo({
+					data: params.data as CryptoData,
+					position: { x: domEvent.zrX + 20, y: domEvent.zrY + 20 },
+				});
+			}
 		}
 	}, []);
 
@@ -346,7 +348,7 @@ const ECTreemap = (props: Props) => {
 					visualDimension: 2,
 					label: {
 						show: true,
-						formatter: (params: any) => {
+						formatter: (params: DefaultLabelFormatterCallbackParams) => {
 							let sizeType = 'normal';
 							if (params.dataIndex > 14) {
 								sizeType = 'tiny';
@@ -356,12 +358,14 @@ const ECTreemap = (props: Props) => {
 								sizeType = 'medium';
 							}
 
-							const isPositive = params.data.change > 0;
+							const data = params.data as CryptoData;
+
+							const isPositive = Number(data.change) > 0;
 
 							return [
 								`{${sizeType}Name|${params.name}}`,
-								`{${sizeType}Price|${params.data.price}}`,
-								`{${isPositive ? `${sizeType}ChangePositive` : `${sizeType}ChangeNegative`}|${params.data.change > 0 ? '+' : ''}${params.data.change}%}`,
+								`{${sizeType}Price|${data.price}}`,
+								`{${isPositive ? `${sizeType}ChangePositive` : `${sizeType}ChangeNegative`}|${Number(data.change) > 0 ? '+' : ''}${data.change}%}`,
 							].join('\n');
 						},
 						rich: {
