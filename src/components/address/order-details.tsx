@@ -316,6 +316,7 @@ const OrderDetails = <TMock extends boolean = false>({
 					onSortChange={descriptor => list.sort(descriptor)}
 					rowHeight={40}
 					isHeaderSticky
+					aria-label={t('title')}
 				>
 					<TableHeader columns={columns}>
 						{column => (
@@ -323,6 +324,7 @@ const OrderDetails = <TMock extends boolean = false>({
 								key={column.key}
 								allowsSorting={column.allowsSorting}
 								className="data-[hover=true]:text-white"
+								aria-label={column.label}
 							>
 								{column.label}
 							</TableColumn>
@@ -332,7 +334,7 @@ const OrderDetails = <TMock extends boolean = false>({
 						{list.items.map((item, index) => (
 							<TableRow key={index}>
 								{columnKey => (
-									<TableCell>
+									<TableCell aria-label={columnKey.toString()}>
 										<Cell item={item} columnKey={columnKey as keyof Data} />
 									</TableCell>
 								)}
