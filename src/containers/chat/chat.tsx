@@ -11,7 +11,9 @@ import DefaultPrompt from '@/components/chat/default-prompt';
 import MessageCard from '@/components/chat/message-card';
 import PromptInput from '@/components/chat/prompt-input';
 import Logo from '@/components/donkin/logo';
+import { Drawer, DrawerContent, DrawerTitle } from '@/components/ui/drawer';
 import { DonkinStatus } from '@/enums/donkin.enum';
+import { useMediaQuery } from '@/hooks/useMediaQuery';
 import { DEFAULT_THREAD_ID } from '@/libs/ai/constants';
 import { ChatStatus } from '@/libs/ai/enums/chatStatus.enum';
 import { useAISearchParams } from '@/libs/ai/hooks/useAISearchParams';
@@ -59,12 +61,12 @@ const ChatBody = () => {
 			className="flex flex-col items-center justify-start w-full max-w-full relative p-0 py-3"
 		>
 			{messages && messages.length > 0 && (
-				<Logo current={DonkinStatus.Folded} className="absolute top-0 left-0 size-8 z-[100]" />
+				<Logo current={DonkinStatus.Folded} className="absolute top-0 left-0 size-8 z-[100] hidden sm:block" />
 			)}
 			<ScrollShadow
 				ref={containerRef}
 				aria-label="chat-scroll-shadow"
-				className="w-full max-w-full h-[calc(100vh-300px)] overflow-y-auto"
+				className="w-full max-w-full h-[calc(100vh-370px)] sm:h-[calc(100vh-300px)] overflow-y-auto"
 			>
 				<div
 					className={cn(
@@ -124,34 +126,58 @@ const ThreadId = () => {
 
 const Chat = () => {
 	const isOpen = useGlobalStore(state => state.donkin.isOpen);
+	const toggle = useGlobalStore(state => state.toggleDonkin);
+	const { isSmWidth } = useMediaQuery();
+
+	if (isSmWidth) {
+		return (
+			<Card
+				className={cn(
+					'bg-[#FFFFFF08] shadow-none p-5 relative overflow-visible transition-width ease-in-out duration-1000 h-full min-h-[calc(100vh-200px)] sm:min-h-[calc(100vh-130px)] max-h-[calc(100vh-200px)] sm:max-h-[calc(100vh-130px)]',
+					!isOpen ? 'w-[30px] rounded-full' : 'min-w-full',
+				)}
+				radius="sm"
+			>
+				<AnimatePresence mode="popLayout">
+					{isOpen && (
+						<motion.div
+							className="flex flex-col w-full h-full"
+							initial={{ opacity: 0, y: -50 }}
+							animate={{ opacity: 1, y: 0 }}
+							exit={{ opacity: 0, y: 50 }}
+							transition={{
+								type: 'spring',
+								duration: 0.5,
+							}}
+						>
+							<ChatBody />
+							<ChatFooter />
+						</motion.div>
+					)}
+				</AnimatePresence>
+				<ThreadId />
+			</Card>
+		);
+	}
 
 	return (
-		<Card
-			className={cn(
-				'bg-[#FFFFFF08] shadow-none p-5 relative overflow-visible transition-width ease-in-out duration-1000 h-full min-h-[calc(100vh-130px)] max-h-[calc(100vh-130px)]',
-				!isOpen ? 'w-[30px] rounded-full' : 'min-w-full',
-			)}
-			radius="sm"
-		>
-			<AnimatePresence mode="popLayout">
-				{isOpen && (
-					<motion.div
-						className="flex flex-col w-full h-full"
-						initial={{ opacity: 0, y: -50 }}
-						animate={{ opacity: 1, y: 0 }}
-						exit={{ opacity: 0, y: 50 }}
-						transition={{
-							type: 'spring',
-							duration: 0.5,
-						}}
-					>
+		<Drawer open={isOpen} onOpenChange={toggle}>
+			<DrawerContent>
+				<DrawerTitle></DrawerTitle>
+				<Card
+					className={cn(
+						'bg-transparent shadow-none p-5 relative overflow-visible transition-width ease-in-out duration-1000 h-full min-h-[calc(100vh-200px)] max-h-[calc(100vh-200px)] w-full min-full',
+					)}
+					radius="sm"
+				>
+					<div className="flex flex-col w-full h-full">
 						<ChatBody />
 						<ChatFooter />
-					</motion.div>
-				)}
-			</AnimatePresence>
-			<ThreadId />
-		</Card>
+					</div>
+					<ThreadId />
+				</Card>
+			</DrawerContent>
+		</Drawer>
 	);
 };
 
