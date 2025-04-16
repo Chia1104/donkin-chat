@@ -2,6 +2,7 @@
 
 import { HeroUIProvider as _HeroUIProvider } from '@heroui/system';
 import { PrivyProvider as _PrivyProvider } from '@privy-io/react-auth';
+import { toSolanaWalletConnectors } from '@privy-io/react-auth/solana';
 import { QueryClientProvider } from '@tanstack/react-query';
 import type { AbstractIntlMessages } from 'next-intl';
 import { NextIntlClientProvider, useLocale } from 'next-intl';
@@ -50,7 +51,6 @@ const PrivyProvider = (props: { children: React.ReactNode }) => {
 					accentColor: '#35E4FF',
 					logo: 'https://ci1qbccnljacb1o3.public.blob.vercel-storage.com/donkin-ltitle-TXaKRh786HMBAYDPQ3xVEmbjqC8ide.png',
 					walletChainType: 'ethereum-and-solana',
-					walletList: ['detected_wallets', 'metamask', 'phantom'],
 				},
 				// Create embedded wallets for users who don't have a wallet
 				embeddedWallets: {
@@ -65,6 +65,7 @@ const PrivyProvider = (props: { children: React.ReactNode }) => {
 					defaultCountry: locale === Locale.EN_US ? 'US' : locale === Locale.ZH_CN ? 'CN' : 'TW',
 				},
 				loginMethods: ['wallet'],
+				externalWallets: { solana: { connectors: toSolanaWalletConnectors() } },
 			}}
 		>
 			{props.children}
