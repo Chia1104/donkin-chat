@@ -7,17 +7,18 @@ import { Spinner } from '@heroui/spinner';
 
 import type { CryptoData } from '@/components/chart/ec-treemap';
 import ECTreemap, { itemStyle } from '@/components/chart/ec-treemap';
+import { AsyncQuery } from '@/components/commons/async-query';
 import { useQueryTokensHot } from '@/libs/token/hooks/useQueryToken';
 import { roundDecimal } from '@/utils/format';
 
 const Heatmap = () => {
-	const { flatData, isLoading } = useQueryTokensHot({
+	const queryResult = useQueryTokensHot({
 		page_size: 20,
 		page: 1,
 		sort_by: 'market_cap',
 	});
 	const data = useMemo(() => {
-		return flatData.map(
+		return queryResult.flatData.map(
 			item =>
 				({
 					name: item.name,
@@ -27,17 +28,20 @@ const Heatmap = () => {
 					itemStyle: itemStyle(item.change),
 				}) satisfies CryptoData,
 		);
-	}, [flatData]);
+	}, [queryResult.flatData]);
 	return (
 		<div className="w-full h-full flex flex-col max-w-full">
 			<ScrollShadow className="w-full h-[calc(100vh-156px)] max-w-full">
-				{isLoading ? (
-					<div className="w-full h-full flex items-center justify-center">
-						<Spinner />
-					</div>
-				) : (
+				<AsyncQuery
+					queryResult={queryResult}
+					loadingFallback={
+						<div className="w-full h-full flex items-center justify-center">
+							<Spinner />
+						</div>
+					}
+				>
 					<ECTreemap data={data} />
-				)}
+				</AsyncQuery>
 			</ScrollShadow>
 		</div>
 	);
