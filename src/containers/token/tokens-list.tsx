@@ -220,6 +220,7 @@ const List = ({ display }: { display: 'group' | 'single' }) => {
 											avatar: '',
 											chain: '',
 											token: '',
+											symbol: '',
 										}}
 										stock={{
 											marketCap: 0,
@@ -291,6 +292,7 @@ const List = ({ display }: { display: 'group' | 'single' }) => {
 								avatar: _.logo_uri ?? '',
 								chain: _.symbol,
 								token: _.address,
+								symbol: _.symbol,
 							}}
 							stock={{
 								marketCap: _.market_cap,

@@ -22,6 +22,7 @@ const Heatmap = () => {
 			item =>
 				({
 					name: item.name,
+					symbol: item.symbol,
 					value: item.market_cap,
 					price: `$${roundDecimal(item.price, 5)}`,
 					change: roundDecimal(item.change, 5),

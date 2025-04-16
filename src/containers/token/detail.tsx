@@ -267,6 +267,7 @@ const Detail = () => {
 									name: queryResult.data?.name ?? '',
 									avatar: queryResult.data?.logo_uri ?? '',
 									chain: queryResult.data?.symbol ?? '',
+									symbol: queryResult.data?.symbol ?? '',
 									token: queryResult.data?.address ?? '',
 								}}
 								link={{
