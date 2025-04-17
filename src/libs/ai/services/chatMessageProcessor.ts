@@ -2,7 +2,15 @@ import { isAbortError } from '@/utils/is';
 import { logger } from '@/utils/logger';
 
 import { ChatEvent, ChatEventType } from '../enums/chatEvent.enum';
-import { messageStartSchema, messageSchema, thinkingSchema, messageEndSchema } from '../pipes/chatEvent.pipe';
+import {
+	messageStartSchema,
+	messageSchema,
+	thinkingSchema,
+	messageEndSchema,
+	errorSchema,
+	searchingStartSchema,
+	searchingEndSchema,
+} from '../pipes/chatEvent.pipe';
 
 interface StreamEventProcessor {
 	onTextPart?: (part: string) => void;
@@ -12,12 +20,14 @@ interface StreamEventProcessor {
 	onThinking?: (content: string) => void;
 	onMessageStart?: (convId: string, msgId: string) => void;
 	onMessageEnd?: (convId: string, msgId: string, content?: string) => void;
+	onSearchingStart?: (content: string) => void;
+	onSearchingEnd?: (content: string) => void;
 	enableLogger?: boolean;
 }
 
 /**
  * 處理特定格式的 SSE 流
- * 支援 message_start, heartbeat, thinking, message, message_end 等事件
+ * 支援 message_start, heartbeat, thinking, message, message_end, searching_start, searching_end, error 等事件
  */
 export async function processStreamEvents({
 	stream,
@@ -26,6 +36,8 @@ export async function processStreamEvents({
 	onStartStepPart,
 	onFinishStepPart,
 	onThinking,
+	onSearchingStart,
+	onSearchingEnd,
 	onMessageStart,
 	onMessageEnd,
 	enableLogger = true,
@@ -99,6 +111,8 @@ export async function processStreamEvents({
 						onMessageStart,
 						onMessageEnd,
 						onFinishStepPart,
+						onSearchingStart,
+						onSearchingEnd,
 						accumulatedText,
 						enableLogger,
 					);
@@ -128,6 +142,8 @@ function processSSEChunk(
 	onMessageStart: ((convId: string, msgId: string) => void) | undefined,
 	onMessageEnd: ((convId: string, msgId: string, content?: string) => void) | undefined,
 	onFinishStepPart: (() => void) | undefined,
+	onSearchingStart: ((content: string) => void) | undefined,
+	onSearchingEnd: ((content: string) => void) | undefined,
 	accumulatedText: string,
 	enableLogger = true,
 ): string {
@@ -258,6 +274,66 @@ function processSSEChunk(
 						if (typeof convId === 'string' && typeof msgId === 'string') {
 							onFinishStepPart?.();
 							onMessageEnd?.(convId, msgId, typeof content === 'string' ? content : undefined);
+						}
+					}
+				}
+				break;
+			}
+
+			case ChatEvent.Error: {
+				const result = errorSchema.safeParse(rawData);
+				if (result.success) {
+					const data = result.data;
+					if (data.type === ChatEventType.Error) {
+						onErrorPart?.(data.msg, new Error(data.msg));
+					}
+				} else {
+					// 容錯處理
+					if (typeof rawData === 'object' && rawData !== null) {
+						const data = rawData as Record<string, unknown>;
+						const msg = data.msg;
+						if (typeof msg === 'string') {
+							onErrorPart?.(msg, new Error(msg));
+						}
+					}
+				}
+				break;
+			}
+
+			case ChatEvent.SearchingStart: {
+				const result = searchingStartSchema.safeParse(rawData);
+				if (result.success) {
+					const data = result.data;
+					if (data.type === ChatEventType.Text && data.content) {
+						onSearchingStart?.(data.content);
+					}
+				} else {
+					// 容錯處理
+					if (typeof rawData === 'object' && rawData !== null) {
+						const data = rawData as Record<string, unknown>;
+						const content = data.content;
+						if (typeof content === 'string') {
+							onSearchingStart?.(content);
+						}
+					}
+				}
+				break;
+			}
+
+			case ChatEvent.SearchingEnd: {
+				const result = searchingEndSchema.safeParse(rawData);
+				if (result.success) {
+					const data = result.data;
+					if (data.type === ChatEventType.Text && data.content) {
+						onSearchingEnd?.(data.content);
+					}
+				} else {
+					// 容錯處理
+					if (typeof rawData === 'object' && rawData !== null) {
+						const data = rawData as Record<string, unknown>;
+						const content = data.content;
+						if (typeof content === 'string') {
+							onSearchingEnd?.(content);
 						}
 					}
 				}
