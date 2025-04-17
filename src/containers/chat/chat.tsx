@@ -24,6 +24,7 @@ import { cn } from '@/utils/cn';
 const Messages = ({ children }: { children?: React.ReactNode }) => {
 	const messages = useChatStore(state => state.items);
 	const status = useChatStore(state => state.status);
+	const isPending = useChatStore(state => state.isPending);
 	const handleRetry = useChatStore(state => state.handleRetry);
 	const handleSubmit = useChatStore(state => state.handleSubmit);
 
@@ -40,9 +41,10 @@ const Messages = ({ children }: { children?: React.ReactNode }) => {
 						key={message.id}
 						message={message}
 						showFeedback={message.role === 'assistant' && isLast}
-						isLoading={status === ChatStatus.Streaming && isLast}
+						isLoading={isPending && isLast}
 						status={status === ChatStatus.Error && isLast ? 'failed' : 'success'}
 						onRetry={message => handleRetry(message.id)}
+						reasoning={message.role === 'assistant' && isLast ? message.reasoning?.content : undefined}
 					/>
 				);
 			})}
@@ -52,7 +54,7 @@ const Messages = ({ children }: { children?: React.ReactNode }) => {
 };
 
 const ChatBody = () => {
-	const status = useChatStore(state => state.status);
+	const isPending = useChatStore(state => state.isPending);
 	const messages = useChatStore(state => state.items);
 	const containerRef = useRef<HTMLDivElement>(null);
 	return (
@@ -80,7 +82,7 @@ const ChatBody = () => {
 			{messages && messages.length > 0 && (
 				<AutoScroll
 					containerRef={containerRef}
-					enabled={status === ChatStatus.Streaming}
+					enabled={isPending}
 					wrapperClassName="absolute bottom-5 left-1/2 -translate-x-1/2 z-10"
 				/>
 			)}

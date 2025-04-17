@@ -40,15 +40,41 @@ const { ChatStoreProvider, useChatStore, ChatStoreContext, creator } = defineCha
 							error: message,
 						});
 					}
+					get().internal_abort();
+					set({ isPending: false }, false, 'messageProcessor');
 				},
 				onFinishStepPart: () => {
 					get().setStatus(ChatStatus.Success);
+					set({ isPending: false }, false, 'messageProcessor');
 				},
 				onStartStepPart: () => {
 					get().setStatus(ChatStatus.Streaming);
+					set({ isPending: true }, false, 'messageProcessor');
 				},
 				onMessageStart(convId) {
 					set({ threadId: convId }, false, 'messageProcessor');
+				},
+				onSearchingStart(content) {
+					const lastMessage = get().getLastMessage();
+					get().setStatus(ChatStatus.Searching);
+					if (lastMessage) {
+						get().updateMessage(lastMessage.id, {
+							reasoning: {
+								content: content.replace(/^\n/, ''),
+							},
+						});
+					}
+				},
+				onSearchingEnd(content) {
+					const lastMessage = get().getLastMessage();
+					get().setStatus(ChatStatus.Streaming);
+					if (lastMessage) {
+						get().updateMessage(lastMessage.id, {
+							reasoning: {
+								content: `${lastMessage.reasoning?.content}${content}`,
+							},
+						});
+					}
 				},
 			});
 		} catch (error) {

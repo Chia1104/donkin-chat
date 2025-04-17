@@ -49,7 +49,12 @@ export const chatActions: StateCreator<
 		set({ status }, false, nameSpace('setStatus', status));
 	},
 	handleSubmit: (content, parts) => {
-		if ((!get().input && !content) || get().status === ChatStatus.Streaming) {
+		if (
+			(!get().input && !content) ||
+			get().status === ChatStatus.Streaming ||
+			get().status === ChatStatus.Searching ||
+			get().isPending
+		) {
 			return;
 		}
 		const userId = uuid();
@@ -78,6 +83,7 @@ export const chatActions: StateCreator<
 			},
 		]);
 		set({ status: ChatStatus.Streaming, input: '' }, false, nameSpace('handleSubmit'));
+		set({ isPending: true }, false, nameSpace('handleSubmit'));
 
 		void get().internal_handleSSE(get().items);
 	},
@@ -96,12 +102,14 @@ export const chatActions: StateCreator<
 			createdAt: dayjs().toDate(),
 		});
 		set({ status: ChatStatus.Streaming }, false, nameSpace('handleRetry', id));
+		set({ isPending: true }, false, nameSpace('handleRetry', id));
 		void get().internal_handleSSE(get().items);
 	},
 	handleCancel: () => {
 		set({ status: ChatStatus.Idle }, false, nameSpace('handleCancel'));
 		try {
 			get().internal_abort();
+			set({ isPending: false }, false, nameSpace('handleCancel'));
 			void get().onCancel?.({ set, get, ctx });
 		} catch (error) {
 			logger(['Error in handleCancel:', error], { type: 'error' });

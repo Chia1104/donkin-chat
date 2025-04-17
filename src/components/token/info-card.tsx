@@ -17,7 +17,6 @@ import NextImage from 'next/image';
 
 import XIcon from '@/components/icons/x-icon';
 import { ProgressSlider } from '@/components/ui/progress-slider';
-import { ChatStatus } from '@/libs/ai/enums/chatStatus.enum';
 import { useAskToken } from '@/libs/ai/hooks/useAskToken';
 import { useChatStore } from '@/stores/chat';
 import { cn } from '@/utils/cn';
@@ -108,7 +107,7 @@ export const LinkIcon = (props: LinkIconProps) => {
 
 export const HeaderPrimitive = (props: HeaderPrimitiveProps) => {
 	const { copied, copy } = useClipboard();
-	const status = useChatStore(state => state.status);
+	const isPending = useChatStore(state => state.isPending);
 	const askToken = useAskToken(props.meta.symbol);
 	const [isError, setIsError] = useState(false);
 
@@ -136,7 +135,7 @@ export const HeaderPrimitive = (props: HeaderPrimitiveProps) => {
 					<Skeleton className="w-full max-w-[100px] h-3 rounded-full" />
 				) : (
 					<Tooltip
-						content={<DonkinPopover disabled={status === ChatStatus.Streaming} className="w-[220px]" {...askToken} />}
+						content={<DonkinPopover disabled={isPending} className="w-[220px]" {...askToken} />}
 						classNames={{
 							base: 'shadow-none',
 							content: 'bg-transparent shadow-none p-0',

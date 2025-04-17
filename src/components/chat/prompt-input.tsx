@@ -6,7 +6,6 @@ import { Textarea } from '@heroui/input';
 import { Tooltip } from '@heroui/tooltip';
 import { useTranslations } from 'next-intl';
 
-import { ChatStatus } from '@/libs/ai/enums/chatStatus.enum';
 import { useChatStore } from '@/stores/chat';
 import { cn } from '@/utils/cn';
 
@@ -26,11 +25,11 @@ const PromptInput = ({ onSubmit, value, onChange, props }: Props) => {
 	const t = useTranslations('chat');
 	const tAction = useTranslations('action');
 	const enabled = useChatStore(state => state.enabled);
-	const status = useChatStore(state => state.status);
+	const isPending = useChatStore(state => state.isPending);
 	const handleCancel = useChatStore(state => state.handleCancel);
 	const handleSubmit = (e: React.FormEvent<HTMLFormElement>) => {
 		e.preventDefault();
-		if (status === ChatStatus.Streaming) {
+		if (isPending) {
 			handleCancel();
 		} else {
 			onSubmit?.(e);
@@ -44,7 +43,7 @@ const PromptInput = ({ onSubmit, value, onChange, props }: Props) => {
 			onSubmit={handleSubmit}
 		>
 			<Textarea
-				isDisabled={!enabled || status === ChatStatus.Streaming}
+				isDisabled={!enabled || isPending}
 				aria-label="Prompt"
 				minRows={4}
 				maxRows={4}
@@ -52,7 +51,7 @@ const PromptInput = ({ onSubmit, value, onChange, props }: Props) => {
 				radius="sm"
 				variant="underlined"
 				endContent={
-					<Tooltip content={status === ChatStatus.Streaming ? tAction('pause') : tAction('send')} size="sm">
+					<Tooltip content={isPending ? tAction('pause') : tAction('send')} size="sm">
 						<HeroButton
 							aria-label="Send"
 							radius="full"
@@ -62,7 +61,7 @@ const PromptInput = ({ onSubmit, value, onChange, props }: Props) => {
 							type="submit"
 							className="self-end"
 						>
-							{status === ChatStatus.Streaming ? (
+							{isPending ? (
 								<Image src="/assets/images/pause-stream.svg" width={24} height={24} />
 							) : (
 								<Image src="/assets/images/send.svg" width={24} height={24} />
