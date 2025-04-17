@@ -2,13 +2,7 @@ import { isAbortError } from '@/utils/is';
 import { logger } from '@/utils/logger';
 
 import { ChatEvent, ChatEventType } from '../enums/chatEvent.enum';
-import {
-	messageStartSchema,
-	messageSchema,
-	thinkingSchema,
-	heartbeatSchema,
-	messageEndSchema,
-} from '../pipes/chatEvent.pipe';
+import { messageStartSchema, messageSchema, thinkingSchema, messageEndSchema } from '../pipes/chatEvent.pipe';
 
 interface StreamEventProcessor {
 	onTextPart?: (part: string) => void;
@@ -139,17 +133,8 @@ function processSSEChunk(
 ): string {
 	if (!chunk.trim()) return accumulatedText;
 
-	// 檢查是否為新的 ping 格式
+	// 將 ping 視為 heartbeat 事件處理
 	if (chunk.trim().startsWith(': ping')) {
-		// 將 ping 視為 heartbeat 事件處理
-		try {
-			// 建立一個類似 heartbeat 的數據結構
-			const heartbeatData = { type: ChatEventType.System };
-			// 模擬 heartbeat 事件的處理流程，但不執行任何回調
-			heartbeatSchema.parse(heartbeatData);
-		} catch (error) {
-			logger(['處理 ping 格式失敗:', error], { type: 'warn', enabled: enableLogger });
-		}
 		return accumulatedText;
 	}
 
@@ -186,18 +171,6 @@ function processSSEChunk(
 	}
 
 	try {
-		// 檢查 JSON 格式是否有效
-		try {
-			JSON.parse(dataLine);
-		} catch {
-			// 嘗試使用正則表達式提取 JSON 部分
-			const jsonRegex = /({.*}|\[.*\])/;
-			const jsonMatch = jsonRegex.exec(dataLine);
-			if (jsonMatch) {
-				dataLine = jsonMatch[0];
-			}
-		}
-
 		const rawData = JSON.parse(dataLine) as unknown;
 
 		switch (eventType) {
@@ -221,10 +194,8 @@ function processSSEChunk(
 				}
 				break;
 			}
-
+			// 心跳事件，不做特別處理
 			case ChatEvent.Heartbeat:
-				// 心跳事件，不做特別處理
-				heartbeatSchema.safeParse(rawData);
 				break;
 
 			case ChatEvent.Thinking: {
