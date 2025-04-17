@@ -14,13 +14,16 @@ import { initialChatState } from './initial-state';
 import type { ChatState } from './initial-state';
 import { chatActions } from './slices/chat/actions';
 import type { ChatAction } from './slices/chat/actions';
+import { messageActions } from './slices/message/actions';
+import type { MessageAction } from './slices/message/actions';
 
 export type ChatStore<TMessageItem extends MessageItem, TStreamRequestDTO, TContext> = ChatState<
 	TMessageItem,
 	TStreamRequestDTO,
 	TContext
 > &
-	ChatAction<TMessageItem>;
+	ChatAction<TMessageItem> &
+	MessageAction<TMessageItem>;
 
 export type ChatStoreApi<TMessageItem extends MessageItem, TStreamRequestDTO, TContext> = StateCreator<
 	ChatStore<TMessageItem, TStreamRequestDTO, TContext>,
@@ -54,6 +57,9 @@ const createChatStore =
 
 			// @ts-expect-error - fix actions generic type
 			...chatActions(...params),
+
+			// @ts-expect-error - fix actions generic type
+			...messageActions(...params),
 		}) as ChatStore<TMessageItem, TStreamRequestDTO, TContext>;
 
 export const defineChatStore = <TMessageItem extends MessageItem, TStreamRequestDTO, TContext>({
