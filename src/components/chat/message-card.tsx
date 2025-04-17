@@ -2,6 +2,7 @@
 
 import React from 'react';
 
+import { Accordion, AccordionItem } from '@heroui/accordion';
 import { Button } from '@heroui/button';
 import { Spinner } from '@heroui/spinner';
 import { cn } from '@heroui/theme';
@@ -23,6 +24,7 @@ export type MessageCardProps = React.HTMLAttributes<HTMLDivElement> & {
 	experimental?: {
 		shiki?: boolean;
 	};
+	reasoning?: string;
 };
 
 const MessageCard = ({
@@ -33,6 +35,7 @@ const MessageCard = ({
 	onRetry,
 	isRetrying,
 	isLoading,
+	reasoning,
 	experimental,
 	...props
 }: MessageCardProps) => {
@@ -69,14 +72,29 @@ const MessageCard = ({
 			)}
 		>
 			{isLoading && (
-				<Spinner
-					size="sm"
-					classNames={{
-						base: 'flex flex-row w-fit',
-					}}
-					label={t('search.title')}
-					variant="gradient"
-				/>
+				<Accordion selectedKeys={reasoning ? ['reasoning'] : []} className="px-0">
+					<AccordionItem
+						classNames={{
+							base: 'not-prose',
+							trigger: 'py-0',
+							content: 'text-foreground-500 text-xs pl-6',
+						}}
+						key="reasoning"
+						title={
+							<Spinner
+								size="sm"
+								classNames={{
+									base: 'flex flex-row w-fit',
+								}}
+								label={t('search.title')}
+								variant="gradient"
+							/>
+						}
+						hideIndicator
+					>
+						{reasoning}
+					</AccordionItem>
+				</Accordion>
 			)}
 			{hasFailed ? (
 				<p>{t('search.error')}</p>

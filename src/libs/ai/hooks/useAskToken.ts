@@ -3,12 +3,11 @@ import { useTranslations } from 'next-intl';
 import { useChatStore } from '@/stores/chat';
 import { tokenInfoArgsSchema } from '@/stores/chat';
 
-import { ChatStatus } from '../enums/chatStatus.enum';
 import { SupportedTool } from '../enums/supportedTool.enum';
 
 export const useAskToken = (token: string) => {
 	const tAskMore = useTranslations('donkin.ask-more');
-	const status = useChatStore(state => state.status);
+	const isPending = useChatStore(state => state.isPending);
 	const handleSubmit = useChatStore(state => state.handleSubmit);
 
 	return {
@@ -19,7 +18,7 @@ export const useAskToken = (token: string) => {
 			// tAskMore('token-name.smart-wallet'),
 		],
 		onAskMore: (item: string) => {
-			if (status === ChatStatus.Streaming) {
+			if (isPending) {
 				return;
 			}
 			switch (item) {

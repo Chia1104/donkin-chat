@@ -33,7 +33,11 @@ export const heartbeatSchema = z.object({
 
 export type Heartbeat = z.infer<typeof heartbeatSchema>;
 
-export const errorSchema = z.unknown();
+export const errorSchema = z.object({
+	type: z.literal(ChatEventType.Error),
+	code: z.number(),
+	msg: z.string(),
+});
 
 export type Error = z.infer<typeof errorSchema>;
 
@@ -45,3 +49,29 @@ export const messageEndSchema = z.object({
 });
 
 export type MessageEnd = z.infer<typeof messageEndSchema>;
+
+export const searchingStartSchema = z.object({
+	type: z.literal(ChatEventType.Text),
+	content: z.string(),
+	sequence: z.number(),
+});
+
+export type SearchingStart = z.infer<typeof searchingStartSchema>;
+
+export const searchingEndSchema = z.object({
+	type: z.literal(ChatEventType.Text),
+	content: z.string(),
+	sequence: z.number(),
+});
+
+export type SearchingEnd = z.infer<typeof searchingEndSchema>;
+
+export type ChatEvent =
+	| MessageStart
+	| Message
+	| Thinking
+	| Heartbeat
+	| Error
+	| MessageEnd
+	| SearchingStart
+	| SearchingEnd;

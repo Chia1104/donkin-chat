@@ -18,13 +18,6 @@ const nameSpace = setNamespace('chat/chat');
 export interface ChatAction<TMessageItem extends MessageItem> {
 	setInput: (input: string) => void;
 	setStatus: (status: ChatStatus) => void;
-	pushMessage: (messages: TMessageItem[]) => void;
-	deleteMessage: (id: string) => void;
-	updateMessage: (id: string, message: Partial<TMessageItem>) => void;
-	deleteLastMessage: () => void;
-	getMessage: (id: string) => TMessageItem | undefined;
-	getLastMessage: () => TMessageItem | undefined;
-	updateLastMessageContent: (content: string) => void;
 	handleSubmit: (
 		content?: string,
 		parts?: {
@@ -33,7 +26,6 @@ export interface ChatAction<TMessageItem extends MessageItem> {
 	) => void;
 	handleRetry: (id: string, handler?: (message: TMessageItem) => void) => void;
 	handleCancel: () => void;
-	getLatestUserMessage: () => TMessageItem | undefined;
 
 	/**
 	 * INTERNAL USE ONLY
@@ -56,41 +48,13 @@ export const chatActions: StateCreator<
 	setStatus: (status: ChatStatus) => {
 		set({ status }, false, nameSpace('setStatus', status));
 	},
-	pushMessage: (messages: MessageItem[]) => {
-		set({ items: [...get().items, ...messages] }, false, nameSpace('pushMessage', messages));
-	},
-	deleteMessage: (id: string) => {
-		set({ items: get().items.filter(item => item.id !== id) }, false, nameSpace('deleteMessage', id));
-	},
-	updateLastMessageContent: (content: string) => {
-		set(
-			{
-				items: get().items.map(item =>
-					item.id === get().items[get().items.length - 1].id ? { ...item, content } : item,
-				),
-			},
-			false,
-			nameSpace('updateLastMessageContent', content),
-		);
-	},
-	updateMessage: (id: string, message: Partial<MessageItem>) => {
-		set(
-			{ items: get().items.map(item => (item.id === id ? { ...item, ...message } : item)) },
-			false,
-			nameSpace('updateMessage', id),
-		);
-	},
-	deleteLastMessage: () => {
-		set({ items: get().items.slice(0, -1) }, false, nameSpace('deleteLastMessage'));
-	},
-	getMessage: (id: string) => {
-		return get().items.find(item => item.id === id);
-	},
-	getLastMessage: () => {
-		return get().items[get().items.length - 1];
-	},
 	handleSubmit: (content, parts) => {
-		if ((!get().input && !content) || get().status === ChatStatus.Streaming) {
+		if (
+			(!get().input && !content) ||
+			get().status === ChatStatus.Streaming ||
+			get().status === ChatStatus.Searching ||
+			get().isPending
+		) {
 			return;
 		}
 		const userId = uuid();
@@ -119,6 +83,7 @@ export const chatActions: StateCreator<
 			},
 		]);
 		set({ status: ChatStatus.Streaming, input: '' }, false, nameSpace('handleSubmit'));
+		set({ isPending: true }, false, nameSpace('handleSubmit'));
 
 		void get().internal_handleSSE(get().items);
 	},
@@ -137,22 +102,18 @@ export const chatActions: StateCreator<
 			createdAt: dayjs().toDate(),
 		});
 		set({ status: ChatStatus.Streaming }, false, nameSpace('handleRetry', id));
+		set({ isPending: true }, false, nameSpace('handleRetry', id));
 		void get().internal_handleSSE(get().items);
 	},
 	handleCancel: () => {
 		set({ status: ChatStatus.Idle }, false, nameSpace('handleCancel'));
 		try {
 			get().internal_abort();
+			set({ isPending: false }, false, nameSpace('handleCancel'));
 			void get().onCancel?.({ set, get, ctx });
 		} catch (error) {
 			logger(['Error in handleCancel:', error], { type: 'error' });
 		}
-	},
-	getLatestUserMessage: () => {
-		return get()
-			.items.slice()
-			.reverse()
-			.find(item => item.role === 'user');
 	},
 
 	/**
