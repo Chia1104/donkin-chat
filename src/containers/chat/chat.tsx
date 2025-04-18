@@ -53,6 +53,24 @@ const Messages = ({ children }: { children?: React.ReactNode }) => {
 	);
 };
 
+const DonkinLogo = () => {
+	const messages = useChatStore(state => state.items);
+
+	return (
+		<>
+			{messages && messages.length > 0 && (
+				<Logo
+					current={DonkinStatus.Folded}
+					className="absolute top-5 left-5 size-8 z-[100] hidden sm:block"
+					classNames={{
+						active: 'size-9 top-0 left-0',
+					}}
+				/>
+			)}
+		</>
+	);
+};
+
 const ChatBody = () => {
 	const isPending = useChatStore(state => state.isPending);
 	const messages = useChatStore(state => state.items);
@@ -62,9 +80,6 @@ const ChatBody = () => {
 			aria-label="chat-body"
 			className="flex flex-col items-center justify-start w-full max-w-full relative p-0 py-3"
 		>
-			{messages && messages.length > 0 && (
-				<Logo current={DonkinStatus.Folded} className="absolute top-0 left-0 size-8 z-[100] hidden sm:block" />
-			)}
 			<ScrollShadow
 				ref={containerRef}
 				aria-label="chat-scroll-shadow"
@@ -140,6 +155,7 @@ const Chat = () => {
 				)}
 				radius="sm"
 			>
+				<DonkinLogo />
 				<AnimatePresence mode="popLayout">
 					{isOpen && (
 						<motion.div
@@ -172,6 +188,7 @@ const Chat = () => {
 					)}
 					radius="sm"
 				>
+					<DonkinLogo />
 					<div className="flex flex-col w-full h-full">
 						<ChatBody />
 						<ChatFooter />

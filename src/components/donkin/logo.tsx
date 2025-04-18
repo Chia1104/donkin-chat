@@ -112,6 +112,7 @@ const ActiveLogo = (props: Props) => {
 			content={content}
 			showArrow
 			isDisabled={!isActivatable}
+			offset={-5}
 		>
 			<motion.div
 				initial={{
@@ -143,14 +144,14 @@ const ActiveLogo = (props: Props) => {
 					<motion.circle
 						cx="20"
 						cy="20"
-						r="21"
-						initial={{ opacity: 0.7 }}
+						r="18"
+						initial={{ opacity: 0.5 }}
 						animate={{
-							opacity: [0.7, 0.9, 0.7],
-							scale: [1, 1.02, 1],
+							opacity: [0.5, 0.7, 0.5],
+							scale: [1, 1.01, 1],
 						}}
 						transition={{
-							duration: 5,
+							duration: 4,
 							repeat: Infinity,
 							ease: 'easeInOut',
 						}}
@@ -158,13 +159,13 @@ const ActiveLogo = (props: Props) => {
 					/>
 
 					{/* 主要圓形 */}
-					<circle cx="20" cy="20" r="20" fill="url(#baseGradient)" filter={`url(#${id}-glowEffect)`} />
+					<circle cx="20" cy="20" r="16" fill={`url(#${id}-baseGradient)`} filter={`url(#${id}-glowEffect)`} />
 
 					{/* 藍色漸變光效 */}
 					<motion.circle
 						cx="20"
 						cy="20"
-						r="20"
+						r="16"
 						fill={`url(#${id}-blueGradient)`}
 						initial={{ opacity: 0.85 }}
 						animate={{
@@ -182,11 +183,11 @@ const ActiveLogo = (props: Props) => {
 					<motion.circle
 						cx="20"
 						cy="20"
-						r="20"
+						r="16"
 						fill={`url(#${id}-highlightGradient)`}
 						initial={{ opacity: 0.7 }}
 						animate={{
-							opacity: [0.7, 0.4, 0.7],
+							opacity: [0.7, 0.9, 0.7],
 							scale: [1, 1.03, 1],
 						}}
 						transition={{
@@ -264,18 +265,31 @@ const ActiveLogo = (props: Props) => {
 						</linearGradient>
 
 						{/* 外發光效果 */}
-						<filter id={`${id}-glowEffect`} x="-2" y="-1" width="44" height="44" filterUnits="userSpaceOnUse">
-							<feDropShadow dx="0" dy="1" stdDeviation="1.5" floodColor="#9DF2FF" floodOpacity="0.25">
-								<animate attributeName="flood-opacity" values="0.25;0.55;0.25" dur="4s" repeatCount="indefinite" />
-								<animate attributeName="stdDeviation" values="1.5;3;1.5" dur="4s" repeatCount="indefinite" />
-							</feDropShadow>
+						<filter
+							id={`${id}-glowEffect`}
+							x="-6"
+							y="-6"
+							width="52"
+							height="52"
+							filterUnits="userSpaceOnUse"
+							colorInterpolationFilters="sRGB"
+						>
+							<feFlood floodOpacity="0" result="BackgroundImageFix" />
+							<feMorphology radius="1" operator="dilate" in="SourceAlpha" result="effect1_dropShadow" />
+							<feOffset dy="1" />
+							<feGaussianBlur stdDeviation="4" />
+							<feComposite in2="hardAlpha" operator="out" />
+							<feColorMatrix type="matrix" values="0 0 0 0 0.615218 0 0 0 0 0.948569 0 0 0 0 1 0 0 0 0.4 0" />
+							<feBlend mode="normal" in2="BackgroundImageFix" result="effect1_dropShadow" />
+							<feBlend mode="normal" in="SourceGraphic" in2="effect1_dropShadow" result="shape" />
+							<animate attributeName="stdDeviation" values="3;5;3" dur="4s" repeatCount="indefinite" />
 						</filter>
 
 						{/* 外部暈眩光漸變 */}
-						<radialGradient id={`${id}-outerGlowGradient`} cx="0.5" cy="0.5" r="0.5" gradientUnits="objectBoundingBox">
-							<stop offset="0" stopColor="#35E4FF" stopOpacity="1" />
-							<stop offset="0.25" stopColor="#35E4FF" stopOpacity="0.8" />
-							<stop offset="0.6" stopColor="#2474FF" stopOpacity="0.5" />
+						<radialGradient id={`${id}-outerGlowGradient`} cx="0.5" cy="0.5" r="0.4" gradientUnits="objectBoundingBox">
+							<stop offset="0" stopColor="#35E4FF" stopOpacity="0.7" />
+							<stop offset="0.6" stopColor="#35E4FF" stopOpacity="0.4" />
+							<stop offset="0.9" stopColor="#2474FF" stopOpacity="0.1" />
 							<stop offset="1" stopColor="#2474FF" stopOpacity="0" />
 						</radialGradient>
 					</defs>

@@ -28,7 +28,7 @@ const DefaultPrompt = ({ currentCoin = 'XX', ...props }: Props) => {
 	return (
 		<section className="flex flex-col items-center justify-center w-full h-full max-w-[350px] gap-5 prose prose-invert">
 			<div className="flex flex-col items-center justify-center w-full max-w-[285px] gap-3">
-				<Logo className="size-[78px]" current={DonkinStatus.Open} />
+				<Logo className="size-[90px] -mb-2" current={DonkinStatus.Open} />
 				<h2 className="mt-0 mb-2">{t('donkin-title')}</h2>
 				<p className="text-xs text-center">{t('donkin-subtitle')}</p>
 			</div>
