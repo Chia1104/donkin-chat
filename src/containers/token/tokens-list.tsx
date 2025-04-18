@@ -230,7 +230,6 @@ const List = ({ display }: { display: 'group' | 'single' }) => {
 										}}
 										hotspots={{
 											x: 0,
-											telegram: 0,
 										}}
 										display={['all']}
 										cardProps={{
@@ -302,7 +301,6 @@ const List = ({ display }: { display: 'group' | 'single' }) => {
 							}}
 							hotspots={{
 								x: globalSearchParams.mock ? 60 : 0,
-								telegram: globalSearchParams.mock ? 70 : 0,
 							}}
 							display={getItemDisplay(index, length)}
 							onPress={data => {
