@@ -1,11 +1,13 @@
 import type { Metadata } from 'next';
 import { getTranslations } from 'next-intl/server';
+import { headers } from 'next/headers';
 
 import ChatRoomLayout from '@/components/layouts/chat-room-layout';
 import Chat from '@/containers/chat/chat';
 import { loadAISearchParams } from '@/libs/ai/services/loadAISearchParams';
 import { aiChatFlag, cookieFeaturesFlag } from '@/libs/flags/services/flags';
 import { ChatStoreProvider } from '@/stores/chat';
+import { HEADERS_SEARCH_PARAMS } from '@/utils/constants';
 
 interface Props {
 	children: React.ReactNode;
@@ -19,13 +21,9 @@ export async function generateMetadata(): Promise<Metadata> {
 }
 
 const Layout = async (props: Props & PagePropsWithLocale) => {
-	const [{ threadId }, { locale }] = await Promise.all([
-		/**
-		 * TODO: refactor chat layout, currently the searchParams is undefined
-		 */
-		loadAISearchParams(props.searchParams),
-		props.params,
-	]);
+	const headerStore = await headers();
+	const searchParams = Object.fromEntries(new URLSearchParams(headerStore.get(HEADERS_SEARCH_PARAMS) || ''));
+	const [{ threadId }, { locale }] = await Promise.all([loadAISearchParams(searchParams), props.params]);
 	const [enabled, cookieFeatures] = await Promise.all([aiChatFlag(), cookieFeaturesFlag()]);
 	return (
 		<ChatStoreProvider
