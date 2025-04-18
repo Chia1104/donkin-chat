@@ -1,14 +1,17 @@
 'use client';
 
-import React from 'react';
+import React, { useRef } from 'react';
 
 import { Accordion, AccordionItem } from '@heroui/accordion';
 import { Button } from '@heroui/button';
+import { ScrollShadow } from '@heroui/scroll-shadow';
 import { Spinner } from '@heroui/spinner';
 import { cn } from '@heroui/theme';
 import { Tooltip } from '@heroui/tooltip';
+import { AnimatePresence, motion } from 'framer-motion';
 import { useTranslations } from 'next-intl';
 
+import { AutoScroll } from '@/components/chat/auto-scroll';
 import type { MessageItem } from '@/libs/ai/types/message';
 
 import CopyButton from '../commons/copy-button';
@@ -26,6 +29,74 @@ export type MessageCardProps = React.HTMLAttributes<HTMLDivElement> & {
 	};
 	reasoning?: string;
 };
+
+const Reasoning = React.memo(
+	({
+		isLoading,
+		reasoning,
+		experimental,
+	}: {
+		isLoading?: boolean;
+		reasoning?: string;
+		experimental?: { shiki?: boolean };
+	}) => {
+		const t = useTranslations('chat');
+		const containerRef = useRef<HTMLDivElement>(null);
+
+		return (
+			<AnimatePresence mode="wait">
+				{isLoading ? (
+					<motion.span
+						key="loading"
+						initial={{ opacity: 0, height: 0 }}
+						animate={{ opacity: 1, height: 'auto' }}
+						exit={{ opacity: 0, height: 0 }}
+						transition={{ duration: 0.3 }}
+						// className="sticky top-10 backdrop-blur-lg z-20"
+					>
+						<Accordion defaultExpandedKeys={reasoning ? ['reasoning'] : []} className="px-0" fullWidth={false}>
+							<AccordionItem
+								classNames={{
+									base: 'not-prose relative',
+									trigger: 'py-0',
+									content: 'text-foreground-500 text-xs pl-7 max-h-[150px]',
+								}}
+								key="reasoning"
+								title={
+									<Spinner
+										size="sm"
+										classNames={{
+											base: 'flex flex-row w-fit',
+										}}
+										label={t('search.title')}
+										variant="gradient"
+									/>
+								}
+								hideIndicator
+							>
+								<ScrollShadow ref={containerRef} className="max-h-[140px] w-full">
+									<Markdown experimental={experimental} content={reasoning ?? ''} />
+								</ScrollShadow>
+								<AutoScroll
+									containerRef={containerRef}
+									enabled={isLoading}
+									wrapperClassName="hidden absolute bottom-5 left-1/2 -translate-x-1/2"
+								/>
+							</AccordionItem>
+						</Accordion>
+					</motion.span>
+				) : null}
+			</AnimatePresence>
+		);
+	},
+	(prevProps, nextProps) => {
+		return (
+			prevProps.isLoading === nextProps.isLoading &&
+			prevProps.reasoning === nextProps.reasoning &&
+			prevProps.experimental === nextProps.experimental
+		);
+	},
+);
 
 const MessageCard = ({
 	message,
@@ -71,31 +142,7 @@ const MessageCard = ({
 				className,
 			)}
 		>
-			{isLoading && (
-				<Accordion selectedKeys={reasoning ? ['reasoning'] : []} className="px-0">
-					<AccordionItem
-						classNames={{
-							base: 'not-prose',
-							trigger: 'py-0',
-							content: 'text-foreground-500 text-xs pl-6',
-						}}
-						key="reasoning"
-						title={
-							<Spinner
-								size="sm"
-								classNames={{
-									base: 'flex flex-row w-fit',
-								}}
-								label={t('search.title')}
-								variant="gradient"
-							/>
-						}
-						hideIndicator
-					>
-						{reasoning}
-					</AccordionItem>
-				</Accordion>
-			)}
+			<Reasoning isLoading={isLoading} reasoning={reasoning} experimental={experimental} />
 			{hasFailed ? (
 				<p>{t('search.error')}</p>
 			) : (
