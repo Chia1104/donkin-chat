@@ -149,7 +149,7 @@ const ChatRoomLayout = (props: Props) => {
 				) : null}
 			</main>
 			<Footer />
-			<Logo className="fixed bottom-5 right-5 z-[99] size-16" opacityOnStatus="close" hiddenOnStatus="open" />
+			<Logo className="fixed bottom-5 right-5 z-[99] size-20" opacityOnStatus="close" hiddenOnStatus="open" />
 		</>
 	);
 };

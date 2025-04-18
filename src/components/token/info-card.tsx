@@ -54,9 +54,9 @@ export interface HeaderPrimitiveProps extends MetaProps {
 }
 
 interface HotspotProps {
-	hotspots: {
-		x: number;
-		telegram: number;
+	hotspots?: {
+		x?: number;
+		telegram?: number;
 	};
 	isLoading?: boolean;
 }
@@ -245,13 +245,17 @@ export const Hotspots = memo(
 	({ hotspots }: HotspotProps) => {
 		const t = useTranslations('preview.ai-signal');
 		return (
-			<CardBody aria-label="Hotspots" className="rounded-none prose prose-invert gap-4 p-0">
-				<HotspotProgress label={t('card.x-hotspot')} value={hotspots.x} colorDirection="green-to-red" />
-				<HotspotProgress label={t('card.tg-hotspot')} value={hotspots.telegram} colorDirection="green-to-red" />
+			<CardBody aria-label="Hotspots" className="rounded-none prose prose-invert gap-4 p-0 mb-2">
+				{hotspots?.x != null ? (
+					<HotspotProgress label={t('card.x-hotspot')} value={hotspots.x} colorDirection="green-to-red" />
+				) : null}
+				{hotspots?.telegram != null ? (
+					<HotspotProgress label={t('card.tg-hotspot')} value={hotspots.telegram} colorDirection="green-to-red" />
+				) : null}
 			</CardBody>
 		);
 	},
-	(prev, next) => prev.hotspots.x === next.hotspots.x && prev.hotspots.telegram === next.hotspots.telegram,
+	(prev, next) => prev.hotspots?.x === next.hotspots?.x && prev.hotspots?.telegram === next.hotspots?.telegram,
 );
 
 export const Stock = memo(

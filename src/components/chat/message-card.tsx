@@ -54,7 +54,12 @@ const Reasoning = React.memo(
 						transition={{ duration: 0.3 }}
 						// className="sticky top-10 backdrop-blur-lg z-20"
 					>
-						<Accordion defaultExpandedKeys={reasoning ? ['reasoning'] : []} className="px-0" fullWidth={false}>
+						<Accordion
+							defaultExpandedKeys={reasoning ? ['reasoning'] : []}
+							className="px-0"
+							fullWidth={false}
+							selectedKeys={!reasoning ? [] : undefined}
+						>
 							<AccordionItem
 								classNames={{
 									base: 'not-prose relative',
@@ -186,6 +191,7 @@ export default React.memo(MessageCard, (prevProps, nextProps) => {
 		prevProps.status === nextProps.status &&
 		prevProps.isLoading === nextProps.isLoading &&
 		prevProps.isRetrying === nextProps.isRetrying &&
-		prevProps.showFeedback === nextProps.showFeedback
+		prevProps.showFeedback === nextProps.showFeedback &&
+		prevProps.reasoning === nextProps.reasoning
 	);
 });

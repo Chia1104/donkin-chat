@@ -76,7 +76,7 @@ const DonkinPopover = forwardRef<HTMLDivElement | null, Props>((props, ref) => {
 							<Logo
 								current={status === 'streaming' ? 'thinking' : 'open'}
 								isActivatable={false}
-								className="size-[14px]"
+								className="size-[16px]"
 								enableEffect
 							/>
 							<span className="font-normal text-xs text-primary">{t('ask-more')}</span>
