@@ -38,6 +38,7 @@ const { ChatStoreProvider, useChatStore, ChatStoreContext, creator } = defineCha
 					if (lastMessage) {
 						get().updateMessage(lastMessage.id, {
 							error: message,
+							reasoning: null,
 						});
 					}
 					get().internal_abort();
@@ -45,6 +46,12 @@ const { ChatStoreProvider, useChatStore, ChatStoreContext, creator } = defineCha
 				},
 				onFinishStepPart: () => {
 					get().setStatus(ChatStatus.Success);
+					const lastMessage = get().getLastMessage();
+					if (lastMessage) {
+						get().updateMessage(lastMessage.id, {
+							reasoning: null,
+						});
+					}
 					set({ isPending: false }, false, 'messageProcessor');
 				},
 				onStartStepPart: () => {
