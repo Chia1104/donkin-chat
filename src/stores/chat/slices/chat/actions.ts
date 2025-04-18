@@ -99,6 +99,7 @@ export const chatActions: StateCreator<
 		void get().updateMessage(id, {
 			error: null,
 			content: '',
+			reasoning: null,
 			createdAt: dayjs().toDate(),
 		});
 		set({ status: ChatStatus.Streaming }, false, nameSpace('handleRetry', id));
@@ -110,6 +111,12 @@ export const chatActions: StateCreator<
 		try {
 			get().internal_abort();
 			set({ isPending: false }, false, nameSpace('handleCancel'));
+			const lastMessage = get().getLastMessage();
+			if (lastMessage) {
+				void get().updateMessage(lastMessage.id, {
+					reasoning: null,
+				});
+			}
 			void get().onCancel?.({ set, get, ctx });
 		} catch (error) {
 			logger(['Error in handleCancel:', error], { type: 'error' });
