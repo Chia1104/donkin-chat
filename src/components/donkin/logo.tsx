@@ -23,6 +23,9 @@ interface Props {
 	forceCloseOnOpen?: boolean;
 	delay?: number;
 	enableEffect?: boolean;
+	classNames?: {
+		active?: string;
+	};
 }
 
 const ActiveLogo = (props: Props) => {
@@ -45,6 +48,7 @@ const ActiveLogo = (props: Props) => {
 		forceCloseOnOpen = false,
 		delay = 0.2,
 		enableEffect = false,
+		classNames,
 	} = props;
 
 	const isActive = useMemo(() => {
@@ -133,7 +137,7 @@ const ActiveLogo = (props: Props) => {
 					damping: 15,
 				}}
 				ref={ref}
-				className={cn('relative size-14 transition-opacity duration-300', className, {
+				className={cn('relative size-14 transition-opacity duration-300', className, classNames?.active, {
 					'cursor-pointer': isActivatable,
 					'opacity-50 hover:opacity-100': opacityOnStatus === current,
 				})}
@@ -314,6 +318,7 @@ const FoldLogo = (props: Props) => {
 		opacityOnStatus,
 		hiddenOnStatus,
 		forceCloseOnOpen = false,
+		classNames,
 	} = props;
 
 	const handleToggle = () => {
@@ -352,6 +357,7 @@ const FoldLogo = (props: Props) => {
 							current={DonkinStatus.Close}
 							isActivatable={false}
 							className={className}
+							classNames={classNames}
 							delay={0}
 						/>
 					) : (
@@ -461,6 +467,7 @@ const ThinkingLogo = (props: Props) => {
 		opacityOnStatus,
 		hiddenOnStatus,
 		forceCloseOnOpen = false,
+		classNames,
 	} = props;
 
 	const handleToggle = () => {
@@ -500,6 +507,7 @@ const ThinkingLogo = (props: Props) => {
 							current={DonkinStatus.Open}
 							isActivatable={false}
 							className={className}
+							classNames={classNames}
 							delay={0}
 						/>
 					) : (

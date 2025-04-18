@@ -1,6 +1,6 @@
 'use client';
 
-import { memo, useRef, useEffect } from 'react';
+import { memo, useRef } from 'react';
 
 import { Card, CardBody, CardFooter } from '@heroui/card';
 import { ScrollShadow } from '@heroui/scroll-shadow';
@@ -14,9 +14,7 @@ import Logo from '@/components/donkin/logo';
 import { Drawer, DrawerContent, DrawerTitle } from '@/components/ui/drawer';
 import { DonkinStatus } from '@/enums/donkin.enum';
 import { useMediaQuery } from '@/hooks/useMediaQuery';
-import { DEFAULT_THREAD_ID } from '@/libs/ai/constants';
 import { ChatStatus } from '@/libs/ai/enums/chatStatus.enum';
-import { useAISearchParams } from '@/libs/ai/hooks/useAISearchParams';
 import { useChatStore } from '@/stores/chat';
 import { useGlobalStore } from '@/stores/global/store';
 import { cn } from '@/utils/cn';
@@ -63,7 +61,7 @@ const DonkinLogo = () => {
 					current={DonkinStatus.Folded}
 					className="absolute top-5 left-5 size-8 z-[100] hidden sm:block"
 					classNames={{
-						active: 'size-9 top-0 left-0',
+						active: 'size-9 -top-1 -left-1',
 					}}
 				/>
 			)}
@@ -130,17 +128,6 @@ const ChatFooter = memo(() => {
 	);
 });
 
-const ThreadId = () => {
-	const threadId = useChatStore(state => state.threadId);
-	const [, setSearchParams] = useAISearchParams();
-	useEffect(() => {
-		if (threadId && threadId !== DEFAULT_THREAD_ID) {
-			void setSearchParams({ threadId });
-		}
-	}, [setSearchParams, threadId]);
-	return null;
-};
-
 const Chat = () => {
 	const isOpen = useGlobalStore(state => state.donkin.isOpen);
 	const toggle = useGlobalStore(state => state.toggleDonkin);
@@ -173,7 +160,6 @@ const Chat = () => {
 						</motion.div>
 					)}
 				</AnimatePresence>
-				<ThreadId />
 			</Card>
 		);
 	}
@@ -193,7 +179,6 @@ const Chat = () => {
 						<ChatBody />
 						<ChatFooter />
 					</div>
-					<ThreadId />
 				</Card>
 			</DrawerContent>
 		</Drawer>
