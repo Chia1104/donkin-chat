@@ -226,119 +226,117 @@ const Detail = () => {
 
 	return (
 		<div className="w-full h-full flex flex-col">
-			<ScrollShadow className="w-full h-[calc(100vh-72px)]">
-				<div className="flex flex-col gap-6 w-full">
-					<header className="flex items-center gap-5 justify-between lg:justify-start">
-						<section className="flex items-center gap-5">
-							<HeaderPrimitive
-								avatarProps={{
-									size: 'lg',
-									className: 'min-w-8 min-h-8 w-8 h-8',
-								}}
-								classNames={{
-									label: 'text-[22px] font-normal mr-2',
-									labelWrapper: 'lg:flex-row flex-col lg:items-center lg:gap-2 gap-0',
-								}}
-								injects={{
-									afterLabel: (
-										<span className="flex items-center gap-3">
-											<p className="text-success text-[12px] font-normal">{diff}</p>
-											<Tooltip
-												content={dayjs(queryResult.data?.created_at).format('YYYY-MM-DD HH:mm:ss')}
-												showArrow
-												radius="sm"
-												classNames={{
-													content: 'text-[10px] font-normal',
-												}}
-											>
-												<p className="text-[12px] font-normal">
-													{truncateMiddle(
-														queryResult.data?.address ?? '',
-														queryResult.data?.address ? queryResult.data?.address.length / 3 : 5,
-													)}
-												</p>
-											</Tooltip>
-											<CopyButton content={params.token} />
-										</span>
-									),
-								}}
-								isLoading={queryResult.isLoading}
-								meta={{
-									name: queryResult.data?.name ?? '',
-									avatar: queryResult.data?.logo_uri ?? '',
-									chain: queryResult.data?.symbol ?? '',
-									symbol: queryResult.data?.symbol ?? '',
-									token: queryResult.data?.address ?? '',
-								}}
-							/>
-						</section>
-						<Divider orientation="vertical" className="h-4 hidden lg:block" />
-						<MetaInfo price={queryResult.data?.price ?? 0} change={queryResult.data?.change ?? 0} />
-					</header>
-					<Card className="flex flex-col space-y-2 lg:flex-row lg:justify-between p-0 bg-transparent">
-						<Hotspot x={0} className="w-full lg:max-w-[40%]" />
-						<CardBody className="grid grid-cols-2 lg:grid-cols-4 gap-2 space-y-2 lg:space-y-0 w-full lg:max-w-[45%]">
-							<Stock
-								label={t('card.stock.marketCap')}
-								value={`$ ${formatLargeNumber(queryResult.data?.market_cap ?? 0)}`}
-								isPending={queryResult.isLoading}
-							/>
-							<Stock
-								classNames={{
-									base: 'lg:pl-4',
-								}}
-								label={t('card.stock.pool')}
-								value={`$ ${formatLargeNumber(queryResult.data?.liquidity ?? 0)}`}
-								isPending={queryResult.isLoading}
-							/>
-							<Stock
-								classNames={{
-									base: 'lg:pl-4',
-								}}
-								label={tToken('holder')}
-								value={formatLargeNumber(0)}
-								isPending={queryResult.isLoading}
-							/>
-							<Stock
-								classNames={{
-									base: 'lg:pl-4',
-								}}
-								label={tToken('wallets')}
-								value={formatLargeNumber(0)}
-								isPending={queryResult.isLoading}
-							/>
-						</CardBody>
-					</Card>
-					<Divider orientation="horizontal" />
-					<section className="flex flex-col md:flex-row md:items-center md:justify-between">
-						<DateFilter />
-						<Marker />
-					</section>
-					{ohlcv.isLoading || isKolAlertsLoading || isTransactionsLoading ? (
-						<div className="flex items-center justify-center w-full h-[55dvh]">
-							<Spinner />
-						</div>
-					) : (
-						<Candlestick
+			<div className="flex flex-col gap-6 w-full">
+				<header className="flex items-center gap-5 justify-between lg:justify-start">
+					<section className="flex items-center gap-5">
+						<HeaderPrimitive
+							avatarProps={{
+								size: 'lg',
+								className: 'min-w-8 min-h-8 w-8 h-8',
+							}}
+							classNames={{
+								label: 'text-[22px] font-normal mr-2',
+								labelWrapper: 'lg:flex-row flex-col lg:items-center lg:gap-2 gap-0',
+							}}
+							injects={{
+								afterLabel: (
+									<span className="flex items-center gap-3">
+										<p className="text-success text-[12px] font-normal">{diff}</p>
+										<Tooltip
+											content={dayjs(queryResult.data?.created_at).format('YYYY-MM-DD HH:mm:ss')}
+											showArrow
+											radius="sm"
+											classNames={{
+												content: 'text-[10px] font-normal',
+											}}
+										>
+											<p className="text-[12px] font-normal">
+												{truncateMiddle(
+													queryResult.data?.address ?? '',
+													queryResult.data?.address ? queryResult.data?.address.length / 3 : 5,
+												)}
+											</p>
+										</Tooltip>
+										<CopyButton content={params.token} />
+									</span>
+								),
+							}}
+							isLoading={queryResult.isLoading}
 							meta={{
-								price: queryResult.data?.price ?? 0,
-								change: queryResult.data?.change ?? 0,
-								address: params.token,
+								name: queryResult.data?.name ?? '',
+								avatar: queryResult.data?.logo_uri ?? '',
+								chain: queryResult.data?.symbol ?? '',
+								symbol: queryResult.data?.symbol ?? '',
+								token: queryResult.data?.address ?? '',
 							}}
-							query={{
-								type: searchParams.interval,
-								time_from: timeFrom,
-								time_to: currentUnix.current,
-							}}
-							data={ohlcvData}
-							isPending={ohlcv.isLoading || isKolAlertsLoading || isTransactionsLoading}
-							isMetaPending={queryResult.isLoading}
-							kolAlerts={kolAlerts}
-							transactions={transactions}
 						/>
-					)}
-				</div>
-			</ScrollShadow>
+					</section>
+					<Divider orientation="vertical" className="h-4 hidden lg:block" />
+					<MetaInfo price={queryResult.data?.price ?? 0} change={queryResult.data?.change ?? 0} />
+				</header>
+				<Card className="flex flex-col space-y-2 lg:flex-row lg:justify-between p-0 bg-transparent">
+					<Hotspot x={0} className="w-full lg:max-w-[40%]" />
+					<CardBody className="grid grid-cols-2 lg:grid-cols-4 gap-2 space-y-2 lg:space-y-0 w-full lg:max-w-[45%]">
+						<Stock
+							label={t('card.stock.marketCap')}
+							value={`$ ${formatLargeNumber(queryResult.data?.market_cap ?? 0)}`}
+							isPending={queryResult.isLoading}
+						/>
+						<Stock
+							classNames={{
+								base: 'lg:pl-4',
+							}}
+							label={t('card.stock.pool')}
+							value={`$ ${formatLargeNumber(queryResult.data?.liquidity ?? 0)}`}
+							isPending={queryResult.isLoading}
+						/>
+						<Stock
+							classNames={{
+								base: 'lg:pl-4',
+							}}
+							label={tToken('holder')}
+							value={formatLargeNumber(0)}
+							isPending={queryResult.isLoading}
+						/>
+						<Stock
+							classNames={{
+								base: 'lg:pl-4',
+							}}
+							label={tToken('wallets')}
+							value={formatLargeNumber(0)}
+							isPending={queryResult.isLoading}
+						/>
+					</CardBody>
+				</Card>
+				<Divider orientation="horizontal" />
+				<section className="flex flex-col lg:flex-row lg:items-center lg:justify-between">
+					<DateFilter />
+					<Marker />
+				</section>
+				{ohlcv.isLoading || isKolAlertsLoading || isTransactionsLoading ? (
+					<div className="flex items-center justify-center w-full h-[55dvh]">
+						<Spinner />
+					</div>
+				) : (
+					<Candlestick
+						meta={{
+							price: queryResult.data?.price ?? 0,
+							change: queryResult.data?.change ?? 0,
+							address: params.token,
+						}}
+						query={{
+							type: searchParams.interval,
+							time_from: timeFrom,
+							time_to: currentUnix.current,
+						}}
+						data={ohlcvData}
+						isPending={ohlcv.isLoading || isKolAlertsLoading || isTransactionsLoading}
+						isMetaPending={queryResult.isLoading}
+						kolAlerts={kolAlerts}
+						transactions={transactions}
+					/>
+				)}
+			</div>
 		</div>
 	);
 };

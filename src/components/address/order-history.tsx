@@ -200,7 +200,7 @@ const Meta = () => {
 	const isPositive = isPositiveNumber(meta.profit) || (typeof meta.profit === 'string' && meta.profit.startsWith('+'));
 
 	return (
-		<div className="w-full flex md:items-center gap-4 justify-between md:justify-start">
+		<div className="w-full flex lg:items-center gap-4 justify-between lg:justify-start">
 			<div className="flex items-center gap-4">
 				<Avatar src={meta.avatar} size="md" className="w-[32px] h-[32px]" />
 				<span className="flex items-center gap-2">
@@ -220,8 +220,8 @@ const Meta = () => {
 					<CopyButton content={meta.address} />
 				</span>
 			</div>
-			<Divider orientation="vertical" className="h-4 hidden md:block" />
-			<div className="flex md:items-center md:gap-4 flex-col md:flex-row">
+			<Divider orientation="vertical" className="h-4 hidden lg:block" />
+			<div className="flex lg:items-center lg:gap-4 flex-col lg:flex-row">
 				<p className="text-[22px] font-normal">
 					${isNumber(meta.volume) ? formatLargeNumber(meta.volume, 2) : meta.volume}
 				</p>
@@ -245,7 +245,7 @@ const Header = () => {
 	const { win, profit, isMetaPending } = useOrderHistory();
 
 	return (
-		<div className="flex flex-col md:flex-row md:items-center md:gap-4 w-full">
+		<div className="flex flex-col lg:flex-row lg:items-center lg:gap-4 w-full">
 			<div className="flex items-center gap-4">
 				<h3 className="text-[16px] font-normal text-white/65">{t('title')}</h3>
 				<Divider orientation="vertical" className="h-4" />

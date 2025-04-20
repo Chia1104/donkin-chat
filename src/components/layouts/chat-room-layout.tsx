@@ -3,6 +3,7 @@
 import { useRef } from 'react';
 
 import { Navbar, NavbarContent, NavbarItem } from '@heroui/navbar';
+import { ScrollShadow } from '@heroui/scroll-shadow';
 import { Skeleton } from '@heroui/skeleton';
 import { usePrivy } from '@privy-io/react-auth';
 import { useTranslations } from 'next-intl';
@@ -36,18 +37,52 @@ interface Props {
 	enableSettings?: boolean;
 }
 
-const ChatRoomLayout = (props: Props) => {
+const ContentLayout = ({ children }: { children: React.ReactNode }) => {
+	const isOpen = useGlobalStore(state => state.donkin.isOpen);
+
+	return (
+		<ScrollShadow
+			className={cn(
+				'p-5 h-fit md:h-[calc(100vh-100px)] flex items-center justify-center',
+				isOpen ? 'w-full lg:w-2/3 pr-0' : 'w-full',
+			)}
+		>
+			{children}
+		</ScrollShadow>
+	);
+};
+
+const ChatBotLayout = ({ children }: { children: React.ReactNode }) => {
+	const { isMdWidth } = useMediaQuery();
+	const isOpen = useGlobalStore(state => state.donkin.isOpen);
+
+	if (isOpen && isMdWidth) {
+		return (
+			<section
+				className={cn(
+					'h-[calc(100vh-100px)] p-5 md:pl-0 md:py-5 transition-width ease-in-out duration-1000 w-full lg:w-1/2 xl:w-1/3',
+				)}
+			>
+				{children}
+			</section>
+		);
+	} else if (isOpen) {
+		return <>{children}</>;
+	}
+
+	return null;
+};
+
+const Navigation = ({ enableSettings }: { enableSettings?: boolean }) => {
 	const t = useTranslations('nav');
 	const tDevMode = useTranslations('dev-mode');
 	const router = useRouter();
-	const isOpen = useGlobalStore(state => state.donkin.isOpen);
 	const clickCountRef = useRef(0);
 	const clickTimerRef = useRef<NodeJS.Timeout | null>(null);
 	const { ready, authenticated } = usePrivy();
-	const { isSmWidth } = useMediaQuery();
 
 	const handleClickFiveTimeToToggleFeatureFlag = () => {
-		void setFeatureFlag(!props.enableSettings);
+		void setFeatureFlag(!enableSettings);
 		toast.success(tDevMode('toggle'), {
 			position: 'top-center',
 		});
@@ -73,80 +108,69 @@ const ChatRoomLayout = (props: Props) => {
 	};
 
 	return (
-		<>
-			<Navbar
-				aria-label="Main Navigation"
-				position="static"
-				className="bg-root backdrop-saturate-0"
-				classNames={{
-					item: 'data-[active=true]:text-primary',
-					wrapper: 'min-w-full h-full',
-					base: 'h-[72px]',
-				}}
+		<Navbar
+			aria-label="Main Navigation"
+			position="static"
+			className="bg-root backdrop-saturate-0"
+			classNames={{
+				item: 'data-[active=true]:text-primary',
+				wrapper: 'min-w-full h-full',
+				base: 'h-[60px]',
+			}}
+		>
+			<NavbarContent
+				aria-label="Main Navigation Content"
+				className={cn('flex lg:gap-10 gap-4', noto_sans.className)}
+				justify="start"
 			>
-				<NavbarContent
-					aria-label="Main Navigation Content"
-					className={cn('flex lg:gap-10 gap-4', noto_sans.className)}
-					justify="start"
+				<NavbarItem className="cursor-pointer" aria-label="Donkin" onClick={handleDonkinClick}>
+					<Donkin />
+				</NavbarItem>
+				<NavbarItem
+					aria-label={t('all-tokens')}
+					className="cursor-pointer hidden md:block"
+					onClick={() => {
+						void router.push(`/?q=${QueryType.Tokens}`);
+					}}
 				>
-					<NavbarItem className="cursor-pointer" aria-label="Donkin" onClick={handleDonkinClick}>
-						<Donkin />
+					{t('all-tokens')}
+				</NavbarItem>
+				<NavbarItem aria-label={t('search-placeholder')} className="hidden md:block">
+					<SearchAddress />
+				</NavbarItem>
+			</NavbarContent>
+			<NavbarContent aria-label="Main Navigation Content" justify="end" className="gap-4">
+				{enableSettings && (
+					<NavbarItem aria-label="Settings">
+						<Settings />
 					</NavbarItem>
-					<NavbarItem
-						aria-label={t('all-tokens')}
-						className="cursor-pointer hidden md:block"
-						onClick={() => {
-							void router.push(`/?q=${QueryType.Tokens}`);
-						}}
-					>
-						{t('all-tokens')}
+				)}
+				{ready && authenticated ? (
+					<NavbarItem aria-label="User">
+						<UserPopover />
 					</NavbarItem>
-					<NavbarItem aria-label={t('search-placeholder')} className="hidden md:block">
-						<SearchAddress />
-					</NavbarItem>
-				</NavbarContent>
-				<NavbarContent aria-label="Main Navigation Content" justify="end" className="gap-4">
-					{props.enableSettings && (
-						<NavbarItem aria-label="Settings">
-							<Settings />
+				) : (
+					<>
+						<NavbarItem aria-label="Connect Wallet">
+							<WalletConnect />
 						</NavbarItem>
-					)}
-					{ready && authenticated ? (
-						<NavbarItem aria-label="User">
-							<UserPopover />
+						<NavbarItem aria-label="Network Selector">
+							<ChainSelector />
 						</NavbarItem>
-					) : (
-						<>
-							<NavbarItem aria-label="Connect Wallet">
-								<WalletConnect />
-							</NavbarItem>
-							<NavbarItem aria-label="Network Selector">
-								<ChainSelector />
-							</NavbarItem>
-						</>
-					)}
-				</NavbarContent>
-			</Navbar>
-			<main className="gap-10 overflow-hidden w-full relative flex items-center justify-center min-h-[calc(100dvh-72px)]">
-				<section
-					className={cn(
-						'p-5 overflow-y-auto h-[calc(100vh-72px)] flex items-center justify-center',
-						isOpen && isSmWidth ? 'w-full lg:w-2/3 pr-0' : 'w-full',
-					)}
-				>
-					{props.children}
-				</section>
-				{isOpen && isSmWidth ? (
-					<section
-						className={cn(
-							'h-[calc(100vh-72px)] p-5 md:pl-0 md:py-5 transition-width ease-in-out duration-1000 w-full md:w-1/2 lg:w-1/3',
-						)}
-					>
-						{props.chatBot}
-					</section>
-				) : isOpen ? (
-					<>{props.chatBot}</>
-				) : null}
+					</>
+				)}
+			</NavbarContent>
+		</Navbar>
+	);
+};
+
+const ChatRoomLayout = (props: Props) => {
+	return (
+		<>
+			<Navigation enableSettings={props.enableSettings} />
+			<main className="gap-5 lg:gap-8 overflow-hidden w-full relative flex items-center justify-center md:min-h-[calc(100dvh-100px)]">
+				<ContentLayout>{props.children}</ContentLayout>
+				<ChatBotLayout>{props.chatBot}</ChatBotLayout>
 			</main>
 			<Footer />
 			<Logo className="fixed bottom-5 right-5 z-[99] size-20" opacityOnStatus="close" hiddenOnStatus="open" />

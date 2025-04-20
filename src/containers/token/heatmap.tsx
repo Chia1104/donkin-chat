@@ -2,7 +2,6 @@
 
 import { useMemo } from 'react';
 
-import { ScrollShadow } from '@heroui/scroll-shadow';
 import { Spinner } from '@heroui/spinner';
 
 import type { CryptoData } from '@/components/chart/ec-treemap';
@@ -31,19 +30,17 @@ const Heatmap = () => {
 		);
 	}, [queryResult.flatData]);
 	return (
-		<div className="w-full h-full flex flex-col max-w-full">
-			<ScrollShadow className="w-full h-[calc(100vh-156px)] max-w-full">
-				<AsyncQuery
-					queryResult={queryResult}
-					loadingFallback={
-						<div className="w-full h-full flex items-center justify-center">
-							<Spinner />
-						</div>
-					}
-				>
-					<ECTreemap data={data} />
-				</AsyncQuery>
-			</ScrollShadow>
+		<div className="w-full h-[calc(100vh-156px)] flex flex-col max-w-full">
+			<AsyncQuery
+				queryResult={queryResult}
+				loadingFallback={
+					<div className="w-full h-full flex items-center justify-center">
+						<Spinner />
+					</div>
+				}
+			>
+				<ECTreemap data={data} />
+			</AsyncQuery>
 		</div>
 	);
 };

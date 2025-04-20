@@ -16,6 +16,35 @@ export type TokenSearchRequestOptions = PaginationRequestOptions & {
 export type TokenSearchResponse = PaginationData<SearchToken>;
 
 export const getTokensHot = async (options?: BaseRequestOptions<TokensHotRequestOptions>) => {
+	if (options?.mock) {
+		return tokensPaginationSchema.parse({
+			total: 40,
+			page: 1,
+			page_size: 40,
+			data: Array.from({ length: 40 }, (_, index) => ({
+				address: `0x${index.toString(16).padStart(40, '0')}`,
+				chain_id: 1,
+				symbol: `TOKEN${index}`,
+				name: `Token ${index}`,
+				decimals: 18,
+				price: 100 + index,
+				daily_volume: 100 + index,
+				market_cap: 100 + index,
+				price_change_24h: 100 + index,
+				volume_24h: 100 + index,
+				liquidity: 100 + index,
+				created_at: new Date().toISOString(),
+				updated_at: new Date().toISOString(),
+				last_trade_time: new Date().toISOString(),
+				freeze_authority: `0x${index.toString(16).padStart(40, '0')}`,
+				mint_authority: `0x${index.toString(16).padStart(40, '0')}`,
+				permanent_delegate: `0x${index.toString(16).padStart(40, '0')}`,
+				minted_at: new Date().toISOString(),
+				coingecko_id: `token${index}`,
+				change: 100 + index,
+			})),
+		} satisfies TokensHotResponse);
+	}
 	const response = await request()
 		.get('api/v1/tokens/hot', {
 			signal: options?.signal,

@@ -2,7 +2,6 @@
 
 import { useMemo } from 'react';
 
-import { ScrollShadow } from '@heroui/scroll-shadow';
 import { Spinner } from '@heroui/spinner';
 import type { Time } from 'lightweight-charts';
 import { useParams } from 'next/navigation';
@@ -146,22 +145,20 @@ const Detail = () => {
 				}
 				enable={false}
 			>
-				<ScrollShadow className="w-full h-[calc(100vh-72px)]">
-					<div className="flex flex-col gap-10 w-full">
-						<ErrorBoundary>
-							<OrderHistory
-								{...orderHistoryProps}
-								balanceData={balanceData}
-								profitLossData={profitLossData}
-								isPending={queryResult.isLoading}
-								isMetaPending={queryResult.isLoading}
-							/>
-						</ErrorBoundary>
-						<ErrorBoundary>
-							<OrderDetails data={queryResult.data} mock={globalSearchParams.mock} isPending={queryResult.isLoading} />
-						</ErrorBoundary>
-					</div>
-				</ScrollShadow>
+				<div className="flex flex-col gap-10 w-full">
+					<ErrorBoundary>
+						<OrderHistory
+							{...orderHistoryProps}
+							balanceData={balanceData}
+							profitLossData={profitLossData}
+							isPending={queryResult.isLoading}
+							isMetaPending={queryResult.isLoading}
+						/>
+					</ErrorBoundary>
+					<ErrorBoundary>
+						<OrderDetails data={queryResult.data} mock={globalSearchParams.mock} isPending={queryResult.isLoading} />
+					</ErrorBoundary>
+				</div>
 			</AsyncQuery>
 		</div>
 	);

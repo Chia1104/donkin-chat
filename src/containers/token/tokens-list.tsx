@@ -256,7 +256,7 @@ const List = ({ display }: { display: 'group' | 'single' }) => {
 							{...props}
 							className={cn(
 								'grid grid-cols-1 gap-4 mb-4 w-full min-h-full',
-								!isOpen ? 'lg:grid-cols-4 md:grid-cols-3 sm:grid-cols-2' : 'lg:grid-cols-3 md:grid-cols-2',
+								!isOpen ? 'xl:grid-cols-4 lg:grid-cols-3 md:grid-cols-2' : 'xl:grid-cols-3 lg:grid-cols-2',
 							)}
 						>
 							{children}
@@ -269,7 +269,7 @@ const List = ({ display }: { display: 'group' | 'single' }) => {
 						</li>
 					),
 					Scroller: ({ children, ...props }) => (
-						<ScrollShadow className="w-full h-[calc(100vh-156px)]" {...props}>
+						<ScrollShadow className="w-full min-h-[calc(100vh-140px)] md:min-h-fit" {...props}>
 							{children}
 						</ScrollShadow>
 					),
@@ -320,7 +320,7 @@ const List = ({ display }: { display: 'group' | 'single' }) => {
 const TokensList = () => {
 	return (
 		<div className="w-full h-full flex flex-col">
-			<header className="flex items-center justify-end py-4">
+			<header className="flex items-center justify-end mb-4">
 				<div className="flex gap-4">
 					<SortFilter />
 				</div>
