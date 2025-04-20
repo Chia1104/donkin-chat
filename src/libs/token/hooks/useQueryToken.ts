@@ -26,12 +26,16 @@ export type QueryTokenSearchOptions = Omit<
 	'queryKey' | 'queryFn' | 'getNextPageParam' | 'initialPageParam'
 >;
 
-export const useQueryTokensHot = (requestOptions?: TokensHotRequestOptions, options?: QueryTokensHotOptions) => {
+export const useQueryTokensHot = (
+	requestOptions?: TokensHotRequestOptions & { mock?: boolean },
+	options?: QueryTokensHotOptions,
+) => {
 	return useInfiniteQuery(
 		{
 			queryKey: ['tokens-hot'],
 			queryFn: ({ pageParam, signal }) =>
 				getTokensHot({
+					mock: requestOptions?.mock,
 					signal,
 					data: {
 						...requestOptions,

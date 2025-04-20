@@ -1,6 +1,6 @@
 'use client';
 
-import { memo, useRef } from 'react';
+import { memo, useEffect, useRef } from 'react';
 
 import { Card, CardBody, CardFooter } from '@heroui/card';
 import { ScrollShadow } from '@heroui/scroll-shadow';
@@ -14,7 +14,9 @@ import Logo from '@/components/donkin/logo';
 import { Drawer, DrawerContent, DrawerTitle } from '@/components/ui/drawer';
 import { DonkinStatus } from '@/enums/donkin.enum';
 import { useMediaQuery } from '@/hooks/useMediaQuery';
+import { DEFAULT_THREAD_ID } from '@/libs/ai/constants';
 import { ChatStatus } from '@/libs/ai/enums/chatStatus.enum';
+import { useAISearchParams } from '@/libs/ai/hooks/useAISearchParams';
 import { useChatStore } from '@/stores/chat';
 import { useGlobalStore } from '@/stores/global/store';
 import { cn } from '@/utils/cn';
@@ -59,7 +61,7 @@ const DonkinLogo = () => {
 			{messages && messages.length > 0 && (
 				<Logo
 					current={DonkinStatus.Folded}
-					className="absolute top-5 left-5 size-8 z-[100] hidden sm:block"
+					className="absolute top-5 left-5 size-8 z-[100] hidden md:block"
 					classNames={{
 						active: 'size-9 -top-1 -left-1',
 					}}
@@ -81,7 +83,7 @@ const ChatBody = () => {
 			<ScrollShadow
 				ref={containerRef}
 				aria-label="chat-scroll-shadow"
-				className="w-full max-w-full h-[calc(100vh-370px)] sm:h-[calc(100vh-300px)] overflow-y-auto"
+				className="w-full max-w-full h-[calc(100vh-370px)] md:h-[calc(100vh-300px)] overflow-y-auto"
 			>
 				<div
 					className={cn(
@@ -128,16 +130,27 @@ const ChatFooter = memo(() => {
 	);
 });
 
+const ThreadId = () => {
+	const threadId = useChatStore(state => state.threadId);
+	const [, setSearchParams] = useAISearchParams();
+	useEffect(() => {
+		if (threadId && threadId !== DEFAULT_THREAD_ID) {
+			void setSearchParams({ threadId });
+		}
+	}, [setSearchParams, threadId]);
+	return null;
+};
+
 const Chat = () => {
 	const isOpen = useGlobalStore(state => state.donkin.isOpen);
 	const toggle = useGlobalStore(state => state.toggleDonkin);
-	const { isSmWidth } = useMediaQuery();
+	const { isMdWidth } = useMediaQuery();
 
-	if (isSmWidth) {
+	if (isMdWidth) {
 		return (
 			<Card
 				className={cn(
-					'bg-[#FFFFFF08] shadow-none p-5 relative overflow-visible transition-width ease-in-out duration-1000 h-full min-h-[calc(100vh-200px)] sm:min-h-[calc(100vh-130px)] max-h-[calc(100vh-200px)] sm:max-h-[calc(100vh-130px)]',
+					'bg-[#FFFFFF08] shadow-none p-5 relative overflow-visible transition-width ease-in-out duration-1000 h-full min-h-[calc(100vh-200px)] md:min-h-[calc(100vh-130px)] max-h-[calc(100vh-200px)] md:max-h-[calc(100vh-130px)]',
 					!isOpen ? 'w-[30px] rounded-full' : 'min-w-full',
 				)}
 				radius="sm"
@@ -160,6 +173,7 @@ const Chat = () => {
 						</motion.div>
 					)}
 				</AnimatePresence>
+				<ThreadId />
 			</Card>
 		);
 	}
@@ -180,6 +194,7 @@ const Chat = () => {
 						<ChatFooter />
 					</div>
 				</Card>
+				<ThreadId />
 			</DrawerContent>
 		</Drawer>
 	);

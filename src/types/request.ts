@@ -3,6 +3,7 @@ export interface BaseRequestOptions<TData = unknown> {
 	signal?: AbortSignal;
 	headers?: Headers;
 	timeout?: number;
+	mock?: boolean;
 }
 
 export interface ResponseData<TData = unknown> {
