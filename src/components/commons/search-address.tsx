@@ -2,6 +2,7 @@
 
 import { useEffect, useRef, useState } from 'react';
 
+import type { AutocompleteProps } from '@heroui/autocomplete';
 import { Autocomplete, AutocompleteItem } from '@heroui/autocomplete';
 import { Avatar } from '@heroui/avatar';
 import { Spinner } from '@heroui/spinner';
@@ -18,7 +19,7 @@ import { useQueryTokenSearch } from '@/libs/token/hooks/useQueryToken';
 import { formatLargeNumber, truncateMiddle } from '@/utils/format';
 import { logger } from '@/utils/logger';
 
-const SearchAddress = () => {
+const SearchAddress = (props: Partial<AutocompleteProps>) => {
 	const t = useTranslations('nav');
 	const tUtils = useTranslations('utils');
 	const tToken = useTranslations('preview.tokens-list');
@@ -103,7 +104,7 @@ const SearchAddress = () => {
 			aria-label={t('search-placeholder')}
 			variant="bordered"
 			endContent={
-				isLoading ? <Spinner size="sm" /> : <span className="text-default-600 i-material-symbols-search size-[22px]" />
+				isLoading ? <Spinner size="sm" /> : <span className="text-default-600 i-material-symbols-search size-[20px]" />
 			}
 			classNames={{
 				base: 'min-w-[200px]',
@@ -125,6 +126,7 @@ const SearchAddress = () => {
 			isClearable={false}
 			scrollRef={scrollerRef}
 			itemHeight={45}
+			{...props}
 		>
 			{concatData.map((item, index) => {
 				return (

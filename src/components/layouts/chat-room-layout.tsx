@@ -2,16 +2,20 @@
 
 import { useRef } from 'react';
 
+import { Listbox, ListboxItem } from '@heroui/listbox';
 import { Navbar, NavbarContent, NavbarItem } from '@heroui/navbar';
+import { Button } from '@heroui/react';
 import { ScrollShadow } from '@heroui/scroll-shadow';
 import { Skeleton } from '@heroui/skeleton';
 import { usePrivy } from '@privy-io/react-auth';
+import { CoinsIcon, HomeIcon, MenuIcon } from 'lucide-react';
 import { useTranslations } from 'next-intl';
-import { useTransitionRouter as useRouter } from 'next-view-transitions';
+import { Link, useTransitionRouter as useRouter } from 'next-view-transitions';
 import dynamic from 'next/dynamic';
 import { toast } from 'sonner';
 
 import Footer from '@/components/commons/footer';
+import { Drawer, DrawerContent, DrawerTitle, DrawerTrigger, DrawerClose } from '@/components/ui/drawer';
 import { useMediaQuery } from '@/hooks/useMediaQuery';
 import { QueryType } from '@/libs/ai/enums/queryType.enum';
 import { setFeatureFlag } from '@/libs/flags/actions/feature.action';
@@ -71,6 +75,54 @@ const ChatBotLayout = ({ children }: { children: React.ReactNode }) => {
 	}
 
 	return null;
+};
+
+const MobileDrawer = () => {
+	const tRoutes = useTranslations('routes');
+	const t = useTranslations('nav');
+	const router = useRouter();
+	return (
+		<Drawer>
+			<DrawerTrigger asChild>
+				<Button isIconOnly variant="bordered" radius="full">
+					<MenuIcon size={16} />
+				</Button>
+			</DrawerTrigger>
+			<DrawerContent className="p-5">
+				<DrawerTitle />
+				<SearchAddress className="w-full my-5" />
+				<Listbox>
+					<ListboxItem>
+						<DrawerClose asChild onClick={() => router.push('/')}>
+							<Link href="/">
+								<span className="flex items-center gap-5">
+									<HomeIcon size={16} />
+									{tRoutes('home.title')}
+								</span>
+							</Link>
+						</DrawerClose>
+					</ListboxItem>
+					<ListboxItem>
+						<DrawerClose asChild onClick={() => router.push(`/?q=${QueryType.Tokens}`)}>
+							<Link
+								href={{
+									pathname: '/',
+									query: {
+										q: QueryType.Tokens,
+									},
+								}}
+							>
+								<span className="flex items-center gap-5">
+									<CoinsIcon size={16} />
+									{t('all-tokens')}
+								</span>
+							</Link>
+						</DrawerClose>
+					</ListboxItem>
+				</Listbox>
+			</DrawerContent>
+		</Drawer>
+	);
 };
 
 const Navigation = ({ enableSettings }: { enableSettings?: boolean }) => {
@@ -145,6 +197,9 @@ const Navigation = ({ enableSettings }: { enableSettings?: boolean }) => {
 						<Settings />
 					</NavbarItem>
 				)}
+				<NavbarItem className="md:hidden">
+					<MobileDrawer />
+				</NavbarItem>
 				{ready && authenticated ? (
 					<NavbarItem aria-label="User">
 						<UserPopover />
