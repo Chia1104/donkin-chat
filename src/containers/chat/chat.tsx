@@ -11,7 +11,7 @@ import DefaultPrompt from '@/components/chat/default-prompt';
 import MessageCard from '@/components/chat/message-card';
 import PromptInput from '@/components/chat/prompt-input';
 import Logo from '@/components/donkin/logo';
-import { Drawer, DrawerContent, DrawerTitle } from '@/components/ui/drawer';
+import { Drawer, DrawerContent, DrawerTitle, DrawerDescription } from '@/components/ui/drawer';
 import { DonkinStatus } from '@/enums/donkin.enum';
 import { useMediaQuery } from '@/hooks/useMediaQuery';
 import { DEFAULT_THREAD_ID } from '@/libs/ai/constants';
@@ -181,7 +181,8 @@ const Chat = () => {
 	return (
 		<Drawer open={isOpen} onOpenChange={toggle}>
 			<DrawerContent>
-				<DrawerTitle></DrawerTitle>
+				<DrawerTitle />
+				<DrawerDescription />
 				<Card
 					className={cn(
 						'bg-transparent shadow-none p-5 relative overflow-visible transition-width ease-in-out duration-1000 h-full min-h-[calc(100vh-200px)] max-h-[calc(100vh-200px)] w-full min-full',
