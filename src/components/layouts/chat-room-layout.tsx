@@ -15,7 +15,14 @@ import dynamic from 'next/dynamic';
 import { toast } from 'sonner';
 
 import Footer from '@/components/commons/footer';
-import { Drawer, DrawerContent, DrawerTitle, DrawerTrigger, DrawerClose } from '@/components/ui/drawer';
+import {
+	Drawer,
+	DrawerContent,
+	DrawerTitle,
+	DrawerTrigger,
+	DrawerClose,
+	DrawerDescription,
+} from '@/components/ui/drawer';
 import { useMediaQuery } from '@/hooks/useMediaQuery';
 import { QueryType } from '@/libs/ai/enums/queryType.enum';
 import { setFeatureFlag } from '@/libs/flags/actions/feature.action';
@@ -48,7 +55,7 @@ const ContentLayout = ({ children }: { children: React.ReactNode }) => {
 		<ScrollShadow
 			className={cn(
 				'p-5 h-fit md:h-[calc(100vh-100px)] flex items-center justify-center',
-				isOpen ? 'w-full lg:w-2/3 pr-0' : 'w-full',
+				isOpen ? 'w-full lg:w-2/3 md:pr-0' : 'w-full',
 			)}
 		>
 			{children}
@@ -90,6 +97,7 @@ const MobileDrawer = () => {
 			</DrawerTrigger>
 			<DrawerContent className="p-5">
 				<DrawerTitle />
+				<DrawerDescription />
 				<SearchAddress className="w-full my-5" />
 				<Listbox>
 					<ListboxItem>
@@ -228,7 +236,7 @@ const ChatRoomLayout = (props: Props) => {
 				<ChatBotLayout>{props.chatBot}</ChatBotLayout>
 			</main>
 			<Footer />
-			<Logo className="fixed bottom-5 right-5 z-[99] size-20" opacityOnStatus="close" hiddenOnStatus="open" />
+			<Logo className="fixed bottom-5 right-5 z-40 size-20" opacityOnStatus="close" hiddenOnStatus="open" />
 		</>
 	);
 };
