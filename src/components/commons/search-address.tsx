@@ -12,6 +12,7 @@ import { isNumber } from 'lodash-es';
 import { useTranslations } from 'next-intl';
 import { useTransitionRouter } from 'next-view-transitions';
 
+import { useAuthGuard } from '@/components/auth/auth-guard';
 import { useCMD } from '@/hooks/useCMD';
 import { IntervalFilter } from '@/libs/address/enums/interval-filter.enum';
 import { useQueryAddress } from '@/libs/address/hooks/useQueryAddress';
@@ -28,6 +29,7 @@ const SearchAddress = (props: Partial<AutocompleteProps>) => {
 	const [search, setSearch] = useState('');
 	const [selected, setSelected] = useState<{ address: string; symbol: string } | null>(null);
 	const router = useTransitionRouter();
+	const { canActivate } = useAuthGuard('SearchAddress');
 
 	const [debouncedSearch] = useDebouncedValue(search, {
 		wait: 800,
@@ -63,12 +65,18 @@ const SearchAddress = (props: Partial<AutocompleteProps>) => {
 		}
 	}, [error, isError]);
 
-	useCMD(false, {
-		cmd: 'k',
-		onKeyDown: () => {
-			ref.current?.focus();
+	useCMD(
+		false,
+		{
+			cmd: 'k',
+			onKeyDown: () => {
+				if (canActivate) {
+					ref.current?.focus();
+				}
+			},
 		},
-	});
+		[canActivate],
+	);
 
 	const [, scrollerRef] = useInfiniteScroll({
 		hasMore: hasNextPage,
