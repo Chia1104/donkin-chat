@@ -55,3 +55,11 @@ export function truncateMiddle(
 
 	return frontPart + ellipsis + backPart;
 }
+
+export const base64Decode = (base64: string): string => {
+	return Buffer.from(base64, 'base64').toString('utf-8');
+};
+
+export const base64Encode = (str: string): string => {
+	return Buffer.from(str).toString('base64');
+};

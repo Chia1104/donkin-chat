@@ -7,7 +7,15 @@ type RequestOptions = {
 	requestMode?: RequestMode;
 } & Options;
 
-export type RequestMode = 'proxy' | 'self-api' | 'external' | 'ai' | 'proxy-ai' | 'node-endpoint';
+export type RequestMode =
+	| 'proxy'
+	| 'self-api'
+	| 'external'
+	| 'ai'
+	| 'proxy-ai'
+	| 'node-endpoint'
+	| 'proxy-invitations-api'
+	| 'invitations-api';
 
 const getPrefixedUrl = (requestMode?: RequestMode) => {
 	const IS_SERVER = typeof window === 'undefined';
@@ -24,6 +32,10 @@ const getPrefixedUrl = (requestMode?: RequestMode) => {
 			return !IS_SERVER ? '/proxy-ai-api' : env.NEXT_PUBLIC_APP_AI_API_HOST;
 		case 'node-endpoint':
 			return env.NEXT_PUBLIC_APP_NODE_ENDPOINT ?? '/';
+		case 'proxy-invitations-api':
+			return !IS_SERVER ? '/proxy-invitations-api' : env.NEXT_PUBLIC_APP_INVITATIONS_API_HOST;
+		case 'invitations-api':
+			return env.NEXT_PUBLIC_APP_INVITATIONS_API_HOST;
 		default:
 			return !IS_SERVER ? '/' : env.NEXT_PUBLIC_APP_API_HOST;
 	}

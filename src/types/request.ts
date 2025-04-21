@@ -8,7 +8,7 @@ export interface BaseRequestOptions<TData = unknown> {
 
 export interface ResponseData<TData = unknown> {
 	code: number;
-	status: 'success' | 'error';
+	status?: 'success' | 'error';
 	message?: string;
 	data: TData;
 }

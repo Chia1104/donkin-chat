@@ -283,6 +283,32 @@
 		"address": "My Wallet",
 		"disconnect": "Disconnect"
 	},
+	"auth": {
+		"invitation": {
+			"title": "Invitation Code",
+			"description": "Please enter the invitation code",
+			"button": "Bind Invitation Code",
+			"success": {
+				"default": "Invitation code bound successfully",
+				"already-bound": "Invitation code already bound"
+			},
+			"error": {
+				"default": "Invitation code binding failed",
+				"invalid": "Invitation code is invalid",
+				"already-bound": "Invitation code already bound"
+			}
+		},
+		"guard": {
+			"code-register": {
+				"title": "Please enter the invitation code",
+				"subtitle": "One invitation code can only bind one wallet",
+				"description": "Current address: {address}",
+				"button": "Bind invitation code",
+				"or": "Or use another wallet",
+				"switch-wallet": "Switch wallet"
+			}
+		}
+	},
 	"ChartExamples": {
 		"title": "Chart Examples",
 		"candlestickTitle": "Candlestick Chart (K-Line)",

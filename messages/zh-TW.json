@@ -283,6 +283,32 @@
 		"address": "我的錢包",
 		"disconnect": "斷開連接"
 	},
+	"auth": {
+		"invitation": {
+			"title": "邀請碼",
+			"description": "請輸入邀請碼",
+			"button": "綁定邀請碼",
+			"success": {
+				"default": "邀請碼綁定成功",
+				"already-bound": "邀請碼已綁定"
+			},
+			"error": {
+				"default": "邀請碼綁定失敗",
+				"invalid": "邀請碼無效",
+				"already-bound": "邀請碼已綁定"
+			}
+		},
+		"guard": {
+			"code-register": {
+				"title": "請輸入邀請碼",
+				"subtitle": "一個邀請碼只能綁定一個錢包",
+				"description": "當前地址為：{address}",
+				"button": "綁定邀請碼",
+				"or": "或使用另一個錢包",
+				"switch-wallet": "切換錢包"
+			}
+		}
+	},
 	"ChartExamples": {
 		"title": "圖表範例",
 		"candlestickTitle": "K 線圖",
