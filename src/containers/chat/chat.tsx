@@ -133,7 +133,7 @@ const Chat = () => {
 	const isOpen = useGlobalStore(state => state.donkin.isOpen);
 	const toggle = useGlobalStore(state => state.toggleDonkin);
 	const { isMdWidth } = useMediaQuery();
-	const { enabled, isAuthenticated } = useAuthGuard();
+	const { canActivate } = useAuthGuard('Chat');
 
 	if (isMdWidth) {
 		return (
@@ -167,7 +167,7 @@ const Chat = () => {
 	}
 
 	return (
-		<Drawer open={(isOpen && !enabled) || (isOpen && enabled && isAuthenticated)} onOpenChange={toggle}>
+		<Drawer open={isOpen && canActivate} onOpenChange={toggle}>
 			<DrawerContent>
 				<DrawerTitle />
 				<DrawerDescription />

@@ -31,6 +31,7 @@ interface Props {
 interface AuthGuardContext {
 	isAuthenticated: boolean;
 	enabled: boolean;
+	canActivate: boolean;
 }
 
 const AuthGuardContext = createContext<AuthGuardContext | null>(null);
@@ -157,7 +158,7 @@ export const AuthGuard = ({ isRegistered, isWalletConnected, children, enabled =
 	const isAuthenticated = (isWalletConnected || (ready && authenticated)) && isRegistered;
 
 	return (
-		<AuthGuardContext value={{ isAuthenticated, enabled }}>
+		<AuthGuardContext value={{ isAuthenticated, enabled, canActivate: !enabled || (enabled && isAuthenticated) }}>
 			{children}
 			<Modal
 				isOpen={!isAuthenticated && enabled}

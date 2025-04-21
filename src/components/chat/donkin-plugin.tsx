@@ -14,20 +14,20 @@ export const DonkinPlugin = () => {
 	const [, setSearchParams] = useAISearchParams();
 	const toggleDonkin = useGlobalStore(state => state.toggleDonkin);
 	const completeDonkin = useGlobalStore(state => state.completeDonkin);
-	const { enabled, isAuthenticated } = useAuthGuard();
+	const { canActivate } = useAuthGuard('DonkinPlugin');
 
 	useCMD(
 		false,
 		{
 			cmd: 'i',
 			onKeyDown: () => {
-				if (!enabled || (enabled && isAuthenticated)) {
+				if (canActivate) {
 					completeDonkin();
 					toggleDonkin();
 				}
 			},
 		},
-		[enabled, isAuthenticated],
+		[canActivate],
 	);
 
 	useEffect(() => {

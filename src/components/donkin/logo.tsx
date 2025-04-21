@@ -40,7 +40,7 @@ const ActiveLogo = (props: Props) => {
 	const onboarding = useGlobalStore(state => state.completeDonkin);
 	const [isComponentMounted] = useIsMounted();
 	const [debouncedForceOnboarding, setDebouncedForceOnboarding] = useState(false);
-	const { enabled, isAuthenticated } = useAuthGuard();
+	const { canActivate } = useAuthGuard('ActiveLogo');
 	const {
 		current = isOpen ? DonkinStatus.Open : DonkinStatus.Close,
 		className,
@@ -64,7 +64,7 @@ const ActiveLogo = (props: Props) => {
 
 	const content = useMemo(() => {
 		if (!isActivatable) return undefined;
-		if ((!donkin && !enabled) || (!donkin && enabled && isAuthenticated)) {
+		if (!donkin && canActivate) {
 			return <OnboardingTooltip />;
 		}
 		switch (current) {
@@ -73,11 +73,9 @@ const ActiveLogo = (props: Props) => {
 			case DonkinStatus.Close:
 				return t('action.open');
 		}
-	}, [current, donkin, enabled, isActivatable, isAuthenticated, t]);
+	}, [canActivate, current, donkin, isActivatable, t]);
 
-	const forceOnboarding =
-		(!donkin && isActivatable && isComponentMounted && !enabled) ||
-		(!donkin && isActivatable && isComponentMounted && enabled && isAuthenticated);
+	const forceOnboarding = !donkin && isActivatable && isComponentMounted && canActivate;
 
 	const handleToggle = () => {
 		if (isActivatable) {

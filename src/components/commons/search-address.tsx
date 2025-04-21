@@ -29,7 +29,7 @@ const SearchAddress = (props: Partial<AutocompleteProps>) => {
 	const [search, setSearch] = useState('');
 	const [selected, setSelected] = useState<{ address: string; symbol: string } | null>(null);
 	const router = useTransitionRouter();
-	const { enabled, isAuthenticated } = useAuthGuard();
+	const { canActivate } = useAuthGuard('SearchAddress');
 
 	const [debouncedSearch] = useDebouncedValue(search, {
 		wait: 800,
@@ -70,12 +70,12 @@ const SearchAddress = (props: Partial<AutocompleteProps>) => {
 		{
 			cmd: 'k',
 			onKeyDown: () => {
-				if (!enabled || (enabled && isAuthenticated)) {
+				if (canActivate) {
 					ref.current?.focus();
 				}
 			},
 		},
-		[enabled, isAuthenticated],
+		[canActivate],
 	);
 
 	const [, scrollerRef] = useInfiniteScroll({
