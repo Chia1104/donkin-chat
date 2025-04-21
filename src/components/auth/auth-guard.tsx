@@ -1,6 +1,6 @@
 'use client';
 
-import { use, useRef, useTransition } from 'react';
+import { use, useTransition } from 'react';
 
 import { Button } from '@heroui/button';
 import { Divider } from '@heroui/divider';
@@ -15,7 +15,6 @@ import { Link, useTransitionRouter } from 'next-view-transitions';
 
 import { useLoginWithInvitationsCode } from '@/libs/auth/hooks/useLoginWithInvitationsCode';
 import { truncateMiddle } from '@/utils/format';
-import { logger } from '@/utils/logger';
 import { tryCatch } from '@/utils/try-catch';
 
 import Donkin from '../donkin/title';
@@ -135,28 +134,22 @@ const CodeRegister = () => {
 };
 
 export const AuthGuard = ({ isRegistered, isWalletConnected, children, enabled = false }: Props) => {
-	const isAuthenticated = useRef(true);
 	const t = useTranslations('footer');
+	const { authenticated, ready } = usePrivy();
 
-	const { ready, authenticated } = usePrivy();
-
-	if (enabled) {
-		const token = use(getAccessToken);
-
-		if (!token.data || !isRegistered || (ready && !authenticated) || !isWalletConnected) {
-			logger('unauthorized');
-			isAuthenticated.current = false;
-		} else {
-			logger('authorized');
-			isAuthenticated.current = true;
-		}
+	if (!enabled) {
+		return children;
 	}
+
+	use(getAccessToken);
+
+	const isAuthenticated = (isWalletConnected || (ready && authenticated)) && isRegistered;
 
 	return (
 		<>
 			{children}
 			<Modal
-				isOpen={!isAuthenticated.current && enabled}
+				isOpen={!isAuthenticated}
 				classNames={{
 					closeButton: 'hidden cursor-default',
 					body: 'bg-transparent',
@@ -164,7 +157,9 @@ export const AuthGuard = ({ isRegistered, isWalletConnected, children, enabled =
 				backdrop="blur"
 			>
 				<ModalContent className="sm:bg-transparent sm:border-none sm:shadow-none prose-invert">
-					<AnimatePresence>{!isWalletConnected ? <Welcome /> : <CodeRegister />}</AnimatePresence>
+					<AnimatePresence>
+						{!isWalletConnected && (!ready || !authenticated) ? <Welcome /> : <CodeRegister />}
+					</AnimatePresence>
 					<ModalFooter className="flex w-full justify-center">
 						<section className="flex gap-1 items-center">
 							<Link className="text-[10px] leading-[12px] w-fit" href="#">
