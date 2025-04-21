@@ -61,7 +61,7 @@ const DonkinLogo = () => {
 			{messages && messages.length > 0 && (
 				<Logo
 					current={DonkinStatus.Folded}
-					className="absolute top-5 left-5 size-8 z-[100] hidden md:block"
+					className="absolute top-5 left-5 size-8 z-40 hidden md:block"
 					classNames={{
 						active: 'size-9 -top-1 -left-1',
 					}}

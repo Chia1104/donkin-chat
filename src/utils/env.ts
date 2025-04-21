@@ -36,6 +36,7 @@ export const env = createEnv({
 		AI_TOKEN: z.string().optional(),
 		OPENROUTER_API_KEY: z.string().optional(),
 		PRIVY_SECRET: z.string().min(1),
+		PRIVY_VERIFICATION_KEY_BASE64: z.string().min(1),
 	},
 
 	client: {
@@ -46,6 +47,7 @@ export const env = createEnv({
 		NEXT_PUBLIC_GA_ID: z.string().optional(),
 		NEXT_PUBLIC_APP_API_HOST: z.string().min(1),
 		NEXT_PUBLIC_APP_AI_API_HOST: z.string().min(1),
+		NEXT_PUBLIC_APP_INVITATIONS_API_HOST: z.string().min(1),
 		NEXT_PUBLIC_DEFAULT_TIME_ZONE: z.string().min(1),
 		NEXT_PUBLIC_DEFAULT_LOCALE: z.nativeEnum(Locale),
 		NEXT_PUBLIC_DEBUG_ZUSTAND_DEVTOOLS: z.string().optional(),
@@ -66,6 +68,7 @@ export const env = createEnv({
 		NEXT_PUBLIC_GA_ID: process.env.NEXT_PUBLIC_GA_ID,
 		NEXT_PUBLIC_APP_API_HOST: process.env.NEXT_PUBLIC_APP_API_HOST,
 		NEXT_PUBLIC_APP_AI_API_HOST: process.env.NEXT_PUBLIC_APP_AI_API_HOST,
+		NEXT_PUBLIC_APP_INVITATIONS_API_HOST: process.env.NEXT_PUBLIC_APP_INVITATIONS_API_HOST,
 		NEXT_PUBLIC_DEFAULT_TIME_ZONE: process.env.NEXT_PUBLIC_DEFAULT_TIME_ZONE || 'Asia/Shanghai',
 		NEXT_PUBLIC_DEFAULT_LOCALE: process.env.NEXT_PUBLIC_DEFAULT_LOCALE || 'zh-CN',
 		OPENAI_API_KEY: process.env.OPENAI_API_KEY,
@@ -79,6 +82,7 @@ export const env = createEnv({
 		NEXT_PUBLIC_PRIVY_APP_ID: process.env.NEXT_PUBLIC_PRIVY_APP_ID,
 		NEXT_PUBLIC_PRIVY_CLIENT_ID: process.env.NEXT_PUBLIC_PRIVY_CLIENT_ID,
 		PRIVY_SECRET: process.env.PRIVY_SECRET,
+		PRIVY_VERIFICATION_KEY_BASE64: process.env.PRIVY_VERIFICATION_KEY_BASE64,
 	},
 
 	skipValidation: process.env.SKIP_ENV_VALIDATION === 'true' || process.env.SKIP_ENV_VALIDATION === '1',

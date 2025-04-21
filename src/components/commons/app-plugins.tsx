@@ -44,7 +44,7 @@ const AppPlugins = () => {
 			<Donkin />
 			<Wb3StoreConsumer />
 			<ToasterPlugin />
-			<ToastProvider />
+			<ToastProvider placement="top-center" toastOffset={20} />
 			<ReactQueryDevtools initialIsOpen={false} buttonPosition="top-left" />
 		</>
 	);

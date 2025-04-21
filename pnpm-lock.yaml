@@ -134,6 +134,9 @@ importers:
       hono:
         specifier: ^4.7.6
         version: 4.7.6
+      jose:
+        specifier: ^6.0.10
+        version: 6.0.10
       katex:
         specifier: ^0.16.22
         version: 0.16.22
@@ -158,6 +161,9 @@ importers:
       next-intl:
         specifier: ^4.0.2
         version: 4.0.2(next@15.3.0(@babel/core@7.26.10)(@opentelemetry/api@1.9.0)(babel-plugin-react-compiler@19.0.0-beta-ebf51a3-20250411)(react-dom@19.1.0(react@19.1.0))(react@19.1.0))(react@19.1.0)(typescript@5.8.3)
+      next-safe-action:
+        specifier: ^7.10.5
+        version: 7.10.5(@sinclair/typebox@0.33.22)(next@15.3.0(@babel/core@7.26.10)(@opentelemetry/api@1.9.0)(babel-plugin-react-compiler@19.0.0-beta-ebf51a3-20250411)(react-dom@19.1.0(react@19.1.0))(react@19.1.0))(react-dom@19.1.0(react@19.1.0))(react@19.1.0)(valibot@1.0.0-beta.15(typescript@5.8.3))(zod@3.24.2)
       next-themes:
         specifier: ^0.4.6
         version: 0.4.6(react-dom@19.1.0(react@19.1.0))(react@19.1.0)
@@ -8159,6 +8165,9 @@ packages:
   jose@5.10.0:
     resolution: {integrity: sha512-s+3Al/p9g32Iq+oqXxkW//7jk2Vig6FF1CFqzVXoTUXt2qz89YWbL+OwS17NFYEvxC35n0FKeGO2LGYSxeM2Gg==}
 
+  jose@6.0.10:
+    resolution: {integrity: sha512-skIAxZqcMkOrSwjJvplIPYrlXGpxTPnro2/QWTDCxAdWQrSTV5/KqspMWmi5WAx5+ULswASJiZ0a+1B/Lxt9cw==}
+
   joycon@3.1.1:
     resolution: {integrity: sha512-34wB/Y7MW7bzjKRjUKTa46I2Z7eV62Rkhva+KkopW7Qvv/OSWBqvkSY7vusOPrNuZcUG3tApvdVgNB8POj3SPw==}
     engines: {node: '>=10'}
@@ -8871,6 +8880,27 @@ packages:
       typescript: ^5.0.0
     peerDependenciesMeta:
       typescript:
+        optional: true
+
+  next-safe-action@7.10.5:
+    resolution: {integrity: sha512-UQdu490byYN7034FYZtnPVFP3DjyvYBpmXSQ/dpdJFznSsGCDCmTRk+Hs51emt5jljEKtMcL1XCfBbFuGklmrA==}
+    engines: {node: '>=18.17'}
+    peerDependencies:
+      '@sinclair/typebox': '>= 0.33.3'
+      next: '>= 14.0.0'
+      react: '>= 18.2.0'
+      react-dom: '>= 18.2.0'
+      valibot: '>= 0.36.0'
+      yup: '>= 1.0.0'
+      zod: '>= 3.0.0'
+    peerDependenciesMeta:
+      '@sinclair/typebox':
+        optional: true
+      valibot:
+        optional: true
+      yup:
+        optional: true
+      zod:
         optional: true
 
   next-themes@0.4.6:
@@ -22676,6 +22706,8 @@ snapshots:
 
   jose@5.10.0: {}
 
+  jose@6.0.10: {}
+
   joycon@3.1.1: {}
 
   js-base64@3.7.7: {}
@@ -23746,6 +23778,16 @@ snapshots:
       use-intl: 4.0.2(react@19.1.0)
     optionalDependencies:
       typescript: 5.8.3
+
+  next-safe-action@7.10.5(@sinclair/typebox@0.33.22)(next@15.3.0(@babel/core@7.26.10)(@opentelemetry/api@1.9.0)(babel-plugin-react-compiler@19.0.0-beta-ebf51a3-20250411)(react-dom@19.1.0(react@19.1.0))(react@19.1.0))(react-dom@19.1.0(react@19.1.0))(react@19.1.0)(valibot@1.0.0-beta.15(typescript@5.8.3))(zod@3.24.2):
+    dependencies:
+      next: 15.3.0(@babel/core@7.26.10)(@opentelemetry/api@1.9.0)(babel-plugin-react-compiler@19.0.0-beta-ebf51a3-20250411)(react-dom@19.1.0(react@19.1.0))(react@19.1.0)
+      react: 19.1.0
+      react-dom: 19.1.0(react@19.1.0)
+    optionalDependencies:
+      '@sinclair/typebox': 0.33.22
+      valibot: 1.0.0-beta.15(typescript@5.8.3)
+      zod: 3.24.2
 
   next-themes@0.4.6(react-dom@19.1.0(react@19.1.0))(react@19.1.0):
     dependencies:

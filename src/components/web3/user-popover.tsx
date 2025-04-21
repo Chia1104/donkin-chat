@@ -10,16 +10,18 @@ import { Unplug } from 'lucide-react';
 import { useTranslations } from 'next-intl';
 import { useTransitionRouter } from 'next-view-transitions';
 
+import { useLogout } from '@/libs/auth/hooks/useLogout';
 import { useWeb3Store } from '@/stores/web3/store';
 import { truncateMiddle } from '@/utils/format';
 
 import CopyButton from '../commons/copy-button';
 
 export const UserPopover = () => {
-	const { ready, authenticated, user, logout } = usePrivy();
+	const { ready, authenticated, user } = usePrivy();
 	const vm = useWeb3Store(store => store.vm);
 	const router = useTransitionRouter();
 	const t = useTranslations('wallet-profile');
+	const [isPending, handleLogout] = useLogout();
 	return (
 		<Popover
 			isTriggerDisabled={!ready || !authenticated}
@@ -44,6 +46,7 @@ export const UserPopover = () => {
 			</PopoverTrigger>
 			<PopoverContent className="px-0">
 				<Listbox
+					disabledKeys={isPending ? ['logout'] : []}
 					aria-label={t('address')}
 					onAction={key => {
 						switch (key) {
@@ -51,7 +54,7 @@ export const UserPopover = () => {
 								router.push(`/${vm}/address/${user?.wallet?.address}`);
 								break;
 							case 'logout':
-								void logout();
+								handleLogout();
 								break;
 						}
 					}}

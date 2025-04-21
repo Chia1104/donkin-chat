@@ -283,6 +283,32 @@
         "address": "我的钱包",
         "disconnect": "断开连接"
     },
+    "auth": {
+        "invitation": {
+            "title": "邀请码",
+            "description": "请输入邀请码",
+            "button": "绑定邀请码",
+            "success": {
+                "default": "邀请码绑定成功",
+                "already-bound": "邀请码已绑定"
+            },
+            "error": {
+                "default": "邀请码绑定失败",
+                "invalid": "邀请码无效",
+                "already-bound": "邀请码已绑定"
+            }
+        },
+        "guard": {
+            "code-register": {
+                "title": "请输入邀请码",
+                "subtitle": "一个邀请码只能绑定一个钱包",
+                "description": "当前地址为：{address}",
+                "button": "绑定邀请码",
+                "or": "或使用另一个钱包",
+                "switch-wallet": "切换钱包"
+            }
+        }
+    },
     "ChartExamples": {
         "title": "图表范例",
         "candlestickTitle": "K 线图",

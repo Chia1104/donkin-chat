@@ -3,11 +3,14 @@ import { flag } from 'flags/next';
 import 'server-only';
 import { z } from 'zod';
 
+import { IS_DEV } from '@/utils/env';
+
 export const getConfig = async (id: string) => get(id);
 
 export const FlagID = {
 	AIChat: 'flags-ai-chat',
 	CookieFeatures: 'flags-cookie-features',
+	InviteCode: 'flags-invite-code',
 } as const;
 
 export const aiChatFlag = flag<boolean>({
@@ -27,7 +30,7 @@ const cookieFeaturesSchema = z
 	})
 	.default(DEFAULT_COOKIE_FEATURES);
 
-type CookieFeatures = z.infer<typeof cookieFeaturesSchema>;
+export type CookieFeatures = z.infer<typeof cookieFeaturesSchema>;
 
 export const cookieFeaturesFlag = flag<CookieFeatures, CookieFeatures>({
 	key: FlagID.CookieFeatures,
@@ -43,5 +46,13 @@ export const cookieFeaturesFlag = flag<CookieFeatures, CookieFeatures>({
 	decide({ entities }) {
 		if (!entities) return DEFAULT_COOKIE_FEATURES;
 		return entities;
+	},
+});
+
+export const inviteCodeFlag = flag<boolean>({
+	key: FlagID.InviteCode,
+	async decide() {
+		if (IS_DEV) return true;
+		return (await getConfig(FlagID.InviteCode)) === 'true';
 	},
 });
