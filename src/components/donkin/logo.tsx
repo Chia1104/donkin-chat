@@ -8,6 +8,7 @@ import { motion, AnimatePresence } from 'framer-motion';
 import { useTranslations } from 'next-intl';
 import { useHover, useInterval } from 'usehooks-ts';
 
+import { useAuthGuard } from '@/components/auth/auth-guard';
 import { DonkinStatus } from '@/enums/donkin.enum';
 import { useGlobalStore } from '@/stores/global/store';
 import { cn } from '@/utils/cn';
@@ -39,6 +40,7 @@ const ActiveLogo = (props: Props) => {
 	const onboarding = useGlobalStore(state => state.completeDonkin);
 	const [isComponentMounted] = useIsMounted();
 	const [debouncedForceOnboarding, setDebouncedForceOnboarding] = useState(false);
+	const { enabled, isAuthenticated } = useAuthGuard();
 	const {
 		current = isOpen ? DonkinStatus.Open : DonkinStatus.Close,
 		className,
@@ -62,7 +64,7 @@ const ActiveLogo = (props: Props) => {
 
 	const content = useMemo(() => {
 		if (!isActivatable) return undefined;
-		if (!donkin) {
+		if ((!donkin && !enabled) || (!donkin && enabled && isAuthenticated)) {
 			return <OnboardingTooltip />;
 		}
 		switch (current) {
@@ -71,9 +73,11 @@ const ActiveLogo = (props: Props) => {
 			case DonkinStatus.Close:
 				return t('action.open');
 		}
-	}, [current, donkin, isActivatable, t]);
+	}, [current, donkin, enabled, isActivatable, isAuthenticated, t]);
 
-	const forceOnboarding = !donkin && isActivatable && isComponentMounted;
+	const forceOnboarding =
+		(!donkin && isActivatable && isComponentMounted && !enabled) ||
+		(!donkin && isActivatable && isComponentMounted && enabled && isAuthenticated);
 
 	const handleToggle = () => {
 		if (isActivatable) {

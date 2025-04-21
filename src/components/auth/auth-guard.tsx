@@ -1,6 +1,6 @@
 'use client';
 
-import { use, useTransition } from 'react';
+import { use, useTransition, createContext } from 'react';
 
 import { Button } from '@heroui/button';
 import { Divider } from '@heroui/divider';
@@ -28,6 +28,21 @@ interface Props {
 	enabled?: boolean;
 }
 
+interface AuthGuardContext {
+	isAuthenticated: boolean;
+	enabled: boolean;
+}
+
+const AuthGuardContext = createContext<AuthGuardContext | null>(null);
+
+export const useAuthGuard = (name = 'useAuthGuard') => {
+	const context = use(AuthGuardContext);
+	if (!context) {
+		throw new Error(`${name} must be used within a AuthGuard`);
+	}
+	return context;
+};
+
 const Welcome = () => {
 	const t = useTranslations('meta');
 	const tAction = useTranslations('action');
@@ -40,10 +55,10 @@ const Welcome = () => {
 
 	return (
 		<motion.div initial={{ opacity: 0 }} animate={{ opacity: 1 }} exit={{ opacity: 0 }} transition={{ duration: 0.3 }}>
-			<ModalBody className="prose prose-invert flex flex-col items-center justify-center text-center mb-5">
+			<ModalBody className="prose-invert prose-sm sm:prose-base flex flex-col items-center justify-center text-center mb-5 prose-h2:mb-2 prose-img:mb-2 prose-p:mb-2 prose-p:mt-2">
 				<h2 className="w-2/3">{t('subtitle')}</h2>
-				<Donkin className="mb-2" width={150} height={54} />
-				<p>{t('description')}</p>
+				<Donkin width={150} height={54} />
+				<p className="w-3/4 sm:w-full">{t('description')}</p>
 				<Button
 					onPress={() =>
 						privyLogin({
@@ -137,26 +152,22 @@ export const AuthGuard = ({ isRegistered, isWalletConnected, children, enabled =
 	const t = useTranslations('footer');
 	const { authenticated, ready } = usePrivy();
 
-	if (!enabled) {
-		return children;
-	}
-
 	use(getAccessToken);
 
 	const isAuthenticated = (isWalletConnected || (ready && authenticated)) && isRegistered;
 
 	return (
-		<>
+		<AuthGuardContext value={{ isAuthenticated, enabled }}>
 			{children}
 			<Modal
-				isOpen={!isAuthenticated}
+				isOpen={!isAuthenticated && enabled}
 				classNames={{
 					closeButton: 'hidden cursor-default',
 					body: 'bg-transparent',
 				}}
 				backdrop="blur"
 			>
-				<ModalContent className="sm:bg-transparent sm:border-none sm:shadow-none prose-invert">
+				<ModalContent className="sm:bg-transparent sm:border-none sm:shadow-none pt-10 sm:pt-0">
 					<AnimatePresence>
 						{!isWalletConnected && (!ready || !authenticated) ? <Welcome /> : <CodeRegister />}
 					</AnimatePresence>
@@ -177,6 +188,6 @@ export const AuthGuard = ({ isRegistered, isWalletConnected, children, enabled =
 					</ModalFooter>
 				</ModalContent>
 			</Modal>
-		</>
+		</AuthGuardContext>
 	);
 };

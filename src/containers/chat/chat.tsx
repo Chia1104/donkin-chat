@@ -1,11 +1,12 @@
 'use client';
 
-import { memo, useEffect, useRef } from 'react';
+import { memo, useRef } from 'react';
 
 import { Card, CardBody, CardFooter } from '@heroui/card';
 import { ScrollShadow } from '@heroui/scroll-shadow';
 import { AnimatePresence, motion } from 'framer-motion';
 
+import { useAuthGuard } from '@/components/auth/auth-guard';
 import { AutoScroll } from '@/components/chat/auto-scroll';
 import DefaultPrompt from '@/components/chat/default-prompt';
 import MessageCard from '@/components/chat/message-card';
@@ -14,9 +15,7 @@ import Logo from '@/components/donkin/logo';
 import { Drawer, DrawerContent, DrawerTitle, DrawerDescription } from '@/components/ui/drawer';
 import { DonkinStatus } from '@/enums/donkin.enum';
 import { useMediaQuery } from '@/hooks/useMediaQuery';
-import { DEFAULT_THREAD_ID } from '@/libs/ai/constants';
 import { ChatStatus } from '@/libs/ai/enums/chatStatus.enum';
-import { useAISearchParams } from '@/libs/ai/hooks/useAISearchParams';
 import { useChatStore } from '@/stores/chat';
 import { useGlobalStore } from '@/stores/global/store';
 import { cn } from '@/utils/cn';
@@ -130,21 +129,11 @@ const ChatFooter = memo(() => {
 	);
 });
 
-const ThreadId = () => {
-	const threadId = useChatStore(state => state.threadId);
-	const [, setSearchParams] = useAISearchParams();
-	useEffect(() => {
-		if (threadId && threadId !== DEFAULT_THREAD_ID) {
-			void setSearchParams({ threadId });
-		}
-	}, [setSearchParams, threadId]);
-	return null;
-};
-
 const Chat = () => {
 	const isOpen = useGlobalStore(state => state.donkin.isOpen);
 	const toggle = useGlobalStore(state => state.toggleDonkin);
 	const { isMdWidth } = useMediaQuery();
+	const { enabled, isAuthenticated } = useAuthGuard();
 
 	if (isMdWidth) {
 		return (
@@ -173,13 +162,12 @@ const Chat = () => {
 						</motion.div>
 					)}
 				</AnimatePresence>
-				<ThreadId />
 			</Card>
 		);
 	}
 
 	return (
-		<Drawer open={isOpen} onOpenChange={toggle}>
+		<Drawer open={(isOpen && !enabled) || (isOpen && enabled && isAuthenticated)} onOpenChange={toggle}>
 			<DrawerContent>
 				<DrawerTitle />
 				<DrawerDescription />
@@ -195,7 +183,6 @@ const Chat = () => {
 						<ChatFooter />
 					</div>
 				</Card>
-				<ThreadId />
 			</DrawerContent>
 		</Drawer>
 	);

@@ -30,6 +30,7 @@ import { useGlobalStore } from '@/stores/global/store';
 import { noto_sans } from '@/themes/fonts';
 import { cn } from '@/utils/cn';
 
+import { DonkinPlugin } from '../chat/donkin-plugin';
 import SearchAddress from '../commons/search-address';
 import { Settings } from '../commons/settings';
 import Logo from '../donkin/logo';
@@ -237,6 +238,7 @@ const ChatRoomLayout = (props: Props) => {
 			</main>
 			<Footer />
 			<Logo className="fixed bottom-5 right-5 z-40 size-20" opacityOnStatus="close" hiddenOnStatus="open" />
+			<DonkinPlugin />
 		</>
 	);
 };
