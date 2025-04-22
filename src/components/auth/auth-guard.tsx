@@ -57,10 +57,10 @@ const Welcome = () => {
 
 	return (
 		<motion.div initial={{ opacity: 0 }} animate={{ opacity: 1 }} exit={{ opacity: 0 }} transition={{ duration: 0.3 }}>
-			<ModalBody className="flex flex-col items-center justify-center text-center mb-5">
-				<Donkin width={167} height={60} className="mb-8" />
-				<h2 className="text-4xl font-medium mb-3">{t('description1')}</h2>
-				<p className="font-light text-xl mb-8 text-default-500">{t('description2')}</p>
+			<ModalBody className="flex flex-col items-center justify-center text-center mb-3 sm:mb-5 px-3 sm:px-0">
+				<Donkin width={167} height={60} className="mb-3 sm:mb-8" />
+				<h2 className="text-xl sm:text-4xl font-medium mb-1 sm:mb-3">{t('description1')}</h2>
+				<p className="font-light text-base sm:text-xl mb-3 sm:mb-8 text-default-500">{t('description2')}</p>
 				<Button
 					onPress={() =>
 						privyLogin({
@@ -124,11 +124,11 @@ const CodeRegister = () => {
 	const isDisabled = isPending || !user?.wallet?.address || isLoading;
 	return (
 		<motion.div initial={{ opacity: 0 }} animate={{ opacity: 1 }} exit={{ opacity: 0 }} transition={{ duration: 0.3 }}>
-			<ModalBody className="flex flex-col items-center justify-center gap-10">
-				<ModalHeader className="flex flex-col items-center justify-center gap-3 pb-0">
-					<h3 className="text-2xl font-medium">{t('title')}</h3>
-					<p className="text-base font-light text-default-500">{t('subtitle')}</p>
-					<span className="text-sm font-light text-default-500">
+			<ModalBody className="flex flex-col items-center justify-center gap-5 sm:gap-8 px-3 sm:px-0">
+				<ModalHeader className="flex flex-col items-center justify-center gap-2 sm:gap-3 pb-0">
+					<h3 className="text-xl sm:text-2xl font-medium text-center">{t('title')}</h3>
+					<p className="text-sm sm:text-base font-light text-default-500 text-center">{t('subtitle')}</p>
+					<span className="text-xs sm:text-sm font-light text-default-500 text-center">
 						{t('description', { address: truncateMiddle(user?.wallet?.address ?? '', 10) })}
 					</span>
 				</ModalHeader>
@@ -149,8 +149,8 @@ const CodeRegister = () => {
 					isInvalid={!!callbackError}
 					autoFocus
 				/>
-				<ModalFooter className="flex flex-col items-center justify-center gap-8 w-full p-0">
-					<div className="flex items-center gap-2 w-full sm:w-1/4">
+				<ModalFooter className="flex flex-col items-center justify-center gap-8 w-full p-0 mb-3">
+					<div className="flex items-center gap-2 w-2/3 sm:w-1/2">
 						<Divider className="flex-1" />
 						<p className="shrink-0 text-xs text-default-500 mb-0">{t('or')}</p>
 						<Divider className="flex-1" />
@@ -176,6 +176,8 @@ const CodeRegister = () => {
 };
 
 export const AuthGuard = ({ isRegistered, isWalletConnected, children, enabled = false }: Props) => {
+	const { authenticated, ready } = usePrivy();
+
 	if (enabled) {
 		/**
 		 * force component to throw promise,
@@ -183,7 +185,7 @@ export const AuthGuard = ({ isRegistered, isWalletConnected, children, enabled =
 		 */
 		use(getAccessToken);
 	}
-	const { authenticated, ready } = usePrivy();
+
 	const isAuthenticated = (isWalletConnected || (ready && authenticated)) && isRegistered;
 
 	return (
@@ -196,9 +198,9 @@ export const AuthGuard = ({ isRegistered, isWalletConnected, children, enabled =
 					body: 'bg-transparent',
 				}}
 				backdrop="blur"
-				size="5xl"
+				size="lg"
 			>
-				<ModalContent className="sm:bg-transparent sm:border-none sm:shadow-none pt-10 sm:pt-0">
+				<ModalContent className="sm:bg-transparent sm:border-none sm:shadow-none pt-5 sm:pt-0">
 					<AnimatePresence>
 						{!isWalletConnected && (!ready || !authenticated) ? <Welcome /> : <CodeRegister />}
 					</AnimatePresence>

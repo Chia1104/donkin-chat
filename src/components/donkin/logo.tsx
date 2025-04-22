@@ -150,14 +150,14 @@ const ActiveLogo = (props: Props) => {
 					<motion.circle
 						cx="20"
 						cy="20"
-						r="18"
+						r="14.5"
 						initial={{ opacity: 0.5 }}
 						animate={{
 							opacity: [0.5, 0.7, 0.5],
 							scale: [1, 1.01, 1],
 						}}
 						transition={{
-							duration: 4,
+							duration: 2.5,
 							repeat: Infinity,
 							ease: 'easeInOut',
 						}}
@@ -166,6 +166,24 @@ const ActiveLogo = (props: Props) => {
 
 					{/* 主要圓形 */}
 					<circle cx="20" cy="20" r="16" fill={`url(#${id}-baseGradient)`} filter={`url(#${id}-glowEffect)`} />
+
+					{/* 增強發光效果球體 */}
+					<motion.circle
+						cx="20"
+						cy="20"
+						r="16"
+						fill={`url(#${id}-baseGradient)`}
+						filter={`url(#${id}-enhancedGlowEffect)`}
+						initial={{ opacity: 0 }}
+						animate={{
+							opacity: [0, 0.4, 0],
+						}}
+						transition={{
+							duration: 3,
+							repeat: Infinity,
+							ease: 'easeInOut',
+						}}
+					/>
 
 					{/* 藍色漸變光效 */}
 					<motion.circle
@@ -179,7 +197,7 @@ const ActiveLogo = (props: Props) => {
 							scale: [1, 1.02, 1],
 						}}
 						transition={{
-							duration: 3,
+							duration: 2,
 							repeat: Infinity,
 							ease: 'easeInOut',
 						}}
@@ -197,10 +215,67 @@ const ActiveLogo = (props: Props) => {
 							scale: [1, 1.03, 1],
 						}}
 						transition={{
-							duration: 3.5,
+							duration: 2.5,
 							repeat: Infinity,
 							ease: 'easeInOut',
-							delay: 0.5,
+							delay: 0.3,
+						}}
+					/>
+
+					{/* 球體效果 - 青藍色調 */}
+					<motion.circle
+						cx="20"
+						cy="20"
+						r="16"
+						fill={`url(#${id}-cyanBallGradient)`}
+						initial={{ opacity: 0.85 }}
+						animate={{
+							opacity: [0.85, 0.7, 0.85],
+							scale: [1, 1.02, 1],
+						}}
+						transition={{
+							duration: 2.2,
+							repeat: Infinity,
+							ease: 'easeInOut',
+							delay: 0.1,
+						}}
+					/>
+
+					{/* 球體效果 - 上方高光 */}
+					<motion.circle
+						cx="20"
+						cy="20"
+						r="16"
+						fill={`url(#${id}-topHighlightGradient)`}
+						initial={{ opacity: 0.7 }}
+						animate={{
+							opacity: [0.7, 0.8, 0.7],
+							scale: [1, 1.03, 1],
+						}}
+						transition={{
+							duration: 2.8,
+							repeat: Infinity,
+							ease: 'easeInOut',
+							delay: 0.2,
+						}}
+					/>
+
+					{/* 球體效果 - 底部白色光暈 */}
+					<motion.circle
+						cx="20"
+						cy="20"
+						r="16"
+						fill={`url(#${id}-bottomGlowGradient)`}
+						initial={{ opacity: 0.6 }}
+						animate={{
+							opacity: [0.6, 0.7, 0.6],
+							scale: [1, 1.02, 1],
+						}}
+						transition={{
+							duration: 3,
+							repeat: Infinity,
+							ease: 'easeInOut',
+							delay: 0.4,
 						}}
 					/>
 
@@ -264,6 +339,36 @@ const ActiveLogo = (props: Props) => {
 							<stop offset="0.86" stopColor="#FFFFFF" stopOpacity="0" />
 						</radialGradient>
 
+						{/* 藍色球體漸變 */}
+						<radialGradient id={`${id}-blueBallGradient`} cx="0.5" cy="0.5" r="0.5" gradientUnits="objectBoundingBox">
+							<stop offset="0" stopColor="#357CFF" />
+							<stop offset="1" stopColor="#2474FF" />
+						</radialGradient>
+
+						{/* 上方高光漸變 */}
+						<radialGradient
+							id={`${id}-topHighlightGradient`}
+							cx="0.917"
+							cy="0.071"
+							r="0.5"
+							gradientUnits="objectBoundingBox"
+						>
+							<stop offset="0" stopColor="#FFFFFF" />
+							<stop offset="1" stopColor="#FFFFFF" stopOpacity="0" />
+						</radialGradient>
+
+						{/* 底部光暈漸變 */}
+						<radialGradient
+							id={`${id}-bottomGlowGradient`}
+							cx="0.288"
+							cy="0.346"
+							r="0.5"
+							gradientUnits="objectBoundingBox"
+						>
+							<stop offset="0.049" stopColor="#47FFF3" stopOpacity="0.7" />
+							<stop offset="0.859" stopColor="#FFFFFF" stopOpacity="0" />
+						</radialGradient>
+
 						{/* 黑線漸變 */}
 						<linearGradient id={`${id}-lineGradient`} x1="0" y1="0" x2="20" y2="0" gradientUnits="userSpaceOnUse">
 							<stop offset="0" stopColor="#151F28" />
@@ -283,12 +388,33 @@ const ActiveLogo = (props: Props) => {
 							<feFlood floodOpacity="0" result="BackgroundImageFix" />
 							<feMorphology radius="1" operator="dilate" in="SourceAlpha" result="effect1_dropShadow" />
 							<feOffset dy="1" />
-							<feGaussianBlur stdDeviation="4" />
+							<feGaussianBlur stdDeviation="2" />
 							<feComposite in2="hardAlpha" operator="out" />
-							<feColorMatrix type="matrix" values="0 0 0 0 0.615218 0 0 0 0 0.948569 0 0 0 0 1 0 0 0 0.4 0" />
+							<feColorMatrix type="matrix" values="0 0 0 0 0.615218 0 0 0 0 0.948569 0 0 0 0 1 0 0 0 0.35 0" />
 							<feBlend mode="normal" in2="BackgroundImageFix" result="effect1_dropShadow" />
 							<feBlend mode="normal" in="SourceGraphic" in2="effect1_dropShadow" result="shape" />
-							<animate attributeName="stdDeviation" values="3;5;3" dur="4s" repeatCount="indefinite" />
+							<animate attributeName="stdDeviation" values="1.5;3;1.5" dur="2.5s" repeatCount="indefinite" />
+						</filter>
+
+						{/* 增強發光效果 */}
+						<filter
+							id={`${id}-enhancedGlowEffect`}
+							x="-8"
+							y="-8"
+							width="56"
+							height="56"
+							filterUnits="userSpaceOnUse"
+							colorInterpolationFilters="sRGB"
+						>
+							<feFlood floodOpacity="0" result="BackgroundImageFix" />
+							<feMorphology radius="1" operator="dilate" in="SourceAlpha" result="effect1_dropShadow" />
+							<feOffset dy="1.5" />
+							<feGaussianBlur stdDeviation="5" />
+							<feComposite in2="hardAlpha" operator="out" />
+							<feColorMatrix type="matrix" values="0 0 0 0 0.615218 0 0 0 0 0.948569 0 0 0 0 1 0 0 0 0.45 0" />
+							<feBlend mode="normal" in2="BackgroundImageFix" result="effect1_dropShadow" />
+							<feBlend mode="normal" in="SourceGraphic" in2="effect1_dropShadow" result="shape" />
+							<animate attributeName="stdDeviation" values="4;6;4" dur="2s" repeatCount="indefinite" />
 						</filter>
 
 						{/* 外部暈眩光漸變 */}
