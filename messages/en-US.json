@@ -290,6 +290,7 @@
 			"button": "Bind Invitation Code",
 			"success": {
 				"default": "Invitation code bound successfully",
+				"login": "Login successfully",
 				"already-bound": "Invitation code already bound"
 			},
 			"error": {

@@ -290,6 +290,7 @@
             "button": "绑定邀请码",
             "success": {
                 "default": "邀请码绑定成功",
+                "login": "登录成功",
                 "already-bound": "邀请码已绑定"
             },
             "error": {
