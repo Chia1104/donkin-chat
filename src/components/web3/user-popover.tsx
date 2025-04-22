@@ -18,7 +18,7 @@ import CopyButton from '../commons/copy-button';
 
 export const UserPopover = () => {
 	const { ready, authenticated, user } = usePrivy();
-	const vm = useWeb3Store(store => store.vm);
+	const symbol = useWeb3Store(store => store.symbol);
 	const router = useTransitionRouter();
 	const t = useTranslations('wallet-profile');
 	const [isPending, handleLogout] = useLogout();
@@ -51,7 +51,7 @@ export const UserPopover = () => {
 					onAction={key => {
 						switch (key) {
 							case 'profile':
-								router.push(`/${vm}/address/${user?.wallet?.address}`);
+								router.push(`/${symbol.toLowerCase()}/address/${user?.wallet?.address}`);
 								break;
 							case 'logout':
 								handleLogout();

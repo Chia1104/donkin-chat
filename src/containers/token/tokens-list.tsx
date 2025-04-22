@@ -304,7 +304,7 @@ const List = ({ display }: { display: 'group' | 'single' }) => {
 							}}
 							display={getItemDisplay(index, length)}
 							onPress={data => {
-								router.push(`/${data.meta.chain}/token/${data.meta.token}`);
+								router.push(`/sol/token/${data.meta.token}`);
 							}}
 							cardProps={{
 								isPressable: true,

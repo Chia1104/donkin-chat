@@ -150,8 +150,8 @@ const SearchAddress = (props: Partial<AutocompleteProps>) => {
 							setSelected(item);
 							router.push(
 								item.name === tRoutes('wallet.title')
-									? `/${item.symbol}/address/${item.address}`
-									: `/${item.symbol}/token/${item.address}`,
+									? `/global/address/${item.address}`
+									: `/sol/token/${item.address}`,
 							);
 						}}
 					>

@@ -64,7 +64,6 @@ const Welcome = () => {
 					onPress={() =>
 						privyLogin({
 							loginMethods: ['wallet'],
-							walletChainType: 'ethereum-and-solana',
 							disableSignup: false,
 						})
 					}

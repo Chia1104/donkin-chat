@@ -106,7 +106,7 @@ const WalletConnect = (props: Props) => {
 		if (privy) {
 			privyLogin({
 				loginMethods: ['wallet'],
-				walletChainType: vm === 'SVM' ? 'solana-only' : 'ethereum-only',
+				// walletChainType: vm === 'SVM' ? 'solana-only' : 'ethereum-only',
 				disableSignup: false,
 			});
 			return;
