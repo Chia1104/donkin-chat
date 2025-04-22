@@ -1,6 +1,6 @@
 'use client';
 
-import { use, useTransition, createContext } from 'react';
+import { use, useTransition, createContext, useState, useRef } from 'react';
 
 import { Button } from '@heroui/button';
 import { Divider } from '@heroui/divider';
@@ -64,7 +64,6 @@ const Welcome = () => {
 					onPress={() =>
 						privyLogin({
 							loginMethods: ['wallet'],
-							walletChainType: 'ethereum-and-solana',
 							disableSignup: false,
 						})
 					}
@@ -78,33 +77,49 @@ const Welcome = () => {
 };
 
 const CodeRegister = () => {
+	const inputRef = useRef<HTMLInputElement>(null);
 	const t = useTranslations('auth.guard.code-register');
 	const [isLoading, startTransition] = useTransition();
 	const { user, logout } = usePrivy();
 	const router = useTransitionRouter();
+	const [value, setValue] = useState('');
+	const [callbackError, setCallbackError] = useState('');
 	const { mutate: loginWithInvitationsCode, isPending } = useLoginWithInvitationsCode({
 		onSuccess(data) {
-			if (!data.success) {
+			startTransition(() => {
+				if (!data.success) {
+					addToast({
+						description: data.message,
+						color: 'danger',
+					});
+					setCallbackError(data.message);
+					return;
+				}
+
 				addToast({
 					description: data.message,
-					color: 'danger',
+					color: 'success',
 				});
-				return;
-			}
-
-			addToast({
-				description: data.message,
-				color: 'success',
+				setCallbackError('');
+				router.refresh();
 			});
-			router.refresh();
 		},
 		onError(error) {
-			addToast({
-				description: error.message,
-				color: 'danger',
+			startTransition(() => {
+				addToast({
+					description: error.message,
+					color: 'danger',
+				});
+				setCallbackError(error.message);
 			});
 		},
 	});
+	const handleChange = (value: string) => {
+		if (callbackError) {
+			setCallbackError('');
+		}
+		setValue(value.toUpperCase());
+	};
 	const isDisabled = isPending || !user?.wallet?.address || isLoading;
 	return (
 		<motion.div initial={{ opacity: 0 }} animate={{ opacity: 1 }} exit={{ opacity: 0 }} transition={{ duration: 0.3 }}>
@@ -115,16 +130,21 @@ const CodeRegister = () => {
 				</ModalHeader>
 
 				<InputOtp
+					ref={inputRef}
 					length={8}
 					allowedKeys={'^[a-zA-Z0-9]+$'}
 					description={t('description', { address: truncateMiddle(user?.wallet?.address ?? '', 10) })}
 					classNames={{
 						description: 'text-xs text-white text-start',
 					}}
-					isDisabled={isDisabled}
+					isReadOnly={isDisabled}
 					onComplete={code => {
 						loginWithInvitationsCode({ code, wallet_address: user?.wallet?.address ?? '' });
 					}}
+					onValueChange={handleChange}
+					value={value}
+					isInvalid={!!callbackError}
+					autoFocus
 				/>
 				<div className="flex items-center gap-2 w-2/3">
 					<Divider className="flex-1" />

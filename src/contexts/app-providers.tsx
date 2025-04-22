@@ -50,7 +50,7 @@ const PrivyProvider = (props: { children: React.ReactNode }) => {
 					theme: '#1C2633',
 					accentColor: '#35E4FF',
 					logo: 'https://ci1qbccnljacb1o3.public.blob.vercel-storage.com/donkin-ltitle-TXaKRh786HMBAYDPQ3xVEmbjqC8ide.png',
-					walletChainType: 'ethereum-and-solana',
+					walletChainType: 'solana-only',
 				},
 				// Create embedded wallets for users who don't have a wallet
 				embeddedWallets: {

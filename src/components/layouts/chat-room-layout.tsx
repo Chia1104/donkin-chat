@@ -7,12 +7,12 @@ import { Navbar, NavbarContent, NavbarItem } from '@heroui/navbar';
 import { Button } from '@heroui/react';
 import { ScrollShadow } from '@heroui/scroll-shadow';
 import { Skeleton } from '@heroui/skeleton';
+import { addToast } from '@heroui/toast';
 import { usePrivy } from '@privy-io/react-auth';
 import { CoinsIcon, HomeIcon, MenuIcon } from 'lucide-react';
 import { useTranslations } from 'next-intl';
 import { Link, useTransitionRouter as useRouter } from 'next-view-transitions';
 import dynamic from 'next/dynamic';
-import { toast } from 'sonner';
 
 import Footer from '@/components/commons/footer';
 import {
@@ -144,8 +144,8 @@ const Navigation = ({ enableSettings }: { enableSettings?: boolean }) => {
 
 	const handleClickFiveTimeToToggleFeatureFlag = () => {
 		void setFeatureFlag(!enableSettings);
-		toast.success(tDevMode('toggle'), {
-			position: 'top-center',
+		addToast({
+			title: tDevMode('toggle'),
 		});
 	};
 

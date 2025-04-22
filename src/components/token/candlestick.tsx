@@ -4,11 +4,11 @@ import { createContext, use, useMemo, useState, useCallback, useRef, useEffect }
 import type { PropsWithChildren } from 'react';
 
 import { Spinner } from '@heroui/spinner';
+import { addToast } from '@heroui/toast';
 import { useQueryClient } from '@tanstack/react-query';
 import { ColorType, HistogramSeries, CandlestickSeries, createTextWatermark } from 'lightweight-charts';
 import type { Time, ISeriesApi } from 'lightweight-charts';
 import { useLocale, useTranslations } from 'next-intl';
-import { toast } from 'sonner';
 
 import OrderPopover from '@/components/token/order-popover';
 import { useMutationOhlcv } from '@/libs/birdeye/hooks/useQueryOhlcv';
@@ -137,6 +137,7 @@ const SubscribeCandlestick = ({
 	const series = useSeries('SubscribeCandlestick');
 	const [isNoData, setIsNoData] = useState(false);
 	const queryClient = useQueryClient();
+	const tUnableToLoad = useTranslations('utils.unable-to-load');
 
 	const handleGenerateTimeWithInterval = useGenerateTimeWithInterval();
 
@@ -233,7 +234,11 @@ const SubscribeCandlestick = ({
 									},
 									onError: error => {
 										logger(error, { type: 'error' });
-										toast.error('Failed to load transactions');
+										addToast({
+											title: tUnableToLoad('title'),
+											description: tUnableToLoad('description'),
+											color: 'danger',
+										});
 									},
 								},
 							);
@@ -241,7 +246,11 @@ const SubscribeCandlestick = ({
 					},
 					onError: error => {
 						logger(error, { type: 'error' });
-						toast.error('Failed to load data');
+						addToast({
+							title: tUnableToLoad('title'),
+							description: tUnableToLoad('description'),
+							color: 'danger',
+						});
 					},
 				},
 			);
@@ -258,6 +267,7 @@ const SubscribeCandlestick = ({
 			handleSubscribe,
 			mutateTransactions,
 			handleSubscribeTransactions,
+			tUnableToLoad,
 		],
 	);
 

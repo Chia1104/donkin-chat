@@ -84,7 +84,7 @@ export const loginWithInvitationCode = actionClient
 			return {
 				success: true,
 				code: CodeVerify.Matched,
-				message: t('success.default'),
+				message: response.login_count > 1 ? t('success.login') : t('success.default'),
 			} as const;
 		} catch (error) {
 			logger(['loginWithInvitationCode', 'error', error]);

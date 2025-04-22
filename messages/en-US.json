@@ -88,7 +88,11 @@
 		"enter": "Please enter",
 		"no-data": "No data",
 		"no-result": "No result found",
-		"searching": "Searching..."
+		"searching": "Searching...",
+		"unable-to-load": {
+			"title": "Unable to load data",
+			"description": "Please try again later, or check your network connection."
+		}
 	},
 	"commons": {
 		"error": {
@@ -290,6 +294,7 @@
 			"button": "Bind Invitation Code",
 			"success": {
 				"default": "Invitation code bound successfully",
+				"login": "Login successfully",
 				"already-bound": "Invitation code already bound"
 			},
 			"error": {
