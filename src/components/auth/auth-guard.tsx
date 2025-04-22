@@ -1,6 +1,6 @@
 'use client';
 
-import { use, useTransition, createContext } from 'react';
+import { use, useTransition, createContext, useState } from 'react';
 
 import { Button } from '@heroui/button';
 import { Divider } from '@heroui/divider';
@@ -82,6 +82,8 @@ const CodeRegister = () => {
 	const [isLoading, startTransition] = useTransition();
 	const { user, logout } = usePrivy();
 	const router = useTransitionRouter();
+	const [value, setValue] = useState('');
+	const [callbackError, setCallbackError] = useState('');
 	const { mutate: loginWithInvitationsCode, isPending } = useLoginWithInvitationsCode({
 		onSuccess(data) {
 			if (!data.success) {
@@ -89,6 +91,7 @@ const CodeRegister = () => {
 					description: data.message,
 					color: 'danger',
 				});
+				setCallbackError(data.message);
 				return;
 			}
 
@@ -96,6 +99,7 @@ const CodeRegister = () => {
 				description: data.message,
 				color: 'success',
 			});
+			setCallbackError('');
 			router.refresh();
 		},
 		onError(error) {
@@ -103,8 +107,15 @@ const CodeRegister = () => {
 				description: error.message,
 				color: 'danger',
 			});
+			setCallbackError(error.message);
 		},
 	});
+	const handleChange = (value: string) => {
+		if (callbackError) {
+			setCallbackError('');
+		}
+		setValue(value.toUpperCase());
+	};
 	const isDisabled = isPending || !user?.wallet?.address || isLoading;
 	return (
 		<motion.div initial={{ opacity: 0 }} animate={{ opacity: 1 }} exit={{ opacity: 0 }} transition={{ duration: 0.3 }}>
@@ -125,6 +136,9 @@ const CodeRegister = () => {
 					onComplete={code => {
 						loginWithInvitationsCode({ code, wallet_address: user?.wallet?.address ?? '' });
 					}}
+					onValueChange={handleChange}
+					value={value}
+					isInvalid={!!callbackError}
 				/>
 				<div className="flex items-center gap-2 w-2/3">
 					<Divider className="flex-1" />
