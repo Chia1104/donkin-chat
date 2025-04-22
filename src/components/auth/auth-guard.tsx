@@ -5,13 +5,14 @@ import { use, useTransition, createContext, useState, useRef } from 'react';
 import { Button } from '@heroui/button';
 import { Divider } from '@heroui/divider';
 import { InputOtp } from '@heroui/input-otp';
+import { Link } from '@heroui/link';
 import { Modal, ModalContent, ModalBody, ModalHeader, ModalFooter } from '@heroui/modal';
 import { addToast } from '@heroui/toast';
 import { getAccessToken as _getAccessToken } from '@privy-io/react-auth';
 import { usePrivy, useLogin } from '@privy-io/react-auth';
 import { motion, AnimatePresence } from 'framer-motion';
 import { useTranslations } from 'next-intl';
-import { Link, useTransitionRouter } from 'next-view-transitions';
+import { useTransitionRouter } from 'next-view-transitions';
 
 import { useLoginWithInvitationsCode } from '@/libs/auth/hooks/useLoginWithInvitationsCode';
 import { truncateMiddle } from '@/utils/format';
@@ -56,10 +57,10 @@ const Welcome = () => {
 
 	return (
 		<motion.div initial={{ opacity: 0 }} animate={{ opacity: 1 }} exit={{ opacity: 0 }} transition={{ duration: 0.3 }}>
-			<ModalBody className="prose-invert prose-sm sm:prose-base flex flex-col items-center justify-center text-center mb-5 prose-h2:mb-2 prose-img:mb-2 prose-p:mb-2 prose-p:mt-2">
-				<h2 className="w-2/3">{t('subtitle')}</h2>
-				<Donkin width={150} height={54} />
-				<p className="w-3/4 sm:w-full">{t('description')}</p>
+			<ModalBody className="flex flex-col items-center justify-center text-center mb-5">
+				<Donkin width={167} height={60} className="mb-8" />
+				<h2 className="text-4xl font-medium mb-3">{t('description1')}</h2>
+				<p className="font-light text-xl mb-8 text-default-500">{t('description2')}</p>
 				<Button
 					onPress={() =>
 						privyLogin({
@@ -123,17 +124,19 @@ const CodeRegister = () => {
 	const isDisabled = isPending || !user?.wallet?.address || isLoading;
 	return (
 		<motion.div initial={{ opacity: 0 }} animate={{ opacity: 1 }} exit={{ opacity: 0 }} transition={{ duration: 0.3 }}>
-			<ModalBody className="flex flex-col items-center justify-center gap-2">
-				<ModalHeader className="flex flex-col items-center justify-center gap-2">
-					{t('title')}
-					<p className="text-xs text-default-500">{t('subtitle')}</p>
+			<ModalBody className="flex flex-col items-center justify-center gap-10">
+				<ModalHeader className="flex flex-col items-center justify-center gap-3 pb-0">
+					<h3 className="text-2xl font-medium">{t('title')}</h3>
+					<p className="text-base font-light text-default-500">{t('subtitle')}</p>
+					<span className="text-sm font-light text-default-500">
+						{t('description', { address: truncateMiddle(user?.wallet?.address ?? '', 10) })}
+					</span>
 				</ModalHeader>
 
 				<InputOtp
 					ref={inputRef}
 					length={8}
 					allowedKeys={'^[a-zA-Z0-9]+$'}
-					description={t('description', { address: truncateMiddle(user?.wallet?.address ?? '', 10) })}
 					classNames={{
 						description: 'text-xs text-white text-start',
 					}}
@@ -146,31 +149,33 @@ const CodeRegister = () => {
 					isInvalid={!!callbackError}
 					autoFocus
 				/>
-				<div className="flex items-center gap-2 w-2/3">
-					<Divider className="flex-1" />
-					<p className="shrink-0 text-tiny text-default-500 mb-0">{t('or')}</p>
-					<Divider className="flex-1" />
-				</div>
-				<Button
-					onPress={() =>
-						startTransition(async () => {
-							await logout();
-							router.refresh();
-						})
-					}
-					size="sm"
-					variant="light"
-					isDisabled={isDisabled}
-				>
-					{t('switch-wallet')}
-				</Button>
+				<ModalFooter className="flex flex-col items-center justify-center gap-8 w-full p-0">
+					<div className="flex items-center gap-2 w-full sm:w-1/4">
+						<Divider className="flex-1" />
+						<p className="shrink-0 text-xs text-default-500 mb-0">{t('or')}</p>
+						<Divider className="flex-1" />
+					</div>
+					<Link
+						as="button"
+						onPress={() =>
+							startTransition(async () => {
+								await logout();
+								router.refresh();
+							})
+						}
+						size="sm"
+						isDisabled={isDisabled}
+						underline="hover"
+					>
+						{t('switch-wallet')}
+					</Link>
+				</ModalFooter>
 			</ModalBody>
 		</motion.div>
 	);
 };
 
 export const AuthGuard = ({ isRegistered, isWalletConnected, children, enabled = false }: Props) => {
-	const t = useTranslations('footer');
 	const { authenticated, ready } = usePrivy();
 
 	use(getAccessToken);
@@ -187,26 +192,12 @@ export const AuthGuard = ({ isRegistered, isWalletConnected, children, enabled =
 					body: 'bg-transparent',
 				}}
 				backdrop="blur"
+				size="5xl"
 			>
 				<ModalContent className="sm:bg-transparent sm:border-none sm:shadow-none pt-10 sm:pt-0">
 					<AnimatePresence>
 						{!isWalletConnected && (!ready || !authenticated) ? <Welcome /> : <CodeRegister />}
 					</AnimatePresence>
-					<ModalFooter className="flex w-full justify-center">
-						<section className="flex gap-1 items-center">
-							<Link className="text-[10px] leading-[12px] w-fit" href="#">
-								{t('about')}
-							</Link>
-							<Divider orientation="vertical" className="h-4" />
-							<Link className="text-[10px] leading-[12px] w-fit" href="#">
-								{t('privacy')}
-							</Link>
-							<Divider orientation="vertical" className="h-4" />
-							<Link className="text-[10px] leading-[12px] w-fit" href="#">
-								{t('contact')}
-							</Link>
-						</section>
-					</ModalFooter>
 				</ModalContent>
 			</Modal>
 		</AuthGuardContext>

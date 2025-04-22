@@ -2,7 +2,9 @@
 	"meta": {
 		"title": "Donkin",
 		"subtitle": "Always stay updated with the latest cryptocurrency news and seize investment opportunities",
-		"description": "Donkin is the most professional AI investment consultant in the cryptocurrency circle, providing real-time information and intelligent investment advice."
+		"description": "Donkin is the most professional AI investment consultant in the cryptocurrency circle, providing real-time information and intelligent investment advice.",
+		"description1": "The most professional AI investment consultant in the cryptocurrency circle",
+		"description2": "Providing real-time information and intelligent investment advice, seize investment opportunities"
 	},
 	"theme": {
 		"label": "Theme",
@@ -306,7 +308,7 @@
 		"guard": {
 			"code-register": {
 				"title": "Please enter the invitation code",
-				"subtitle": "One invitation code can only bind one wallet",
+				"subtitle": "One invitation code can only bind one wallet, after binding, it cannot be changed",
 				"description": "Current address: {address}",
 				"button": "Bind invitation code",
 				"or": "Or use another wallet",

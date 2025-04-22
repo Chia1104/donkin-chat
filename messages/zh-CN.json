@@ -2,7 +2,9 @@
     "meta": {
         "title": "Donkin",
         "subtitle": "随时掌握币圈最新动态，掌握投资先机",
-        "description": "Donkin 是币圈最专业的 AI 投顾，提供即时的币圈资讯和智能的投资建议。"
+        "description": "Donkin 是币圈最专业的 AI 投顾，提供即时的币圈资讯和智能的投资建议。",
+        "description1": "币圈最专业的 AI 投顾",
+        "description2": "提供即时的币圈资讯和智能投资建议，掌握投資先機"
     },
     "theme": {
         "label": "主题",
@@ -306,7 +308,7 @@
         "guard": {
             "code-register": {
                 "title": "请输入邀请码",
-                "subtitle": "一个邀请码只能绑定一个钱包",
+                "subtitle": "一个邀请码只能绑定一个钱包，绑定后无法更换",
                 "description": "当前地址为：{address}",
                 "button": "绑定邀请码",
                 "or": "或使用另一个钱包",
