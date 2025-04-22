@@ -137,6 +137,7 @@ const SubscribeCandlestick = ({
 	const series = useSeries('SubscribeCandlestick');
 	const [isNoData, setIsNoData] = useState(false);
 	const queryClient = useQueryClient();
+	const tUnableToLoad = useTranslations('utils.unable-to-load');
 
 	const handleGenerateTimeWithInterval = useGenerateTimeWithInterval();
 
@@ -234,7 +235,8 @@ const SubscribeCandlestick = ({
 									onError: error => {
 										logger(error, { type: 'error' });
 										addToast({
-											title: 'Failed to load transactions',
+											title: tUnableToLoad('title'),
+											description: tUnableToLoad('description'),
 											color: 'danger',
 										});
 									},
@@ -245,7 +247,8 @@ const SubscribeCandlestick = ({
 					onError: error => {
 						logger(error, { type: 'error' });
 						addToast({
-							title: 'Failed to load data',
+							title: tUnableToLoad('title'),
+							description: tUnableToLoad('description'),
 							color: 'danger',
 						});
 					},
@@ -264,6 +267,7 @@ const SubscribeCandlestick = ({
 			handleSubscribe,
 			mutateTransactions,
 			handleSubscribeTransactions,
+			tUnableToLoad,
 		],
 	);
 

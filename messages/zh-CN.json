@@ -88,7 +88,11 @@
         "enter": "请输入",
         "no-data": "无数据",
         "no-result": "找不到任何结果",
-        "searching": "搜寻中..."
+        "searching": "搜寻中...",
+        "unable-to-load": {
+            "title": "无法载入数据",
+            "description": "请稍后再试一次，或检查网络连接。"
+        }
     },
     "commons": {
         "error": {
