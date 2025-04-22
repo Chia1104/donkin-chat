@@ -4,11 +4,11 @@ import { createContext, use, useMemo, useState, useCallback, useRef, useEffect }
 import type { PropsWithChildren } from 'react';
 
 import { Spinner } from '@heroui/spinner';
+import { addToast } from '@heroui/toast';
 import { useQueryClient } from '@tanstack/react-query';
 import { ColorType, HistogramSeries, CandlestickSeries, createTextWatermark } from 'lightweight-charts';
 import type { Time, ISeriesApi } from 'lightweight-charts';
 import { useLocale, useTranslations } from 'next-intl';
-import { toast } from 'sonner';
 
 import OrderPopover from '@/components/token/order-popover';
 import { useMutationOhlcv } from '@/libs/birdeye/hooks/useQueryOhlcv';
@@ -233,7 +233,10 @@ const SubscribeCandlestick = ({
 									},
 									onError: error => {
 										logger(error, { type: 'error' });
-										toast.error('Failed to load transactions');
+										addToast({
+											title: 'Failed to load transactions',
+											color: 'danger',
+										});
 									},
 								},
 							);
@@ -241,7 +244,10 @@ const SubscribeCandlestick = ({
 					},
 					onError: error => {
 						logger(error, { type: 'error' });
-						toast.error('Failed to load data');
+						addToast({
+							title: 'Failed to load data',
+							color: 'danger',
+						});
 					},
 				},
 			);

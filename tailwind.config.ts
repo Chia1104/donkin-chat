@@ -26,11 +26,20 @@ const config = {
 						primary: {
 							DEFAULT: 'rgba(53, 205, 255, 1)',
 						},
+						secondary: {
+							DEFAULT: 'rgba(0, 111, 238, 1)',
+						},
 						danger: {
-							DEFAULT: '#E75A5B',
+							DEFAULT: 'rgba(231, 90, 91, 1)',
+						},
+						warning: {
+							DEFAULT: 'rgba(255, 181, 34, 1)',
 						},
 						background: {
 							DEFAULT: '#FFFFFF14',
+						},
+						success: {
+							DEFAULT: 'rgba(56, 175, 117, 1)',
 						},
 						default: {
 							DEFAULT: 'rgba(35, 48, 64, 1)',
@@ -56,8 +65,17 @@ const config = {
 						primary: {
 							DEFAULT: 'rgba(53, 205, 255, 1)',
 						},
+						secondary: {
+							DEFAULT: 'rgba(0, 111, 238, 1)',
+						},
 						danger: {
-							DEFAULT: '#E75A5B',
+							DEFAULT: 'rgba(231, 90, 91, 1)',
+						},
+						warning: {
+							DEFAULT: 'rgba(255, 181, 34, 1)',
+						},
+						success: {
+							DEFAULT: 'rgba(56, 175, 117, 1)',
 						},
 						background: {
 							DEFAULT: '#FFFFFF14',

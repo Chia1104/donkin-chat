@@ -3,6 +3,7 @@
 import { useEffect } from 'react';
 
 import { ToastProvider } from '@heroui/toast';
+import { X } from 'lucide-react';
 import dynamic from 'next/dynamic';
 import { Toaster } from 'sonner';
 
@@ -28,7 +29,18 @@ const AppPlugins = () => {
 		<>
 			<Wb3StoreConsumer />
 			<ToasterPlugin />
-			<ToastProvider placement="top-center" toastOffset={20} />
+			<ToastProvider
+				placement="top-center"
+				toastOffset={20}
+				toastProps={{
+					variant: 'flat',
+					classNames: {
+						base: 'bg-[rgba(28, 38, 51, 1)] border-none p-3',
+						closeButton: 'opacity-100 absolute right-4 top-1/2 -translate-y-1/2',
+					},
+					closeIcon: <X color="rgba(88, 93, 105, 1)" />,
+				}}
+			/>
 			<ReactQueryDevtools initialIsOpen={false} buttonPosition="top-left" />
 		</>
 	);
