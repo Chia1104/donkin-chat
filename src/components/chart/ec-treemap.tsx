@@ -371,11 +371,11 @@ const ECTreemap = (props: Props) => {
 						show: true,
 						formatter: (params: DefaultLabelFormatterCallbackParams) => {
 							let sizeType = 'normal';
-							if (params.dataIndex > 14) {
+							if (params.dataIndex > 12) {
 								sizeType = 'tiny';
-							} else if (params.dataIndex > 10) {
+							} else if (params.dataIndex > 8) {
 								sizeType = 'small';
-							} else if (params.dataIndex > 6) {
+							} else if (params.dataIndex > 4) {
 								sizeType = 'medium';
 							}
 
@@ -391,31 +391,27 @@ const ECTreemap = (props: Props) => {
 						},
 						rich: {
 							normalName: {
-								fontSize: 48,
-								fontWeight: 'bold',
+								fontSize: 32,
 								color: '#fff',
 								padding: [20, 2, 2, 10],
 							},
 							mediumName: {
-								fontSize: 32,
-								fontWeight: 'bold',
+								fontSize: 24,
 								color: '#fff',
 								padding: [18, 2, 2, 9],
 							},
 							smallName: {
 								fontSize: 16,
-								fontWeight: 'bold',
 								color: '#fff',
 								padding: [15, 2, 2, 8],
 							},
 							tinyName: {
 								fontSize: 12,
-								fontWeight: 'bold',
 								color: '#fff',
 								padding: [12, 2, 2, 6],
 							},
 							normalPrice: {
-								fontSize: 20,
+								fontSize: 16,
 								color: '#fff',
 								padding: [5, 2, 2, 10],
 							},
@@ -435,12 +431,12 @@ const ECTreemap = (props: Props) => {
 								padding: [3, 2, 2, 6],
 							},
 							normalChangePositive: {
-								fontSize: 20,
+								fontSize: 16,
 								padding: [5, 2, 2, 10],
 								color: 'rgba(56, 175, 117, 1)',
 							},
 							normalChangeNegative: {
-								fontSize: 20,
+								fontSize: 16,
 								padding: [5, 2, 2, 10],
 								color: 'rgba(231, 90, 91, 1)',
 							},
