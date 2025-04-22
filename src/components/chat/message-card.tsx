@@ -1,9 +1,10 @@
 'use client';
 
-import React, { useRef } from 'react';
+import { useRef, useEffect, useState, useTransition, useCallback, useMemo, memo } from 'react';
 
 import { Accordion, AccordionItem } from '@heroui/accordion';
 import { Button } from '@heroui/button';
+import type { Selection } from '@heroui/react';
 import { ScrollShadow } from '@heroui/scroll-shadow';
 import { Spinner } from '@heroui/spinner';
 import { cn } from '@heroui/theme';
@@ -30,7 +31,7 @@ export type MessageCardProps = React.HTMLAttributes<HTMLDivElement> & {
 	reasoning?: string;
 };
 
-const Reasoning = React.memo(
+const Reasoning = memo(
 	({
 		isLoading,
 		reasoning,
@@ -42,6 +43,19 @@ const Reasoning = React.memo(
 	}) => {
 		const t = useTranslations('chat');
 		const containerRef = useRef<HTMLDivElement>(null);
+		const [controlled, setControlled] = useState(false);
+		const [selectedKeys, setSelectedKeys] = useState<Selection>(() => {
+			if (reasoning) {
+				return new Set(['reasoning']);
+			}
+			return new Set([]);
+		});
+
+		useEffect(() => {
+			if (!controlled && !!reasoning) {
+				setSelectedKeys(new Set(['reasoning']));
+			}
+		}, [controlled, reasoning]);
 
 		return (
 			<AnimatePresence mode="wait">
@@ -55,10 +69,13 @@ const Reasoning = React.memo(
 						// className="sticky top-10 backdrop-blur-lg z-20"
 					>
 						<Accordion
-							defaultExpandedKeys={reasoning ? ['reasoning'] : []}
 							className="px-0"
 							fullWidth={false}
-							selectedKeys={!reasoning ? [] : undefined}
+							selectedKeys={selectedKeys}
+							onSelectionChange={key => {
+								setSelectedKeys(key);
+								setControlled(true);
+							}}
 						>
 							<AccordionItem
 								classNames={{
@@ -115,17 +132,17 @@ const MessageCard = ({
 	experimental,
 	...props
 }: MessageCardProps) => {
-	const [isPending, startTransition] = React.useTransition();
+	const [isPending, startTransition] = useTransition();
 	const t = useTranslations('chat');
 	const tAction = useTranslations('action');
 
 	const hasFailed = status === 'failed';
 
-	const handleRetry = React.useCallback(() => {
+	const handleRetry = useCallback(() => {
 		startTransition(() => onRetry?.(message));
 	}, [onRetry, message]);
 
-	const classNames = React.useMemo(() => {
+	const classNames = useMemo(() => {
 		const failedMessageClassName =
 			status === 'failed'
 				? 'text-foreground'
@@ -185,7 +202,7 @@ const MessageCard = ({
 	);
 };
 
-export default React.memo(MessageCard, (prevProps, nextProps) => {
+export default memo(MessageCard, (prevProps, nextProps) => {
 	return (
 		prevProps.message.content === nextProps.message.content &&
 		prevProps.status === nextProps.status &&
