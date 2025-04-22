@@ -176,10 +176,14 @@ const CodeRegister = () => {
 };
 
 export const AuthGuard = ({ isRegistered, isWalletConnected, children, enabled = false }: Props) => {
+	if (enabled) {
+		/**
+		 * force component to throw promise,
+		 * so that the component will refresh token first when it is enabled
+		 */
+		use(getAccessToken);
+	}
 	const { authenticated, ready } = usePrivy();
-
-	use(getAccessToken);
-
 	const isAuthenticated = (isWalletConnected || (ready && authenticated)) && isRegistered;
 
 	return (
