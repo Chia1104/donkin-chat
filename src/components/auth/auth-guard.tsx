@@ -86,28 +86,32 @@ const CodeRegister = () => {
 	const [callbackError, setCallbackError] = useState('');
 	const { mutate: loginWithInvitationsCode, isPending } = useLoginWithInvitationsCode({
 		onSuccess(data) {
-			if (!data.success) {
+			startTransition(() => {
+				if (!data.success) {
+					addToast({
+						description: data.message,
+						color: 'danger',
+					});
+					setCallbackError(data.message);
+					return;
+				}
+
 				addToast({
 					description: data.message,
-					color: 'danger',
+					color: 'success',
 				});
-				setCallbackError(data.message);
-				return;
-			}
-
-			addToast({
-				description: data.message,
-				color: 'success',
+				setCallbackError('');
+				router.refresh();
 			});
-			setCallbackError('');
-			router.refresh();
 		},
 		onError(error) {
-			addToast({
-				description: error.message,
-				color: 'danger',
+			startTransition(() => {
+				addToast({
+					description: error.message,
+					color: 'danger',
+				});
+				setCallbackError(error.message);
 			});
-			setCallbackError(error.message);
 		},
 	});
 	const handleChange = (value: string) => {
