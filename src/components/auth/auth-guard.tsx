@@ -1,6 +1,6 @@
 'use client';
 
-import { use, useTransition, createContext, useState } from 'react';
+import { use, useTransition, createContext, useState, useRef } from 'react';
 
 import { Button } from '@heroui/button';
 import { Divider } from '@heroui/divider';
@@ -78,6 +78,7 @@ const Welcome = () => {
 };
 
 const CodeRegister = () => {
+	const inputRef = useRef<HTMLInputElement>(null);
 	const t = useTranslations('auth.guard.code-register');
 	const [isLoading, startTransition] = useTransition();
 	const { user, logout } = usePrivy();
@@ -130,19 +131,21 @@ const CodeRegister = () => {
 				</ModalHeader>
 
 				<InputOtp
+					ref={inputRef}
 					length={8}
 					allowedKeys={'^[a-zA-Z0-9]+$'}
 					description={t('description', { address: truncateMiddle(user?.wallet?.address ?? '', 10) })}
 					classNames={{
 						description: 'text-xs text-white text-start',
 					}}
-					isDisabled={isDisabled}
+					isReadOnly={isDisabled}
 					onComplete={code => {
 						loginWithInvitationsCode({ code, wallet_address: user?.wallet?.address ?? '' });
 					}}
 					onValueChange={handleChange}
 					value={value}
 					isInvalid={!!callbackError}
+					autoFocus
 				/>
 				<div className="flex items-center gap-2 w-2/3">
 					<Divider className="flex-1" />
