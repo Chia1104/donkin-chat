@@ -82,7 +82,7 @@ const Marker = () => {
 			size="sm"
 			classNames={{
 				base: 'items-center ml-0',
-				label: 'items-center flex mt-1',
+				label: 'items-center flex',
 			}}
 			isSelected={searchParams.mark}
 			onValueChange={e => setSearchParams({ mark: e })}

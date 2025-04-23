@@ -4,7 +4,7 @@ import type { Locale } from 'next-intl';
 import { ViewTransitions } from 'next-view-transitions';
 
 import { Theme } from '@/enums/theme.enum';
-import { PingFangTC, AvenirNextLTPro_Regular } from '@/themes/fonts';
+import { noto_sans, AvenirNextLTPro_Regular } from '@/themes/fonts';
 import { cn } from '@/utils/cn';
 
 interface Props {
@@ -31,7 +31,7 @@ const AppLayout: FC<Props> = ({ children, locale, htmlProps, bodyProps, theme })
 			>
 				<body
 					{...bodyProps}
-					className={cn(PingFangTC.className, AvenirNextLTPro_Regular.className, bodyProps?.className)}
+					className={cn(noto_sans.className, AvenirNextLTPro_Regular.className, bodyProps?.className)}
 				>
 					{children}
 				</body>
