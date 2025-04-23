@@ -36,6 +36,7 @@
 		"@react-stately/data": "^3.12.3",
 		"@sentry/nextjs": "^9.14.0",
 		"@shikijs/rehype": "^3.3.0",
+		"@solana/spl-token": "^0.4.13",
 		"@solana/wallet-adapter-base": "^0.9.26",
 		"@solana/wallet-adapter-react": "^0.15.38",
 		"@solana/wallet-adapter-react-ui": "^0.9.38",
