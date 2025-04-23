@@ -8,36 +8,37 @@ type RequestOptions = {
 } & Options;
 
 export type RequestMode =
-	| 'proxy'
+	| 'proxy-service'
 	| 'self-api'
-	| 'external'
+	| 'public-service'
+	| 'proxy-public-service'
 	| 'ai'
 	| 'proxy-ai'
-	| 'node-endpoint'
-	| 'proxy-invitations-api'
-	| 'invitations-api';
+	| 'node-endpoint';
 
 const getPrefixedUrl = (requestMode?: RequestMode) => {
 	const IS_SERVER = typeof window === 'undefined';
 	switch (requestMode) {
-		case 'proxy':
-			return !IS_SERVER ? '/proxy-api' : env.NEXT_PUBLIC_APP_API_HOST;
-		case 'self-api':
-			return !IS_SERVER ? '/' : env.NEXT_PUBLIC_APP_API_HOST;
-		case 'external':
-			return env.NEXT_PUBLIC_APP_API_HOST;
+		case 'proxy-service':
+			return !IS_SERVER ? '/proxy/service' : env.NEXT_PUBLIC_SERVICE_ENDPOINT;
+		case 'self-api': {
+			if (IS_SERVER) {
+				throw new Error('self-api is not supported on server');
+			}
+			return '/';
+		}
+		case 'public-service':
+			return env.NEXT_PUBLIC_PUBLIC_SERVICE_ENDPOINT;
+		case 'proxy-public-service':
+			return !IS_SERVER ? '/proxy' : env.NEXT_PUBLIC_PUBLIC_SERVICE_ENDPOINT;
 		case 'ai':
-			return env.NEXT_PUBLIC_APP_AI_API_HOST;
+			return env.NEXT_PUBLIC_AI_SERVICE_ENDPOINT;
 		case 'proxy-ai':
-			return !IS_SERVER ? '/proxy-ai-api' : env.NEXT_PUBLIC_APP_AI_API_HOST;
+			return !IS_SERVER ? '/proxy/ai' : env.NEXT_PUBLIC_AI_SERVICE_ENDPOINT;
 		case 'node-endpoint':
-			return env.NEXT_PUBLIC_APP_NODE_ENDPOINT ?? '/';
-		case 'proxy-invitations-api':
-			return !IS_SERVER ? '/proxy-invitations-api' : env.NEXT_PUBLIC_APP_INVITATIONS_API_HOST;
-		case 'invitations-api':
-			return env.NEXT_PUBLIC_APP_INVITATIONS_API_HOST;
+			return env.NEXT_PUBLIC_APP_NODE_ENDPOINT;
 		default:
-			return !IS_SERVER ? '/' : env.NEXT_PUBLIC_APP_API_HOST;
+			return !IS_SERVER ? '/proxy' : env.NEXT_PUBLIC_PUBLIC_SERVICE_ENDPOINT;
 	}
 };
 
@@ -50,7 +51,7 @@ export const withPrefixedUrl = (url: string, requestMode?: RequestMode) => {
 };
 
 export const request = (defaultOptions?: RequestOptions) => {
-	const { requestMode = 'proxy' } = defaultOptions || {};
+	const { requestMode = 'proxy-public-service' } = defaultOptions || {};
 
 	return ky.extend({
 		timeout: 30_000,

@@ -94,6 +94,12 @@
 		"unable-to-load": {
 			"title": "Unable to load data",
 			"description": "Please try again later, or check your network connection."
+		},
+		"too-many-requests": {
+			"default": "You have made too many requests, please try again later",
+			"title": "Too many requests",
+			"description": "Please try again later",
+			"with-limit": "You have made {limit} requests, please try again later"
 		}
 	},
 	"commons": {

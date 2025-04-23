@@ -35,7 +35,7 @@ const AppPlugins = () => {
 				toastProps={{
 					variant: 'flat',
 					classNames: {
-						base: 'bg-[rgba(28, 38, 51, 1)] border-none p-3',
+						base: 'bg-content1 border-none p-3',
 						closeButton: 'opacity-100 absolute right-4 top-1/2 -translate-y-1/2',
 					},
 					closeIcon: <X color="rgba(88, 93, 105, 1)" />,

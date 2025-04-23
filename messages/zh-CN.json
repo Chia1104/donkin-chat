@@ -94,6 +94,12 @@
         "unable-to-load": {
             "title": "无法载入数据",
             "description": "请稍后再试一次，或检查网络连接。"
+        },
+        "too-many-requests": {
+            "default": "你尝试的次数过多，请稍后再试一次",
+            "title": "尝试次数过多",
+            "description": "请稍后再试一次",
+            "with-limit": "你已尝试 {limit} 次，请稍后再试一次"
         }
     },
     "commons": {

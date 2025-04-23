@@ -10,6 +10,7 @@ import { Modal, ModalContent, ModalBody, ModalHeader, ModalFooter } from '@herou
 import { addToast } from '@heroui/toast';
 import { getAccessToken as _getAccessToken } from '@privy-io/react-auth';
 import { usePrivy, useLogin } from '@privy-io/react-auth';
+import { useRateLimiter } from '@tanstack/react-pacer';
 import { motion, AnimatePresence } from 'framer-motion';
 import { useTranslations } from 'next-intl';
 import { useTransitionRouter } from 'next-view-transitions';
@@ -87,6 +88,7 @@ const Welcome = () => {
 const CodeRegister = () => {
 	const inputRef = useRef<HTMLInputElement>(null);
 	const t = useTranslations('auth.guard.code-register');
+	const tTooManyRequests = useTranslations('utils.too-many-requests');
 	const [isLoading, startTransition] = useTransition();
 	const { user, logout } = usePrivy();
 	const router = useTransitionRouter();
@@ -122,6 +124,16 @@ const CodeRegister = () => {
 			});
 		},
 	});
+	const { maybeExecute } = useRateLimiter(loginWithInvitationsCode, {
+		limit: 5,
+		window: 30_000,
+		onReject: info => {
+			addToast({
+				description: tTooManyRequests('with-limit', { limit: info.limit.toString() }),
+				color: 'danger',
+			});
+		},
+	});
 	const handleChange = (value: string) => {
 		if (callbackError) {
 			setCallbackError('');
@@ -149,7 +161,7 @@ const CodeRegister = () => {
 					}}
 					isReadOnly={isDisabled}
 					onComplete={code => {
-						loginWithInvitationsCode({ code, wallet_address: user?.wallet?.address ?? '' });
+						maybeExecute({ code, wallet_address: user?.wallet?.address ?? '' });
 					}}
 					onValueChange={handleChange}
 					value={value}

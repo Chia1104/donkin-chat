@@ -45,7 +45,7 @@ export const getTokensHot = async (options?: BaseRequestOptions<TokensHotRequest
 			})),
 		} satisfies TokensHotResponse);
 	}
-	const response = await request()
+	const response = await request({ requestMode: 'proxy-service' })
 		.get('api/v1/tokens/hot', {
 			signal: options?.signal,
 			searchParams: {
@@ -63,7 +63,9 @@ export const getTokensHot = async (options?: BaseRequestOptions<TokensHotRequest
 };
 
 export const getToken = async (address: string) => {
-	const response = await request().get(`api/v1/tokens/${address}`).json<ResponseData<Token>>();
+	const response = await request({ requestMode: 'proxy-service' })
+		.get(`api/v1/tokens/${address}`)
+		.json<ResponseData<Token>>();
 
 	return tokenSchema.parse(response.data);
 };

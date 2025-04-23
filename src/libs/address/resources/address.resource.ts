@@ -9,7 +9,7 @@ export const getAddress = async (
 	address: string,
 	options?: BaseRequestOptions<{ interval: IntervalFilter; include_transactions?: boolean }>,
 ) => {
-	const response = await request({ timeout: options?.timeout })
+	const response = await request({ timeout: options?.timeout, requestMode: 'proxy-service' })
 		.get(`api/v1/wallet/current/${address}`, {
 			searchParams: {
 				interval: options?.data?.interval ?? '',
