@@ -149,6 +149,17 @@ const { ChatStoreProvider, useChatStore, ChatStoreContext, creator } = defineCha
 										false,
 										'preStreamWithToolCall/GetTokenInfo',
 									);
+								} else {
+									get().setStatus(ChatStatus.Error);
+									const lastMessage = get().getLastMessage();
+									if (lastMessage) {
+										get().updateMessage(lastMessage.id, {
+											error: data.msg,
+											reasoning: null,
+										});
+									}
+									get().internal_abort();
+									set({ isPending: false }, false, 'preStreamWithToolCall/GetTokenInfo');
 								}
 							}
 							break;
@@ -178,6 +189,17 @@ const { ChatStoreProvider, useChatStore, ChatStoreContext, creator } = defineCha
 										false,
 										'preStreamWithToolCall/GetTokenTrend',
 									);
+								} else {
+									get().setStatus(ChatStatus.Error);
+									const lastMessage = get().getLastMessage();
+									if (lastMessage) {
+										get().updateMessage(lastMessage.id, {
+											error: data.msg,
+											reasoning: null,
+										});
+									}
+									get().internal_abort();
+									set({ isPending: false }, false, 'preStreamWithToolCall/GetTokenTrend');
 								}
 							}
 							break;
@@ -214,6 +236,17 @@ const { ChatStoreProvider, useChatStore, ChatStoreContext, creator } = defineCha
 						false,
 						'preStream',
 					);
+				} else {
+					get().setStatus(ChatStatus.Error);
+					const lastMessage = get().getLastMessage();
+					if (lastMessage) {
+						get().updateMessage(lastMessage.id, {
+							error: data.msg,
+							reasoning: null,
+						});
+					}
+					get().internal_abort();
+					set({ isPending: false }, false, 'preStream');
 				}
 			} else {
 				const data = await request({
@@ -242,6 +275,17 @@ const { ChatStoreProvider, useChatStore, ChatStoreContext, creator } = defineCha
 						false,
 						'preStream',
 					);
+				} else {
+					get().setStatus(ChatStatus.Error);
+					const lastMessage = get().getLastMessage();
+					if (lastMessage) {
+						get().updateMessage(lastMessage.id, {
+							error: data.msg,
+							reasoning: null,
+						});
+					}
+					get().internal_abort();
+					set({ isPending: false }, false, 'preStream');
 				}
 			}
 		},

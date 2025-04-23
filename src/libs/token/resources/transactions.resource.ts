@@ -12,7 +12,7 @@ export interface RequestDTO {
 }
 
 export const getTransactions = async (options?: BaseRequestOptions<RequestDTO>) => {
-	const res = await request()
+	const res = await request({ requestMode: 'proxy-service' })
 		.get('api/v1/analytics/token/transactions', {
 			searchParams: {
 				token_address: options?.data?.token_address ?? '',

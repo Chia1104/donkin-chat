@@ -7,20 +7,19 @@ import { logger } from '@/utils/logger';
 
 const app = new Hono();
 
-app.all('/proxy-ai-api/*', c => {
-	const url = `${env.NEXT_PUBLIC_APP_AI_API_HOST}${c.req.path.replace(/^\/proxy-ai-api/, '').replace(/\/$/, '')}?${Object.entries(
+app.all('/proxy/*', c => {
+	const url = `${env.NEXT_PUBLIC_PUBLIC_SERVICE_ENDPOINT}${c.req.path.replace(/^\/proxy/, '').replace(/\/$/, '')}?${Object.entries(
 		c.req.query(),
 	)
 		.map(([key, value]) => `${key}=${value}`)
 		.join('&')}`;
 
-	logger(['PROXY URL: ', url], { type: 'log' });
+	logger(['PROXY URL (PUBLIC SERVICE): ', url], { type: 'log' });
 
 	return proxy(url, {
 		...c.req, // optional, specify only when forwarding all the request data (including credentials) is necessary.
 		headers: {
 			...c.req.header(),
-			Authorization: `Bearer ${env.AI_TOKEN}`,
 			'X-Forwarded-For': '127.0.0.1',
 			'X-Forwarded-Host': c.req.header('host'),
 		},

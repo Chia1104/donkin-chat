@@ -5,7 +5,7 @@ import type { VerifyInvitationCodeResponse, LoginWithInvitationCodeResponse } fr
 import { verifyInvitationCodeResponseSchema, loginWithInvitationCodeResponseSchema } from '../pipes/invitations.pipe';
 
 export const verifyInvitationCode = async (code: string) => {
-	const response = await request({ requestMode: 'proxy-invitations-api' })
+	const response = await request({ requestMode: 'proxy-public-service' })
 		.post('api/v1/invitations/verify', {
 			json: {
 				code,
@@ -17,7 +17,7 @@ export const verifyInvitationCode = async (code: string) => {
 };
 
 export const verifyInvitationToken = async (token: string) => {
-	const response = await request({ requestMode: 'proxy-invitations-api' })
+	const response = await request({ requestMode: 'proxy-public-service' })
 		.post('api/v1/invitations/verify-token', {
 			json: { token },
 		})
@@ -27,7 +27,7 @@ export const verifyInvitationToken = async (token: string) => {
 };
 
 export const bindInvitationCode = async (code: string, walletAddress: string) => {
-	const response = await request({ requestMode: 'proxy-invitations-api' })
+	const response = await request({ requestMode: 'proxy-public-service' })
 		.post('api/v1/invitations/bind', {
 			json: { code, wallet_address: walletAddress },
 		})
@@ -37,7 +37,7 @@ export const bindInvitationCode = async (code: string, walletAddress: string) =>
 };
 
 export const loginWithInvitationCode = async (code: string, walletAddress: string) => {
-	const response = await request({ requestMode: 'proxy-invitations-api' })
+	const response = await request({ requestMode: 'proxy-public-service' })
 		.post('api/v1/invitations/login', {
 			json: { code, wallet_address: walletAddress },
 		})

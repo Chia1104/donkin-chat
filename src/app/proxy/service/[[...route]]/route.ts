@@ -7,14 +7,14 @@ import { logger } from '@/utils/logger';
 
 const app = new Hono();
 
-app.all('/proxy-invitations-api/*', c => {
-	const url = `${env.NEXT_PUBLIC_APP_INVITATIONS_API_HOST}${c.req.path.replace(/^\/proxy-invitations-api/, '').replace(/\/$/, '')}?${Object.entries(
+app.all('/proxy/service/*', c => {
+	const url = `${env.NEXT_PUBLIC_SERVICE_ENDPOINT}${c.req.path.replace(/^\/proxy\/service/, '').replace(/\/$/, '')}?${Object.entries(
 		c.req.query(),
 	)
 		.map(([key, value]) => `${key}=${value}`)
 		.join('&')}`;
 
-	logger(['PROXY URL: ', url], { type: 'log' });
+	logger(['PROXY URL (SERVICE): ', url], { type: 'log' });
 
 	return proxy(url, {
 		...c.req, // optional, specify only when forwarding all the request data (including credentials) is necessary.
