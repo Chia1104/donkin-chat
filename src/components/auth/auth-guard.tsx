@@ -54,7 +54,6 @@ const Welcome = () => {
 	const switchChain = useWeb3Store(state => state.switchChain);
 	const { login: privyLogin } = useLogin({
 		onComplete: ({ user }) => {
-			console.log('user', user);
 			if (user?.wallet?.chainType) {
 				switchChain(user?.wallet?.chainType === 'ethereum' ? ChainID.ETH : ChainID.SOL);
 			}
