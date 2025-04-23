@@ -46,12 +46,12 @@ export const initialSOLChain: Chain = {
 export const initialWeb3ChainState: Web3ChainState = {
 	...initialSOLChain,
 	supportedEVM: [
-		// {
-		// 	chainId: EVMChainID.ETH,
-		// 	chainName: EVMChainSymbol.ETH,
-		// 	symbol: EVMChainSymbol.ETH,
-		// 	vm: SupportedVM.EVM,
-		// },
+		{
+			chainId: EVMChainID.ETH,
+			chainName: EVMChainSymbol.ETH,
+			symbol: EVMChainSymbol.ETH,
+			vm: SupportedVM.EVM,
+		},
 		// {
 		// 	chainId: EVMChainID.BNB,
 		// 	chainName: EVMChainSymbol.BNB,
@@ -74,12 +74,12 @@ export const initialWeb3ChainState: Web3ChainState = {
 			symbol: SVMChainSymbol.SOL,
 			vm: SupportedVM.SVM,
 		},
-		// {
-		// 	chainId: EVMChainID.ETH,
-		// 	chainName: EVMChainSymbol.ETH,
-		// 	symbol: EVMChainSymbol.ETH,
-		// 	vm: SupportedVM.EVM,
-		// },
+		{
+			chainId: EVMChainID.ETH,
+			chainName: EVMChainSymbol.ETH,
+			symbol: EVMChainSymbol.ETH,
+			vm: SupportedVM.EVM,
+		},
 		// {
 		// 	chainId: EVMChainID.BNB,
 		// 	chainName: EVMChainSymbol.BNB,

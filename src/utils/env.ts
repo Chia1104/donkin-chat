@@ -33,6 +33,7 @@ export const env = createEnv({
 		OPENAI_API_KEY: z.string().optional(),
 		BIRDEYE_API_KEY: z.string().optional(),
 		FLAGS_AI_CHAT: z.string().optional(),
+		FLAGS_INVITE_CODE: z.string().optional(),
 		AI_TOKEN: z.string().optional(),
 		OPENROUTER_API_KEY: z.string().optional(),
 		PRIVY_SECRET: z.string().min(1),
@@ -83,6 +84,7 @@ export const env = createEnv({
 		NEXT_PUBLIC_PRIVY_CLIENT_ID: process.env.NEXT_PUBLIC_PRIVY_CLIENT_ID,
 		PRIVY_SECRET: process.env.PRIVY_SECRET,
 		PRIVY_VERIFICATION_KEY_BASE64: process.env.PRIVY_VERIFICATION_KEY_BASE64,
+		FLAGS_INVITE_CODE: process.env.FLAGS_INVITE_CODE,
 	},
 
 	skipValidation: process.env.SKIP_ENV_VALIDATION === 'true' || process.env.SKIP_ENV_VALIDATION === '1',

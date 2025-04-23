@@ -2,6 +2,7 @@
 
 import { Button } from '@heroui/button';
 import { useTranslations } from 'next-intl';
+import { useAccount } from 'wagmi';
 
 import OrderPopover from '@/components/token/order-popover';
 import { useChatStore } from '@/stores/chat';
@@ -33,9 +34,10 @@ const TestOrderPopover = () => {
 
 const Page = () => {
 	const handleSubmit = useChatStore(state => state.handleSubmit);
-
+	const { address } = useAccount();
 	return (
 		<div className="flex flex-col gap-4 w-full items-center">
+			<p>Wallet address: {address}</p>
 			<Button onPress={() => handleSubmit('幫我生成一個 500 字故事')}>Test SSE</Button>
 			<TestOrderPopover />
 		</div>
