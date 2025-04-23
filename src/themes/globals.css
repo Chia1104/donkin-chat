@@ -27,6 +27,7 @@ body {
 	scroll-behavior: smooth;
 	scroll-padding-top: 10px;
 	background: linear-gradient(180deg, #09182a 0%, #0f1319 100%);
+	/* font-family: var(--font-noto-sans-tc), var(--font-noto-sans-sc), var(--font-noto-sans); */
 }
 
 ::selection {

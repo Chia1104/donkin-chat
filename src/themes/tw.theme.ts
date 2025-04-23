@@ -76,5 +76,10 @@ export const theme = {
 				},
 			},
 		},
+		fontFamily: {
+			tc: ['var(--font-noto-sans-tc)'],
+			sc: ['var(--font-noto-sans-sc)'],
+			en: ['var(--font-noto-sans)'],
+		},
 	},
 } satisfies Config['theme'];

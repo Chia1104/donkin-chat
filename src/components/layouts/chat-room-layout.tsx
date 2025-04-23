@@ -27,7 +27,6 @@ import { useMediaQuery } from '@/hooks/useMediaQuery';
 import { QueryType } from '@/libs/ai/enums/queryType.enum';
 import { setFeatureFlag } from '@/libs/flags/actions/feature.action';
 import { useGlobalStore } from '@/stores/global/store';
-import { noto_sans } from '@/themes/fonts';
 import { cn } from '@/utils/cn';
 
 import { DonkinPlugin } from '../chat/donkin-plugin';
@@ -179,11 +178,7 @@ const Navigation = ({ enableSettings }: { enableSettings?: boolean }) => {
 				base: 'h-[60px]',
 			}}
 		>
-			<NavbarContent
-				aria-label="Main Navigation Content"
-				className={cn('flex lg:gap-10 gap-4', noto_sans.className)}
-				justify="start"
-			>
+			<NavbarContent aria-label="Main Navigation Content" className={cn('flex lg:gap-10 gap-4')} justify="start">
 				<NavbarItem className="cursor-pointer" aria-label="Donkin" onClick={handleDonkinClick}>
 					<Donkin />
 				</NavbarItem>
