@@ -4,7 +4,7 @@ import type { Locale } from 'next-intl';
 import { ViewTransitions } from 'next-view-transitions';
 
 import { Theme } from '@/enums/theme.enum';
-import { noto_sans, AvenirNextLTPro_Regular } from '@/themes/fonts';
+import { noto_sans_tc, noto_sans_sc } from '@/themes/fonts';
 import { cn } from '@/utils/cn';
 
 interface Props {
@@ -23,16 +23,13 @@ const AppLayout: FC<Props> = ({ children, locale, htmlProps, bodyProps, theme })
 				lang={locale}
 				suppressHydrationWarning
 				{...htmlProps}
-				className={cn(htmlProps?.className, themeSchema)}
+				className={cn(htmlProps?.className, themeSchema, noto_sans_tc.className, noto_sans_sc.className)}
 				style={{
 					colorScheme: themeSchema,
 					...htmlProps?.style,
 				}}
 			>
-				<body
-					{...bodyProps}
-					className={cn(noto_sans.className, AvenirNextLTPro_Regular.className, bodyProps?.className)}
-				>
+				<body {...bodyProps} className={cn(bodyProps?.className)}>
 					{children}
 				</body>
 			</html>
