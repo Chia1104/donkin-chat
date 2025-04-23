@@ -3,7 +3,7 @@ import { flag } from 'flags/next';
 import 'server-only';
 import { z } from 'zod';
 
-import { IS_DEV } from '@/utils/env';
+import { IS_DEV, env } from '@/utils/env';
 
 export const getConfig = async (id: string) => get(id);
 
@@ -52,7 +52,12 @@ export const cookieFeaturesFlag = flag<CookieFeatures, CookieFeatures>({
 export const inviteCodeFlag = flag<boolean>({
 	key: FlagID.InviteCode,
 	async decide() {
-		if (IS_DEV) return true;
-		return (await getConfig(FlagID.InviteCode)) === 'true';
+		try {
+			if (IS_DEV) return env.FLAGS_INVITE_CODE === 'true' || env.FLAGS_INVITE_CODE === '1';
+			const config = await getConfig(FlagID.InviteCode);
+			return config === 'true' || config === '1';
+		} catch {
+			return false;
+		}
 	},
 });

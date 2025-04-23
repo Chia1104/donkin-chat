@@ -1,6 +1,6 @@
 'use client';
 
-import { use, useTransition, createContext, useState, useRef } from 'react';
+import { use, useTransition, createContext, useState, useRef, useEffect } from 'react';
 
 import { Button } from '@heroui/button';
 import { Divider } from '@heroui/divider';
@@ -15,6 +15,8 @@ import { useTranslations } from 'next-intl';
 import { useTransitionRouter } from 'next-view-transitions';
 
 import { useLoginWithInvitationsCode } from '@/libs/auth/hooks/useLoginWithInvitationsCode';
+import { ChainID } from '@/libs/web3/enums/chain.enum';
+import { useWeb3Store } from '@/stores/web3/store';
 import { truncateMiddle } from '@/utils/format';
 import { tryCatch } from '@/utils/try-catch';
 
@@ -49,8 +51,13 @@ const Welcome = () => {
 	const t = useTranslations('meta');
 	const tAction = useTranslations('action');
 	const router = useTransitionRouter();
+	const switchChain = useWeb3Store(state => state.switchChain);
 	const { login: privyLogin } = useLogin({
-		onComplete: () => {
+		onComplete: ({ user }) => {
+			console.log('user', user);
+			if (user?.wallet?.chainType) {
+				switchChain(user?.wallet?.chainType === 'ethereum' ? ChainID.ETH : ChainID.SOL);
+			}
 			router.refresh();
 		},
 	});
@@ -66,6 +73,7 @@ const Welcome = () => {
 						privyLogin({
 							loginMethods: ['wallet'],
 							disableSignup: false,
+							walletChainType: 'ethereum-and-solana',
 						})
 					}
 					color="primary"
@@ -175,8 +183,9 @@ const CodeRegister = () => {
 	);
 };
 
-export const AuthGuard = ({ isRegistered, isWalletConnected, children, enabled = false }: Props) => {
-	const { authenticated, ready } = usePrivy();
+export const AuthGuard = ({ isRegistered, isWalletConnected, children, enabled = true }: Props) => {
+	const { authenticated, ready, user } = usePrivy();
+	const switchChain = useWeb3Store(state => state.switchChain);
 
 	if (enabled) {
 		/**
@@ -187,6 +196,12 @@ export const AuthGuard = ({ isRegistered, isWalletConnected, children, enabled =
 	}
 
 	const isAuthenticated = (isWalletConnected || (ready && authenticated)) && isRegistered;
+
+	useEffect(() => {
+		if ((user?.wallet?.chainType, enabled)) {
+			switchChain(user?.wallet?.chainType === 'ethereum' ? ChainID.ETH : ChainID.SOL);
+		}
+	}, [user?.wallet?.chainType, switchChain, enabled]);
 
 	return (
 		<AuthGuardContext value={{ isAuthenticated, enabled, canActivate: !enabled || (enabled && isAuthenticated) }}>

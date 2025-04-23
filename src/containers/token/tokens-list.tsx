@@ -27,6 +27,8 @@ import { useMediaQuery } from '@/hooks/useMediaQuery';
 import { TokenSort } from '@/libs/ai/enums/tokenSort.enum';
 import { useAISearchParams } from '@/libs/ai/hooks/useAISearchParams';
 import { useQueryTokensHot } from '@/libs/token/hooks/useQueryToken';
+import type { Token } from '@/libs/token/pipes/token.pipe';
+import { ChainID, ChainSymbol } from '@/libs/web3/enums/chain.enum';
 import { useGlobalStore } from '@/stores/global/store';
 import { cn } from '@/utils/cn';
 
@@ -199,6 +201,25 @@ const List = ({ display }: { display: 'group' | 'single' }) => {
 		[isOpen, isLgWidth, isMdWidth, isSmWidth, display],
 	);
 
+	const handlePress = useCallback(
+		(data: Token) => {
+			const chainId = Object.values(ChainID).find(id => data.chain_id === id);
+			const getChainSymbol = (chainId: unknown) => {
+				switch (chainId) {
+					case ChainID.ETH:
+						return ChainSymbol.ETH.toLowerCase();
+					case ChainID.SOL:
+						return ChainSymbol.SOL.toLowerCase();
+					default:
+						return 'global';
+				}
+			};
+
+			router.push(`/${getChainSymbol(chainId)}/token/${data.address}`);
+		},
+		[router],
+	);
+
 	return (
 		<AsyncQuery
 			queryResult={queryResult}
@@ -303,9 +324,7 @@ const List = ({ display }: { display: 'group' | 'single' }) => {
 								x: globalSearchParams.mock ? 60 : 0,
 							}}
 							display={getItemDisplay(index, length)}
-							onPress={data => {
-								router.push(`/sol/token/${data.meta.token}`);
-							}}
+							onPress={() => handlePress(_)}
 							cardProps={{
 								isPressable: true,
 							}}

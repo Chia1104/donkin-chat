@@ -1,3 +1,4 @@
+/* eslint-disable @typescript-eslint/unbound-method */
 import { useMemo } from 'react';
 
 import { Button } from '@heroui/button';
@@ -48,10 +49,25 @@ const WalletConnect = (props: Props) => {
 
 	const { vm = currentVM, privy = true } = props;
 	const { isOpen, onOpen, onOpenChange } = useDisclosure();
-	const { connectors, connect, reset } = useConnect();
-	// eslint-disable-next-line @typescript-eslint/unbound-method
-	const { wallets, select: solanaSelect, connect: solanaConnect, disconnect: solanaDisconnect } = useWallet();
 
+	/**
+	 * @description Ethereum wallet connect
+	 */
+	const { connectors, connect, reset } = useConnect();
+
+	/**
+	 * @description Solana wallet connect
+	 */
+	const {
+		wallets: solanaWallets,
+		select: solanaSelect,
+		connect: solanaConnect,
+		disconnect: solanaDisconnect,
+	} = useWallet();
+
+	/**
+	 * @description Privy integration
+	 */
 	const { ready: privyReady, authenticated: privyAuthenticated } = usePrivy();
 	const { login: privyLogin } = useLogin();
 
@@ -78,7 +94,7 @@ const WalletConnect = (props: Props) => {
 			case SupportedVM.SVM:
 				return (
 					<>
-						{wallets.map(wallet => (
+						{solanaWallets.map(wallet => (
 							<Button
 								key={wallet.adapter.name}
 								onPress={() => {
@@ -100,13 +116,13 @@ const WalletConnect = (props: Props) => {
 			default:
 				return null;
 		}
-	}, [connect, connectors, reset, solanaConnect, solanaDisconnect, solanaSelect, vm, wallets]);
+	}, [connect, connectors, reset, solanaConnect, solanaDisconnect, solanaSelect, vm, solanaWallets]);
 
 	const handleConnect = () => {
 		if (privy) {
 			privyLogin({
 				loginMethods: ['wallet'],
-				// walletChainType: vm === 'SVM' ? 'solana-only' : 'ethereum-only',
+				walletChainType: vm === 'SVM' ? 'solana-only' : vm === 'EVM' ? 'ethereum-only' : 'ethereum-and-solana',
 				disableSignup: false,
 			});
 			return;

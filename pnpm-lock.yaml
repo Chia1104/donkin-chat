@@ -35,6 +35,9 @@ importers:
       '@privy-io/server-auth':
         specifier: ^1.20.2
         version: 1.20.2(bufferutil@4.0.9)(encoding@0.1.13)(typescript@5.8.3)(utf-8-validate@5.0.10)(viem@2.26.5(bufferutil@4.0.9)(typescript@5.8.3)(utf-8-validate@5.0.10)(zod@3.24.2))
+      '@privy-io/wagmi':
+        specifier: ^1.0.3
+        version: 1.0.3(ca2396539a6875cb911c0914f5948a77)
       '@radix-ui/react-dialog':
         specifier: ^1.1.7
         version: 1.1.7(@types/react-dom@19.1.2(@types/react@19.1.1))(@types/react@19.1.1)(react-dom@19.1.0(react@19.1.0))(react@19.1.0)
@@ -2933,6 +2936,14 @@ packages:
     peerDependenciesMeta:
       viem:
         optional: true
+
+  '@privy-io/wagmi@1.0.3':
+    resolution: {integrity: sha512-pxVulp8uKMJ1bG2X8oMw3z+RfBOZ3VkcFbFA9mRuWCgW8Zy88LnnRL8UYayklhHFXS1voCxWK88xEFg2+cBqwQ==}
+    peerDependencies:
+      '@privy-io/react-auth': ^2.0.0
+      react: '>=18'
+      viem: ^2
+      wagmi: ^2.14.11
 
   '@project-serum/sol-wallet-adapter@0.2.6':
     resolution: {integrity: sha512-cpIb13aWPW8y4KzkZAPDgw+Kb+DXjCC6rZoH74MGm3I/6e/zKyGnfAuW5olb2zxonFqsYgnv7ev8MQnvSgJ3/g==}
@@ -15046,6 +15057,13 @@ snapshots:
       - encoding
       - typescript
       - utf-8-validate
+
+  '@privy-io/wagmi@1.0.3(ca2396539a6875cb911c0914f5948a77)':
+    dependencies:
+      '@privy-io/react-auth': 2.9.1(@react-native-async-storage/async-storage@1.24.0(react-native@0.77.1(@babel/core@7.26.10)(@babel/preset-env@7.26.9(@babel/core@7.26.10))(@types/react@19.1.1)(bufferutil@4.0.9)(react@19.1.0)(utf-8-validate@5.0.10)))(@solana/web3.js@1.98.0(bufferutil@4.0.9)(encoding@0.1.13)(utf-8-validate@5.0.10))(@types/react@19.1.1)(bs58@5.0.0)(bufferutil@4.0.9)(immer@10.1.1)(react-dom@19.1.0(react@19.1.0))(react@19.1.0)(typescript@5.8.3)(use-sync-external-store@1.5.0(react@19.1.0))(utf-8-validate@5.0.10)(zod@3.24.2)
+      react: 19.1.0
+      viem: 2.26.5(bufferutil@4.0.9)(typescript@5.8.3)(utf-8-validate@5.0.10)(zod@3.24.2)
+      wagmi: 2.14.16(@react-native-async-storage/async-storage@1.24.0(react-native@0.77.1(@babel/core@7.26.10)(@babel/preset-env@7.26.9(@babel/core@7.26.10))(@types/react@19.1.1)(bufferutil@4.0.9)(react@19.1.0)(utf-8-validate@5.0.10)))(@tanstack/query-core@5.74.0)(@tanstack/react-query@5.74.0(react@19.1.0))(@types/react@19.1.1)(bufferutil@4.0.9)(encoding@0.1.13)(immer@10.1.1)(react@19.1.0)(typescript@5.8.3)(utf-8-validate@5.0.10)(viem@2.26.5(bufferutil@4.0.9)(typescript@5.8.3)(utf-8-validate@5.0.10)(zod@3.24.2))(zod@3.24.2)
 
   '@project-serum/sol-wallet-adapter@0.2.6(@solana/web3.js@1.98.0(bufferutil@4.0.9)(encoding@0.1.13)(utf-8-validate@5.0.10))':
     dependencies:
