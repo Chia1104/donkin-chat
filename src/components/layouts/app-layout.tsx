@@ -1,6 +1,5 @@
 import type { ReactNode, FC, ComponentPropsWithoutRef } from 'react';
 
-import type { Locale } from 'next-intl';
 import { ViewTransitions } from 'next-view-transitions';
 
 import { Theme } from '@/enums/theme.enum';
@@ -23,7 +22,7 @@ const AppLayout: FC<Props> = ({ children, locale, htmlProps, bodyProps, theme })
 				lang={locale}
 				suppressHydrationWarning
 				{...htmlProps}
-				className={cn(htmlProps?.className, themeSchema, noto_sans_tc.className, noto_sans_sc.className)}
+				className={cn(htmlProps?.className, themeSchema, noto_sans_tc.variable, noto_sans_sc.variable)}
 				style={{
 					colorScheme: themeSchema,
 					...htmlProps?.style,
