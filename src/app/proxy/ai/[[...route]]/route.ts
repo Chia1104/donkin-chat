@@ -2,10 +2,13 @@ import { Hono } from 'hono';
 import { proxy } from 'hono/proxy';
 import { handle } from 'hono/vercel';
 
+import { withRateLimiter, presetRateLimiter } from '@/libs/kv/services/with-rate-limiter';
 import { env } from '@/utils/env';
 import { logger } from '@/utils/logger';
 
 const app = new Hono();
+
+const enabledRateLimiter = false;
 
 app.all('/proxy/ai/*', c => {
 	const url = `${env.NEXT_PUBLIC_AI_SERVICE_ENDPOINT}${c.req.path.replace(/^\/proxy\/ai/, '').replace(/\/$/, '')}?${Object.entries(
@@ -27,8 +30,33 @@ app.all('/proxy/ai/*', c => {
 	});
 });
 
-export const GET = handle(app);
-export const POST = handle(app);
-export const PUT = handle(app);
-export const PATCH = handle(app);
-export const DELETE = handle(app);
+export const GET = withRateLimiter(
+	handle(app),
+	presetRateLimiter({
+		enabled: enabledRateLimiter,
+	}),
+);
+export const POST = withRateLimiter(
+	handle(app),
+	presetRateLimiter({
+		enabled: enabledRateLimiter,
+	}),
+);
+export const PUT = withRateLimiter(
+	handle(app),
+	presetRateLimiter({
+		enabled: enabledRateLimiter,
+	}),
+);
+export const PATCH = withRateLimiter(
+	handle(app),
+	presetRateLimiter({
+		enabled: enabledRateLimiter,
+	}),
+);
+export const DELETE = withRateLimiter(
+	handle(app),
+	presetRateLimiter({
+		enabled: enabledRateLimiter,
+	}),
+);
