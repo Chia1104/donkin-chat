@@ -21,6 +21,8 @@ interface Props<TData, TError extends Error, TInfinite extends boolean> {
 		: UseQueryResult<TData, TError>;
 	enable?: boolean;
 	isInfinite?: TInfinite;
+	enableLoadingFallback?: boolean;
+	enableErrorFallback?: boolean;
 }
 
 export const AsyncQuery = <TData, TError extends Error, TInfinite extends boolean>({
@@ -29,16 +31,14 @@ export const AsyncQuery = <TData, TError extends Error, TInfinite extends boolea
 	errorFallback,
 	queryResult,
 	enable = true,
+	enableLoadingFallback = true,
+	enableErrorFallback = true,
 }: Props<TData, TError, TInfinite>) => {
-	if (!enable) {
-		return typeof children === 'function' ? children(queryResult) : children;
-	}
-
-	if (queryResult.isLoading) {
+	if (queryResult.isLoading && enableLoadingFallback && enable) {
 		return loadingFallback;
 	}
 
-	if (queryResult.isError) {
+	if (queryResult.isError && enableErrorFallback && enable) {
 		return (
 			(typeof errorFallback === 'function' ? errorFallback(queryResult.error) : errorFallback) ?? (
 				<Error error={queryResult.error} enabledSentry={!(queryResult.error instanceof HTTPError)} />

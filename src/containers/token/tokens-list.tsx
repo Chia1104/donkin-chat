@@ -218,48 +218,7 @@ const List = ({ display }: { display: 'group' | 'single' }) => {
 	);
 
 	return (
-		<AsyncQuery
-			queryResult={queryResult}
-			isInfinite
-			loadingFallback={
-				<ul
-					className={cn(
-						'grid grid-cols-1 gap-4 mb-4 w-full min-h-full',
-						!isOpen ? 'xl:grid-cols-4 lg:grid-cols-3 md:grid-cols-2' : 'xl:grid-cols-3 lg:grid-cols-2',
-					)}
-				>
-					{Array.from({ length: 12 }).map((_, index) => {
-						return (
-							<li className="w-full" key={index}>
-								<InfoCard
-									meta={{
-										name: '',
-										avatar: '',
-										chain: '',
-										token: '',
-										symbol: '',
-									}}
-									stock={{
-										marketCap: 0,
-										price: 0,
-										pool: 0,
-										change: 0,
-									}}
-									hotspots={{
-										x: 0,
-									}}
-									display={['all']}
-									cardProps={{
-										isPressable: false,
-									}}
-									isLoading
-								/>
-							</li>
-						);
-					})}
-				</ul>
-			}
-		>
+		<AsyncQuery queryResult={queryResult} isInfinite enableLoadingFallback={false}>
 			<VirtuosoGrid
 				key={isMdWidth ? 'desktop' : 'mobile'}
 				endReached={() => {
@@ -280,7 +239,7 @@ const List = ({ display }: { display: 'group' | 'single' }) => {
 							)}
 						>
 							{children}
-							{queryResult.isFetchingNextPage &&
+							{(queryResult.isFetchingNextPage || queryResult.isFetching) &&
 								Array.from({ length: 12 }).map((_, index) => {
 									return (
 										<li className="w-full" key={index}>
