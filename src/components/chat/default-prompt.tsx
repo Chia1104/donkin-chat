@@ -13,7 +13,7 @@ interface Props {
 	currentCoin?: string;
 }
 
-const DefaultPrompt = ({ currentCoin = 'XX', ...props }: Props) => {
+const DefaultPrompt = (props: Props) => {
 	const t = useTranslations('chat');
 
 	const handleAction = useCallback(
@@ -41,9 +41,6 @@ const DefaultPrompt = ({ currentCoin = 'XX', ...props }: Props) => {
 				</ActionCard>
 				<ActionCard onPress={() => handleAction(t('default-prompt.largest-whales'))}>
 					<ActionBody label={t('default-prompt.largest-whales')} className="justify-center p-5" />
-				</ActionCard>
-				<ActionCard onPress={() => handleAction(t('default-prompt.info-about', { item: 'XX' }))}>
-					<ActionBody label={t('default-prompt.info-about', { item: currentCoin })} className="justify-center p-5" />
 				</ActionCard>
 			</div>
 		</section>
