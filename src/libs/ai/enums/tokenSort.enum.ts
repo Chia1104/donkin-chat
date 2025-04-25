@@ -1,5 +1,5 @@
 export const TokenSort = {
-	Hot: 'hot',
+	Hot: 'rank',
 	UpTime: 'minted_at',
 	MarketCap: 'market_cap',
 	Change: 'price_change_24h',
