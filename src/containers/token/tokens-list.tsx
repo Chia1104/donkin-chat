@@ -7,10 +7,7 @@ import { Button } from '@heroui/button';
 import { Divider } from '@heroui/divider';
 import { Popover, PopoverTrigger, PopoverContent } from '@heroui/popover';
 import { RadioGroup, Radio } from '@heroui/radio';
-import { ScrollShadow } from '@heroui/scroll-shadow';
-import { Spinner } from '@heroui/spinner';
 import { useDisclosure } from '@heroui/use-disclosure';
-import { AnimatePresence, motion } from 'framer-motion';
 import { ArrowUpDownIcon } from 'lucide-react';
 import { useTranslations } from 'next-intl';
 import { useTransitionRouter } from 'next-view-transitions';
@@ -151,7 +148,7 @@ const SortFilter = () => {
 const List = ({ display }: { display: 'group' | 'single' }) => {
 	const [searchParams] = useAISearchParams();
 	const queryResult = useQueryTokensHot({
-		page_size: 100,
+		page_size: 20,
 		sort_by: searchParams.sort,
 		order: searchParams.order,
 	});
@@ -221,54 +218,15 @@ const List = ({ display }: { display: 'group' | 'single' }) => {
 	);
 
 	return (
-		<AsyncQuery
-			queryResult={queryResult}
-			isInfinite
-			loadingFallback={
-				<ul
-					className={cn(
-						'grid grid-cols-1 gap-4 mb-4 w-full min-h-full',
-						!isOpen ? 'xl:grid-cols-4 lg:grid-cols-3 md:grid-cols-2' : 'xl:grid-cols-3 lg:grid-cols-2',
-					)}
-				>
-					<AnimatePresence>
-						{Array.from({ length: 12 }).map((_, index) => {
-							return (
-								<motion.li className="w-full" key={index} exit={{ opacity: 1 }} layout>
-									<InfoCard
-										meta={{
-											name: '',
-											avatar: '',
-											chain: '',
-											token: '',
-											symbol: '',
-										}}
-										stock={{
-											marketCap: 0,
-											price: 0,
-											pool: 0,
-											change: 0,
-										}}
-										hotspots={{
-											x: 0,
-										}}
-										display={['all']}
-										cardProps={{
-											isPressable: false,
-										}}
-										isLoading
-									/>
-								</motion.li>
-							);
-						})}
-					</AnimatePresence>
-				</ul>
-			}
-		>
+		<AsyncQuery queryResult={queryResult} isInfinite enableLoadingFallback={false}>
 			<VirtuosoGrid
-				// endReached={() => {
-				// 	void queryResult.fetchNextPage();
-				// }}
+				key={isMdWidth ? 'desktop' : 'mobile'}
+				endReached={() => {
+					if (!queryResult.isFetchingNextPage && queryResult.hasNextPage) {
+						void queryResult.fetchNextPage();
+					}
+				}}
+				useWindowScroll={!isMdWidth}
 				components={{
 					List: ({ style, children, ref, ...props }) => (
 						<ul
@@ -281,6 +239,36 @@ const List = ({ display }: { display: 'group' | 'single' }) => {
 							)}
 						>
 							{children}
+							{(queryResult.isFetchingNextPage || queryResult.isFetching) &&
+								Array.from({ length: 12 }).map((_, index) => {
+									return (
+										<li className="w-full" key={index}>
+											<InfoCard
+												meta={{
+													name: '',
+													avatar: '',
+													chain: '',
+													token: '',
+													symbol: '',
+												}}
+												stock={{
+													marketCap: 0,
+													price: 0,
+													pool: 0,
+													change: 0,
+												}}
+												hotspots={{
+													x: 0,
+												}}
+												display={['all']}
+												cardProps={{
+													isPressable: false,
+												}}
+												isLoading
+											/>
+										</li>
+									);
+								})}
 						</ul>
 					),
 					Item: ({ children, ...props }) => (
@@ -289,17 +277,6 @@ const List = ({ display }: { display: 'group' | 'single' }) => {
 							{children}
 						</li>
 					),
-					Scroller: ({ children, ...props }) => (
-						<ScrollShadow className="w-full min-h-[calc(100vh-140px)] md:min-h-fit" {...props}>
-							{children}
-						</ScrollShadow>
-					),
-					Footer: () =>
-						queryResult.isFetchingNextPage ? (
-							<div className="flex justify-center items-center h-full py-5">
-								<Spinner className="space-y-5 justify-self-center" />
-							</div>
-						) : null,
 				}}
 				data={queryResult.flatData ?? []}
 				totalCount={queryResult.flatData?.length ?? 0}
