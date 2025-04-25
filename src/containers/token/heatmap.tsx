@@ -17,7 +17,7 @@ const Heatmap = () => {
 		{
 			page_size: 20,
 			page: 1,
-			sort_by: 'market_cap',
+			sort_by: 'hot',
 		},
 		{
 			enabled: !searchParams.mock,
