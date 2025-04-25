@@ -9,7 +9,7 @@ import { Order } from '../enums/order.enum';
 
 export const tokenQueryStates = {
 	[FilterColumn.Mark]: parseAsBoolean.withDefault(true),
-	[FilterColumn.Interval]: parseAsStringEnum(Object.values(IntervalFilter)).withDefault(IntervalFilter.OneMinute),
+	[FilterColumn.Interval]: parseAsStringEnum(Object.values(IntervalFilter)).withDefault(IntervalFilter.OneHour),
 	[FilterColumn.Address]: parseAsArrayOf(parseAsStringEnum(Object.values(Address))),
 	[FilterColumn.Order]: parseAsArrayOf(parseAsStringEnum(Object.values(Order))),
 	[FilterColumn.TransactionMin]: parseAsFloat,
