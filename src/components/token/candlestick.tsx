@@ -477,7 +477,6 @@ const TransactionMarkers = () => {
 		const markers: ClickableMarker<Time>[] = [];
 
 		groupedTransactions.forEach((group, time) => {
-			console.log(group);
 			let totalBuy = 0;
 			let totalSell = 0;
 			let totalKolAlerts = 0;
