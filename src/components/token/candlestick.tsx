@@ -197,7 +197,7 @@ const SubscribeCandlestick = ({
 			if (isPending || isNoData || isError) {
 				return;
 			}
-			const numberBarsToLoad = 50 - range;
+			const numberBarsToLoad = 150 - range;
 			const newTimeFrom = handleGenerateTimeWithInterval(timeFrom, query.type, numberBarsToLoad);
 			const newTimeTo = handleGenerateTimeWithInterval(timeFrom, query.type, 0);
 			setTimeFrom(newTimeFrom);
@@ -325,6 +325,8 @@ const TransactionMarkers = () => {
 		  >
 		| undefined
 	>();
+
+	console.log(groupedTransactions);
 
 	const transactionMarkers: ClickableMarker<Time>[] = useMemo(() => {
 		// 找出 data 中最早和最晚的 unix 時間
@@ -485,8 +487,6 @@ const TransactionMarkers = () => {
 				group.buys.length > 0 &&
 				(searchParams.address.includes(Address.SmartMoney) || searchParams.address.includes(Address.Whale))
 			) {
-				totalBuy = group.buys.length;
-
 				const buyMin = searchParams.tmin;
 				const buyMax = searchParams.tmax;
 
@@ -757,7 +757,7 @@ const Chart = () => {
 			className="h-[55dvh]"
 			initOptions={initOptions}
 			onInit={c => {
-				if (data.length < 50) {
+				if (data.length < 150) {
 					c.timeScale().fitContent();
 				}
 			}}

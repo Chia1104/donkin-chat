@@ -151,17 +151,17 @@ const Detail = () => {
 	const timeFrom = useMemo(() => {
 		switch (searchParams.interval) {
 			case IntervalFilter.OneMinute:
-				return dayjs.unix(currentUnix.current).subtract(6, 'hour').unix();
-			case IntervalFilter.FiveMinutes:
-				return dayjs.unix(currentUnix.current).subtract(6, 'hour').unix();
-			case IntervalFilter.FifteenMinutes:
-				return dayjs.unix(currentUnix.current).subtract(6, 'hour').unix();
-			case IntervalFilter.ThirtyMinutes:
 				return dayjs.unix(currentUnix.current).subtract(12, 'hour').unix();
-			case IntervalFilter.OneHour:
+			case IntervalFilter.FiveMinutes:
+				return dayjs.unix(currentUnix.current).subtract(1, 'day').unix();
+			case IntervalFilter.FifteenMinutes:
 				return dayjs.unix(currentUnix.current).subtract(1, 'week').unix();
+			case IntervalFilter.ThirtyMinutes:
+				return dayjs.unix(currentUnix.current).subtract(1, 'week').unix();
+			case IntervalFilter.OneHour:
+				return dayjs.unix(currentUnix.current).subtract(2, 'week').unix();
 			case IntervalFilter.FourHours:
-				return dayjs.unix(currentUnix.current).subtract(1, 'month').unix();
+				return dayjs.unix(currentUnix.current).subtract(2, 'month').unix();
 			case IntervalFilter.OneDay:
 				return dayjs.unix(currentUnix.current).subtract(6, 'month').unix();
 			case IntervalFilter.OneWeek:

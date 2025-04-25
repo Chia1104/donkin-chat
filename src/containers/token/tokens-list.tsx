@@ -151,7 +151,7 @@ const SortFilter = () => {
 const List = ({ display }: { display: 'group' | 'single' }) => {
 	const [searchParams] = useAISearchParams();
 	const queryResult = useQueryTokensHot({
-		page_size: 20,
+		page_size: searchParams.sort === TokenSort.Hot ? 100 : 20,
 		sort_by: searchParams.sort,
 		order: searchParams.order,
 	});
@@ -227,8 +227,8 @@ const List = ({ display }: { display: 'group' | 'single' }) => {
 			loadingFallback={
 				<ul
 					className={cn(
-						'grid grid-cols-1 gap-4 mb-4 w-full',
-						!isOpen ? 'lg:grid-cols-4 md:grid-cols-3 sm:grid-cols-2' : 'lg:grid-cols-3 md:grid-cols-2',
+						'grid grid-cols-1 gap-4 mb-4 w-full min-h-full',
+						!isOpen ? 'xl:grid-cols-4 lg:grid-cols-3 md:grid-cols-2' : 'xl:grid-cols-3 lg:grid-cols-2',
 					)}
 				>
 					<AnimatePresence>
@@ -267,6 +267,9 @@ const List = ({ display }: { display: 'group' | 'single' }) => {
 		>
 			<VirtuosoGrid
 				endReached={() => {
+					if (searchParams.sort === TokenSort.Hot) {
+						return;
+					}
 					void queryResult.fetchNextPage();
 				}}
 				components={{

@@ -133,9 +133,9 @@
 		"donkin-warning": "Donkin may provide inaccurate information, please verify important information",
 		"default-prompt": {
 			"title": "Example：",
-			"latest-coins": "What are the most popular tokens recently",
-			"smart-wallet-recommendations": "What are smart money addresses buying",
-			"largest-whales": "What are whale addresses buying recently",
+			"latest-coins": "What are the most popular tokens recently?",
+			"smart-wallet-recommendations": "What are smart money addresses buying?",
+			"kol-orders": "What are KOLs calling? What is the effect?",
 			"info-about": "I want to know the information of {item} token"
 		},
 		"search": {

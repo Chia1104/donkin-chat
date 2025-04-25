@@ -51,7 +51,7 @@ export const getTokensHot = async (options?: BaseRequestOptions<TokensHotRequest
 			searchParams: {
 				page: options?.data?.page ?? '',
 				page_size: options?.data?.page_size ?? '',
-				sort_by: options?.data?.sort_by ? (options?.data?.sort_by === 'hot' ? '' : options?.data?.sort_by) : '',
+				sort_by: options?.data?.sort_by ?? '',
 				order: options?.data?.order ?? '',
 			},
 			timeout: options?.timeout,

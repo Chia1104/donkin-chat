@@ -17,7 +17,7 @@ const Heatmap = () => {
 		{
 			page_size: 20,
 			page: 1,
-			sort_by: 'market_cap',
+			sort_by: 'rank',
 		},
 		{
 			enabled: !searchParams.mock,
@@ -25,11 +25,11 @@ const Heatmap = () => {
 	);
 	const data = useMemo(() => {
 		return queryResult.flatData.map(
-			item =>
+			(item, index) =>
 				({
 					name: item.name,
 					symbol: item.symbol,
-					value: item.market_cap,
+					value: Math.pow(1.3, queryResult.flatData.length - index),
 					price: `$${roundDecimal(item.price, 5)}`,
 					change: roundDecimal(item.change, 5),
 					itemStyle: itemStyle(item.change),
