@@ -326,6 +326,8 @@ const TransactionMarkers = () => {
 		| undefined
 	>();
 
+	console.log(groupedTransactions);
+
 	const transactionMarkers: ClickableMarker<Time>[] = useMemo(() => {
 		// 找出 data 中最早和最晚的 unix 時間
 		const earliestUnixTime = Math.min(...internal_data.map(item => item.unix));
@@ -485,8 +487,6 @@ const TransactionMarkers = () => {
 				group.buys.length > 0 &&
 				(searchParams.address.includes(Address.SmartMoney) || searchParams.address.includes(Address.Whale))
 			) {
-				totalBuy = group.buys.length;
-
 				const buyMin = searchParams.tmin;
 				const buyMax = searchParams.tmax;
 
