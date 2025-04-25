@@ -249,16 +249,25 @@ const ActiveLogo = (props: Props) => {
 						fill={`url(#${id}-topHighlightGradient)`}
 						initial={{ opacity: 0.7 }}
 						animate={{
-							opacity: [0.7, 0.8, 0.7],
+							opacity: [0.7, 0, 0.7],
 							scale: [1, 1.03, 1],
 						}}
 						transition={{
-							duration: 2.8,
+							duration: 4,
 							repeat: Infinity,
 							ease: 'easeInOut',
 							delay: 0.2,
 						}}
-					/>
+					>
+						<animateTransform
+							attributeName="gradientTransform"
+							type="translate"
+							values="0.417 -0.429; 0 0; 0.417 -0.429"
+							dur="4s"
+							repeatCount="indefinite"
+							additive="sum"
+						/>
+					</motion.circle>
 
 					{/* 球體效果 - 底部白色光暈 */}
 					<motion.circle
@@ -317,14 +326,14 @@ const ActiveLogo = (props: Props) => {
 					<defs>
 						{/* 底色漸變 */}
 						<linearGradient id={`${id}-baseGradient`} x1="20" y1="0" x2="20" y2="40" gradientUnits="userSpaceOnUse">
-							<stop offset="0" stopColor="#09182A" />
-							<stop offset="1" stopColor="#0F1319" />
+							<stop offset="0" stopColor="#061525" />
+							<stop offset="1" stopColor="#0A0F14" />
 						</linearGradient>
 
 						{/* 藍色放射漸變 */}
 						<radialGradient id={`${id}-blueGradient`} cx="0.5" cy="0.5" r="0.5" gradientUnits="objectBoundingBox">
-							<stop offset="0" stopColor="#35E4FF" />
-							<stop offset="1" stopColor="#2474FF" />
+							<stop offset="0" stopColor="#20BFFF" />
+							<stop offset="1" stopColor="#1560D9" />
 						</radialGradient>
 
 						{/* 高光效果 */}
@@ -341,17 +350,18 @@ const ActiveLogo = (props: Props) => {
 
 						{/* 藍色球體漸變 */}
 						<radialGradient id={`${id}-blueBallGradient`} cx="0.5" cy="0.5" r="0.5" gradientUnits="objectBoundingBox">
-							<stop offset="0" stopColor="#357CFF" />
-							<stop offset="1" stopColor="#2474FF" />
+							<stop offset="0" stopColor="#2067C7" />
+							<stop offset="1" stopColor="#1852C4" />
 						</radialGradient>
 
 						{/* 上方高光漸變 */}
 						<radialGradient
 							id={`${id}-topHighlightGradient`}
-							cx="0.917"
-							cy="0.071"
+							cx="0.5"
+							cy="0.5"
 							r="0.5"
 							gradientUnits="objectBoundingBox"
+							gradientTransform="translate(0.417 -0.429) scale(1 1)"
 						>
 							<stop offset="0" stopColor="#FFFFFF" />
 							<stop offset="1" stopColor="#FFFFFF" stopOpacity="0" />

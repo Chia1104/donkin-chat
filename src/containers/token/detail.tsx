@@ -18,8 +18,8 @@ import CopyButton from '@/components/commons/copy-button';
 import Candlestick from '@/components/token/candlestick';
 import { FilterAction } from '@/components/token/filter-action';
 import { HeaderPrimitive } from '@/components/token/info-card';
+import { HotspotProgress } from '@/components/token/info-card';
 import Card from '@/components/ui/card';
-import { MarketSentiment } from '@/components/ui/market-sentiment';
 import { useGlobalSearchParams } from '@/hooks/useGlobalSearchParams';
 import { useQueryOhlcv } from '@/libs/birdeye/hooks/useQueryOhlcv';
 import { useGetKolAlerts } from '@/libs/kol/hooks/useGetKolAlerts';
@@ -36,11 +36,9 @@ const Hotspot = ({ x, className }: { x: number; className?: string }) => {
 	const t = useTranslations('preview.ai-signal');
 	const [searchParams] = useGlobalSearchParams();
 	x = searchParams.mock ? 60 : x;
-	const bull = x ?? 0;
-	const bear = x ? 100 - x : 0;
 	return (
 		<CardBody className={cn('items-center', className)}>
-			<MarketSentiment showValues bullValue={bull} bearValue={bear} segments={10} label={t('card.x-hotspot')} />
+			<HotspotProgress colorDirection="green-to-red" value={x} label={t('card.x-hotspot')} />
 		</CardBody>
 	);
 };
@@ -274,9 +272,9 @@ const Detail = () => {
 					<Divider orientation="vertical" className="h-4 hidden lg:block" />
 					<MetaInfo price={queryResult.data?.price ?? 0} change={queryResult.data?.change ?? 0} />
 				</header>
-				<Card className="flex flex-col space-y-2 lg:flex-row lg:justify-between p-0 bg-transparent">
-					<Hotspot x={0} className="w-full lg:max-w-[40%]" />
-					<CardBody className="grid grid-cols-2 lg:grid-cols-4 gap-2 space-y-2 lg:space-y-0 w-full lg:max-w-[45%]">
+				<Card className="flex flex-col gap-2 lg:flex-row lg:justify-between p-0 bg-transparent items-center">
+					<Hotspot x={0} className="w-full lg:max-w-[40%] h-fit lg:h-full justify-center" />
+					<CardBody className="grid grid-cols-2 lg:grid-cols-4 gap-4 w-full lg:max-w-[45%]">
 						<Stock
 							label={t('card.stock.marketCap')}
 							value={`$ ${formatLargeNumber(queryResult.data?.market_cap ?? 0)}`}

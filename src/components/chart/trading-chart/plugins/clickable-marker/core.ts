@@ -14,6 +14,10 @@ export interface ClickableMarkerOptions {
 		marker: ClickableMarker<Time>;
 	}) => void;
 	onCloseTooltip?: (option: { visible: false }) => void;
+	tooltipSize?: {
+		width: number;
+		height: number;
+	};
 }
 
 export interface ClickableMarker<TimeType> extends Omit<SeriesMarker<TimeType>, 'tooltip'> {
@@ -130,12 +134,32 @@ export function createClickableMarkers<TimeType>(
 		});
 
 		if (clickedMarker && chartContainer) {
+			// 計算調整後的位置，避免 tooltip 超出容器
+			let posX = param.point?.x || 0;
+			let posY = param.point?.y || 0;
+
+			// 如果提供了 tooltipSize，計算邊界以避免超出
+			if (options?.tooltipSize) {
+				const { width, height } = options.tooltipSize;
+				const containerRect = chartContainer.getBoundingClientRect();
+
+				// 計算右邊界，確保 tooltip 不超出右側
+				if (posX + width > containerRect.width) {
+					posX = Math.max(0, containerRect.width - width);
+				}
+
+				// 計算下邊界，確保 tooltip 不超出底部
+				if (posY + height > containerRect.height) {
+					posY = Math.max(0, containerRect.height - height);
+				}
+			}
+
 			options?.onOpenTooltip?.({
 				tooltip: clickedMarker.tooltip,
 				visible: true,
 				position: {
-					x: param.point?.x || 0,
-					y: param.point?.y || 0,
+					x: posX,
+					y: posY,
 				},
 				container: chartContainer,
 				activeMarker: clickedMarker as unknown as ClickableMarker<Time>,

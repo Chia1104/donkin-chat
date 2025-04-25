@@ -235,7 +235,7 @@ export const HotspotProgress = ({
 						colorDirection={colorDirection}
 					/>
 				</div>
-				<span>{roundDecimal(convert(value) / 10, 0)}</span>
+				<span className="text-sm font-normal">{roundDecimal(convert(value) / 10, 0)}</span>
 			</div>
 		</div>
 	);
