@@ -151,7 +151,7 @@ const SortFilter = () => {
 const List = ({ display }: { display: 'group' | 'single' }) => {
 	const [searchParams] = useAISearchParams();
 	const queryResult = useQueryTokensHot({
-		page_size: searchParams.sort === TokenSort.Hot ? 100 : 20,
+		page_size: 100,
 		sort_by: searchParams.sort,
 		order: searchParams.order,
 	});
@@ -266,12 +266,9 @@ const List = ({ display }: { display: 'group' | 'single' }) => {
 			}
 		>
 			<VirtuosoGrid
-				endReached={() => {
-					if (searchParams.sort === TokenSort.Hot) {
-						return;
-					}
-					void queryResult.fetchNextPage();
-				}}
+				// endReached={() => {
+				// 	void queryResult.fetchNextPage();
+				// }}
 				components={{
 					List: ({ style, children, ref, ...props }) => (
 						<ul
