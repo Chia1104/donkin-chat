@@ -326,8 +326,6 @@ const TransactionMarkers = () => {
 		| undefined
 	>();
 
-	console.log(groupedTransactions);
-
 	const transactionMarkers: ClickableMarker<Time>[] = useMemo(() => {
 		// 找出 data 中最早和最晚的 unix 時間
 		const earliestUnixTime = Math.min(...internal_data.map(item => item.unix));
@@ -479,6 +477,7 @@ const TransactionMarkers = () => {
 		const markers: ClickableMarker<Time>[] = [];
 
 		groupedTransactions.forEach((group, time) => {
+			console.log(group);
 			let totalBuy = 0;
 			let totalSell = 0;
 			let totalKolAlerts = 0;
@@ -509,6 +508,25 @@ const TransactionMarkers = () => {
 					return false;
 				};
 
+				// 計算符合過濾條件的交易數量
+				if (buyMin != null || buyMax != null) {
+					totalBuy = group.buys.filter(tx => {
+						const amount = Number(tx.amount);
+						if (buyMin != null && buyMax != null) {
+							return amount >= buyMin && amount <= buyMax;
+						}
+						if (buyMin != null && buyMax == null) {
+							return amount >= buyMin;
+						}
+						if (buyMin == null && buyMax != null) {
+							return amount <= buyMax;
+						}
+						return false;
+					}).length;
+				} else {
+					totalBuy = group.buys.length;
+				}
+
 				if (check()) {
 					markers.push({
 						time: time as Time,
@@ -517,9 +535,6 @@ const TransactionMarkers = () => {
 						size: 1,
 						type: 'buy',
 					});
-					totalBuy += 1;
-				} else {
-					totalBuy = 0;
 				}
 			}
 
