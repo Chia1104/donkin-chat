@@ -626,6 +626,10 @@ const TransactionMarkers = () => {
 		let clean: (() => void) | undefined;
 		if (chartApi && seriesApi && searchParams.mark) {
 			const seriesMarkers = createClickableMarkers<Time>(chartApi, seriesApi, transactionMarkers, {
+				tooltipSize: {
+					width: 220,
+					height: 290,
+				},
 				onOpenTooltip(option) {
 					const currentGroup = groupedTransactions?.get(option.marker.time as number);
 
