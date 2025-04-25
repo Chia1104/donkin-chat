@@ -39,8 +39,8 @@ const DefaultPrompt = (props: Props) => {
 				<ActionCard onPress={() => handleAction(t('default-prompt.smart-wallet-recommendations'))}>
 					<ActionBody label={t('default-prompt.smart-wallet-recommendations')} className="justify-center p-5" />
 				</ActionCard>
-				<ActionCard onPress={() => handleAction(t('default-prompt.largest-whales'))}>
-					<ActionBody label={t('default-prompt.largest-whales')} className="justify-center p-5" />
+				<ActionCard onPress={() => handleAction(t('default-prompt.kol-orders'))}>
+					<ActionBody label={t('default-prompt.kol-orders')} className="justify-center p-5" />
 				</ActionCard>
 			</div>
 		</section>

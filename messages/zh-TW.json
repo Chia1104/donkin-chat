@@ -133,9 +133,9 @@
 		"donkin-warning": "Donkin 可能提供不精確的資訊，請查證重要訊息",
 		"default-prompt": {
 			"title": "例子：",
-			"latest-coins": "最近最火的代幣有哪些",
-			"smart-wallet-recommendations": "聰明錢地址都在買什麼",
-			"largest-whales": "最近巨鯨地址都在買什麼",
+			"latest-coins": "最近最火的代幣有哪些？",
+			"smart-wallet-recommendations": "聰明錢地址都在買什麼？",
+			"kol-orders": "最近KOL都在喊單什麼代幣？",
 			"info-about": "我想了解 {item} 代幣的信息"
 		},
 		"search": {
