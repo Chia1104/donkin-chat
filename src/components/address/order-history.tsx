@@ -16,6 +16,7 @@ import { ColorType, HistogramSeries, AreaSeries } from 'lightweight-charts';
 import type { Time, ISeriesApi, DeepPartial, TimeChartOptions, IChartApi } from 'lightweight-charts';
 import { useLocale } from 'next-intl';
 import { useTranslations } from 'next-intl';
+import { useParams } from 'next/navigation';
 
 import { DisplayFilter as TDisplayFilter } from '@/libs/address/enums/display-filter.enum';
 import { IntervalFilter } from '@/libs/address/enums/interval-filter.enum';
@@ -178,6 +179,7 @@ const Meta = () => {
 	const { meta } = useOrderHistory();
 	const tAskMore = useTranslations('donkin.ask-more');
 	const { isMetaPending } = useOrderHistory();
+	const { address } = useParams<{ address: string }>();
 
 	if (isMetaPending || !meta) {
 		return (
@@ -185,7 +187,20 @@ const Meta = () => {
 				<div className="flex items-center gap-4">
 					<Avatar size="md" className="w-[32px] h-[32px]" aria-label="Avatar" />
 					<span className="flex items-center gap-2">
-						<Skeleton className="w-20 h-4 rounded-full" />
+						<Tooltip
+							classNames={{
+								content: 'bg-transparent shadow-none p-0',
+							}}
+							content={
+								<DonkinPopover
+									className="w-[220px]"
+									askMore={[tAskMore('address-detail.history-analysis'), tAskMore('address-detail.current-holdings')]}
+								/>
+							}
+						>
+							<p className="text-[22px] font-normal">{truncateMiddle(address ?? '', 10)}</p>
+						</Tooltip>
+						<CopyButton content={address} />
 					</span>
 					<Divider orientation="vertical" className="h-4" />
 					<Skeleton className="w-20 h-4 rounded-full" />
@@ -215,9 +230,9 @@ const Meta = () => {
 							/>
 						}
 					>
-						<p className="text-[22px] font-normal">{truncateMiddle(meta.address ?? '', 10)}</p>
+						<p className="text-[22px] font-normal">{truncateMiddle(address ?? '', 10)}</p>
 					</Tooltip>
-					<CopyButton content={meta.address} />
+					<CopyButton content={address} />
 				</span>
 			</div>
 			<Divider orientation="vertical" className="h-4 hidden lg:block" />
