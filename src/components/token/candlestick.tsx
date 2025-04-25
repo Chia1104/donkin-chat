@@ -494,15 +494,17 @@ const TransactionMarkers = () => {
 						return true;
 					}
 					if (buyMin != null && buyMax != null) {
-						const filteredBuys = group.buys.filter(tx => Number(tx.amount) >= buyMin && Number(tx.amount) <= buyMax);
+						const filteredBuys = group.buys.filter(
+							tx => Number(tx.usd_value) >= buyMin && Number(tx.usd_value) <= buyMax,
+						);
 						return filteredBuys.length > 0;
 					}
 					if (buyMin != null && buyMax == null) {
-						const filteredBuys = group.buys.filter(tx => Number(tx.amount) >= buyMin);
+						const filteredBuys = group.buys.filter(tx => Number(tx.usd_value) >= buyMin);
 						return filteredBuys.length > 0;
 					}
 					if (buyMin == null && buyMax != null) {
-						const filteredBuys = group.buys.filter(tx => Number(tx.amount) <= buyMax);
+						const filteredBuys = group.buys.filter(tx => Number(tx.usd_value) <= buyMax);
 						return filteredBuys.length > 0;
 					}
 					return false;
@@ -511,15 +513,15 @@ const TransactionMarkers = () => {
 				// 計算符合過濾條件的交易數量
 				if (buyMin != null || buyMax != null) {
 					totalBuy = group.buys.filter(tx => {
-						const amount = Number(tx.amount);
+						const usdValue = Number(tx.usd_value);
 						if (buyMin != null && buyMax != null) {
-							return amount >= buyMin && amount <= buyMax;
+							return usdValue >= buyMin && usdValue <= buyMax;
 						}
 						if (buyMin != null && buyMax == null) {
-							return amount >= buyMin;
+							return usdValue >= buyMin;
 						}
 						if (buyMin == null && buyMax != null) {
-							return amount <= buyMax;
+							return usdValue <= buyMax;
 						}
 						return false;
 					}).length;
@@ -635,18 +637,18 @@ const TransactionMarkers = () => {
 					// 過濾 buy 交易
 					const filteredBuys =
 						currentGroup?.buys.filter(tx => {
-							const amount = Number(tx.amount);
+							const usdValue = Number(tx.usd_value);
 							if (buyMin == null && buyMax == null) {
 								return true;
 							}
 							if (buyMin != null && buyMax != null) {
-								return amount >= buyMin && amount <= buyMax;
+								return usdValue >= buyMin && usdValue <= buyMax;
 							}
 							if (buyMin != null && buyMax == null) {
-								return amount >= buyMin;
+								return usdValue >= buyMin;
 							}
 							if (buyMin == null && buyMax != null) {
-								return amount <= buyMax;
+								return usdValue <= buyMax;
 							}
 							return false;
 						}) || [];
@@ -661,11 +663,11 @@ const TransactionMarkers = () => {
 									order: currentGroup?.kolAlerts?.length ?? 0,
 								}}
 								total={{
-									buy: filteredBuys.reduce((acc, tx) => acc + Number(tx.amount), 0),
-									sell: currentGroup?.sells.reduce((acc, tx) => acc + Number(tx.amount), 0) ?? 0,
+									buy: filteredBuys.reduce((acc, tx) => acc + Number(tx.usd_value), 0),
+									sell: currentGroup?.sells.reduce((acc, tx) => acc + Number(tx.usd_value), 0) ?? 0,
 									volume:
-										filteredBuys.reduce((acc, tx) => acc + Number(tx.amount), 0) +
-										(currentGroup?.sells.reduce((acc, tx) => acc + Number(tx.amount), 0) ?? 0),
+										filteredBuys.reduce((acc, tx) => acc + Number(tx.usd_value), 0) +
+										(currentGroup?.sells.reduce((acc, tx) => acc + Number(tx.usd_value), 0) ?? 0),
 								}}
 								order={{
 									total: currentGroup?.kolAlerts?.length ?? 0,
