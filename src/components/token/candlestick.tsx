@@ -197,7 +197,7 @@ const SubscribeCandlestick = ({
 			if (isPending || isNoData || isError) {
 				return;
 			}
-			const numberBarsToLoad = 50 - range;
+			const numberBarsToLoad = 150 - range;
 			const newTimeFrom = handleGenerateTimeWithInterval(timeFrom, query.type, numberBarsToLoad);
 			const newTimeTo = handleGenerateTimeWithInterval(timeFrom, query.type, 0);
 			setTimeFrom(newTimeFrom);
@@ -757,7 +757,7 @@ const Chart = () => {
 			className="h-[55dvh]"
 			initOptions={initOptions}
 			onInit={c => {
-				if (data.length < 50) {
+				if (data.length < 150) {
 					c.timeScale().fitContent();
 				}
 			}}
