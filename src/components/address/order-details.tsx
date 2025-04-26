@@ -306,9 +306,9 @@ const OrderDetails = <TMock extends boolean = false>({
 				<Table
 					classNames={{
 						base: 'bg-transparent',
-						thead: '[&>tr]:first:shadow-none',
+						thead: 'first:[&>tr]:shadow-none',
 						th: 'bg-[rgb(22,29,42)]',
-						td: 'group-aria-[selected=false]/tr:group-data-[hover=true]/tr:before:bg-[#FFFFFF05] data-[selected=true]:text-white',
+						td: 'group-data-[hover=true]/tr:group-aria-[selected=false]/tr:before:bg-[#FFFFFF05] data-[selected=true]:text-white',
 					}}
 					removeWrapper
 					selectionMode="single"

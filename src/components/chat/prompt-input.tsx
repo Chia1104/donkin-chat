@@ -79,7 +79,7 @@ const PromptInput = ({ onSubmit, value, onChange, props }: Props) => {
 					],
 					innerWrapper: ['items-center px-3 py-2', props?.textarea?.classNames?.innerWrapper],
 					inputWrapper: [
-						'min-h-[60px] border-1 !rounded-lg bg-black/25 bg-transparent after:bg-gradient-to-r after:from-transparent after:via-primary/50 after:to-transparent after:bg-transparent ',
+						'min-h-[60px] border-1 rounded-lg! bg-black/25 bg-transparent after:bg-linear-to-r after:from-transparent after:via-primary/50 after:to-transparent after:bg-transparent ',
 						props?.textarea?.classNames?.inputWrapper,
 					],
 				}}
