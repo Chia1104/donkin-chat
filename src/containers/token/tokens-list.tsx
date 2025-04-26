@@ -315,7 +315,7 @@ const List = ({ display }: { display: 'group' | 'single' }) => {
 
 const TokensList = () => {
 	return (
-		<div className="w-full h-full flex flex-col">
+		<div className="w-full h-full flex flex-col not-prose">
 			<header className="flex items-center justify-end mb-4">
 				<div className="flex gap-4">
 					<SortFilter />
