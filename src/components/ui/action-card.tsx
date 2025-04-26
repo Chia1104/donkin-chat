@@ -10,7 +10,7 @@ const ActionCard = (props: CardProps) => {
 			aria-label="Action Card"
 			isPressable
 			{...props}
-			className={cn('transition duration-300 rounded-sm', 'from-[55%] via-[10%] p-0', props.className)}
+			className={cn('transition duration-300 rounded-sm', 'from-55% via-10% p-0', props.className)}
 		/>
 	);
 };
@@ -20,7 +20,7 @@ const Icon = ({ children }: { children: React.ReactElement }) => {
 		<div
 			className={cn(
 				'w-6 h-6 border-divider rounded-full gap-4 flex justify-center items-center border-1',
-				'bg-gradient-to-b from-black/10 via-black/5 to-white/15 from-[55%] via-[10%]',
+				'bg-linear-to-b from-black/10 via-black/5 to-white/15 from-55% via-10%',
 			)}
 		>
 			{children}

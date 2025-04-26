@@ -1,0 +1,76 @@
+@import './colors.css';
+@import './typography.css';
+@import 'tw-animate-css';
+
+@plugin "@tailwindcss/typography";
+@plugin "./egoist-icons";
+
+@custom-variant dark (&:where(.dark, .dark *));
+@custom-variant dark-theme (&:where(.dark-theme, .dark-theme *));
+
+/*
+  The default border color has changed to `currentcolor` in Tailwind CSS v4,
+  so we've added these compatibility styles to make sure everything still
+  looks the same as it did with Tailwind CSS v3.
+
+  If we ever want to remove these styles, we need to add an explicit border
+  color utility to any element that depends on these defaults.
+*/
+@layer base {
+	*,
+	::after,
+	::before,
+	::backdrop,
+	::file-selector-button {
+		border-color: var(--color-gray-200, currentcolor);
+	}
+}
+
+@utility animated-feature-cards {
+	&::before {
+		@apply pointer-events-none absolute rounded-3xl opacity-0 transition-opacity duration-300 select-none hover:opacity-100;
+		background: radial-gradient(
+			1000px circle at var(--x) var(--y),
+			#db2777 0,
+			#c084fc 25%,
+			rgba(255, 255, 255, 0) 50%,
+			transparent 80%
+		);
+		z-index: -1;
+		content: '';
+		inset: -1px;
+	}
+}
+
+@utility dc-bg-rainbow {
+	@apply bg-[linear-gradient(to_right,#98C188_0%,#ADB77C_10%,#C1BA70_20%,#D4B664_30%,#DEAB54_40%,#E5984A_50%,#E58946_60%,#E37B45_70%,#E04C45_80%,#DC5E45_100%)];
+}
+
+@layer utilities {
+	html,
+	body {
+		scroll-behavior: smooth;
+		scroll-padding-top: 10px;
+		background: linear-gradient(180deg, #09182a 0%, #0f1319 100%);
+		font-family: var(--font-noto-sans-tc), var(--font-noto-sans-sc), var(--font-inter);
+	}
+
+	::selection {
+		background: #8884;
+	}
+}
+
+@layer base {
+	:root {
+		--x: 0;
+		--y: 0;
+		--radius: 0.5rem;
+		background-color: rgba(10, 24, 42, 1) !important;
+	}
+}
+
+@theme inline {
+	--font-noto-sans-tc: var(--font-noto-sans-tc);
+	--font-noto-sans-sc: var(--font-noto-sans-sc);
+	--font-noto-sans: var(--font-noto-sans);
+}

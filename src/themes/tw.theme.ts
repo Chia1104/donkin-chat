@@ -1,5 +1,8 @@
 import type { Config } from 'tailwindcss';
 
+/**
+ * @deprecated Read css variables instead
+ */
 export const theme = {
 	extend: {
 		colors: {

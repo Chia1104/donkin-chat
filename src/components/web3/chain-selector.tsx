@@ -82,7 +82,7 @@ const ChainSelector = () => {
 								<Image
 									aria-label={item.data.name}
 									alt={item.data.name}
-									className="flex-shrink-0"
+									className="shrink-0"
 									width={24}
 									height={24}
 									src={item.data.image}
@@ -112,7 +112,7 @@ const ChainSelector = () => {
 							<Image
 								aria-label={network.name}
 								alt={network.name}
-								className="flex-shrink-0"
+								className="shrink-0"
 								width={24}
 								height={24}
 								src={network.image}

@@ -111,7 +111,7 @@ export const MarkerTooltip = ({ className }: { className?: string }) => {
 				exit={{ opacity: 0 }}
 				transition={{ duration: 0.2 }}
 				ref={tooltipRef}
-				className={cn('absolute z-[1000]', className)}
+				className={cn('absolute z-1000', className)}
 				style={{ left: position.x, top: position.y }}
 			>
 				{tooltip}
