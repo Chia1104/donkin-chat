@@ -158,6 +158,7 @@ const MessageCard = ({
 	return (
 		<div
 			{...props}
+			data-message-id={message.id}
 			className={cn(
 				'relative w-fit rounded-medium text-default-600 flex flex-col text-small prose prose-invert prose-sm prose-headings:mt-3 prose-headings:mb-2 prose-ul:my-2.5 prose-table:my-2.5',
 				classNames.failedMessageClassName,
