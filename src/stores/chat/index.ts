@@ -163,7 +163,7 @@ const { ChatStoreProvider, useChatStore, ChatStoreContext, creator } = defineCha
 
 			if (userMessage?.toolCalls) {
 				for (const toolCall of userMessage.toolCalls) {
-					switch (toolCall.function.name) {
+					switch (toolCall.id) {
 						case SupportedTool.GetTokenInfo:
 							{
 								const args = tokenInfoArgsSchema.parse(JSON.parse(toolCall.function.arguments));
@@ -296,6 +296,7 @@ const { ChatStoreProvider, useChatStore, ChatStoreContext, creator } = defineCha
 								token: data.data.token,
 								locale: locale ?? env.NEXT_PUBLIC_DEFAULT_LOCALE,
 							},
+							threadId: data.data.conv_id,
 						},
 						false,
 						'preStream',
@@ -322,7 +323,7 @@ const { ChatStoreProvider, useChatStore, ChatStoreContext, creator } = defineCha
 
 			if (lastMessage?.toolCalls && currentContext) {
 				for (const toolCall of lastMessage.toolCalls) {
-					switch (toolCall.function.name) {
+					switch (toolCall.id) {
 						case SupportedTool.GetTokenInfo:
 						case SupportedTool.GetTokenTrend:
 						case SupportedTool.Get7DKOLAlerts:
@@ -334,9 +335,10 @@ const { ChatStoreProvider, useChatStore, ChatStoreContext, creator } = defineCha
 											...currentContext,
 											conv_id: DEFAULT_THREAD_ID,
 										},
+										threadId: DEFAULT_THREAD_ID,
 									},
 									false,
-									'postStreamWithToolCall/GetTokenTrend',
+									`postStreamWithToolCall/${toolCall.id}`,
 								);
 							}
 							break;
