@@ -43,7 +43,7 @@ const FeatureCard: FC<Props> = ({ className, children, wrapperProps, ...props })
 		>
 			<motion.div
 				className={cn(
-					'border-dark group relative w-full overflow-hidden rounded-3xl border bg-gradient-to-b transition duration-300 from-neutral-950/90 to-neutral-800/90',
+					'border-dark group relative w-full overflow-hidden rounded-3xl border bg-linear-to-b transition duration-300 from-neutral-950/90 to-neutral-800/90',
 					'md:hover:border-transparent',
 					className,
 				)}

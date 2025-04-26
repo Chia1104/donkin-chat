@@ -1,0 +1,9 @@
+@layer components {
+	.typography {
+		p {
+			color: #ffffffd9;
+			margin-top: 0.8rem;
+			margin-bottom: 0.8rem;
+		}
+	}
+}
