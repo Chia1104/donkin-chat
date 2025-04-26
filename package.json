@@ -153,5 +153,5 @@
 	"lint-staged": {
 		"src/**/*.{js,jsx,ts,tsx,css,scss,md}": "prettier --write --ignore-unknown"
 	},
-	"packageManager": "pnpm@10.8.0"
+	"packageManager": "pnpm@10.9.0"
 }
