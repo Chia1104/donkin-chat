@@ -1,6 +1,6 @@
 'use client';
 
-import { memo, useRef } from 'react';
+import { memo, useRef, unstable_ViewTransition as ViewTransition } from 'react';
 
 import { Card, CardBody, CardFooter } from '@heroui/card';
 import { ScrollShadow } from '@heroui/scroll-shadow';
@@ -90,7 +90,9 @@ const ChatBody = () => {
 						messages && messages.length > 0 ? 'items-start' : 'items-center',
 					)}
 				>
-					<Messages />
+					<ViewTransition>
+						<Messages />
+					</ViewTransition>
 				</div>
 			</ScrollShadow>
 			{messages && messages.length > 0 && (

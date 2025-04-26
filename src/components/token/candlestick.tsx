@@ -11,6 +11,7 @@ import type { Time, ISeriesApi } from 'lightweight-charts';
 import { useLocale, useTranslations } from 'next-intl';
 
 import OrderPopover from '@/components/token/order-popover';
+import { useAskTokenTrade } from '@/libs/ai/hooks/useAskTokenTrade';
 import { useMutationOhlcv } from '@/libs/birdeye/hooks/useQueryOhlcv';
 import type { OlcvResponseDTO } from '@/libs/birdeye/hooks/useQueryOhlcv';
 import type { KolAlert } from '@/libs/kol/pipes/kol.pipe';
@@ -306,7 +307,7 @@ const NoDataWatermark = ({ data, text = 'No data' }: { data: OlcvResponseDTO; te
 };
 
 const TransactionMarkers = () => {
-	const { internal_transactions, internal_data, query, kolAlerts } = useCandlestick();
+	const { internal_transactions, internal_data, query, kolAlerts, meta } = useCandlestick();
 	const chart = useChart('TransactionMarkers');
 	const series = useSeries('TransactionMarkers');
 	const tAskMore = useTranslations('donkin.ask-more.kol-order');
@@ -325,7 +326,7 @@ const TransactionMarkers = () => {
 		  >
 		| undefined
 	>();
-
+	const askTokenTrade = useAskTokenTrade(meta.address);
 	const transactionMarkers: ClickableMarker<Time>[] = useMemo(() => {
 		// 找出 data 中最早和最晚的 unix 時間
 		const earliestUnixTime = Math.min(...internal_data.map(item => item.unix));
@@ -677,8 +678,7 @@ const TransactionMarkers = () => {
 									success: 0,
 								}}
 								onClose={closeTooltip}
-								askMore={[tAskMore('smart-wallet'), tAskMore('kol-order')]}
-								onAskMore={logger}
+								{...askTokenTrade}
 							/>
 						),
 					});

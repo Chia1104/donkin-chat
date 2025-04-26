@@ -8,7 +8,7 @@ import { TokenSort } from '@/libs/ai/enums/tokenSort.enum';
 export const aiQueryStates = {
 	q: parseAsStringEnum(Object.values(QueryType)).withDefault(QueryType.Heatmap),
 	threadId: parseAsString.withDefault(DEFAULT_THREAD_ID),
-	sort: parseAsStringEnum(Object.values(TokenSort)).withDefault(TokenSort.MarketCap),
+	sort: parseAsStringEnum(Object.values(TokenSort)).withDefault(TokenSort.Hot),
 	order: parseAsStringEnum(Object.values(Sort)).withDefault(Sort.Desc),
 };
 

@@ -19,6 +19,16 @@ export const tokenInfoArgsSchema = z.object({
 	token: z.string(),
 });
 
+export const get7DKOLAlertsArgsSchema = z.object({
+	userMessage: z.string().nullable(),
+	token_address: z.string(),
+});
+
+export const get7DSmartMoneyTradesArgsSchema = z.object({
+	userMessage: z.string().nullable(),
+	token_address: z.string(),
+});
+
 const { ChatStoreProvider, useChatStore, ChatStoreContext, creator } = defineChatStore({
 	async messageProcessor({ get, response, set }) {
 		try {
@@ -120,6 +130,37 @@ const { ChatStoreProvider, useChatStore, ChatStoreContext, creator } = defineCha
 			const userMessage = get().getLatestUserMessage();
 			const locale = get().context?.locale;
 
+			const handlePreStreamWithToolCall = (
+				data: AIResponseData<{ conv_id: string; token: string; msg_id: string }>,
+				name: string,
+			) => {
+				if (data.code === 200) {
+					set(
+						{
+							context: {
+								conv_id: data.data.conv_id,
+								token: data.data.token,
+								locale: locale ?? env.NEXT_PUBLIC_DEFAULT_LOCALE,
+							},
+							threadId: data.data.conv_id,
+						},
+						false,
+						`preStreamWithToolCall/${name}`,
+					);
+				} else {
+					get().setStatus(ChatStatus.Error);
+					const lastMessage = get().getLastMessage();
+					if (lastMessage) {
+						get().updateMessage(lastMessage.id, {
+							error: data.msg,
+							reasoning: null,
+						});
+					}
+					get().internal_abort();
+					set({ isPending: false }, false, `preStreamWithToolCall/${name}`);
+				}
+			};
+
 			if (userMessage?.toolCalls) {
 				for (const toolCall of userMessage.toolCalls) {
 					switch (toolCall.function.name) {
@@ -136,31 +177,7 @@ const { ChatStoreProvider, useChatStore, ChatStoreContext, creator } = defineCha
 									})
 									.json<AIResponseData<{ conv_id: string; token: string; msg_id: string }>>();
 
-								if (data.code === 200) {
-									set(
-										{
-											context: {
-												conv_id: data.data.conv_id,
-												token: data.data.token,
-												locale: locale ?? env.NEXT_PUBLIC_DEFAULT_LOCALE,
-											},
-											threadId: data.data.conv_id,
-										},
-										false,
-										'preStreamWithToolCall/GetTokenInfo',
-									);
-								} else {
-									get().setStatus(ChatStatus.Error);
-									const lastMessage = get().getLastMessage();
-									if (lastMessage) {
-										get().updateMessage(lastMessage.id, {
-											error: data.msg,
-											reasoning: null,
-										});
-									}
-									get().internal_abort();
-									set({ isPending: false }, false, 'preStreamWithToolCall/GetTokenInfo');
-								}
+								handlePreStreamWithToolCall(data, 'GetTokenInfo');
 							}
 							break;
 						case SupportedTool.GetTokenTrend:
@@ -176,31 +193,39 @@ const { ChatStoreProvider, useChatStore, ChatStoreContext, creator } = defineCha
 									})
 									.json<AIResponseData<{ conv_id: string; token: string; msg_id: string }>>();
 
-								if (data.code === 200) {
-									set(
-										{
-											context: {
-												conv_id: data.data.conv_id,
-												token: data.data.token,
-												locale: locale ?? env.NEXT_PUBLIC_DEFAULT_LOCALE,
-											},
-											threadId: data.data.conv_id,
+								handlePreStreamWithToolCall(data, 'GetTokenTrend');
+							}
+							break;
+						case SupportedTool.Get7DKOLAlerts:
+							{
+								const args = get7DKOLAlertsArgsSchema.parse(JSON.parse(toolCall.function.arguments));
+								const data = await request({
+									requestMode: 'proxy-ai',
+								})
+									.post('api/v1/ai/chat/last_7d_kol_alerts', {
+										json: {
+											token_address: args.token_address,
 										},
-										false,
-										'preStreamWithToolCall/GetTokenTrend',
-									);
-								} else {
-									get().setStatus(ChatStatus.Error);
-									const lastMessage = get().getLastMessage();
-									if (lastMessage) {
-										get().updateMessage(lastMessage.id, {
-											error: data.msg,
-											reasoning: null,
-										});
-									}
-									get().internal_abort();
-									set({ isPending: false }, false, 'preStreamWithToolCall/GetTokenTrend');
-								}
+									})
+									.json<AIResponseData<{ conv_id: string; token: string; msg_id: string }>>();
+
+								handlePreStreamWithToolCall(data, 'Get7DKOLAlerts');
+							}
+							break;
+						case SupportedTool.Get7DSmartMoneyTrades:
+							{
+								const args = get7DSmartMoneyTradesArgsSchema.parse(JSON.parse(toolCall.function.arguments));
+								const data = await request({
+									requestMode: 'proxy-ai',
+								})
+									.post('api/v1/ai/chat/last_7d_smart_money_trades', {
+										json: {
+											token_address: args.token_address,
+										},
+									})
+									.json<AIResponseData<{ conv_id: string; token: string; msg_id: string }>>();
+
+								handlePreStreamWithToolCall(data, 'Get7DSmartMoneyTrades');
 							}
 							break;
 					}
@@ -299,20 +324,9 @@ const { ChatStoreProvider, useChatStore, ChatStoreContext, creator } = defineCha
 				for (const toolCall of lastMessage.toolCalls) {
 					switch (toolCall.function.name) {
 						case SupportedTool.GetTokenInfo:
-							{
-								set(
-									{
-										context: {
-											...currentContext,
-											conv_id: DEFAULT_THREAD_ID,
-										},
-									},
-									false,
-									'postStreamWithToolCall/GetTokenInfo',
-								);
-							}
-							break;
 						case SupportedTool.GetTokenTrend:
+						case SupportedTool.Get7DKOLAlerts:
+						case SupportedTool.Get7DSmartMoneyTrades:
 							{
 								set(
 									{
