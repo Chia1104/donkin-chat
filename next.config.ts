@@ -67,15 +67,15 @@ const nextConfig: NextConfig = {
 		viewTransition: true,
 		webpackBuildWorker: true,
 		authInterrupts: true,
-		turbo: {
-			rules: {
-				'*.svg': {
-					loaders: ['@svgr/webpack'],
-					as: '*.js',
-				},
+		clientInstrumentationHook: true,
+	},
+	turbopack: {
+		rules: {
+			'*.svg': {
+				loaders: ['@svgr/webpack'],
+				as: '*.js',
 			},
 		},
-		clientInstrumentationHook: true,
 	},
 	webpack(config) {
 		config.module.rules.push({
