@@ -289,6 +289,48 @@ const { ChatStoreProvider, useChatStore, ChatStoreContext, creator } = defineCha
 				}
 			}
 		},
+		postStream: ({ get, set }) => {
+			const convId = get().context?.conv_id;
+			const lastMessage = get().getLastMessage();
+			const currentContext = get().context;
+			if (!convId) return;
+
+			if (lastMessage?.toolCalls && currentContext) {
+				for (const toolCall of lastMessage.toolCalls) {
+					switch (toolCall.function.name) {
+						case SupportedTool.GetTokenInfo:
+							{
+								set(
+									{
+										context: {
+											...currentContext,
+											conv_id: DEFAULT_THREAD_ID,
+										},
+									},
+									false,
+									'postStreamWithToolCall/GetTokenInfo',
+								);
+							}
+							break;
+						case SupportedTool.GetTokenTrend:
+							{
+								set(
+									{
+										context: {
+											...currentContext,
+											conv_id: DEFAULT_THREAD_ID,
+										},
+									},
+									false,
+									'postStreamWithToolCall/GetTokenTrend',
+								);
+							}
+							break;
+					}
+				}
+				return;
+			}
+		},
 		onCancel: async ({ get }) => {
 			const convId = get().context?.conv_id;
 			if (!convId) return;
