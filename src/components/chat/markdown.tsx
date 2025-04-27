@@ -30,9 +30,11 @@ const rehypePluginsWithoutShiki: PluggableList = [[rehypeSanitize], [rehypeRaw],
 
 const components: Components = {
 	a: ({ children, ...props }) => {
+		const isInternalLink = props.href?.startsWith('/') || props.href?.startsWith('#');
+		const linkProps = isInternalLink ? {} : { target: '_blank', rel: 'noopener noreferrer' };
 		return (
 			// @ts-expect-error - error
-			<Link {...props} underline="always" color="primary" size="sm" target="_blank" rel="noopener noreferrer">
+			<Link {...props} underline="always" color="primary" size="sm" {...linkProps}>
 				{children}
 			</Link>
 		);
