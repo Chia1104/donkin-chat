@@ -5,6 +5,7 @@ import { memo } from 'react';
 import { Link } from '@heroui/link';
 import rehypeShiki from '@shikijs/rehype';
 import dynamic from 'next/dynamic';
+import NextLink from 'next/link';
 import type { Components } from 'react-markdown';
 import rehypeKatex from 'rehype-katex';
 import rehypeRaw from 'rehype-raw';
@@ -34,7 +35,7 @@ const components: Components = {
 		const linkProps = isInternalLink ? {} : { target: '_blank', rel: 'noopener noreferrer' };
 		return (
 			// @ts-expect-error - error
-			<Link {...props} underline="always" color="primary" size="sm" {...linkProps}>
+			<Link {...props} as={NextLink} underline="always" color="primary" size="sm" {...linkProps}>
 				{children}
 			</Link>
 		);
