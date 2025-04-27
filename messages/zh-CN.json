@@ -60,7 +60,8 @@
         "copied": "已复制",
         "retry": "重试",
         "send": "发送",
-        "pause": "暂停"
+        "pause": "暂停",
+        "go-to": "前往"
     },
     "onboarding": {
         "donkin": {
@@ -100,7 +101,8 @@
             "title": "尝试次数过多",
             "description": "请稍后再试一次",
             "with-limit": "你已尝试 {limit} 次，请稍后再试一次"
-        }
+        },
+        "leave-site": "你即将离开我们的网站，前往"
     },
     "commons": {
         "error": {

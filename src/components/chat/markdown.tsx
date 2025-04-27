@@ -2,16 +2,16 @@
 
 import { memo } from 'react';
 
-import { Link } from '@heroui/link';
 import rehypeShiki from '@shikijs/rehype';
 import dynamic from 'next/dynamic';
-import NextLink from 'next/link';
 import type { Components } from 'react-markdown';
 import rehypeKatex from 'rehype-katex';
 import rehypeRaw from 'rehype-raw';
 import rehypeSanitize from 'rehype-sanitize';
 import remarkGfm from 'remark-gfm';
 import type { PluggableList } from 'unified';
+
+import { Link as SafeLink } from '@/components/ui/link';
 
 const ReactMarkdownHooks = dynamic(() => import('react-markdown').then(mod => mod.MarkdownHooks), { ssr: false });
 
@@ -30,16 +30,8 @@ const rehypePluginsWithShiki: PluggableList = [
 const rehypePluginsWithoutShiki: PluggableList = [[rehypeSanitize], [rehypeRaw], [rehypeKatex]];
 
 const components: Components = {
-	a: ({ children, ...props }) => {
-		const isInternalLink = props.href?.startsWith('/') || props.href?.startsWith('#');
-		const linkProps = isInternalLink ? {} : { target: '_blank', rel: 'noopener noreferrer' };
-		return (
-			// @ts-expect-error - error
-			<Link {...props} as={NextLink} underline="always" color="primary" size="sm" {...linkProps}>
-				{children}
-			</Link>
-		);
-	},
+	// @ts-expect-error - error
+	a: props => <SafeLink {...props} withSafeLink />,
 };
 
 interface Props {

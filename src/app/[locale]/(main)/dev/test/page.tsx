@@ -5,6 +5,7 @@ import { useTranslations } from 'next-intl';
 import { useAccount } from 'wagmi';
 
 import OrderPopover from '@/components/token/order-popover';
+import { Link } from '@/components/ui/link';
 import { useChatStore } from '@/stores/chat';
 import { logger } from '@/utils/logger';
 
@@ -38,6 +39,9 @@ const Page = () => {
 	return (
 		<div className="flex flex-col gap-4 w-full items-center">
 			<p>Wallet address: {address}</p>
+			<Link href="https://chia1104.dev" withSafeLink>
+				Chia1104.dev
+			</Link>
 			<Button onPress={() => handleSubmit('幫我生成一個 500 字故事')}>Test SSE</Button>
 			<TestOrderPopover />
 		</div>

@@ -60,7 +60,8 @@
 		"copied": "Copied",
 		"retry": "Retry",
 		"send": "Send",
-		"pause": "Pause"
+		"pause": "Pause",
+		"go-to": "Go to"
 	},
 	"onboarding": {
 		"donkin": {
@@ -100,7 +101,8 @@
 			"title": "Too many requests",
 			"description": "Please try again later",
 			"with-limit": "You have made {limit} requests, please try again later"
-		}
+		},
+		"leave-site": "You are about to leave our website and go to"
 	},
 	"commons": {
 		"error": {
