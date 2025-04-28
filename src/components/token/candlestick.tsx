@@ -709,6 +709,7 @@ const TransactionMarkers = () => {
 		tAskMore,
 		searchParams.tmin,
 		searchParams.tmax,
+		askTokenTrade,
 	]);
 
 	return null;
