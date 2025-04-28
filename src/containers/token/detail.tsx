@@ -277,8 +277,8 @@ const Detail = () => {
 					<MetaInfo price={queryResult.data?.price ?? 0} change={queryResult.data?.change ?? 0} />
 				</header>
 				<Card className="flex flex-col gap-2 lg:flex-row lg:justify-between p-0 bg-transparent items-center">
-					<Hotspot x={0} className="w-full lg:max-w-[40%] h-fit lg:h-full justify-center" />
-					<CardBody className="grid grid-cols-2 lg:grid-cols-4 gap-4 w-full lg:max-w-[45%]">
+					<Hotspot x={0} className="w-full lg:max-w-[25%] h-fit lg:h-full justify-center" />
+					<CardBody className="grid grid-cols-2 lg:grid-cols-4 gap-4 w-full lg:max-w-[50%]">
 						<Stock
 							label={t('card.stock.marketCap')}
 							value={`$ ${formatLargeNumber(queryResult.data?.market_cap ?? 0)}`}
