@@ -63,19 +63,18 @@ export function createClickableMarkers<TimeType>(
 		chartContainer.style.position = 'relative';
 	}
 
-	// 點擊事件處理
-	const handleClick: MouseEventHandler<Time> = (param: MouseEventParams<Time>) => {
+	// 用於檢測是否在標記上的通用函數
+	const isOverMarker = (param: MouseEventParams<Time>) => {
 		// 如果沒有點擊到具體位置，則返回
 		if (!param.point) {
-			options?.onCloseTooltip?.({ visible: false });
-			return;
+			return null;
 		}
 
 		// 獲取所有標記
 		const allMarkers = seriesMarkers.markers() as unknown as ClickableMarker<TimeType>[];
 
-		// 查找點擊的標記（這裡使用簡單的點擊範圍檢測）
-		const clickedMarker = allMarkers.find(marker => {
+		// 查找指標下的標記（這裡使用簡單的點擊範圍檢測）
+		return allMarkers.find(marker => {
 			// 獲取標記的時間對應的x座標
 			const timeScale = chart.timeScale();
 			const coord = timeScale.timeToCoordinate(marker.time as unknown as Time);
@@ -122,7 +121,7 @@ export function createClickableMarkers<TimeType>(
 
 			if (priceCoord === null) return false;
 
-			// 簡單的點擊範圍檢測（假設標記大小為特定像素）
+			// 簡單的範圍檢測（假設標記大小為特定像素）
 			// 調整點擊區域大小以提高可用性
 			const markerSize = (marker.size || 1) * 15;
 			const pointX = param.point?.x || 0;
@@ -132,6 +131,17 @@ export function createClickableMarkers<TimeType>(
 
 			return Math.sqrt(dx * dx + dy * dy) <= markerSize;
 		});
+	};
+
+	// 點擊事件處理
+	const handleClick: MouseEventHandler<Time> = (param: MouseEventParams<Time>) => {
+		// 如果沒有點擊到具體位置，則返回
+		if (!param.point) {
+			options?.onCloseTooltip?.({ visible: false });
+			return;
+		}
+
+		const clickedMarker = isOverMarker(param);
 
 		if (clickedMarker && chartContainer) {
 			// 計算調整後的位置，避免 tooltip 超出容器
@@ -176,7 +186,24 @@ export function createClickableMarkers<TimeType>(
 		}
 	};
 
+	// 鼠標移動處理
+	const handleCrosshairMove: MouseEventHandler<Time> = (param: MouseEventParams<Time>) => {
+		if (!chartElement) return;
+
+		// 檢查鼠標是否在標記上
+		const hoveredMarker = isOverMarker(param);
+
+		// 如果在標記上，更改鼠標樣式為指針
+		if (hoveredMarker) {
+			chartElement.style.cursor = 'pointer';
+		} else {
+			// 否則恢復預設樣式
+			chartElement.style.cursor = '';
+		}
+	};
+
 	chart.subscribeClick(handleClick);
+	chart.subscribeCrosshairMove(handleCrosshairMove);
 
 	return {
 		setMarkers: newMarkers => {
@@ -189,6 +216,7 @@ export function createClickableMarkers<TimeType>(
 			 */
 			seriesMarkers.detach();
 			chart.unsubscribeClick(handleClick);
+			chart.unsubscribeCrosshairMove(handleCrosshairMove);
 		},
 	};
 }
