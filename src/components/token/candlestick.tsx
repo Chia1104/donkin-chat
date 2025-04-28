@@ -314,6 +314,7 @@ const TransactionMarkers = () => {
 	const [searchParams] = useTokenSearchParams();
 	const openTooltip = useMarkerTooltipStore(state => state.openTooltip);
 	const closeTooltip = useMarkerTooltipStore(state => state.closeTooltip);
+	const generateTimeWithInterval = useGenerateTimeWithInterval();
 	const [groupedTransactions, setGroupedTransactions] = useState<
 		| Map<
 				number,
@@ -679,6 +680,17 @@ const TransactionMarkers = () => {
 								}}
 								onClose={closeTooltip}
 								{...askTokenTrade}
+								onAskMore={ask => {
+									askTokenTrade.onAskMore(
+										ask,
+										dayjs(generateTimeWithInterval(option.marker.time as number, query.type, 1))
+											// .utc()
+											.valueOf(),
+										dayjs(option.marker.time as number)
+											// .utc()
+											.valueOf(),
+									);
+								}}
 							/>
 						),
 					});
@@ -710,6 +722,8 @@ const TransactionMarkers = () => {
 		searchParams.tmin,
 		searchParams.tmax,
 		askTokenTrade,
+		generateTimeWithInterval,
+		query.type,
 	]);
 
 	return null;

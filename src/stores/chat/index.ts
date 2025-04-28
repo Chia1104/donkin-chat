@@ -22,11 +22,15 @@ export const tokenInfoArgsSchema = z.object({
 export const get7DKOLAlertsArgsSchema = z.object({
 	userMessage: z.string().nullable(),
 	token_address: z.string(),
+	start_time: z.number().optional(),
+	end_time: z.number().optional(),
 });
 
 export const get7DSmartMoneyTradesArgsSchema = z.object({
 	userMessage: z.string().nullable(),
 	token_address: z.string(),
+	start_time: z.number().optional(),
+	end_time: z.number().optional(),
 });
 
 const { ChatStoreProvider, useChatStore, ChatStoreContext, creator } = defineChatStore({
@@ -202,9 +206,11 @@ const { ChatStoreProvider, useChatStore, ChatStoreContext, creator } = defineCha
 								const data = await request({
 									requestMode: 'proxy-ai',
 								})
-									.post('api/v1/ai/chat/last_7d_kol_alerts', {
+									.post('api/v1/ai/chat/token_kol_alerts', {
 										json: {
 											token_address: args.token_address,
+											start_time: args.start_time,
+											end_time: args.end_time,
 										},
 									})
 									.json<AIResponseData<{ conv_id: string; token: string; msg_id: string }>>();
@@ -218,9 +224,11 @@ const { ChatStoreProvider, useChatStore, ChatStoreContext, creator } = defineCha
 								const data = await request({
 									requestMode: 'proxy-ai',
 								})
-									.post('api/v1/ai/chat/last_7d_smart_money_trades', {
+									.post('api/v1/ai/chat/token_smart_money_trades', {
 										json: {
 											token_address: args.token_address,
+											start_time: args.start_time,
+											end_time: args.end_time,
 										},
 									})
 									.json<AIResponseData<{ conv_id: string; token: string; msg_id: string }>>();

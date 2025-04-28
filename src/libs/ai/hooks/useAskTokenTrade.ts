@@ -12,7 +12,7 @@ export const useAskTokenTrade = (token_address: string) => {
 
 	return {
 		askMore: [tAskMore('smart-wallet'), tAskMore('kol-order')],
-		onAskMore: (item: string) => {
+		onAskMore: (item: string, start_time?: number, end_time?: number) => {
 			if (isPending) {
 				return;
 			}
@@ -28,6 +28,8 @@ export const useAskTokenTrade = (token_address: string) => {
 										get7DSmartMoneyTradesArgsSchema.parse({
 											userMessage: tAskMore('smart-wallet'),
 											token_address,
+											start_time,
+											end_time,
 										}),
 									),
 								},
@@ -46,6 +48,8 @@ export const useAskTokenTrade = (token_address: string) => {
 										get7DKOLAlertsArgsSchema.parse({
 											userMessage: tAskMore('kol-order'),
 											token_address,
+											start_time,
+											end_time,
 										}),
 									),
 								},
