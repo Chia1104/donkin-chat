@@ -21,6 +21,7 @@ const Heatmap = () => {
 		},
 		{
 			enabled: !searchParams.mock,
+			refetchInterval: 60_000,
 		},
 	);
 	const data = useMemo(() => {

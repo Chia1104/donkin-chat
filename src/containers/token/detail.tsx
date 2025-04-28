@@ -180,6 +180,10 @@ const Detail = () => {
 		},
 		{
 			gcTime: 0,
+			staleTime: Infinity,
+			retry: false,
+			refetchOnMount: false,
+			refetchOnWindowFocus: false,
 		},
 	);
 
