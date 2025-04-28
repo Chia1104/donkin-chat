@@ -24,9 +24,9 @@ export interface Props {
 const PromptInput = ({ onSubmit, value, onChange, props }: Props) => {
 	const t = useTranslations('chat');
 	const tAction = useTranslations('action');
-	const enabled = useChatStore(state => state.enabled);
-	const isPending = useChatStore(state => state.isPending);
-	const handleCancel = useChatStore(state => state.handleCancel);
+	const enabled = useChatStore(state => state.enabled, 'PromptInput');
+	const isPending = useChatStore(state => state.isPending, 'PromptInput');
+	const handleCancel = useChatStore(state => state.handleCancel, 'PromptInput');
 	const handleSubmit = (e: React.FormEvent<HTMLFormElement>) => {
 		e.preventDefault();
 		if (isPending) {

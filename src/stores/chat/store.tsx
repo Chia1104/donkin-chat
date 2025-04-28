@@ -92,10 +92,13 @@ export const defineChatStore = <TMessageItem extends MessageItem, TStreamRequest
 		return <ChatStoreContext value={storeRef.current}>{children}</ChatStoreContext>;
 	};
 
-	const useChatStore = <T,>(selector: (store: ChatStore<TMessageItem, TStreamRequestDTO, TContext>) => T): T => {
+	const useChatStore = <T,>(
+		selector: (store: ChatStore<TMessageItem, TStreamRequestDTO, TContext>) => T,
+		name = 'useChatStore',
+	): T => {
 		const chatStoreContext = use(ChatStoreContext);
 		if (!chatStoreContext) {
-			throw new Error(`useChatStore must be used within ChatStoreProvider`);
+			throw new Error(`${name} must be used within ChatStoreProvider`);
 		}
 
 		return useStore(chatStoreContext, selector);

@@ -26,11 +26,12 @@ interface Props extends CardProps {
 }
 
 const DonkinPopover = forwardRef<HTMLDivElement | null, Props>((props, ref) => {
-	const { header, onClose, askMore, onAskMore, className, body, disabled, ...rest } = props;
+	const isPending = useChatStore(state => state.isPending, 'DonkinPopover');
+	const { header, onClose, askMore, onAskMore, className, body, disabled = isPending, ...rest } = props;
 	const { toggleDonkin } = useGlobalStore(state => state);
 	const t = useTranslations('token.order-popover');
 	const containerRef = useRef<HTMLDivElement | null>(null);
-	const status = useChatStore(state => state.status);
+	const status = useChatStore(state => state.status, 'DonkinPopover');
 	useImperativeHandle<HTMLDivElement | null, HTMLDivElement | null>(ref, () => containerRef.current);
 	return (
 		<Card

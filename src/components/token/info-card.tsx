@@ -107,7 +107,7 @@ export const LinkIcon = (props: LinkIconProps) => {
 
 export const HeaderPrimitive = (props: HeaderPrimitiveProps) => {
 	const { copied, copy } = useClipboard();
-	const isPending = useChatStore(state => state.isPending);
+	const isPending = useChatStore(state => state.isPending, 'HeaderPrimitive');
 	const askToken = useAskToken(props.meta.symbol);
 	const [isError, setIsError] = useState(false);
 

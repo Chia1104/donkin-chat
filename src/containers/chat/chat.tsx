@@ -21,11 +21,11 @@ import { useGlobalStore } from '@/stores/global/store';
 import { cn } from '@/utils/cn';
 
 const Messages = ({ children }: { children?: React.ReactNode }) => {
-	const messages = useChatStore(state => state.items);
-	const status = useChatStore(state => state.status);
-	const isPending = useChatStore(state => state.isPending);
-	const handleRetry = useChatStore(state => state.handleRetry);
-	const handleSubmit = useChatStore(state => state.handleSubmit);
+	const messages = useChatStore(state => state.items, 'Chat/Messages');
+	const status = useChatStore(state => state.status, 'Chat/Messages');
+	const isPending = useChatStore(state => state.isPending, 'Chat/Messages');
+	const handleRetry = useChatStore(state => state.handleRetry, 'Chat/Messages');
+	const handleSubmit = useChatStore(state => state.handleSubmit, 'Chat/Messages');
 
 	if (!messages || messages.length === 0) {
 		return <DefaultPrompt onAction={handleSubmit} />;
@@ -44,7 +44,7 @@ const Messages = ({ children }: { children?: React.ReactNode }) => {
 						status={status === ChatStatus.Error && isLast ? 'failed' : 'success'}
 						onRetry={message => handleRetry(message.id)}
 						reasoning={message.role === 'assistant' && isLast ? message.reasoning?.content : undefined}
-						className={cn(isLast && 'min-h-[calc(100vh-380px)]')}
+						className={cn(isLast && 'min-h-[calc(100vh-450px)] md:min-h-[calc(100vh-380px)]')}
 						/**
 						 * TODO: WIP
 						 */
@@ -58,7 +58,7 @@ const Messages = ({ children }: { children?: React.ReactNode }) => {
 };
 
 const DonkinLogo = () => {
-	const messages = useChatStore(state => state.items);
+	const messages = useChatStore(state => state.items, 'Chat/DonkinLogo');
 
 	return (
 		<>
@@ -76,8 +76,8 @@ const DonkinLogo = () => {
 };
 
 const ChatBody = () => {
-	const isPending = useChatStore(state => state.isPending);
-	const messages = useChatStore(state => state.items);
+	const isPending = useChatStore(state => state.isPending, 'Chat/ChatBody');
+	const messages = useChatStore(state => state.items, 'Chat/ChatBody');
 	const containerRef = useRef<HTMLDivElement>(null);
 	return (
 		<CardBody
@@ -112,10 +112,10 @@ const ChatBody = () => {
 };
 
 const ChatFooter = memo(() => {
-	const handleSubmit = useChatStore(state => state.handleSubmit);
-	const setInput = useChatStore(state => state.setInput);
-	const input = useChatStore(state => state.input);
-	const enabled = useChatStore(state => state.enabled);
+	const handleSubmit = useChatStore(state => state.handleSubmit, 'Chat/ChatFooter');
+	const setInput = useChatStore(state => state.setInput, 'Chat/ChatFooter');
+	const input = useChatStore(state => state.input, 'Chat/ChatFooter');
+	const enabled = useChatStore(state => state.enabled, 'Chat/ChatFooter');
 	return (
 		<CardFooter
 			aria-label="chat-footer"
