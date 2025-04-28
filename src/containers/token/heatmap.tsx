@@ -28,8 +28,9 @@ const Heatmap = () => {
 		return queryResult.flatData.map(
 			(item, index) =>
 				({
-					name: item.name,
+					name: item.symbol,
 					symbol: item.symbol,
+					address: item.address,
 					value: Math.pow(1.3, queryResult.flatData.length - index),
 					price: `$${roundDecimal(item.price, 5)}`,
 					change: roundDecimal(item.change, 5),

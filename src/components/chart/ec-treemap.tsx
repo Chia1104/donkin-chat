@@ -1,9 +1,10 @@
 'use client';
 
-import { useMemo, useRef, useState, useCallback, useEffect, forwardRef } from 'react';
+import { useMemo, useRef, useState, useCallback, forwardRef, useEffect } from 'react';
 
 import type { TreemapSeriesOption, EChartsOption, ECElementEvent, DefaultLabelFormatterCallbackParams } from 'echarts';
 import ReactECharts from 'echarts-for-react';
+import { useTransitionRouter } from 'next-view-transitions';
 import { createPortal } from 'react-dom';
 
 import { useAskToken } from '@/libs/ai/hooks/useAskToken';
@@ -14,7 +15,8 @@ import DonkinPopover from '../donkin/popover';
 export interface CryptoData {
 	name: string;
 	symbol: string;
-	value: number | number[];
+	value: number;
+	address: string;
 	price: string;
 	change: string | number;
 	children?: CryptoData[];
@@ -66,7 +68,8 @@ export const MOCK_DATA: CryptoData[] = [
 	{
 		name: 'BTC',
 		symbol: 'BTC',
-		value: [1000, 5.46],
+		address: '1A1zP1eP5QGefi2DMPTfTL5SLmv7DivfNa',
+		value: Math.pow(1.3, 20),
 		price: '$99,299.9',
 		change: 5.46,
 		itemStyle: itemStyle(5.46),
@@ -74,7 +77,8 @@ export const MOCK_DATA: CryptoData[] = [
 	{
 		name: 'ETH',
 		symbol: 'ETH',
-		value: [500, -18.46],
+		address: '0x0000000000000000000000000000000000000000',
+		value: Math.pow(1.3, 19),
 		price: '$2,299.9',
 		change: -18.46,
 		itemStyle: itemStyle(-18.46),
@@ -82,7 +86,8 @@ export const MOCK_DATA: CryptoData[] = [
 	{
 		name: 'XRP',
 		symbol: 'XRP',
-		value: [200, 2.46],
+		address: 'rJ9i9xqy2nm48YfDg4Ywz52ud81Y4QoK',
+		value: Math.pow(1.3, 18),
 		price: '$2.9987',
 		change: 2.46,
 		itemStyle: itemStyle(2.46),
@@ -90,7 +95,8 @@ export const MOCK_DATA: CryptoData[] = [
 	{
 		name: 'SOL',
 		symbol: 'SOL',
-		value: [200, -10.46],
+		address: 'So11111111111111111111111111111111111111112',
+		value: Math.pow(1.3, 17),
 		price: '$190.47',
 		change: -10.46,
 		itemStyle: itemStyle(-10.46),
@@ -98,7 +104,8 @@ export const MOCK_DATA: CryptoData[] = [
 	{
 		name: 'BNB',
 		symbol: 'BNB',
-		value: [180, -0.46],
+		address: 'bnb1333333333333333333333333333333333333333',
+		value: Math.pow(1.3, 16),
 		price: '$641.47',
 		change: -0.46,
 		itemStyle: itemStyle(-0.46),
@@ -106,7 +113,8 @@ export const MOCK_DATA: CryptoData[] = [
 	{
 		name: 'DOGE',
 		symbol: 'DOGE',
-		value: [120, -10.46],
+		address: 'D9QfDQkFf9384M982x4vUYS9vAwH217Y5',
+		value: Math.pow(1.3, 15),
 		price: '$0.2513',
 		change: -10.46,
 		itemStyle: itemStyle(-10.46),
@@ -114,7 +122,8 @@ export const MOCK_DATA: CryptoData[] = [
 	{
 		name: 'ADA',
 		symbol: 'ADA',
-		value: [100, -0.46],
+		address: 'D9QfDQkFf9384M982x4vUYS9vAwH217Y5',
+		value: Math.pow(1.3, 14),
 		price: '$0.7731',
 		change: -0.46,
 		itemStyle: itemStyle(-0.46),
@@ -122,7 +131,8 @@ export const MOCK_DATA: CryptoData[] = [
 	{
 		name: 'TRX',
 		symbol: 'TRX',
-		value: [80, 10.46],
+		address: 'D9QfDQkFf9384M982x4vUYS9vAwH217Y5',
+		value: Math.pow(1.3, 13),
 		price: '$0.2409',
 		change: 10.46,
 		itemStyle: itemStyle(10.46),
@@ -130,7 +140,8 @@ export const MOCK_DATA: CryptoData[] = [
 	{
 		name: 'LINK',
 		symbol: 'LINK',
-		value: [80, 5.46],
+		address: 'D9QfDQkFf9384M982x4vUYS9vAwH217Y5',
+		value: Math.pow(1.3, 12),
 		price: '$17.47',
 		change: 5.46,
 		itemStyle: itemStyle(5.46),
@@ -138,7 +149,8 @@ export const MOCK_DATA: CryptoData[] = [
 	{
 		name: 'AVAX',
 		symbol: 'AVAX',
-		value: [70, -5.46],
+		address: 'D9QfDQkFf9384M982x4vUYS9vAwH217Y5',
+		value: Math.pow(1.3, 11),
 		price: '$24.72',
 		change: -5.46,
 		itemStyle: itemStyle(-5.46),
@@ -146,7 +158,8 @@ export const MOCK_DATA: CryptoData[] = [
 	{
 		name: 'SUI',
 		symbol: 'SUI',
-		value: [60, 10.46],
+		address: 'D9QfDQkFf9384M982x4vUYS9vAwH217Y5',
+		value: Math.pow(1.3, 10),
 		price: '$1.47',
 		change: 10.46,
 		itemStyle: itemStyle(10.46),
@@ -154,7 +167,8 @@ export const MOCK_DATA: CryptoData[] = [
 	{
 		name: 'XLM',
 		symbol: 'XLM',
-		value: [60, 10.46],
+		address: 'D9QfDQkFf9384M982x4vUYS9vAwH217Y5',
+		value: Math.pow(1.3, 9),
 		price: '$0.3189',
 		change: 10.46,
 		itemStyle: itemStyle(10.46),
@@ -162,7 +176,8 @@ export const MOCK_DATA: CryptoData[] = [
 	{
 		name: 'UNI',
 		symbol: 'UNI',
-		value: [50, 10.46],
+		address: 'D9QfDQkFf9384M982x4vUYS9vAwH217Y5',
+		value: Math.pow(1.3, 8),
 		price: '$9.47',
 		change: 10.46,
 		itemStyle: itemStyle(10.46),
@@ -170,7 +185,8 @@ export const MOCK_DATA: CryptoData[] = [
 	{
 		name: 'DAI',
 		symbol: 'DAI',
-		value: [50, -10.46],
+		address: 'D9QfDQkFf9384M982x4vUYS9vAwH217Y5',
+		value: Math.pow(1.3, 7),
 		price: '$0.99',
 		change: -10.46,
 		itemStyle: itemStyle(-10.46),
@@ -178,7 +194,8 @@ export const MOCK_DATA: CryptoData[] = [
 	{
 		name: 'SHIB',
 		symbol: 'SHIB',
-		value: [40, 15.46],
+		address: 'D9QfDQkFf9384M982x4vUYS9vAwH217Y5',
+		value: Math.pow(1.3, 6),
 		price: '$0.00000916',
 		change: 15.46,
 		itemStyle: itemStyle(15.46),
@@ -186,7 +203,8 @@ export const MOCK_DATA: CryptoData[] = [
 	{
 		name: 'DOT',
 		symbol: 'DOT',
-		value: [40, -0.46],
+		address: 'D9QfDQkFf9384M982x4vUYS9vAwH217Y5',
+		value: Math.pow(1.3, 5),
 		price: '$4.87',
 		change: -0.46,
 		itemStyle: itemStyle(-0.46),
@@ -194,7 +212,8 @@ export const MOCK_DATA: CryptoData[] = [
 	{
 		name: 'ONDO',
 		symbol: 'ONDO',
-		value: [30, 10.46],
+		address: 'D9QfDQkFf9384M982x4vUYS9vAwH217Y5',
+		value: Math.pow(1.3, 4),
 		price: '$1.47',
 		change: 10.46,
 		itemStyle: itemStyle(10.46),
@@ -202,7 +221,8 @@ export const MOCK_DATA: CryptoData[] = [
 	{
 		name: 'TRUMP',
 		symbol: 'TRUMP',
-		value: [30, 10.46],
+		address: 'D9QfDQkFf9384M982x4vUYS9vAwH217Y5',
+		value: Math.pow(1.3, 3),
 		price: '$1.47',
 		change: 10.46,
 		itemStyle: itemStyle(10.46),
@@ -210,7 +230,8 @@ export const MOCK_DATA: CryptoData[] = [
 	{
 		name: 'PEPE',
 		symbol: 'PEPE',
-		value: [20, -5.46],
+		address: 'D9QfDQkFf9384M982x4vUYS9vAwH217Y5',
+		value: Math.pow(1.3, 2),
 		price: '$0.00000976',
 		change: -5.46,
 		itemStyle: itemStyle(-5.46),
@@ -218,7 +239,8 @@ export const MOCK_DATA: CryptoData[] = [
 	{
 		name: 'CKB',
 		symbol: 'CKB',
-		value: [20, 5.46],
+		address: 'D9QfDQkFf9384M982x4vUYS9vAwH217Y5',
+		value: Math.pow(1.3, 1),
 		price: '$0.47',
 		change: 5.46,
 		itemStyle: itemStyle(5.46),
@@ -280,14 +302,33 @@ const ECTreemap = (props: Props) => {
 	const chartRef = useRef<ReactECharts>(null);
 	const containerRef = useRef<HTMLDivElement>(null);
 	const tooltipRef = useRef<HTMLDivElement>(null);
-
-	const handleChartClick = useCallback((params: ECElementEvent) => {
+	const router = useTransitionRouter();
+	const handleChartHover = useCallback((params: ECElementEvent) => {
 		if (params.componentType === 'series') {
 			const domEvent = params.event?.event;
-			if (domEvent?.zrX && domEvent?.zrY) {
+			// 獲取圖表容器的位置
+			const containerRect = containerRef.current?.getBoundingClientRect();
+			// 獲取當前區塊的位置和大小
+			const rect = params.event?.target?.getBoundingRect();
+			if (domEvent?.zrX && domEvent?.zrY && containerRect && rect) {
+				// 獲取區塊的 transform 資訊
+				const transform = params.event?.target?.transform;
+				let x, y;
+
+				if (transform) {
+					x = transform[4] + containerRect.left + 15;
+					y = transform[5] + rect.height + containerRect.top - 155;
+				} else {
+					x = rect.x + containerRect.left + 15;
+					y = rect.y + rect.height + containerRect.top - 155;
+				}
+
 				setTooltipInfo({
 					data: params.data as CryptoData,
-					position: { x: domEvent.zrX + 20, y: domEvent.zrY + 20 },
+					position: {
+						x,
+						y,
+					},
 				});
 			}
 		}
@@ -296,6 +337,16 @@ const ECTreemap = (props: Props) => {
 	const handleCloseTooltip = useCallback(() => {
 		setTooltipInfo(null);
 	}, []);
+
+	const handleClick = useCallback(
+		(params: ECElementEvent) => {
+			const data = params.data as CryptoData;
+			if (params.componentType === 'series' && data.address) {
+				router.push(`/sol/token/${data.address}`);
+			}
+		},
+		[router],
+	);
 
 	const handleMouseMove = useCallback(
 		(e: MouseEvent) => {
@@ -341,9 +392,10 @@ const ECTreemap = (props: Props) => {
 
 	const onEvents = useMemo(() => {
 		return {
-			click: handleChartClick,
+			mouseover: handleChartHover,
+			click: handleClick,
 		};
-	}, [handleChartClick]);
+	}, [handleChartHover, handleClick]);
 
 	const options = useMemo(() => {
 		return {
