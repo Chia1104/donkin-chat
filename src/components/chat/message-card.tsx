@@ -11,6 +11,7 @@ import { cn } from '@heroui/theme';
 import { Tooltip } from '@heroui/tooltip';
 import { AnimatePresence, motion } from 'framer-motion';
 import { useTranslations } from 'next-intl';
+import { useHover } from 'usehooks-ts';
 
 import { AutoScroll } from '@/components/chat/auto-scroll';
 import type { MessageItem } from '@/libs/ai/types/message';
@@ -20,6 +21,7 @@ import Markdown from './markdown';
 
 export type MessageCardProps = React.HTMLAttributes<HTMLDivElement> & {
 	showFeedback?: boolean;
+	hoverFeedback?: boolean;
 	message: MessageItem;
 	status?: 'success' | 'failed';
 	onRetry?: (message: MessageItem) => void;
@@ -96,7 +98,12 @@ const Reasoning = memo(
 								}
 								hideIndicator
 							>
-								<ScrollShadow ref={containerRef} className="max-h-[140px] w-full">
+								<ScrollShadow
+									ref={containerRef}
+									className="max-h-[140px] w-full"
+									visibility={(reasoning?.length ?? 0) > 100 ? 'auto' : 'none'}
+									hideScrollBar
+								>
 									<Markdown experimental={experimental} content={reasoning ?? ''} />
 								</ScrollShadow>
 								<AutoScroll
@@ -130,12 +137,14 @@ const MessageCard = ({
 	isLoading,
 	reasoning,
 	experimental,
+	hoverFeedback,
 	...props
 }: MessageCardProps) => {
 	const [isPending, startTransition] = useTransition();
 	const t = useTranslations('chat');
 	const tAction = useTranslations('action');
-
+	const containerRef = useRef<HTMLDivElement>(null);
+	const isHover = useHover(containerRef as React.RefObject<HTMLElement>);
 	const hasFailed = status === 'failed';
 
 	const handleRetry = useCallback(() => {
@@ -158,6 +167,7 @@ const MessageCard = ({
 	return (
 		<div
 			{...props}
+			ref={containerRef}
 			data-message-id={message.id}
 			className={cn(
 				'relative w-fit rounded-medium text-default-600 flex flex-col text-small prose prose-invert prose-sm prose-headings:mt-3 prose-headings:mb-2 prose-ul:my-2.5 prose-table:my-2.5',
@@ -171,32 +181,44 @@ const MessageCard = ({
 			) : (
 				<>
 					<Markdown experimental={experimental} content={message.content ?? ''} />
-					{showFeedback && !hasFailed && !isLoading && (
-						<div className="flex mb-3">
-							<CopyButton
-								content={message.content ?? ''}
-								variant="light"
-								className="bg-transparent max-w-[26px] h-[26px] max-h-[26px] w-[26px] min-w-[26px] min-h-[26px]"
-								iconProps={{
-									className: 'size-4',
-								}}
-							/>
-							<Tooltip content={tAction('retry')} size="sm">
-								<Button
+					<AnimatePresence mode="wait">
+						{((showFeedback && !hasFailed && !isLoading) || (hoverFeedback && isHover)) && (
+							<motion.div
+								className={cn(
+									!hoverFeedback && 'mb-3',
+									hoverFeedback && 'absolute -bottom-3 right-2',
+									hoverFeedback && message.role === 'assistant' && 'left-0',
+								)}
+								initial={{ opacity: 0, y: 10 }}
+								animate={{ opacity: 1, y: 0 }}
+								exit={{ opacity: 0, y: 10 }}
+								transition={{ duration: 0.3 }}
+							>
+								<CopyButton
+									content={message.content ?? ''}
 									variant="light"
-									aria-label="retry-button"
-									isIconOnly
-									radius="full"
-									size="sm"
-									onPress={() => handleRetry()}
-									isLoading={isPending || isRetrying}
-									className="max-w-[26px] h-[26px] max-h-[26px] w-[26px] min-w-[26px] min-h-[26px]"
-								>
-									<span className="text-default-600 i-material-symbols-refresh size-4" />
-								</Button>
-							</Tooltip>
-						</div>
-					)}
+									className="bg-transparent max-w-[26px] h-[26px] max-h-[26px] w-[26px] min-w-[26px] min-h-[26px]"
+									iconProps={{
+										className: 'size-4',
+									}}
+								/>
+								<Tooltip content={tAction('retry')} size="sm">
+									<Button
+										variant="light"
+										aria-label="retry-button"
+										isIconOnly
+										radius="full"
+										size="sm"
+										onPress={() => handleRetry()}
+										isLoading={isPending || isRetrying}
+										className="max-w-[26px] h-[26px] max-h-[26px] w-[26px] min-w-[26px] min-h-[26px]"
+									>
+										<span className="text-default-600 i-material-symbols-refresh size-4" />
+									</Button>
+								</Tooltip>
+							</motion.div>
+						)}
+					</AnimatePresence>
 				</>
 			)}
 		</div>

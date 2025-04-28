@@ -44,6 +44,11 @@ const Messages = ({ children }: { children?: React.ReactNode }) => {
 						status={status === ChatStatus.Error && isLast ? 'failed' : 'success'}
 						onRetry={message => handleRetry(message.id)}
 						reasoning={message.role === 'assistant' && isLast ? message.reasoning?.content : undefined}
+						className={cn(isLast && 'min-h-[calc(100vh-380px)]')}
+						/**
+						 * TODO: WIP
+						 */
+						// hoverFeedback={!isLast}
 					/>
 				);
 			})}
