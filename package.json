@@ -85,6 +85,7 @@
 		"react-hook-form": "^7.56.1",
 		"react-markdown": "^10.1.0",
 		"react-virtuoso": "^4.12.6",
+		"recharts": "^2.15.3",
 		"rehype-highlight": "^7.0.2",
 		"rehype-katex": "^7.0.1",
 		"rehype-raw": "^7.0.0",

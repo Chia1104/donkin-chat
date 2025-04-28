@@ -54,7 +54,7 @@ const ContentLayout = ({ children }: { children: React.ReactNode }) => {
 	return (
 		<ScrollShadow
 			className={cn(
-				'p-5 h-fit md:h-[calc(100vh-100px)] flex items-center justify-center',
+				'p-5 h-fit md:h-[calc(100vh-100px)] flex items-center justify-center overflow-x-hidden',
 				isOpen ? 'w-full lg:w-2/3 md:pr-0' : 'w-full',
 			)}
 		>

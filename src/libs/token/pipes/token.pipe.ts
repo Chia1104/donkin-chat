@@ -50,7 +50,18 @@ export const searchTokensPaginationSchema = paginationSchema.extend({
 	data: searchTokensSchema,
 });
 
+export const tokenPriceSchema = z.object({
+	price: z.number(),
+	price_change_24h: z.number(),
+});
+
+export const tokenSmartWalletCountSchema = z.object({
+	smart_wallet_count: z.number(),
+});
+
 export type Token = z.infer<typeof tokenSchema>;
 export type SearchToken = z.infer<typeof searchTokenSchema>;
 export type TokensPagination = z.infer<typeof tokensPaginationSchema>;
 export type SearchTokensPagination = z.infer<typeof searchTokensPaginationSchema>;
+export type TokenPrice = z.infer<typeof tokenPriceSchema>;
+export type TokenSmartWalletCount = z.infer<typeof tokenSmartWalletCountSchema>;

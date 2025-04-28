@@ -147,11 +147,16 @@ const SortFilter = () => {
 
 const List = ({ display }: { display: 'group' | 'single' }) => {
 	const [searchParams] = useAISearchParams();
-	const queryResult = useQueryTokensHot({
-		page_size: 20,
-		sort_by: searchParams.sort,
-		order: searchParams.order,
-	});
+	const queryResult = useQueryTokensHot(
+		{
+			page_size: 20,
+			sort_by: searchParams.sort,
+			order: searchParams.order,
+		},
+		{
+			refetchInterval: 60_000,
+		},
+	);
 	const isOpen = useGlobalStore(state => state.donkin.isOpen);
 	const router = useTransitionRouter();
 	const [globalSearchParams] = useGlobalSearchParams();

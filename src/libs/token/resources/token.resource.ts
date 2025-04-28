@@ -2,8 +2,14 @@ import type { TokenSort } from '@/libs/ai/enums/tokenSort.enum';
 import type { ResponseData, PaginationData, BaseRequestOptions, PaginationRequestOptions } from '@/types/request';
 import { request } from '@/utils/request';
 
-import type { Token, SearchToken } from '../pipes/token.pipe';
-import { tokenSchema, tokensPaginationSchema, searchTokensPaginationSchema } from '../pipes/token.pipe';
+import type { Token, SearchToken, TokenPrice, TokenSmartWalletCount } from '../pipes/token.pipe';
+import {
+	tokenSchema,
+	tokensPaginationSchema,
+	searchTokensPaginationSchema,
+	tokenPriceSchema,
+	tokenSmartWalletCountSchema,
+} from '../pipes/token.pipe';
 
 export type TokensHotRequestOptions = PaginationRequestOptions<
 	[typeof TokenSort.Change, typeof TokenSort.Hot, typeof TokenSort.MarketCap, typeof TokenSort.UpTime]
@@ -68,6 +74,22 @@ export const getToken = async (address: string) => {
 		.json<ResponseData<Token>>();
 
 	return tokenSchema.parse(response.data);
+};
+
+export const getTokenPrice = async (address: string) => {
+	const response = await request({ requestMode: 'proxy-service' })
+		.get(`api/v1/tokens/${address}/price`)
+		.json<ResponseData<TokenPrice>>();
+
+	return tokenPriceSchema.parse(response.data);
+};
+
+export const getTokenSmartWalletCount = async (address: string) => {
+	const response = await request({ requestMode: 'proxy-service' })
+		.get(`api/v1/tokens/${address}/smart_wallet_count`)
+		.json<ResponseData<TokenSmartWalletCount>>();
+
+	return tokenSmartWalletCountSchema.parse(response.data);
 };
 
 export const searchToken = async (options?: BaseRequestOptions<TokenSearchRequestOptions>) => {

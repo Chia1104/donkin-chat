@@ -25,6 +25,8 @@ import { useQueryOhlcv } from '@/libs/birdeye/hooks/useQueryOhlcv';
 import { useGetKolAlerts } from '@/libs/kol/hooks/useGetKolAlerts';
 import { IntervalFilter } from '@/libs/token/enums/interval-filter.enum';
 import { useQueryToken } from '@/libs/token/hooks/useQueryToken';
+import { useQueryTokenPrice } from '@/libs/token/hooks/useQueryTokenPrice';
+import { useQueryTokenSmartWallet } from '@/libs/token/hooks/useQueryTokenSmartWallet';
 import { useQueryTransactions } from '@/libs/token/hooks/useQueryTransactions';
 import { useTokenSearchParams } from '@/libs/token/hooks/useTokenSearchParams';
 import { cn } from '@/utils/cn';
@@ -114,9 +116,19 @@ const DateFilter = memo(() => {
 	);
 });
 
-const MetaInfo = ({ price, change }: { price: number; change: number | string }) => {
+const MetaInfo = ({ price, change, isPending }: { price: number; change: number | string; isPending?: boolean }) => {
 	const isPositiveChange = isPositiveNumber(change) || (typeof change === 'string' && change.startsWith('+'));
 	const isNegativeChange = isNegativeNumber(change) || (typeof change === 'string' && change.startsWith('-'));
+
+	if (isPending) {
+		return (
+			<div className="flex flex-col lg:flex-row lg:items-center">
+				<Skeleton className="w-20 h-5 rounded-full mb-2 lg:mb-0 lg:mr-5" />
+				<Skeleton className="w-10 h-3 rounded-full" />
+			</div>
+		);
+	}
+
 	return (
 		<div className="flex flex-col lg:flex-row lg:items-center">
 			<h3 className="text-[22px] font-medium lg:mr-5">{`$ ${formatLargeNumber(price ?? 0)}`}</h3>
@@ -142,6 +154,12 @@ const Detail = () => {
 	const tToken = useTranslations('token');
 	const params = useParams<{ chain: string; token: string }>();
 	const queryResult = useQueryToken(params.token);
+	const queryPrice = useQueryTokenPrice(params.token, {
+		refetchInterval: 60_000,
+	});
+	const querySmartWalletCount = useQueryTokenSmartWallet(params.token, {
+		refetchInterval: 60_000 * 5,
+	});
 	const [searchParams] = useTokenSearchParams();
 	const currentUnix = useRef(dayjs().unix());
 	const { data: kolAlerts, isLoading: isKolAlertsLoading } = useGetKolAlerts(params.token);
@@ -180,6 +198,10 @@ const Detail = () => {
 		},
 		{
 			gcTime: 0,
+			staleTime: Infinity,
+			retry: false,
+			refetchOnMount: false,
+			refetchOnWindowFocus: false,
 		},
 	);
 
@@ -223,119 +245,129 @@ const Detail = () => {
 	}, [queryResult.data?.created_at]);
 
 	return (
-		<div className="w-full h-full flex flex-col">
-			<div className="flex flex-col gap-6 w-full">
-				<header className="flex items-center gap-5 justify-between lg:justify-start">
-					<section className="flex items-center gap-5">
-						<HeaderPrimitive
-							avatarProps={{
-								size: 'lg',
-								className: 'min-w-8 min-h-8 w-8 h-8',
-							}}
-							classNames={{
-								label: 'text-[22px] font-normal mr-2',
-								labelWrapper: 'lg:flex-row flex-col lg:items-center lg:gap-2 gap-0',
-							}}
-							injects={{
-								afterLabel: (
-									<span className="flex items-center gap-3">
-										<p className="text-success text-[12px] font-normal">{diff}</p>
-										<Tooltip
-											content={dayjs(queryResult.data?.created_at).format('YYYY-MM-DD HH:mm:ss')}
-											showArrow
-											radius="sm"
-											classNames={{
-												content: 'text-[10px] font-normal',
-											}}
-										>
-											<p className="text-[12px] font-normal">
-												{truncateMiddle(
-													queryResult.data?.address ?? '',
-													queryResult.data?.address ? queryResult.data?.address.length / 3 : 5,
-												)}
-											</p>
-										</Tooltip>
-										<CopyButton content={params.token} />
-									</span>
-								),
-							}}
-							isLoading={queryResult.isLoading}
-							meta={{
-								name: queryResult.data?.name ?? '',
-								avatar: queryResult.data?.logo_uri ?? '',
-								chain: queryResult.data?.symbol ?? '',
-								symbol: queryResult.data?.symbol ?? '',
-								token: queryResult.data?.address ?? '',
-							}}
+		<>
+			<div className="w-full h-full flex flex-col">
+				<div className="flex flex-col gap-6 w-full">
+					<header className="flex items-center gap-5 justify-between lg:justify-start">
+						<section className="flex items-center gap-5">
+							<HeaderPrimitive
+								avatarProps={{
+									size: 'lg',
+									className: 'min-w-8 min-h-8 w-8 h-8',
+								}}
+								classNames={{
+									label: 'text-[22px] font-normal mr-2',
+									labelWrapper: 'lg:flex-row flex-col lg:items-center lg:gap-2 gap-0',
+								}}
+								injects={{
+									afterLabel: (
+										<span className="flex items-center gap-3">
+											<p className="text-success text-[12px] font-normal">{diff}</p>
+											<Tooltip
+												content={dayjs(queryResult.data?.created_at).format('YYYY-MM-DD HH:mm:ss')}
+												showArrow
+												radius="sm"
+												classNames={{
+													content: 'text-[10px] font-normal',
+												}}
+											>
+												<p className="text-[12px] font-normal">
+													{truncateMiddle(
+														queryResult.data?.address ?? '',
+														queryResult.data?.address ? queryResult.data?.address.length / 3 : 5,
+													)}
+												</p>
+											</Tooltip>
+											<CopyButton content={params.token} />
+										</span>
+									),
+								}}
+								isLoading={queryResult.isLoading}
+								meta={{
+									name: queryResult.data?.name ?? '',
+									avatar: queryResult.data?.logo_uri ?? '',
+									chain: queryResult.data?.symbol ?? '',
+									symbol: queryResult.data?.symbol ?? '',
+									token: queryResult.data?.address ?? '',
+								}}
+							/>
+						</section>
+						<Divider orientation="vertical" className="h-4 hidden lg:block" />
+						<MetaInfo
+							price={queryPrice.data?.price ?? 0}
+							change={queryPrice.data?.price_change_24h ?? 0}
+							isPending={queryPrice.isLoading}
 						/>
+					</header>
+					<Card className="flex flex-col gap-2 lg:flex-row lg:justify-between p-0 bg-transparent items-center">
+						<Hotspot x={0} className="w-full lg:max-w-[25%] h-fit lg:h-full justify-center" />
+						<CardBody className="grid grid-cols-2 lg:grid-cols-4 gap-4 w-full lg:max-w-[50%]">
+							<Stock
+								label={t('card.stock.marketCap')}
+								value={`$ ${formatLargeNumber(queryResult.data?.market_cap ?? 0)}`}
+								isPending={queryResult.isLoading}
+							/>
+							<Stock
+								classNames={{
+									base: 'lg:pl-4',
+								}}
+								label={t('card.stock.pool')}
+								value={`$ ${formatLargeNumber(queryResult.data?.liquidity ?? 0)}`}
+								isPending={queryResult.isLoading}
+							/>
+							<Stock
+								classNames={{
+									base: 'lg:pl-4',
+								}}
+								label={tToken('holder')}
+								value={formatLargeNumber(0)}
+								isPending={queryResult.isLoading}
+							/>
+							<Stock
+								classNames={{
+									base: 'lg:pl-4',
+								}}
+								label={tToken('wallets')}
+								value={
+									querySmartWalletCount.data?.smart_wallet_count
+										? formatLargeNumber(querySmartWalletCount.data?.smart_wallet_count)
+										: '-'
+								}
+								isPending={querySmartWalletCount.isLoading}
+							/>
+						</CardBody>
+					</Card>
+					<Divider orientation="horizontal" />
+					<section className="flex flex-col lg:flex-row lg:items-center lg:justify-between">
+						<DateFilter />
+						<Marker />
 					</section>
-					<Divider orientation="vertical" className="h-4 hidden lg:block" />
-					<MetaInfo price={queryResult.data?.price ?? 0} change={queryResult.data?.change ?? 0} />
-				</header>
-				<Card className="flex flex-col gap-2 lg:flex-row lg:justify-between p-0 bg-transparent items-center">
-					<Hotspot x={0} className="w-full lg:max-w-[40%] h-fit lg:h-full justify-center" />
-					<CardBody className="grid grid-cols-2 lg:grid-cols-4 gap-4 w-full lg:max-w-[45%]">
-						<Stock
-							label={t('card.stock.marketCap')}
-							value={`$ ${formatLargeNumber(queryResult.data?.market_cap ?? 0)}`}
-							isPending={queryResult.isLoading}
-						/>
-						<Stock
-							classNames={{
-								base: 'lg:pl-4',
+					{ohlcv.isLoading || isKolAlertsLoading || isTransactionsLoading ? (
+						<div className="flex items-center justify-center w-full h-[55dvh]">
+							<Spinner />
+						</div>
+					) : (
+						<Candlestick
+							meta={{
+								price: queryResult.data?.price ?? 0,
+								change: queryResult.data?.change ?? 0,
+								address: params.token,
 							}}
-							label={t('card.stock.pool')}
-							value={`$ ${formatLargeNumber(queryResult.data?.liquidity ?? 0)}`}
-							isPending={queryResult.isLoading}
-						/>
-						<Stock
-							classNames={{
-								base: 'lg:pl-4',
+							query={{
+								type: searchParams.interval,
+								time_from: timeFrom,
+								time_to: currentUnix.current,
 							}}
-							label={tToken('holder')}
-							value={formatLargeNumber(0)}
-							isPending={queryResult.isLoading}
+							data={ohlcvData}
+							isPending={ohlcv.isLoading || isKolAlertsLoading || isTransactionsLoading}
+							isMetaPending={queryResult.isLoading}
+							kolAlerts={kolAlerts}
+							transactions={transactions}
 						/>
-						<Stock
-							classNames={{
-								base: 'lg:pl-4',
-							}}
-							label={tToken('wallets')}
-							value={formatLargeNumber(0)}
-							isPending={queryResult.isLoading}
-						/>
-					</CardBody>
-				</Card>
-				<Divider orientation="horizontal" />
-				<section className="flex flex-col lg:flex-row lg:items-center lg:justify-between">
-					<DateFilter />
-					<Marker />
-				</section>
-				{ohlcv.isLoading || isKolAlertsLoading || isTransactionsLoading ? (
-					<div className="flex items-center justify-center w-full h-[55dvh]">
-						<Spinner />
-					</div>
-				) : (
-					<Candlestick
-						meta={{
-							price: queryResult.data?.price ?? 0,
-							change: queryResult.data?.change ?? 0,
-							address: params.token,
-						}}
-						query={{
-							type: searchParams.interval,
-							time_from: timeFrom,
-							time_to: currentUnix.current,
-						}}
-						data={ohlcvData}
-						isPending={ohlcv.isLoading || isKolAlertsLoading || isTransactionsLoading}
-						isMetaPending={queryResult.isLoading}
-						kolAlerts={kolAlerts}
-						transactions={transactions}
-					/>
-				)}
+					)}
+				</div>
 			</div>
-		</div>
+		</>
 	);
 };
 
