@@ -13,7 +13,7 @@ const OnboardingTooltip = () => {
 	const action = useGlobalStore(state => state.toggleDonkin);
 	const t = useTranslations('onboarding.donkin');
 	const tAction = useTranslations('action');
-	const handleSubmit = useChatStore(state => state.handleSubmit);
+	const handleSubmit = useChatStore(state => state.handleSubmit, 'OnboardingTooltip');
 
 	const handleOpen = (ask?: string) => {
 		action(true);

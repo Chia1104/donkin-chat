@@ -245,7 +245,7 @@ const List = ({ display }: { display: 'group' | 'single' }) => {
 						>
 							{children}
 							{(queryResult.isFetchingNextPage || queryResult.isFetching) &&
-								Array.from({ length: 12 }).map((_, index) => {
+								Array.from({ length: 16 }).map((_, index) => {
 									return (
 										<li className="w-full" key={index}>
 											<InfoCard

@@ -10,7 +10,7 @@ import { useChatStore } from '@/stores/chat';
 import { useGlobalStore } from '@/stores/global/store';
 
 export const DonkinPlugin = () => {
-	const threadId = useChatStore(state => state.threadId);
+	const threadId = useChatStore(state => state.threadId, 'DonkinPlugin');
 	const [, setSearchParams] = useAISearchParams();
 	const toggleDonkin = useGlobalStore(state => state.toggleDonkin);
 	const completeDonkin = useGlobalStore(state => state.completeDonkin);

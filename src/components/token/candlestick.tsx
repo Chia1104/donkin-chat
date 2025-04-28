@@ -690,6 +690,7 @@ const TransactionMarkers = () => {
 											// .utc()
 											.valueOf(),
 									);
+									closeTooltip();
 								}}
 							/>
 						),

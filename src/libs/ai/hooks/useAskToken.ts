@@ -7,8 +7,7 @@ import { SupportedTool } from '../enums/supportedTool.enum';
 
 export const useAskToken = (token: string) => {
 	const tAskMore = useTranslations('donkin.ask-more');
-	const isPending = useChatStore(state => state.isPending);
-	const handleSubmit = useChatStore(state => state.handleSubmit);
+	const handleSubmit = useChatStore(state => state.handleSubmit, 'useAskToken');
 
 	return {
 		askMore: [
@@ -18,9 +17,6 @@ export const useAskToken = (token: string) => {
 			// tAskMore('token-name.smart-wallet'),
 		],
 		onAskMore: (item: string) => {
-			if (isPending) {
-				return;
-			}
 			switch (item) {
 				case tAskMore('token-name.basic-info'):
 					handleSubmit(

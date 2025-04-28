@@ -7,15 +7,11 @@ import { SupportedTool } from '../enums/supportedTool.enum';
 
 export const useAskTokenTrade = (token_address: string) => {
 	const tAskMore = useTranslations('donkin.ask-more.kol-order');
-	const isPending = useChatStore(state => state.isPending);
-	const handleSubmit = useChatStore(state => state.handleSubmit);
+	const handleSubmit = useChatStore(state => state.handleSubmit, 'useAskTokenTrade');
 
 	return {
 		askMore: [tAskMore('smart-wallet'), tAskMore('kol-order')],
 		onAskMore: (item: string, start_time?: number, end_time?: number) => {
-			if (isPending) {
-				return;
-			}
 			switch (item) {
 				case tAskMore('smart-wallet'):
 					handleSubmit(tAskMore('smart-wallet'), {

@@ -63,6 +63,98 @@ export function createClickableMarkers<TimeType>(
 		chartContainer.style.position = 'relative';
 	}
 
+	// 用於檢測是否在標記上的通用函數
+	const isOverMarker = (param: MouseEventParams<Time>) => {
+		// 如果沒有點擊到具體位置，則返回
+		if (!param.point) {
+			return null;
+		}
+
+		// 獲取所有標記
+		const allMarkers = seriesMarkers.markers() as unknown as ClickableMarker<TimeType>[];
+
+		// 查找指標下的標記（使用更精確的點擊範圍檢測）
+		return allMarkers.find(marker => {
+			// 獲取標記的時間對應的x座標
+			const timeScale = chart.timeScale();
+			const coord = timeScale.timeToCoordinate(marker.time as unknown as Time);
+			if (coord === null) return false;
+
+			const time = marker.time as unknown as Time;
+			const logical = chart.timeScale().timeToIndex(time);
+			if (logical === null) return false;
+
+			const data = series.dataByIndex(logical);
+			if (!data) return false;
+
+			if (!('high' in data && 'low' in data && 'close' in data)) return false;
+
+			// 計算實際標記尺寸
+			const sizeMultiplier = marker.size || 1;
+			const barSpacing = chart.timeScale().options().barSpacing;
+			const actualMarkerSize = Math.min(Math.max(barSpacing, 12), 30) * sizeMultiplier;
+
+			// 增加 shapeMargin 的值，提供更多間距
+			// 使用 barSpacing 的 0.3 倍作為基準，但不小於 6 像素
+			const shapeMargin = Math.max(barSpacing * 0.3, 6);
+
+			// 根據標記位置獲取正確的y座標
+			let priceCoord: number | null = null;
+			let offsetY = 0;
+
+			switch (marker.position) {
+				case 'aboveBar': {
+					// 標記在蠟燭上方（high價格上方）
+					const highPrice = data.high;
+					priceCoord = series.priceToCoordinate(highPrice);
+					if (priceCoord === null) return false;
+
+					// 上方標記的偏移：向上偏移半個標記大小+邊距
+					offsetY = -(actualMarkerSize / 2 + shapeMargin);
+					break;
+				}
+				case 'belowBar': {
+					// 標記在蠟燭下方（low價格下方）
+					const lowPrice = data.low;
+					priceCoord = series.priceToCoordinate(lowPrice);
+					if (priceCoord === null) return false;
+
+					// 下方標記的偏移：向下偏移半個標記大小+邊距
+					offsetY = actualMarkerSize / 2 + shapeMargin;
+					break;
+				}
+				case 'inBar':
+				default: {
+					// 標記在蠟燭內部（close價格處）
+					const closePrice = data.close;
+					priceCoord = series.priceToCoordinate(closePrice);
+					if (priceCoord === null) return false;
+					break;
+				}
+			}
+
+			// 應用偏移量計算實際y座標
+			const actualY = priceCoord + offsetY;
+
+			// 更精確的範圍檢測
+			const pointX = param.point?.x || 0;
+			const pointY = param.point?.y || 0;
+
+			// 增加點擊範圍以便於點擊，尤其是同一時間段內有多個標記的情況
+			// 對於 Y 軸方向，也略微增加範圍（4倍）
+			const hitboxMultiplierY = 4; // 增加Y軸方向的點擊範圍
+			const halfSizeX = actualMarkerSize / 2;
+			const halfSizeY = (actualMarkerSize / 2) * hitboxMultiplierY;
+
+			// 定義點擊區域
+			const isInXRange = Math.abs(pointX - coord) <= halfSizeX;
+			const isInYRange = Math.abs(pointY - actualY) <= halfSizeY;
+
+			// 返回點是否在標記範圍內
+			return isInXRange && isInYRange;
+		});
+	};
+
 	// 點擊事件處理
 	const handleClick: MouseEventHandler<Time> = (param: MouseEventParams<Time>) => {
 		// 如果沒有點擊到具體位置，則返回
@@ -71,67 +163,7 @@ export function createClickableMarkers<TimeType>(
 			return;
 		}
 
-		// 獲取所有標記
-		const allMarkers = seriesMarkers.markers() as unknown as ClickableMarker<TimeType>[];
-
-		// 查找點擊的標記（這裡使用簡單的點擊範圍檢測）
-		const clickedMarker = allMarkers.find(marker => {
-			// 獲取標記的時間對應的x座標
-			const timeScale = chart.timeScale();
-			const coord = timeScale.timeToCoordinate(marker.time as unknown as Time);
-			if (coord === null) return false;
-
-			// 獲取標記的價格對應的y座標
-			let priceCoord: number | null = null;
-
-			// 嘗試獲取價格座標
-			try {
-				// 使用不同的位置策略來獲取座標
-				if (marker.position === 'aboveBar') {
-					const time = marker.time as unknown as Time;
-					const logical = chart.timeScale().timeToIndex(time);
-					if (logical !== null) {
-						const data = series.dataByIndex(logical);
-						if (data && 'high' in data) {
-							priceCoord = series.priceToCoordinate(data.high);
-						}
-					}
-				} else if (marker.position === 'belowBar') {
-					const time = marker.time as unknown as Time;
-					const logical = chart.timeScale().timeToIndex(time);
-					if (logical !== null) {
-						const data = series.dataByIndex(logical);
-						if (data && 'low' in data) {
-							priceCoord = series.priceToCoordinate(data.low);
-						}
-					}
-				} else {
-					const time = marker.time as unknown as Time;
-					const logical = chart.timeScale().timeToIndex(time);
-					if (logical !== null) {
-						const data = series.dataByIndex(logical);
-						if (data && 'close' in data) {
-							priceCoord = series.priceToCoordinate(data.close);
-						}
-					}
-				}
-			} catch {
-				// 忽略錯誤，處理找不到數據的情況
-				return false;
-			}
-
-			if (priceCoord === null) return false;
-
-			// 簡單的點擊範圍檢測（假設標記大小為特定像素）
-			// 調整點擊區域大小以提高可用性
-			const markerSize = (marker.size || 1) * 15;
-			const pointX = param.point?.x || 0;
-			const pointY = param.point?.y || 0;
-			const dx = pointX - coord;
-			const dy = (pointY - priceCoord) * 0.1;
-
-			return Math.sqrt(dx * dx + dy * dy) <= markerSize;
-		});
+		const clickedMarker = isOverMarker(param);
 
 		if (clickedMarker && chartContainer) {
 			// 計算調整後的位置，避免 tooltip 超出容器
@@ -176,7 +208,24 @@ export function createClickableMarkers<TimeType>(
 		}
 	};
 
+	// 鼠標移動處理
+	const handleCrosshairMove: MouseEventHandler<Time> = (param: MouseEventParams<Time>) => {
+		if (!chartElement) return;
+
+		// 檢查鼠標是否在標記上
+		const hoveredMarker = isOverMarker(param);
+
+		// 如果在標記上，更改鼠標樣式為指針
+		if (hoveredMarker) {
+			chartElement.style.cursor = 'pointer';
+		} else {
+			// 否則恢復預設樣式
+			chartElement.style.cursor = '';
+		}
+	};
+
 	chart.subscribeClick(handleClick);
+	chart.subscribeCrosshairMove(handleCrosshairMove);
 
 	return {
 		setMarkers: newMarkers => {
@@ -189,6 +238,7 @@ export function createClickableMarkers<TimeType>(
 			 */
 			seriesMarkers.detach();
 			chart.unsubscribeClick(handleClick);
+			chart.unsubscribeCrosshairMove(handleCrosshairMove);
 		},
 	};
 }
