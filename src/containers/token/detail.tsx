@@ -29,6 +29,7 @@ import { useQueryTokenPrice } from '@/libs/token/hooks/useQueryTokenPrice';
 import { useQueryTokenSmartWallet } from '@/libs/token/hooks/useQueryTokenSmartWallet';
 import { useQueryTransactions } from '@/libs/token/hooks/useQueryTransactions';
 import { useTokenSearchParams } from '@/libs/token/hooks/useTokenSearchParams';
+import { useGlobalStore } from '@/stores/global/store';
 import { cn } from '@/utils/cn';
 import dayjs from '@/utils/dayjs';
 import { truncateMiddle, formatLargeNumber, roundDecimal } from '@/utils/format';
@@ -122,7 +123,7 @@ const MetaInfo = ({ price, change, isPending }: { price: number; change: number 
 
 	if (isPending) {
 		return (
-			<div className="flex flex-col lg:flex-row lg:items-center">
+			<div className="flex items-center">
 				<Skeleton className="w-20 h-5 rounded-full mb-2 lg:mb-0 lg:mr-5" />
 				<Skeleton className="w-10 h-3 rounded-full" />
 			</div>
@@ -130,8 +131,8 @@ const MetaInfo = ({ price, change, isPending }: { price: number; change: number 
 	}
 
 	return (
-		<div className="flex flex-col lg:flex-row lg:items-center">
-			<h3 className="text-[22px] font-medium lg:mr-5">{`$ ${formatLargeNumber(price ?? 0)}`}</h3>
+		<div className="flex items-center">
+			<h3 className="text-[22px] font-medium mr-5">{`$ ${formatLargeNumber(price ?? 0)}`}</h3>
 			<span
 				className={cn(
 					'text-xs flex items-center gap-1',
@@ -149,8 +150,9 @@ const MetaInfo = ({ price, change, isPending }: { price: number; change: number 
 	);
 };
 
-const Detail = () => {
+const Detail = ({ simplify = false }: { simplify?: boolean }) => {
 	const t = useTranslations('preview.ai-signal');
+	const isOpen = useGlobalStore(state => state.donkin.isOpen);
 	const tToken = useTranslations('token');
 	const params = useParams<{ chain: string; token: string }>();
 	const queryResult = useQueryToken(params.token);
@@ -262,96 +264,116 @@ const Detail = () => {
 	return (
 		<>
 			<div className="w-full h-full flex flex-col">
-				<div className="flex flex-col gap-6 w-full">
-					<header className="flex items-center gap-5 justify-between lg:justify-start">
-						<section className="flex items-center gap-5">
-							<HeaderPrimitive
-								avatarProps={{
-									size: 'lg',
-									className: 'min-w-8 min-h-8 w-8 h-8',
-								}}
-								classNames={{
-									label: 'text-[22px] font-normal mr-2',
-									labelWrapper: 'lg:flex-row flex-col lg:items-center lg:gap-2 gap-0',
-								}}
-								injects={{
-									afterLabel: (
-										<span className="flex items-center gap-3">
-											<p className="text-success text-[12px] font-normal">{diff}</p>
-											<Tooltip
-												content={dayjs(queryResult.data?.created_at).format('YYYY-MM-DD HH:mm:ss')}
-												showArrow
-												radius="sm"
-												classNames={{
-													content: 'text-[10px] font-normal',
-												}}
-											>
-												<p className="text-[12px] font-normal">
-													{truncateMiddle(
-														queryResult.data?.address ?? '',
-														queryResult.data?.address ? queryResult.data?.address.length / 3 : 5,
-													)}
-												</p>
-											</Tooltip>
-											<CopyButton content={params.token} />
-										</span>
-									),
-								}}
-								isLoading={queryResult.isLoading}
-								meta={{
-									name: queryResult.data?.name ?? '',
-									avatar: queryResult.data?.logo_uri ?? '',
-									chain: queryResult.data?.symbol ?? '',
-									symbol: queryResult.data?.symbol ?? '',
-									token: queryResult.data?.address ?? '',
-								}}
-							/>
-						</section>
-						<Divider orientation="vertical" className="h-4 hidden lg:block" />
-						<MetaInfo
-							price={queryPrice.data?.price ?? 0}
-							change={queryPrice.data?.price_change_24h ?? 0}
-							isPending={queryPrice.isLoading}
-						/>
-					</header>
-					<Card className="flex flex-col gap-2 lg:flex-row lg:justify-between p-0 bg-transparent items-center">
-						<Hotspot x={0} className="w-full lg:max-w-[25%] h-fit lg:h-full justify-center" />
-						<CardBody className="grid grid-cols-2 lg:grid-cols-4 gap-4 w-full lg:max-w-[50%]">
-							<Stock
-								label={t('card.stock.marketCap')}
-								value={`$ ${formatLargeNumber(queryResult.data?.market_cap ?? 0)}`}
-								isPending={queryResult.isLoading}
-							/>
-							<Stock
-								classNames={{
-									base: 'lg:pl-4',
-								}}
-								label={t('card.stock.pool')}
-								value={`$ ${formatLargeNumber(queryResult.data?.liquidity ?? 0)}`}
-								isPending={queryResult.isLoading}
-							/>
-							<Stock
-								classNames={{
-									base: 'lg:pl-4',
-								}}
-								label={tToken('holder')}
-								value={formatLargeNumber(0)}
-								isPending={queryResult.isLoading}
-							/>
-							<Stock
-								classNames={{
-									base: 'lg:pl-4',
-								}}
-								label={tToken('wallets')}
-								value={
-									querySmartWalletCount.data?.smart_wallet_count
-										? formatLargeNumber(querySmartWalletCount.data?.smart_wallet_count)
-										: '-'
-								}
-								isPending={querySmartWalletCount.isLoading}
-							/>
-						</CardBody>
-					</Card>
+				<div className={cn('flex flex-col gap-6 w-full')}>
+					<div
+						className={cn(
+							'flex flex-col gap-6 w-full',
+							simplify && (isOpen ? 'xl:flex-row xl:justify-between' : 'lg:flex-row lg:justify-between'),
+						)}
+					>
+						<header
+							className={cn(
+								'flex flex-col lg:flex-row lg:items-center items-start gap-1 justify-between w-fit lg:justify-start',
+								simplify &&
+									(isOpen
+										? 'xl:flex-row xl:items-center xl:gap-5 xl:justify-start lg:flex-col'
+										: 'lg:flex-row lg:items-center lg:gap-5 lg:justify-start'),
+							)}
+						>
+							<div className="flex items-center gap-5">
+								<section className="flex items-center gap-5">
+									<HeaderPrimitive
+										avatarProps={{
+											size: 'lg',
+											className: 'min-w-8 min-h-8 w-8 h-8',
+										}}
+										classNames={{
+											label: 'text-[22px] font-normal w-fit',
+											labelWrapper: 'items-center gap-0 w-fit',
+										}}
+										isLoading={queryResult.isLoading}
+										meta={{
+											name: queryResult.data?.name ?? '',
+											avatar: queryResult.data?.logo_uri ?? '',
+											chain: queryResult.data?.symbol ?? '',
+											symbol: queryResult.data?.symbol ?? '',
+											token: queryResult.data?.address ?? '',
+										}}
+									/>
+								</section>
+								<Divider orientation="vertical" className="h-4" />
+								<MetaInfo
+									price={queryPrice.data?.price ?? 0}
+									change={queryPrice.data?.price_change_24h ?? 0}
+									isPending={queryPrice.isLoading}
+								/>
+							</div>
+							<span className="flex items-center gap-3">
+								<p className="text-success text-[12px] font-normal">{diff}</p>
+								<Tooltip
+									content={dayjs(queryResult.data?.created_at).format('YYYY-MM-DD HH:mm:ss')}
+									showArrow
+									radius="sm"
+									classNames={{
+										content: 'text-[10px] font-normal',
+									}}
+								>
+									<p className="text-[12px] font-normal">
+										{truncateMiddle(
+											queryResult.data?.address ?? '',
+											queryResult.data?.address ? queryResult.data?.address.length / 3 : 5,
+										)}
+									</p>
+								</Tooltip>
+								<CopyButton content={params.token} />
+							</span>
+						</header>
+						<Card className={cn('flex flex-col gap-2 lg:flex-row lg:justify-between p-0 bg-transparent items-center')}>
+							{!simplify && <Hotspot x={0} className="w-full lg:max-w-[25%] h-fit lg:h-full justify-center" />}
+							<CardBody
+								className={cn(
+									'grid grid-cols-2 lg:grid-cols-4 gap-4 w-full lg:max-w-[50%]',
+									simplify && (isOpen ? 'xl:grid-cols-3 xl:max-w-full lg:max-w-full' : 'lg:grid-cols-3 lg:max-w-full'),
+								)}
+							>
+								<Stock
+									label={t('card.stock.marketCap')}
+									value={`$ ${formatLargeNumber(queryResult.data?.market_cap ?? 0)}`}
+									isPending={queryResult.isLoading}
+								/>
+								<Stock
+									classNames={{
+										base: 'lg:pl-4',
+									}}
+									label={t('card.stock.pool')}
+									value={`$ ${formatLargeNumber(queryResult.data?.liquidity ?? 0)}`}
+									isPending={queryResult.isLoading}
+								/>
+								{!simplify && (
+									<Stock
+										classNames={{
+											base: 'lg:pl-4',
+										}}
+										label={tToken('holder')}
+										value={formatLargeNumber(0)}
+										isPending={queryResult.isLoading}
+									/>
+								)}
+								<Stock
+									classNames={{
+										base: 'lg:pl-4',
+									}}
+									label={tToken('wallets')}
+									value={
+										querySmartWalletCount.data?.smart_wallet_count
+											? formatLargeNumber(querySmartWalletCount.data?.smart_wallet_count)
+											: '-'
+									}
+									isPending={querySmartWalletCount.isLoading}
+								/>
+							</CardBody>
+						</Card>
+					</div>
 					<Divider orientation="horizontal" />
 					<section className="flex flex-col lg:flex-row lg:items-center lg:justify-between">
 						<DateFilter />
