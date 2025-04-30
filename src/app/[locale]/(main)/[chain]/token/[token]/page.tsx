@@ -50,7 +50,7 @@ const Page = async (props: PagePropsWithLocale<{ token: string }>) => {
 
 	return (
 		<HydrationBoundary state={dehydrate(queryClient)}>
-			<Detail />
+			<Detail simplify />
 		</HydrationBoundary>
 	);
 };

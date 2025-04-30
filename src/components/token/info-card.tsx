@@ -8,6 +8,7 @@ import { Avatar } from '@heroui/avatar';
 import { Button } from '@heroui/button';
 import type { CardProps as HCardProps } from '@heroui/card';
 import { Card as HCard, CardBody, CardHeader as HCardHeader } from '@heroui/card';
+import { Divider } from '@heroui/divider';
 import { Image } from '@heroui/image';
 import { Skeleton } from '@heroui/skeleton';
 import { Tooltip } from '@heroui/tooltip';
@@ -37,6 +38,11 @@ interface MetaProps {
 	};
 	link?: Record<LinkProvider, string | undefined>;
 	isLoading?: boolean;
+	classNames?: {
+		linkWrapper?: string;
+		labelWrapper?: string;
+		label?: string;
+	};
 }
 
 export interface HeaderPrimitiveProps extends MetaProps {
@@ -80,6 +86,11 @@ interface CardProps extends MetaProps, StockProps, HotspotProps {
 	onPress?: (meta: MetaProps) => void;
 	cardProps?: HCardProps;
 	isLoading?: boolean;
+	classNames?: {
+		linkWrapper?: string;
+		labelWrapper?: string;
+		label?: string;
+	};
 }
 
 interface LinkIconProps {
@@ -100,7 +111,7 @@ export const LinkIcon = (props: LinkIconProps) => {
 			return props.copied ? (
 				<span className="text-default-600 i-material-symbols-done-all size-3" />
 			) : (
-				<span className="text-default-600 i-material-symbols-content-copy-outline rotate-180 size-3" />
+				<NextImage src="/assets/images/copy.svg" alt="copy" width={18} height={18} />
 			);
 	}
 };
@@ -343,7 +354,11 @@ const InfoCard = ({ display = ['all'], onPress, cardProps, ...props }: CardProps
 			{...cardProps}
 		>
 			{(display.includes('meta') || display.includes('all')) && <CardHeader {...props} />}
-			{(display.includes('hotspots') || display.includes('all')) && <Hotspots {...props} />}
+			{display.includes('hotspots') || display.includes('all') ? (
+				<Hotspots {...props} />
+			) : display.includes('meta') && display.includes('stock') ? (
+				<Divider className="bg-default" />
+			) : null}
 			{(display.includes('stock') || display.includes('all')) && <Stock {...props} />}
 		</HCard>
 	);
