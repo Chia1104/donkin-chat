@@ -162,7 +162,13 @@ const Detail = () => {
 	});
 	const [searchParams] = useTokenSearchParams();
 	const currentUnix = useRef(dayjs().unix());
-	const { data: kolAlerts, isLoading: isKolAlertsLoading } = useGetKolAlerts(params.token);
+	const { data: kolAlerts, isLoading: isKolAlertsLoading } = useGetKolAlerts(params.token, {
+		gcTime: 0,
+		staleTime: Infinity,
+		retry: false,
+		refetchOnMount: false,
+		refetchOnWindowFocus: false,
+	});
 
 	const timeFrom = useMemo(() => {
 		switch (searchParams.interval) {
@@ -212,12 +218,21 @@ const Detail = () => {
 		return ohlcv.data;
 	}, [ohlcv.data]);
 
-	const { data: transactions, isLoading: isTransactionsLoading } = useQueryTransactions({
-		token_address: params.token,
-		start_time: dayjs.unix(timeFrom).format('YYYY-MM-DD'),
-		end_time: dayjs.unix(currentUnix.current).format('YYYY-MM-DD'),
-		interval: searchParams.interval,
-	});
+	const { data: transactions, isLoading: isTransactionsLoading } = useQueryTransactions(
+		{
+			token_address: params.token,
+			start_time: dayjs.unix(timeFrom).format('YYYY-MM-DD'),
+			end_time: dayjs.unix(currentUnix.current).format('YYYY-MM-DD'),
+			interval: searchParams.interval,
+		},
+		{
+			gcTime: 0,
+			staleTime: Infinity,
+			retry: false,
+			refetchOnMount: false,
+			refetchOnWindowFocus: false,
+		},
+	);
 
 	const diff = useMemo(() => {
 		if (!queryResult.data?.created_at) {

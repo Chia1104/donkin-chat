@@ -2,6 +2,14 @@
 @import './preset.css';
 
 @plugin "./heroui";
+@plugin "tailwind-scrollbar" {
+	nocompatible: true;
+	preferredstrategy: 'pseudoelements';
+}
 
 @source "./src/**/*.{js,ts,jsx,tsx}";
 @source "../../node_modules/@heroui/theme/dist/**/*.{js,ts,jsx,tsx}";
+
+@utility donkin-scrollbar {
+	@apply scrollbar-thumb-[rgba(255,_255,_255,_0.1)] scrollbar-track-transparent scrollbar-thumb-rounded-full scrollbar scrollbar-w-1;
+}

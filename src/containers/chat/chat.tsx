@@ -87,6 +87,7 @@ const ChatBody = () => {
 			<ScrollShadow
 				ref={containerRef}
 				aria-label="chat-scroll-shadow"
+				hideScrollBar
 				className="w-full max-w-full h-[calc(100vh-370px)] md:h-[calc(100vh-300px)] overflow-y-auto"
 			>
 				<div

@@ -54,8 +54,8 @@ const ContentLayout = ({ children }: { children: React.ReactNode }) => {
 	return (
 		<ScrollShadow
 			className={cn(
-				'p-5 h-fit md:h-[calc(100vh-100px)] flex items-center justify-center overflow-x-hidden',
-				isOpen ? 'w-full lg:w-2/3 md:pr-0' : 'w-full',
+				'p-5 h-fit md:h-[calc(100vh-100px)] flex items-center justify-center overflow-x-hidden donkin-scrollbar',
+				isOpen ? 'w-full lg:w-2/3 md:pr-2' : 'w-full',
 			)}
 		>
 			{children}
@@ -227,7 +227,7 @@ const ChatRoomLayout = (props: Props) => {
 	return (
 		<>
 			<Navigation enableSettings={props.enableSettings} />
-			<main className="gap-5 lg:gap-8 overflow-hidden w-full relative flex items-center justify-center md:min-h-[calc(100dvh-100px)]">
+			<main className="gap-4 overflow-hidden w-full relative flex items-center justify-center md:min-h-[calc(100dvh-100px)]">
 				<ContentLayout>{props.children}</ContentLayout>
 				<ChatBotLayout>{props.chatBot}</ChatBotLayout>
 			</main>
