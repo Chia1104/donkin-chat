@@ -225,6 +225,7 @@ const List = ({ display }: { display: 'group' | 'single' }) => {
 	return (
 		<AsyncQuery queryResult={queryResult} isInfinite enableLoadingFallback={false}>
 			<VirtuosoGrid
+				className="donkin-scrollbar"
 				key={isMdWidth ? 'desktop' : 'mobile'}
 				endReached={() => {
 					if (!queryResult.isFetchingNextPage && queryResult.hasNextPage) {
@@ -239,7 +240,7 @@ const List = ({ display }: { display: 'group' | 'single' }) => {
 							ref={ref as any}
 							{...props}
 							className={cn(
-								'grid grid-cols-1 gap-4 mb-4 w-full min-h-full',
+								'grid grid-cols-1 gap-4 mb-4 w-full min-h-full md:pr-2',
 								!isOpen ? 'xl:grid-cols-4 lg:grid-cols-3 md:grid-cols-2' : 'xl:grid-cols-3 lg:grid-cols-2',
 							)}
 						>
