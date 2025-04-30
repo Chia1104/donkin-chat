@@ -80,36 +80,60 @@ const useCandlestick = () => {
 
 const useGenerateTimeWithInterval = () => {
 	const handleGenerateTimeWithInterval = useCallback(
-		(current: number, interval: IntervalFilter, range: number): number => {
+		(current: number, interval: IntervalFilter, range: number, action = 'subtract'): number => {
 			switch (interval) {
 				case IntervalFilter.OneMinute:
-					return dayjs.unix(current).subtract(range, 'minutes').unix();
+					return action === 'subtract'
+						? dayjs.unix(current).subtract(range, 'minutes').unix()
+						: dayjs.unix(current).add(range, 'minutes').unix();
 				case IntervalFilter.FiveMinutes:
-					return dayjs
-						.unix(current)
-						.subtract(range * 5, 'minutes')
-						.unix();
+					return action === 'subtract'
+						? dayjs
+								.unix(current)
+								.subtract(range * 5, 'minutes')
+								.unix()
+						: dayjs
+								.unix(current)
+								.add(range * 5, 'minutes')
+								.unix();
 				case IntervalFilter.FifteenMinutes:
-					return dayjs
-						.unix(current)
-						.subtract(range * 15, 'minutes')
-						.unix();
+					return action === 'subtract'
+						? dayjs
+								.unix(current)
+								.subtract(range * 15, 'minutes')
+								.unix()
+						: dayjs
+								.unix(current)
+								.add(range * 15, 'minutes')
+								.unix();
 				case IntervalFilter.ThirtyMinutes:
-					return dayjs
-						.unix(current)
-						.subtract(range * 30, 'minutes')
-						.unix();
+					return action === 'subtract'
+						? dayjs
+								.unix(current)
+								.subtract(range * 30, 'minutes')
+								.unix()
+						: dayjs
+								.unix(current)
+								.add(range * 30, 'minutes')
+								.unix();
 				case IntervalFilter.OneHour:
-					return dayjs.unix(current).subtract(range, 'hours').unix();
+					return action === 'subtract'
+						? dayjs.unix(current).subtract(range, 'hours').unix()
+						: dayjs.unix(current).add(range, 'hours').unix();
 				case IntervalFilter.FourHours:
-					return dayjs
-						.unix(current)
-						.subtract(range * 4, 'hours')
-						.unix();
+					return action === 'subtract'
+						? dayjs
+								.unix(current)
+								.subtract(range * 4, 'hours')
+								.unix()
+						: dayjs
+								.unix(current)
+								.add(range * 4, 'hours')
+								.unix();
 				case IntervalFilter.OneDay:
-					return dayjs.unix(current).subtract(range, 'days').unix();
-				case IntervalFilter.OneWeek:
-					return dayjs.unix(current).subtract(range, 'weeks').unix();
+					return action === 'subtract'
+						? dayjs.unix(current).subtract(range, 'days').unix()
+						: dayjs.unix(current).add(range, 'weeks').unix();
 				default:
 					return dayjs.unix(current).unix();
 			}
@@ -683,12 +707,8 @@ const TransactionMarkers = () => {
 								onAskMore={ask => {
 									askTokenTrade.onAskMore(
 										ask,
-										dayjs(generateTimeWithInterval(option.marker.time as number, query.type, 1))
-											// .utc()
-											.valueOf(),
-										dayjs(option.marker.time as number)
-											// .utc()
-											.valueOf(),
+										dayjs(option.marker.time as number).valueOf(),
+										dayjs(generateTimeWithInterval(option.marker.time as number, query.type, 1, 'add')).valueOf(),
 									);
 									closeTooltip();
 								}}
