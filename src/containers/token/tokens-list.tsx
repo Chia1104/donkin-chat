@@ -147,21 +147,23 @@ const SortFilter = () => {
 
 const List = ({ display }: { display: 'group' | 'single' }) => {
 	const [searchParams] = useAISearchParams();
-	const queryResult = useQueryTokensHot(
-		{
-			page_size: 20,
-			sort_by: searchParams.sort,
-			order: searchParams.order,
-		},
-		{
-			refetchInterval: 60_000,
-		},
-	);
 	const isOpen = useGlobalStore(state => state.donkin.isOpen);
 	const router = useTransitionRouter();
 	const [globalSearchParams] = useGlobalSearchParams();
 
 	const { isLgWidth, isMdWidth, isSmWidth } = useMediaQuery();
+
+	const queryResult = useQueryTokensHot(
+		{
+			page_size: 20,
+			sort_by: searchParams.sort,
+			order: searchParams.order,
+			mock: globalSearchParams.mock,
+		},
+		{
+			refetchInterval: 60_000,
+		},
+	);
 
 	const getItemDisplay = useCallback(
 		(index: number, length: number): ('all' | 'meta' | 'stock' | 'hotspots')[] => {
@@ -311,6 +313,15 @@ const List = ({ display }: { display: 'group' | 'single' }) => {
 							onPress={() => handlePress(_)}
 							cardProps={{
 								isPressable: true,
+							}}
+							classNames={{
+								labelWrapper: 'flex-row items-center',
+							}}
+							link={{
+								copy: _.address,
+								website: undefined,
+								x: undefined,
+								telegram: undefined,
 							}}
 						/>
 					);
