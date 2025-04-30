@@ -16,7 +16,6 @@ import { useAuthGuard } from '@/components/auth/auth-guard';
 import { useCMD } from '@/hooks/useCMD';
 import { useQueryTokenSearch } from '@/libs/token/hooks/useQueryToken';
 import { useQuerySolBalance } from '@/libs/web3/hooks/useGetSolBalance';
-import { IS_DEV } from '@/utils/env';
 import { formatLargeNumber, truncateMiddle } from '@/utils/format';
 import { logger } from '@/utils/logger';
 
@@ -58,7 +57,7 @@ const SearchAddress = (props: Partial<AutocompleteProps>) => {
 	} = useQuerySolBalance(
 		{
 			address: debouncedSearch,
-			network: IS_DEV ? 'devnet' : 'mainnet-beta',
+			network: 'devnet',
 		},
 		{
 			enabled: !!debouncedSearch,
