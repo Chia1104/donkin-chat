@@ -253,7 +253,7 @@ interface TooltipProps {
 	onClose: () => void;
 }
 
-const Tooltip = forwardRef<HTMLDivElement, TooltipProps>(({ data, position, onClose }, ref) => {
+const Tooltip = forwardRef<HTMLDivElement, TooltipProps>(({ data, position }, ref) => {
 	const askToken = useAskToken(data.symbol);
 
 	// 調整位置以確保 tooltip 不會超出螢幕邊界
@@ -289,7 +289,6 @@ const Tooltip = forwardRef<HTMLDivElement, TooltipProps>(({ data, position, onCl
 	return createPortal(
 		<DonkinPopover
 			ref={ref}
-			onClose={onClose}
 			style={{ position: 'absolute', top: adjustedPosition.y, left: adjustedPosition.x }}
 			{...askToken}
 		/>,

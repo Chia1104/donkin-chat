@@ -4,6 +4,7 @@ import { useRef, useEffect, useState, useTransition, useCallback, useMemo, memo 
 
 import { Accordion, AccordionItem } from '@heroui/accordion';
 import { Button } from '@heroui/button';
+import { Image } from '@heroui/image';
 import type { Selection } from '@heroui/react';
 import { ScrollShadow } from '@heroui/scroll-shadow';
 import { Spinner } from '@heroui/spinner';
@@ -11,6 +12,7 @@ import { cn } from '@heroui/theme';
 import { Tooltip } from '@heroui/tooltip';
 import { AnimatePresence, motion } from 'framer-motion';
 import { useTranslations } from 'next-intl';
+import NextImage from 'next/image';
 import { useHover } from 'usehooks-ts';
 
 import { AutoScroll } from '@/components/chat/auto-scroll';
@@ -185,6 +187,7 @@ const MessageCard = ({
 						{((showFeedback && !hasFailed && !isLoading) || (hoverFeedback && isHover)) && (
 							<motion.div
 								className={cn(
+									'flex items-center',
 									!hoverFeedback && 'mb-3',
 									hoverFeedback && 'absolute -bottom-3 right-2',
 									hoverFeedback && message.role === 'assistant' && 'left-0',
@@ -199,7 +202,8 @@ const MessageCard = ({
 									variant="light"
 									className="bg-transparent max-w-[26px] h-[26px] max-h-[26px] w-[26px] min-w-[26px] min-h-[26px]"
 									iconProps={{
-										className: 'size-4',
+										width: 24,
+										height: 24,
 									}}
 								/>
 								<Tooltip content={tAction('retry')} size="sm">
@@ -213,7 +217,14 @@ const MessageCard = ({
 										isLoading={isPending || isRetrying}
 										className="max-w-[26px] h-[26px] max-h-[26px] w-[26px] min-w-[26px] min-h-[26px]"
 									>
-										<span className="text-default-600 i-material-symbols-refresh size-4" />
+										<Image
+											as={NextImage}
+											src="/assets/images/retry.svg"
+											alt="retry"
+											removeWrapper
+											width={20}
+											height={20}
+										/>
 									</Button>
 								</Tooltip>
 							</motion.div>

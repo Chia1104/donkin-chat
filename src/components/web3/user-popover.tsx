@@ -2,11 +2,10 @@
 
 import { Avatar } from '@heroui/avatar';
 import { Button } from '@heroui/button';
+import { Image } from '@heroui/image';
 import { Listbox, ListboxItem } from '@heroui/listbox';
 import { Popover, PopoverTrigger, PopoverContent } from '@heroui/popover';
 import { usePrivy } from '@privy-io/react-auth';
-import { Wallet } from 'lucide-react';
-import { Unplug } from 'lucide-react';
 import { useTranslations } from 'next-intl';
 import { useTransitionRouter } from 'next-view-transitions';
 
@@ -34,13 +33,16 @@ export const UserPopover = () => {
 				<Button
 					as="span"
 					variant="bordered"
-					startContent={<Avatar size="sm" className="w-6 h-6" />}
+					startContent={
+						<Avatar size="sm" className="w-6 h-6 overflow-visible" src="/assets/images/default-avatar.png" />
+					}
 					radius="full"
 					aria-label={t('address')}
+					className="px-2 gap-2"
 				>
 					<span className="flex items-center gap-1">
-						<p className="text-xs text-gray-500">{truncateMiddle(user?.wallet?.address ?? '', 10)}</p>{' '}
-						<CopyButton content={user?.wallet?.address ?? ''} />
+						<p className="text-[13px]">{truncateMiddle(user?.wallet?.address ?? '', 10)}</p>{' '}
+						<CopyButton content={user?.wallet?.address ?? ''} className="bg-transparent" />
 					</span>
 				</Button>
 			</PopoverTrigger>
@@ -65,10 +67,12 @@ export const UserPopover = () => {
 					<ListboxItem
 						key="profile"
 						aria-label={t('address')}
-						startContent={<Wallet size={14} />}
+						startContent={
+							<Image src="/assets/images/wallet.svg" width={20} height={20} alt="wallet" aria-label="wallet" />
+						}
 						classNames={{
 							title: 'text-xs',
-							base: 'gap-4 p-2 px-4',
+							base: 'gap-[10px] p-2 px-4',
 						}}
 					>
 						{t('address')}
@@ -76,10 +80,18 @@ export const UserPopover = () => {
 					<ListboxItem
 						key="logout"
 						aria-label={t('disconnect')}
-						startContent={<Unplug size={14} />}
+						startContent={
+							<Image
+								src="/assets/images/disconnect.svg"
+								width={20}
+								height={20}
+								alt="disconnect"
+								aria-label="disconnect"
+							/>
+						}
 						classNames={{
 							title: 'text-xs',
-							base: 'gap-4 p-2 px-4',
+							base: 'gap-[10px] p-2 px-4',
 						}}
 					>
 						{t('disconnect')}
