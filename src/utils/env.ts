@@ -56,6 +56,7 @@ export const env = createEnv({
 		NEXT_PUBLIC_SERVICE_ENDPOINT: z.string().min(1),
 		NEXT_PUBLIC_PUBLIC_SERVICE_ENDPOINT: z.string().min(1),
 		NEXT_PUBLIC_AI_SERVICE_ENDPOINT: z.string().min(1),
+		NEXT_PUBLIC_SOLANA_RPC: z.string().min(1),
 	},
 
 	runtimeEnv: {
@@ -86,6 +87,7 @@ export const env = createEnv({
 		PRIVY_SECRET: process.env.PRIVY_SECRET,
 		PRIVY_VERIFICATION_KEY_BASE64: process.env.PRIVY_VERIFICATION_KEY_BASE64,
 		FLAGS_INVITE_CODE: process.env.FLAGS_INVITE_CODE,
+		NEXT_PUBLIC_SOLANA_RPC: process.env.NEXT_PUBLIC_SOLANA_RPC ?? 'https://api.devnet.solana.com',
 	},
 
 	skipValidation: process.env.SKIP_ENV_VALIDATION === 'true' || process.env.SKIP_ENV_VALIDATION === '1',

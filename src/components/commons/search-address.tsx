@@ -14,9 +14,9 @@ import { useTransitionRouter } from 'next-view-transitions';
 
 import { useAuthGuard } from '@/components/auth/auth-guard';
 import { useCMD } from '@/hooks/useCMD';
-import { IntervalFilter } from '@/libs/address/enums/interval-filter.enum';
-import { useQueryAddress } from '@/libs/address/hooks/useQueryAddress';
 import { useQueryTokenSearch } from '@/libs/token/hooks/useQueryToken';
+import { useQuerySolBalance } from '@/libs/web3/hooks/useGetSolBalance';
+import { IS_DEV } from '@/utils/env';
 import { formatLargeNumber, truncateMiddle } from '@/utils/format';
 import { logger } from '@/utils/logger';
 
@@ -49,10 +49,16 @@ const SearchAddress = (props: Partial<AutocompleteProps>) => {
 		},
 	);
 
-	const { data: addressData, isLoading: isAddressLoading } = useQueryAddress(
+	const {
+		data: addressData,
+		isLoading: isAddressLoading,
+		isError: isAddressError,
+		error: addressError,
+		isSuccess: isAddressSuccess,
+	} = useQuerySolBalance(
 		{
 			address: debouncedSearch,
-			interval: IntervalFilter.OneWeek,
+			network: IS_DEV ? 'devnet' : 'mainnet-beta',
 		},
 		{
 			enabled: !!debouncedSearch,
@@ -61,9 +67,12 @@ const SearchAddress = (props: Partial<AutocompleteProps>) => {
 
 	useEffect(() => {
 		if (isError) {
-			logger(error, { type: 'error' });
+			logger(['get token error', error], { type: 'error' });
 		}
-	}, [error, isError]);
+		if (isAddressError) {
+			logger(['get solana balance error', addressError], { type: 'error' });
+		}
+	}, [error, isError, addressError, isAddressError]);
 
 	useCMD(
 		false,
@@ -88,19 +97,19 @@ const SearchAddress = (props: Partial<AutocompleteProps>) => {
 
 	const isLoading = isTokenLoading || isAddressLoading;
 
-	const concatData = flatData.concat(
-		addressData
-			? [
+	const concatData = isLoading
+		? []
+		: flatData.length === 0 && addressData != null && debouncedSearch && isAddressSuccess
+			? flatData.concat([
 					{
 						address: debouncedSearch,
 						symbol: 'sol',
 						name: tRoutes('wallet.title'),
 						market_cap: 0,
-						logo_uri: '',
+						logo_uri: '/assets/images/default-avatar.png',
 					},
-				]
-			: [],
-	);
+				])
+			: flatData;
 
 	return (
 		<Autocomplete
