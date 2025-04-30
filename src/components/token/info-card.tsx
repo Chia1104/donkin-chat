@@ -141,7 +141,7 @@ export const HeaderPrimitive = (props: HeaderPrimitiveProps) => {
 							content: 'bg-transparent shadow-none p-0',
 						}}
 					>
-						<h3 className={cn('text-base font-semibold flex max-w-full', props.classNames?.label)}>
+						<h3 className={cn('text-base font-semibold flex max-w-full text-start', props.classNames?.label)}>
 							<span className="line-clamp-1 break-words">{props.meta.name}</span>
 						</h3>
 					</Tooltip>
@@ -335,7 +335,7 @@ const InfoCard = ({ display = ['all'], onPress, cardProps, ...props }: CardProps
 			aria-label="info-card"
 			isPressable
 			className={cn(
-				'shadow-none p-4 gap-5 relative w-full border-none rounded-sm bg-[#FFFFFF08]',
+				'shadow-none p-4 gap-8 relative w-full border-none rounded-sm bg-[#FFFFFF08]',
 				cardProps?.className,
 			)}
 			onPress={() => onPress && onPress(props)}

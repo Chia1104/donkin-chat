@@ -259,7 +259,7 @@ const Tooltip = forwardRef<HTMLDivElement, TooltipProps>(({ data, position }, re
 	// 調整位置以確保 tooltip 不會超出螢幕邊界
 	const adjustedPosition = useMemo(() => {
 		const tooltipWidth = 220;
-		const tooltipHeight = 210;
+		const tooltipHeight = 117;
 
 		// 獲取視窗大小
 		const windowWidth = typeof window !== 'undefined' ? window.innerWidth : 0;
@@ -316,10 +316,10 @@ const ECTreemap = (props: Props) => {
 
 				if (transform) {
 					x = transform[4] + containerRect.left + 15;
-					y = transform[5] + rect.height + containerRect.top - 155;
+					y = transform[5] + rect.height + containerRect.top - 130;
 				} else {
 					x = rect.x + containerRect.left + 15;
-					y = rect.y + rect.height + containerRect.top - 155;
+					y = rect.y + rect.height + containerRect.top - 130;
 				}
 
 				setTooltipInfo({

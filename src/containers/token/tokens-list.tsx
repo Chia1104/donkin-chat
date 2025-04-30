@@ -197,7 +197,8 @@ const List = ({ display }: { display: 'group' | 'single' }) => {
 					return ['all'];
 				}
 			} else {
-				return ['all'];
+				// return ['all'];
+				return ['meta', 'stock'];
 			}
 		},
 		[isOpen, isLgWidth, isMdWidth, isSmWidth, display],
@@ -266,7 +267,7 @@ const List = ({ display }: { display: 'group' | 'single' }) => {
 												hotspots={{
 													x: 0,
 												}}
-												display={['all']}
+												display={['meta', 'stock']}
 												cardProps={{
 													isPressable: false,
 												}}
