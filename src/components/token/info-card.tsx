@@ -1,7 +1,7 @@
 'use client';
 
-import type { ReactNode } from 'react';
-import { memo, useState } from 'react';
+import type { ReactNode, RefObject } from 'react';
+import { memo, useState, useRef } from 'react';
 
 import type { AvatarProps } from '@heroui/avatar';
 import { Avatar } from '@heroui/avatar';
@@ -13,8 +13,10 @@ import { Image } from '@heroui/image';
 import { Skeleton } from '@heroui/skeleton';
 import { Tooltip } from '@heroui/tooltip';
 import { useClipboard } from '@heroui/use-clipboard';
+import type { ClassValue } from 'clsx';
 import { useTranslations } from 'next-intl';
 import NextImage from 'next/image';
+import { useHover } from 'usehooks-ts';
 
 import XIcon from '@/components/icons/x-icon';
 import { ProgressSlider } from '@/components/ui/progress-slider';
@@ -39,24 +41,27 @@ interface MetaProps {
 	link?: Record<LinkProvider, string | undefined>;
 	isLoading?: boolean;
 	classNames?: {
-		linkWrapper?: string;
-		labelWrapper?: string;
-		label?: string;
+		linkWrapper?: ClassValue;
+		labelWrapper?: ClassValue;
+		label?: ClassValue;
 	};
 }
 
 export interface HeaderPrimitiveProps extends MetaProps {
 	avatarProps?: AvatarProps;
 	classNames?: {
-		linkWrapper?: string;
-		labelWrapper?: string;
-		label?: string;
+		linkWrapper?: ClassValue;
+		labelWrapper?: ClassValue;
+		label?: ClassValue;
 	};
 	injects?: {
 		afterLabel?: ReactNode;
 	};
 	isLoading?: boolean;
 	onAskMore?: (item: string) => void;
+	experimental?: {
+		hoverToShowLabel?: boolean;
+	};
 }
 
 interface HotspotProps {
@@ -87,9 +92,9 @@ interface CardProps extends MetaProps, StockProps, HotspotProps {
 	cardProps?: HCardProps;
 	isLoading?: boolean;
 	classNames?: {
-		linkWrapper?: string;
-		labelWrapper?: string;
-		label?: string;
+		linkWrapper?: ClassValue;
+		labelWrapper?: ClassValue;
+		label?: ClassValue;
 	};
 }
 
@@ -116,10 +121,64 @@ export const LinkIcon = (props: LinkIconProps) => {
 	}
 };
 
-export const HeaderPrimitive = (props: HeaderPrimitiveProps) => {
+const Title = (props: HeaderPrimitiveProps) => {
 	const { copied, copy } = useClipboard();
 	const isPending = useChatStore(state => state.isPending, 'HeaderPrimitive');
 	const askToken = useAskToken(props.meta.symbol);
+	const ref = useRef<HTMLDivElement>(null);
+	const isHover = useHover(ref as RefObject<HTMLElement>);
+
+	return (
+		<div
+			ref={ref}
+			className={cn('flex flex-col gap-2 items-start w-full max-w-[calc(100%-3rem)]', props.classNames?.labelWrapper)}
+		>
+			{props.isLoading ? (
+				<Skeleton className="w-full max-w-[100px] h-3 rounded-full" />
+			) : (
+				<Tooltip
+					content={<DonkinPopover disabled={isPending} className="w-[220px]" {...askToken} />}
+					classNames={{
+						base: 'shadow-none',
+						content: 'bg-transparent shadow-none p-0',
+					}}
+				>
+					<h3
+						className={cn(
+							'text-base font-semibold max-w-[calc(100%-2rem)] text-start line-clamp-1 break-words',
+							props.classNames?.label,
+							isHover && props.experimental?.hoverToShowLabel && 'line-clamp-0',
+						)}
+					>
+						{props.meta.name}
+					</h3>
+				</Tooltip>
+			)}
+			{props.injects?.afterLabel}
+			<div className={cn('flex items-center gap-1 z-20', props.classNames?.linkWrapper)}>
+				{Object.entries(props.link ?? {})
+					.filter(([_, value]) => value)
+					.map(([key, value]) => (
+						<Button
+							aria-label={key}
+							as={key === 'copy' ? 'span' : 'a'}
+							href={value}
+							onPress={() => key === 'copy' && value && copy(value)}
+							isIconOnly
+							key={key}
+							radius="full"
+							size="sm"
+							className="bg-background max-w-5 h-5 max-h-5 w-5 min-w-5 min-h-5 p-0"
+						>
+							{value && <LinkIcon provider={key as LinkProvider} link={value} copied={copied} />}
+						</Button>
+					))}
+			</div>
+		</div>
+	);
+};
+
+export const HeaderPrimitive = (props: HeaderPrimitiveProps) => {
 	const [isError, setIsError] = useState(false);
 
 	return (
@@ -139,45 +198,7 @@ export const HeaderPrimitive = (props: HeaderPrimitiveProps) => {
 				className={cn('w-12 h-12 min-w-12 min-h-12', props.avatarProps?.className)}
 				src={!isError ? props.meta.avatar : ''}
 			/>
-			<div
-				className={cn('flex flex-col gap-2 items-start w-full max-w-[calc(100%-3rem)]', props.classNames?.labelWrapper)}
-			>
-				{props.isLoading ? (
-					<Skeleton className="w-full max-w-[100px] h-3 rounded-full" />
-				) : (
-					<Tooltip
-						content={<DonkinPopover disabled={isPending} className="w-[220px]" {...askToken} />}
-						classNames={{
-							base: 'shadow-none',
-							content: 'bg-transparent shadow-none p-0',
-						}}
-					>
-						<h3 className={cn('text-base font-semibold flex max-w-full text-start', props.classNames?.label)}>
-							<span className="line-clamp-1 break-words">{props.meta.name}</span>
-						</h3>
-					</Tooltip>
-				)}
-				{props.injects?.afterLabel}
-				<div className={cn('flex items-center gap-1 z-20', props.classNames?.linkWrapper)}>
-					{Object.entries(props.link ?? {})
-						.filter(([_, value]) => value)
-						.map(([key, value]) => (
-							<Button
-								aria-label={key}
-								as={key === 'copy' ? 'span' : 'a'}
-								href={value}
-								onPress={() => key === 'copy' && value && copy(value)}
-								isIconOnly
-								key={key}
-								radius="full"
-								size="sm"
-								className="bg-background max-w-5 h-5 max-h-5 w-5 min-w-5 min-h-5 p-0"
-							>
-								{value && <LinkIcon provider={key as LinkProvider} link={value} copied={copied} />}
-							</Button>
-						))}
-				</div>
-			</div>
+			<Title {...props} />
 		</>
 	);
 };

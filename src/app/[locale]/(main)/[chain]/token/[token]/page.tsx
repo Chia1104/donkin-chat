@@ -7,15 +7,12 @@ import Detail from '@/containers/token/detail';
 import { getToken } from '@/libs/token/resources/token.resource.rsc';
 import { loadGlobalSearchParams } from '@/services/loadGlobalSearchParams';
 import { IS_DEV } from '@/utils/env';
+import { roundDecimal } from '@/utils/format';
 import { getQueryClient } from '@/utils/query-client';
 import { tryCatch } from '@/utils/try-catch';
 
 export async function generateMetadata(props: PagePropsWithLocale<{ token: string }>): Promise<Metadata> {
-	const [{ token }, tRoutes, tToken] = await Promise.all([
-		props.params,
-		getTranslations('routes'),
-		getTranslations('token.not-found'),
-	]);
+	const [{ token }, tToken] = await Promise.all([props.params, getTranslations('token.not-found')]);
 	const { data, error } = await tryCatch(getToken(token));
 
 	if (error) {
@@ -25,7 +22,7 @@ export async function generateMetadata(props: PagePropsWithLocale<{ token: strin
 	}
 
 	return {
-		title: `${data.name} | ${tRoutes('token.title')}`,
+		title: `${data.name} $${roundDecimal(data.price, 4)}`,
 	};
 }
 

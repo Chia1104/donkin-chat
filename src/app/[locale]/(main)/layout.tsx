@@ -1,5 +1,3 @@
-import type { Metadata } from 'next';
-import { getTranslations } from 'next-intl/server';
 import { headers, cookies } from 'next/headers';
 
 import { AuthGuard } from '@/components/auth/auth-guard';
@@ -17,13 +15,6 @@ import { tryCatch } from '@/utils/try-catch';
 
 interface Props {
 	children: React.ReactNode;
-}
-
-export async function generateMetadata(): Promise<Metadata> {
-	const tRoutes = await getTranslations('routes');
-	return {
-		title: tRoutes('home.title'),
-	};
 }
 
 const Layout = async (props: Props & PagePropsWithLocale) => {

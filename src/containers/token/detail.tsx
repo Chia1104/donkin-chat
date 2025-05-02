@@ -15,6 +15,7 @@ import { useTranslations } from 'next-intl';
 import { useParams } from 'next/navigation';
 
 import CopyButton from '@/components/commons/copy-button';
+import { Head } from '@/components/commons/head';
 import Candlestick from '@/components/token/candlestick';
 import { FilterAction } from '@/components/token/filter-action';
 import { HeaderPrimitive } from '@/components/token/info-card';
@@ -29,6 +30,7 @@ import { useQueryTokenPrice } from '@/libs/token/hooks/useQueryTokenPrice';
 import { useQueryTokenSmartWallet } from '@/libs/token/hooks/useQueryTokenSmartWallet';
 import { useQueryTransactions } from '@/libs/token/hooks/useQueryTransactions';
 import { useTokenSearchParams } from '@/libs/token/hooks/useTokenSearchParams';
+import type { Token } from '@/libs/token/pipes/token.pipe';
 import { useGlobalStore } from '@/stores/global/store';
 import { cn } from '@/utils/cn';
 import dayjs from '@/utils/dayjs';
@@ -123,7 +125,7 @@ const MetaInfo = ({ price, change, isPending }: { price: number; change: number 
 
 	if (isPending) {
 		return (
-			<div className="flex items-center">
+			<div className="flex items-end lg:items-center flex-col lg:flex-row">
 				<Skeleton className="w-20 h-5 rounded-full mb-2 lg:mb-0 lg:mr-5" />
 				<Skeleton className="w-10 h-3 rounded-full" />
 			</div>
@@ -131,8 +133,8 @@ const MetaInfo = ({ price, change, isPending }: { price: number; change: number 
 	}
 
 	return (
-		<div className="flex items-center">
-			<h3 className="text-[22px] font-medium mr-5">{`$ ${formatLargeNumber(price ?? 0)}`}</h3>
+		<div className="flex items-end lg:items-center flex-col lg:flex-row min-w-fit">
+			<h3 className="text-[22px] font-medium lg:mr-5">{`$ ${formatLargeNumber(price ?? 0)}`}</h3>
 			<span
 				className={cn(
 					'text-xs flex items-center gap-1',
@@ -149,6 +151,40 @@ const MetaInfo = ({ price, change, isPending }: { price: number; change: number 
 		</div>
 	);
 };
+
+const Header = memo(
+	({ data, isLoading }: { data?: Token; isLoading: boolean }) => {
+		const isOpen = useGlobalStore(state => state.donkin.isOpen);
+		return (
+			<div className="flex items-center gap-5">
+				<HeaderPrimitive
+					avatarProps={{
+						size: 'lg',
+						className: 'min-w-8 min-h-8 w-8 h-8',
+					}}
+					classNames={{
+						label: ['text-[22px] font-normal max-w-full'],
+						labelWrapper: ['items-start gap-0 w-full max-w-[150px] md:max-w-[250px]', isOpen && 'md:max-w-[150px]'],
+					}}
+					isLoading={isLoading}
+					meta={{
+						name: data?.name ?? '',
+						avatar: data?.logo_uri ?? '',
+						chain: data?.symbol ?? '',
+						symbol: data?.symbol ?? '',
+						token: data?.address ?? '',
+					}}
+					experimental={{
+						hoverToShowLabel: true,
+					}}
+				/>
+			</div>
+		);
+	},
+	(prev, next) => {
+		return prev.data === next.data && prev.isLoading === next.isLoading;
+	},
+);
 
 const Detail = ({ simplify = false }: { simplify?: boolean }) => {
 	const t = useTranslations('preview.ai-signal');
@@ -263,6 +299,7 @@ const Detail = ({ simplify = false }: { simplify?: boolean }) => {
 
 	return (
 		<>
+			<Head title={`${queryResult.data?.name} $${formatLargeNumber(queryPrice.data?.price ?? 0)}`} />
 			<div className="w-full h-full flex flex-col">
 				<div className={cn('flex flex-col gap-6 w-full')}>
 					<div
@@ -271,37 +308,18 @@ const Detail = ({ simplify = false }: { simplify?: boolean }) => {
 							simplify && (isOpen ? 'xl:flex-row xl:justify-between' : 'lg:flex-row lg:justify-between'),
 						)}
 					>
-						<header
+						<div
 							className={cn(
-								'flex flex-col lg:flex-row lg:items-center items-start gap-1 justify-between w-fit lg:justify-start',
+								'flex flex-col lg:flex-row items-start gap-1 justify-between w-full lg:w-fit lg:justify-start',
 								simplify &&
 									(isOpen
 										? 'xl:flex-row xl:items-center xl:gap-5 xl:justify-start lg:flex-col'
 										: 'lg:flex-row lg:items-center lg:gap-5 lg:justify-start'),
 							)}
 						>
-							<div className="flex items-center gap-5">
-								<section className="flex items-center gap-5">
-									<HeaderPrimitive
-										avatarProps={{
-											size: 'lg',
-											className: 'min-w-8 min-h-8 w-8 h-8',
-										}}
-										classNames={{
-											label: 'text-[22px] font-normal w-fit',
-											labelWrapper: 'items-center gap-0 w-fit',
-										}}
-										isLoading={queryResult.isLoading}
-										meta={{
-											name: queryResult.data?.name ?? '',
-											avatar: queryResult.data?.logo_uri ?? '',
-											chain: queryResult.data?.symbol ?? '',
-											symbol: queryResult.data?.symbol ?? '',
-											token: queryResult.data?.address ?? '',
-										}}
-									/>
-								</section>
-								<Divider orientation="vertical" className="h-4" />
+							<div className="flex items-center gap-5 justify-between lg:justify-start w-full lg:w-fit">
+								<Header data={queryResult.data} isLoading={queryResult.isLoading} />
+								<Divider orientation="vertical" className="h-4 hidden lg:block" />
 								<MetaInfo
 									price={queryPrice.data?.price ?? 0}
 									change={queryPrice.data?.price_change_24h ?? 0}
@@ -327,8 +345,12 @@ const Detail = ({ simplify = false }: { simplify?: boolean }) => {
 								</Tooltip>
 								<CopyButton content={params.token} />
 							</span>
-						</header>
-						<Card className={cn('flex flex-col gap-2 lg:flex-row lg:justify-between p-0 bg-transparent items-center')}>
+						</div>
+						<Card
+							className={cn(
+								'flex flex-col gap-2 lg:flex-row lg:justify-between p-0 bg-transparent items-center min-w-fit',
+							)}
+						>
 							{!simplify && <Hotspot x={0} className="w-full lg:max-w-[25%] h-fit lg:h-full justify-center" />}
 							<CardBody
 								className={cn(
