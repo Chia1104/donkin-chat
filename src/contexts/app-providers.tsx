@@ -10,6 +10,7 @@ import { NextIntlClientProvider, useLocale } from 'next-intl';
 import { ThemeProvider as NextThemeProvider } from 'next-themes';
 import { useTransitionRouter as useRouter } from 'next-view-transitions';
 import { NuqsAdapter } from 'nuqs/adapters/next/app';
+import { HelmetProvider } from 'react-helmet-async';
 import type { State as WagmiSessionState } from 'wagmi';
 
 import { wagmiConfig } from '@/config/wagmi';
@@ -83,7 +84,9 @@ const AppProviders = (props: Props) => {
 						<SolanaWalletProvider>
 							<NuqsAdapter>
 								<NextThemeProvider forcedTheme="dark" defaultTheme="dark" enableSystem attribute="class">
-									<HeroUIProvider>{props.children}</HeroUIProvider>
+									<HeroUIProvider>
+										<HelmetProvider>{props.children}</HelmetProvider>
+									</HeroUIProvider>
 								</NextThemeProvider>
 							</NuqsAdapter>
 						</SolanaWalletProvider>

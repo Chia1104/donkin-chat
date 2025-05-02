@@ -7,6 +7,7 @@ import Detail from '@/containers/token/detail';
 import { getToken } from '@/libs/token/resources/token.resource.rsc';
 import { loadGlobalSearchParams } from '@/services/loadGlobalSearchParams';
 import { IS_DEV } from '@/utils/env';
+import { formatLargeNumber } from '@/utils/format';
 import { getQueryClient } from '@/utils/query-client';
 import { tryCatch } from '@/utils/try-catch';
 
@@ -25,7 +26,7 @@ export async function generateMetadata(props: PagePropsWithLocale<{ token: strin
 	}
 
 	return {
-		title: `${data.name} | ${tRoutes('token.title')}`,
+		title: `${data.name} $${formatLargeNumber(data.price)} | ${tRoutes('token.title')}`,
 	};
 }
 
