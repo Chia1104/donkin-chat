@@ -15,14 +15,10 @@ import { logger } from '@/utils/logger';
 import { getQueryClient } from '@/utils/query-client';
 
 export async function generateMetadata(props: PagePropsWithLocale<{ address: string }>): Promise<Metadata> {
-	const [{ address }, tRoutes, tWallet] = await Promise.all([
-		props.params,
-		getTranslations('routes'),
-		getTranslations('address.not-found'),
-	]);
+	const [{ address }, tWallet] = await Promise.all([props.params, getTranslations('address.not-found')]);
 	try {
 		return {
-			title: `${truncateMiddle(address, 10)} | ${tRoutes('wallet.title')}`,
+			title: `${truncateMiddle(address, 10)}`,
 		};
 	} catch (error) {
 		logger(error, { type: 'error' });

@@ -13,9 +13,9 @@ import { Tabs, Tab } from '@heroui/tabs';
 import { Tooltip } from '@heroui/tooltip';
 import { useTranslations } from 'next-intl';
 import { useParams } from 'next/navigation';
-import { Helmet } from 'react-helmet-async';
 
 import CopyButton from '@/components/commons/copy-button';
+import { Head } from '@/components/commons/head';
 import Candlestick from '@/components/token/candlestick';
 import { FilterAction } from '@/components/token/filter-action';
 import { HeaderPrimitive } from '@/components/token/info-card';
@@ -188,7 +188,6 @@ const Header = memo(
 
 const Detail = ({ simplify = false }: { simplify?: boolean }) => {
 	const t = useTranslations('preview.ai-signal');
-	const tRoutes = useTranslations('routes');
 	const isOpen = useGlobalStore(state => state.donkin.isOpen);
 	const tToken = useTranslations('token');
 	const params = useParams<{ chain: string; token: string }>();
@@ -300,9 +299,7 @@ const Detail = ({ simplify = false }: { simplify?: boolean }) => {
 
 	return (
 		<>
-			<Helmet>
-				<title>{`${queryResult.data?.name} $${formatLargeNumber(queryPrice.data?.price ?? 0)} | ${tRoutes('token.title')}`}</title>
-			</Helmet>
+			<Head title={`${queryResult.data?.name} $${formatLargeNumber(queryPrice.data?.price ?? 0)}`} />
 			<div className="w-full h-full flex flex-col">
 				<div className={cn('flex flex-col gap-6 w-full')}>
 					<div
