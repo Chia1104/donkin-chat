@@ -9,7 +9,7 @@ import ECTreemap, { itemStyle, MOCK_DATA } from '@/components/chart/ec-treemap';
 import { AsyncQuery } from '@/components/commons/async-query';
 import { useGlobalSearchParams } from '@/hooks/useGlobalSearchParams';
 import { useQueryTokensHot } from '@/libs/token/hooks/useQueryToken';
-import { roundDecimal } from '@/utils/format';
+import { formatLargeNumber, roundDecimal } from '@/utils/format';
 
 const Heatmap = () => {
 	const [searchParams] = useGlobalSearchParams();
@@ -32,7 +32,7 @@ const Heatmap = () => {
 					symbol: item.symbol,
 					address: item.address,
 					value: Math.pow(1.3, queryResult.flatData.length - index),
-					price: `$${roundDecimal(item.price, 5)}`,
+					price: `$${formatLargeNumber(item.price)}`,
 					change: roundDecimal(item.change, 5),
 					itemStyle: itemStyle(item.change),
 				}) satisfies CryptoData,
