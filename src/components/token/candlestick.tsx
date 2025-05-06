@@ -834,7 +834,7 @@ const Chart = () => {
 					wickDownColor: twTheme.extend.colors.sell.DEFAULT,
 					priceFormat: {
 						type: 'custom',
-						formatter: value => {
+						formatter: (value: number) => {
 							return formatSmallNumber(value);
 						},
 						minMove: 0.00000001,
