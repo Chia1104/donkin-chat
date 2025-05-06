@@ -23,7 +23,7 @@ import { ProgressSlider } from '@/components/ui/progress-slider';
 import { useAskToken } from '@/libs/ai/hooks/useAskToken';
 import { useChatStore } from '@/stores/chat';
 import { cn } from '@/utils/cn';
-import { formatLargeNumber, roundDecimal } from '@/utils/format';
+import { formatLargeNumber, roundDecimal, formatSmallNumber } from '@/utils/format';
 import { isNumber, isPositiveNumber, isNegativeNumber } from '@/utils/is';
 
 import DonkinPopover from '../donkin/popover';
@@ -313,7 +313,7 @@ export const Stock = memo(
 						{isLoading ? (
 							<Skeleton className="w-full max-w-[50px] h-3 mt-2 rounded-full mb-2" />
 						) : (
-							<span className="text-sm font-normal">{`$ ${formatLargeNumber(stock.price)}`}</span>
+							<span className="text-sm font-normal">{`$ ${formatSmallNumber(stock.price)}`}</span>
 						)}
 					</div>
 				</div>
