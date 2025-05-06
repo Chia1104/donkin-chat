@@ -1,7 +1,7 @@
 'use client';
 
 import type { ReactNode } from 'react';
-import { useMemo, useRef, memo } from 'react';
+import { useMemo, useRef, memo, useCallback } from 'react';
 
 import { CardBody } from '@heroui/card';
 import { Checkbox } from '@heroui/checkbox';
@@ -11,8 +11,10 @@ import { ScrollShadow } from '@heroui/scroll-shadow';
 import { Skeleton } from '@heroui/skeleton';
 import { Tabs, Tab } from '@heroui/tabs';
 import { Tooltip } from '@heroui/tooltip';
+import type { ManipulateType } from 'dayjs';
 import { useTranslations } from 'next-intl';
 import { useParams } from 'next/navigation';
+import { useInterval } from 'usehooks-ts';
 
 import CopyButton from '@/components/commons/copy-button';
 import { Head } from '@/components/commons/head';
@@ -22,7 +24,7 @@ import { HeaderPrimitive } from '@/components/token/info-card';
 import { HotspotProgress } from '@/components/token/info-card';
 import Card from '@/components/ui/card';
 import { useGlobalSearchParams } from '@/hooks/useGlobalSearchParams';
-import { useQueryOhlcv } from '@/libs/birdeye/hooks/useQueryOhlcv';
+import { useQueryOhlcv, useMutationOhlcv } from '@/libs/birdeye/hooks/useQueryOhlcv';
 import { useGetKolAlerts } from '@/libs/kol/hooks/useGetKolAlerts';
 import { IntervalFilter } from '@/libs/token/enums/interval-filter.enum';
 import { useQueryToken } from '@/libs/token/hooks/useQueryToken';
@@ -193,10 +195,10 @@ const Detail = ({ simplify = false }: { simplify?: boolean }) => {
 	const params = useParams<{ chain: string; token: string }>();
 	const queryResult = useQueryToken(params.token);
 	const queryPrice = useQueryTokenPrice(params.token, {
-		refetchInterval: 60_000,
+		refetchInterval: 10_000,
 	});
 	const querySmartWalletCount = useQueryTokenSmartWallet(params.token, {
-		refetchInterval: 60_000 * 5,
+		refetchInterval: 60_000,
 	});
 	const [searchParams] = useTokenSearchParams();
 	const currentUnix = useRef(dayjs().unix());
@@ -207,6 +209,7 @@ const Detail = ({ simplify = false }: { simplify?: boolean }) => {
 		refetchOnMount: false,
 		refetchOnWindowFocus: false,
 	});
+	const intervalSnapshot = useRef<IntervalFilter>(searchParams.interval);
 
 	const timeFrom = useMemo(() => {
 		switch (searchParams.interval) {
@@ -249,12 +252,71 @@ const Detail = ({ simplify = false }: { simplify?: boolean }) => {
 		},
 	);
 
+	const { mutate: updateOhlcv, isPending, data: updateOhlcvData } = useMutationOhlcv();
+
+	const handleUpdateOhlcv = useCallback(() => {
+		if (ohlcv.isLoading || isPending) {
+			return;
+		}
+
+		const timeTo = dayjs().unix();
+
+		const getSubtract = (interval: IntervalFilter): [number, string] => {
+			switch (interval) {
+				case IntervalFilter.OneMinute:
+					return [1, 'minute'];
+				case IntervalFilter.FiveMinutes:
+					return [5, 'minute'];
+				case IntervalFilter.FifteenMinutes:
+					return [15, 'minute'];
+				case IntervalFilter.ThirtyMinutes:
+					return [30, 'minute'];
+				case IntervalFilter.OneHour:
+					return [1, 'hour'];
+				case IntervalFilter.FourHours:
+					return [4, 'hour'];
+				case IntervalFilter.OneDay:
+					return [1, 'day'];
+				case IntervalFilter.OneWeek:
+					return [1, 'week'];
+				default:
+					return [1, 'hour'];
+			}
+		};
+
+		const [subtract, unit] = getSubtract(searchParams.interval);
+		const timeFrom = dayjs()
+			.subtract(subtract, unit as ManipulateType)
+			.unix();
+
+		updateOhlcv({
+			data: {
+				address: params.token,
+				type: searchParams.interval,
+				time_from: timeFrom,
+				time_to: timeTo,
+			},
+		});
+		currentUnix.current = timeTo;
+	}, [isPending, ohlcv.isLoading, params.token, searchParams.interval, updateOhlcv]);
+
+	useInterval(handleUpdateOhlcv, 10_000);
+
 	const ohlcvData = useMemo(() => {
 		if (!ohlcv?.data || !Array.isArray(ohlcv?.data)) {
 			return [];
 		}
 		return ohlcv.data;
 	}, [ohlcv.data]);
+
+	const updateData = useMemo(() => {
+		if (!updateOhlcvData || !Array.isArray(updateOhlcvData) || intervalSnapshot.current !== searchParams.interval) {
+			intervalSnapshot.current = searchParams.interval;
+			return undefined;
+		}
+		intervalSnapshot.current = searchParams.interval;
+		return updateOhlcvData[0];
+	}, [updateOhlcvData, searchParams.interval]);
 
 	const { data: transactions, isLoading: isTransactionsLoading } = useQueryTransactions(
 		{
@@ -425,6 +487,7 @@ const Detail = ({ simplify = false }: { simplify?: boolean }) => {
 								time_to: currentUnix.current,
 							}}
 							data={ohlcvData}
+							updateData={updateData}
 							isPending={ohlcv.isLoading || isKolAlertsLoading || isTransactionsLoading}
 							isMetaPending={queryResult.isLoading}
 							kolAlerts={kolAlerts}

@@ -52,6 +52,8 @@ interface CandlestickProps {
 		time_to: number;
 	};
 	data: OlcvResponseDTO;
+	updateData?: OlcvResponseDTO[0];
+	updateInterval?: number;
 	kolAlerts?: KolAlert[];
 	isPending?: boolean;
 	isMetaPending?: boolean;
@@ -307,6 +309,28 @@ const SubscribeCandlestick = ({
 			method={handleSubscribeVisibleLogicalRange}
 		/>
 	);
+};
+
+const LiveUpdate = ({ color }: { color: boolean }) => {
+	const { updateData } = useCandlestick();
+	const series = useSeries('LiveUpdateCandlestick');
+
+	useEffect(() => {
+		if (updateData) {
+			series.api().update({
+				...updateData,
+				value: updateData.volume,
+				time: updateData.unix as Time,
+				color: color
+					? updateData.close > updateData.open
+						? twTheme.extend.colors.buy.disabled
+						: twTheme.extend.colors.sell.disabled
+					: undefined,
+			});
+		}
+	}, [updateData, series, color]);
+
+	return null;
 };
 
 const NoDataWatermark = ({ data, text = 'No data' }: { data: OlcvResponseDTO; text?: string }) => {
@@ -842,6 +866,7 @@ const Chart = () => {
 				}}
 			>
 				<SubscribeCandlestick onLoad={handleSubscribeHistogram} />
+				<LiveUpdate color={false} />
 				<TransactionMarkers />
 			</Series>
 			<Series
@@ -862,7 +887,9 @@ const Chart = () => {
 						},
 					});
 				}}
-			/>
+			>
+				<LiveUpdate color />
+			</Series>
 		</TradingChart>
 	);
 };
