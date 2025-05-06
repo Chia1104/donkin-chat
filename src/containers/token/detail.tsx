@@ -34,7 +34,7 @@ import type { Token } from '@/libs/token/pipes/token.pipe';
 import { useGlobalStore } from '@/stores/global/store';
 import { cn } from '@/utils/cn';
 import dayjs from '@/utils/dayjs';
-import { truncateMiddle, formatLargeNumber, roundDecimal } from '@/utils/format';
+import { truncateMiddle, formatLargeNumber, roundDecimal, formatSmallNumber } from '@/utils/format';
 import { isPositiveNumber, isNegativeNumber, isNumber } from '@/utils/is';
 
 const Hotspot = ({ x, className }: { x: number; className?: string }) => {
@@ -134,7 +134,7 @@ const MetaInfo = ({ price, change, isPending }: { price: number; change: number 
 
 	return (
 		<div className="flex items-end lg:items-center flex-col lg:flex-row min-w-fit">
-			<h3 className="text-[22px] font-medium lg:mr-5">{`$ ${formatLargeNumber(price ?? 0)}`}</h3>
+			<h3 className="text-[22px] font-medium lg:mr-5">{`$ ${formatSmallNumber(price ?? 0)}`}</h3>
 			<span
 				className={cn(
 					'text-xs flex items-center gap-1',
@@ -297,9 +297,16 @@ const Detail = ({ simplify = false }: { simplify?: boolean }) => {
 		return `${dayjs().diff(base, 'hours')}h`;
 	}, [queryResult.data?.created_at]);
 
+	const headTitle = useMemo(() => {
+		const isPositiveChange = isPositiveNumber(queryPrice.data?.price_change_24h);
+		const isNegativeChange = isNegativeNumber(queryPrice.data?.price_change_24h);
+		const updownSymbol = isPositiveChange ? '↑' : isNegativeChange ? '↓' : '';
+		return `${queryResult.data?.symbol} ${updownSymbol} $${formatSmallNumber(queryPrice.data?.price ?? 0)}`;
+	}, [queryResult.data?.symbol, queryPrice.data?.price_change_24h, queryPrice.data?.price]);
+
 	return (
 		<>
-			<Head title={`${queryResult.data?.name} $${formatLargeNumber(queryPrice.data?.price ?? 0)}`} />
+			<Head title={headTitle} />
 			<div className="w-full h-full flex flex-col">
 				<div className={cn('flex flex-col gap-6 w-full')}>
 					<div

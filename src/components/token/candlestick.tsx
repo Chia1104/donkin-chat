@@ -7,7 +7,7 @@ import { Spinner } from '@heroui/spinner';
 import { addToast } from '@heroui/toast';
 import { useQueryClient } from '@tanstack/react-query';
 import { ColorType, HistogramSeries, CandlestickSeries, createTextWatermark } from 'lightweight-charts';
-import type { Time, ISeriesApi } from 'lightweight-charts';
+import type { Time, ISeriesApi, DeepPartial, TimeChartOptions } from 'lightweight-charts';
 import { useLocale, useTranslations } from 'next-intl';
 
 import OrderPopover from '@/components/token/order-popover';
@@ -23,6 +23,7 @@ import { useTokenSearchParams } from '@/libs/token/hooks/useTokenSearchParams';
 import type { Transactions, Transaction } from '@/libs/token/pipes/transactions.pipe';
 import { theme as twTheme } from '@/themes/tw.theme';
 import dayjs from '@/utils/dayjs';
+import { formatSmallNumber } from '@/utils/format';
 import { logger } from '@/utils/logger';
 
 import { useChart } from '../chart/trading-chart/chart';
@@ -753,7 +754,7 @@ const TransactionMarkers = () => {
 const Chart = () => {
 	const tUtils = useTranslations('utils');
 	const locale = useLocale();
-	const [initOptions] = useState({
+	const [initOptions] = useState<DeepPartial<TimeChartOptions>>({
 		autoSize: true,
 		layout: {
 			textColor: '#9B9EAB',
@@ -831,6 +832,13 @@ const Chart = () => {
 					borderVisible: false,
 					wickUpColor: twTheme.extend.colors.buy.DEFAULT,
 					wickDownColor: twTheme.extend.colors.sell.DEFAULT,
+					priceFormat: {
+						type: 'custom',
+						formatter: value => {
+							return formatSmallNumber(value);
+						},
+						minMove: 0.00000001,
+					},
 				}}
 			>
 				<SubscribeCandlestick onLoad={handleSubscribeHistogram} />

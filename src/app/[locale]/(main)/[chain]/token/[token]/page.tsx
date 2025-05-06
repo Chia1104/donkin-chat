@@ -7,7 +7,8 @@ import Detail from '@/containers/token/detail';
 import { getToken } from '@/libs/token/resources/token.resource.rsc';
 import { loadGlobalSearchParams } from '@/services/loadGlobalSearchParams';
 import { IS_DEV } from '@/utils/env';
-import { roundDecimal } from '@/utils/format';
+import { formatSmallNumber } from '@/utils/format';
+import { isNegativeNumber, isPositiveNumber } from '@/utils/is';
 import { getQueryClient } from '@/utils/query-client';
 import { tryCatch } from '@/utils/try-catch';
 
@@ -21,8 +22,13 @@ export async function generateMetadata(props: PagePropsWithLocale<{ token: strin
 		};
 	}
 
+	const isPositiveChange = isPositiveNumber(data.change);
+	const isNegativeChange = isNegativeNumber(data.change);
+
+	const updownSymbol = isPositiveChange ? '↑' : isNegativeChange ? '↓' : '';
+
 	return {
-		title: `${data.name} $${roundDecimal(data.price, 4)}`,
+		title: `${data.symbol} ${updownSymbol} $${formatSmallNumber(data.price)}`,
 	};
 }
 
