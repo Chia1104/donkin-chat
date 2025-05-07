@@ -39,6 +39,8 @@ import dayjs from '@/utils/dayjs';
 import { truncateMiddle, formatLargeNumber, roundDecimal, formatSmallNumber } from '@/utils/format';
 import { isPositiveNumber, isNegativeNumber, isNumber } from '@/utils/is';
 
+const REFETCH_INTERVAL = 60_000;
+
 const Hotspot = ({ x, className }: { x: number; className?: string }) => {
 	const t = useTranslations('preview.ai-signal');
 	const [searchParams] = useGlobalSearchParams();
@@ -121,7 +123,7 @@ const DateFilter = memo(() => {
 	);
 });
 
-const MetaInfo = ({ refetchInterval = 60_000, symbol }: { refetchInterval?: number; symbol: string }) => {
+const MetaInfo = ({ refetchInterval = REFETCH_INTERVAL, symbol }: { refetchInterval?: number; symbol: string }) => {
 	const params = useParams<{ chain: string; token: string }>();
 	const queryPrice = useQueryTokenPrice(params.token, {
 		refetchInterval,
@@ -207,7 +209,7 @@ const Header = memo(
 	},
 );
 
-const Chart = ({ refetchInterval = 60_000 }: { refetchInterval?: number }) => {
+const Chart = ({ refetchInterval = REFETCH_INTERVAL }: { refetchInterval?: number }) => {
 	const params = useParams<{ chain: string; token: string }>();
 
 	const [searchParams] = useTokenSearchParams();
