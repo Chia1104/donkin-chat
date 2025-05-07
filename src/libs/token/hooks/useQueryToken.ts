@@ -4,8 +4,8 @@ import { useQuery } from '@tanstack/react-query';
 import type { QueryOptions } from '@/hooks/useInfiniteQuery';
 import { useInfiniteQuery } from '@/hooks/useInfiniteQuery';
 
-import type { Token, SearchToken } from '../pipes/token.pipe';
-import { getTokensHot, getToken, searchToken } from '../resources/token.resource';
+import type { Token, SearchToken, TokenMetadata } from '../pipes/token.pipe';
+import { getTokensHot, getToken, searchToken, getTokenMetadata } from '../resources/token.resource';
 import type { TokensHotRequestOptions, TokenSearchRequestOptions } from '../resources/token.resource';
 
 export const useQueryToken = (address: string, options?: Partial<UseQueryOptions<Token, Error, Token>>) => {
@@ -64,4 +64,15 @@ export const useQueryTokenSearch = (requestOptions?: TokenSearchRequestOptions, 
 		},
 		requestOptions,
 	);
+};
+
+export const useQueryTokenMetadata = (
+	address: string,
+	options?: Partial<UseQueryOptions<TokenMetadata, Error, TokenMetadata>>,
+) => {
+	return useQuery<TokenMetadata, Error, TokenMetadata>({
+		queryKey: ['token-metadata', address],
+		queryFn: ({ signal }) => getTokenMetadata({ data: address, signal }),
+		...options,
+	});
 };

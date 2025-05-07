@@ -2,13 +2,14 @@ import type { TokenSort } from '@/libs/ai/enums/tokenSort.enum';
 import type { ResponseData, PaginationData, BaseRequestOptions, PaginationRequestOptions } from '@/types/request';
 import { request } from '@/utils/request';
 
-import type { Token, SearchToken, TokenPrice, TokenSmartWalletCount } from '../pipes/token.pipe';
+import type { Token, SearchToken, TokenPrice, TokenSmartWalletCount, TokenMetadata } from '../pipes/token.pipe';
 import {
 	tokenSchema,
 	tokensPaginationSchema,
 	searchTokensPaginationSchema,
 	tokenPriceSchema,
 	tokenSmartWalletCountSchema,
+	tokenMetadataSchema,
 } from '../pipes/token.pipe';
 
 export type TokensHotRequestOptions = PaginationRequestOptions<
@@ -108,4 +109,16 @@ export const searchToken = async (options?: BaseRequestOptions<TokenSearchReques
 		.json<ResponseData<TokenSearchResponse>>();
 
 	return searchTokensPaginationSchema.parse(response.data);
+};
+
+export const getTokenMetadata = async (options: BaseRequestOptions<string>) => {
+	const response = await request({ requestMode: 'proxy-service' })
+		.get(`api/v1/tokens/${options.data}/metadata`, {
+			signal: options.signal,
+			headers: options.headers,
+			timeout: options.timeout,
+		})
+		.json<ResponseData<TokenMetadata>>();
+
+	return tokenMetadataSchema.parse(response.data);
 };

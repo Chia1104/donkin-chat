@@ -59,9 +59,40 @@ export const tokenSmartWalletCountSchema = z.object({
 	smart_wallet_count: z.number(),
 });
 
+export const tokenMetadataSchema = z.object({
+	address: z.string(),
+	symbol: z.string(),
+	name: z.string(),
+	icon: z.string().nullish(),
+	decimals: z.number(),
+	holder: z.number(),
+	creator: z.string(),
+	create_tx: z.string(),
+	created_time: z.number(),
+	first_mint_tx: z.string(),
+	first_mint_time: z.number(),
+	metadata: z.object({
+		name: z.string(),
+		symbol: z.string(),
+		description: z.string(),
+		image: z.string(),
+		twitter: z.string(),
+		website: z.string(),
+	}),
+	mint_authority: z.unknown(),
+	freeze_authority: z.unknown(),
+	supply: z.string(),
+	price: z.number(),
+	volume_24h: z.number(),
+	market_cap: z.number(),
+	market_cap_rank: z.number(),
+	price_change_24h: z.number(),
+});
+
 export type Token = z.infer<typeof tokenSchema>;
 export type SearchToken = z.infer<typeof searchTokenSchema>;
 export type TokensPagination = z.infer<typeof tokensPaginationSchema>;
 export type SearchTokensPagination = z.infer<typeof searchTokensPaginationSchema>;
 export type TokenPrice = z.infer<typeof tokenPriceSchema>;
 export type TokenSmartWalletCount = z.infer<typeof tokenSmartWalletCountSchema>;
+export type TokenMetadata = z.infer<typeof tokenMetadataSchema>;

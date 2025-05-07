@@ -42,8 +42,6 @@ import { ErrorBoundary } from '../commons/error-boundary';
 
 interface CandlestickProps {
 	meta: {
-		price: number;
-		change: number | string;
 		address: string;
 	};
 	query: {
