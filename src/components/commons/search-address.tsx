@@ -1,6 +1,6 @@
 'use client';
 
-import { useEffect, useRef, useState } from 'react';
+import { useRef, useState, useMemo } from 'react';
 
 import type { AutocompleteProps } from '@heroui/autocomplete';
 import { Autocomplete, AutocompleteItem } from '@heroui/autocomplete';
@@ -15,9 +15,8 @@ import { useTransitionRouter } from 'next-view-transitions';
 import { useAuthGuard } from '@/components/auth/auth-guard';
 import { useCMD } from '@/hooks/useCMD';
 import { useQueryTokenSearch } from '@/libs/token/hooks/useQueryToken';
-import { useQuerySolBalance } from '@/libs/web3/hooks/useGetSolBalance';
+import { isSOLAddress } from '@/libs/web3/services/solana.service';
 import { formatLargeNumber, truncateMiddle } from '@/utils/format';
-import { logger } from '@/utils/logger';
 
 const SearchAddress = (props: Partial<AutocompleteProps>) => {
 	const t = useTranslations('nav');
@@ -37,8 +36,6 @@ const SearchAddress = (props: Partial<AutocompleteProps>) => {
 	const {
 		flatData,
 		isLoading: isTokenLoading,
-		isError,
-		error,
 		fetchNextPage,
 		hasNextPage,
 	} = useQueryTokenSearch(
@@ -47,31 +44,6 @@ const SearchAddress = (props: Partial<AutocompleteProps>) => {
 			enabled: !!debouncedSearch,
 		},
 	);
-
-	const {
-		data: addressData,
-		isLoading: isAddressLoading,
-		isError: isAddressError,
-		error: addressError,
-		isSuccess: isAddressSuccess,
-	} = useQuerySolBalance(
-		{
-			address: debouncedSearch,
-			network: 'devnet',
-		},
-		{
-			enabled: !!debouncedSearch,
-		},
-	);
-
-	useEffect(() => {
-		if (isError) {
-			logger(['get token error', error], { type: 'error' });
-		}
-		if (isAddressError) {
-			logger(['get solana balance error', addressError], { type: 'error' });
-		}
-	}, [error, isError, addressError, isAddressError]);
 
 	useCMD(
 		false,
@@ -94,21 +66,25 @@ const SearchAddress = (props: Partial<AutocompleteProps>) => {
 		},
 	});
 
-	const isLoading = isTokenLoading || isAddressLoading;
+	const isLoading = isTokenLoading;
 
-	const concatData = isLoading
-		? []
-		: flatData.length === 0 && addressData != null && debouncedSearch && isAddressSuccess
-			? flatData.concat([
-					{
-						address: debouncedSearch,
-						symbol: 'sol',
-						name: tRoutes('wallet.title'),
-						market_cap: 0,
-						logo_uri: '/assets/images/default-avatar.png',
-					},
-				])
-			: flatData;
+	const concatData = useMemo(() => {
+		if (isLoading) {
+			return [];
+		} else if (flatData.length === 0 && debouncedSearch && isSOLAddress(debouncedSearch)) {
+			return flatData.concat([
+				{
+					address: debouncedSearch,
+					symbol: 'sol',
+					name: tRoutes('wallet.title'),
+					market_cap: 0,
+					logo_uri: '/assets/images/default-avatar.png',
+				},
+			]);
+		}
+
+		return flatData;
+	}, [flatData, isLoading, debouncedSearch, tRoutes]);
 
 	return (
 		<Autocomplete
