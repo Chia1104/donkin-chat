@@ -10,3 +10,12 @@ export const getSolBalance = async (address: string, network: SolanaNetworks = I
 	const balance = await connection.getBalance(publicKey);
 	return balance / LAMPORTS_PER_SOL;
 };
+
+export const isSOLAddress = (address: unknown): address is string => {
+	try {
+		new PublicKey(address as string);
+		return true;
+	} catch {
+		return false;
+	}
+};
