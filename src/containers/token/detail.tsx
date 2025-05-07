@@ -121,11 +121,22 @@ const DateFilter = memo(() => {
 	);
 });
 
-const MetaInfo = ({ price, change, isPending }: { price: number; change: number | string; isPending?: boolean }) => {
-	const isPositiveChange = isPositiveNumber(change) || (typeof change === 'string' && change.startsWith('+'));
-	const isNegativeChange = isNegativeNumber(change) || (typeof change === 'string' && change.startsWith('-'));
+const MetaInfo = ({ refetchInterval = 60_000, symbol }: { refetchInterval?: number; symbol: string }) => {
+	const params = useParams<{ chain: string; token: string }>();
+	const queryPrice = useQueryTokenPrice(params.token, {
+		refetchInterval,
+	});
+	const isPositiveChange = isPositiveNumber(queryPrice.data?.price_change_24h);
+	const isNegativeChange = isNegativeNumber(queryPrice.data?.price_change_24h);
 
-	if (isPending) {
+	const headTitle = useMemo(() => {
+		const isPositiveChange = isPositiveNumber(queryPrice.data?.price_change_24h);
+		const isNegativeChange = isNegativeNumber(queryPrice.data?.price_change_24h);
+		const updownSymbol = isPositiveChange ? '↑' : isNegativeChange ? '↓' : '';
+		return `${symbol} ${updownSymbol} $${formatSmallNumber(queryPrice.data?.price ?? 0)}`;
+	}, [symbol, queryPrice.data?.price_change_24h, queryPrice.data?.price]);
+
+	if (queryPrice.isLoading) {
 		return (
 			<div className="flex items-end lg:items-center flex-col lg:flex-row">
 				<Skeleton className="w-20 h-5 rounded-full mb-2 lg:mb-0 lg:mr-5" />
@@ -135,22 +146,30 @@ const MetaInfo = ({ price, change, isPending }: { price: number; change: number 
 	}
 
 	return (
-		<div className="flex items-end lg:items-center flex-col lg:flex-row min-w-fit">
-			<h3 className="text-[22px] font-medium lg:mr-5">{`$ ${formatSmallNumber(price ?? 0)}`}</h3>
-			<span
-				className={cn(
-					'text-xs flex items-center gap-1',
-					isPositiveChange ? 'text-success' : isNegativeChange ? 'text-danger' : 'text-foreground-500',
-				)}
-			>
-				{isNumber(change) ? (isPositiveChange ? `+${roundDecimal(change, 2)}` : roundDecimal(change, 2)) : change}%{' '}
-				{isPositiveChange ? (
-					<span className="i-material-symbols-trending-up size-3 text-success" />
-				) : (
-					<span className="i-material-symbols-trending-down size-3 text-danger" />
-				)}
-			</span>
-		</div>
+		<>
+			<Head title={headTitle} />
+			<div className="flex items-end lg:items-center flex-col lg:flex-row min-w-fit">
+				<h3 className="text-[22px] font-medium lg:mr-5">{`$ ${formatSmallNumber(queryPrice.data?.price ?? 0)}`}</h3>
+				<span
+					className={cn(
+						'text-xs flex items-center gap-1',
+						isPositiveChange ? 'text-success' : isNegativeChange ? 'text-danger' : 'text-foreground-500',
+					)}
+				>
+					{isNumber(queryPrice.data?.price_change_24h)
+						? isPositiveChange
+							? `+${roundDecimal(queryPrice.data?.price_change_24h, 2)}`
+							: roundDecimal(queryPrice.data?.price_change_24h, 2)
+						: queryPrice.data?.price_change_24h}
+					%{' '}
+					{isPositiveChange ? (
+						<span className="i-material-symbols-trending-up size-3 text-success" />
+					) : (
+						<span className="i-material-symbols-trending-down size-3 text-danger" />
+					)}
+				</span>
+			</div>
+		</>
 	);
 };
 
@@ -188,18 +207,9 @@ const Header = memo(
 	},
 );
 
-const Detail = ({ simplify = false }: { simplify?: boolean }) => {
-	const t = useTranslations('preview.ai-signal');
-	const isOpen = useGlobalStore(state => state.donkin.isOpen);
-	const tToken = useTranslations('token');
+const Chart = ({ refetchInterval = 60_000 }: { refetchInterval?: number }) => {
 	const params = useParams<{ chain: string; token: string }>();
-	const queryResult = useQueryToken(params.token);
-	const queryPrice = useQueryTokenPrice(params.token, {
-		refetchInterval: 10_000,
-	});
-	const querySmartWalletCount = useQueryTokenSmartWallet(params.token, {
-		refetchInterval: 60_000,
-	});
+
 	const [searchParams] = useTokenSearchParams();
 	const currentUnix = useRef(dayjs().unix());
 	const { data: kolAlerts, isLoading: isKolAlertsLoading } = useGetKolAlerts(params.token, {
@@ -300,7 +310,7 @@ const Detail = ({ simplify = false }: { simplify?: boolean }) => {
 		currentUnix.current = timeTo;
 	}, [isPending, ohlcv.isLoading, params.token, searchParams.interval, updateOhlcv]);
 
-	useInterval(handleUpdateOhlcv, 10_000);
+	useInterval(handleUpdateOhlcv, refetchInterval);
 
 	const ohlcvData = useMemo(() => {
 		if (!ohlcv?.data || !Array.isArray(ohlcv?.data)) {
@@ -334,6 +344,43 @@ const Detail = ({ simplify = false }: { simplify?: boolean }) => {
 		},
 	);
 
+	return (
+		<>
+			{ohlcv.isLoading || isKolAlertsLoading || isTransactionsLoading ? (
+				<div className="flex items-center justify-center w-full h-[55dvh]">
+					<Spinner />
+				</div>
+			) : (
+				<Candlestick
+					meta={{
+						address: params.token,
+					}}
+					query={{
+						type: searchParams.interval,
+						time_from: timeFrom,
+						time_to: currentUnix.current,
+					}}
+					data={ohlcvData}
+					updateData={updateData}
+					isPending={ohlcv.isLoading || isKolAlertsLoading || isTransactionsLoading}
+					kolAlerts={kolAlerts}
+					transactions={transactions}
+				/>
+			)}
+		</>
+	);
+};
+
+const Detail = ({ simplify = false }: { simplify?: boolean }) => {
+	const t = useTranslations('preview.ai-signal');
+	const isOpen = useGlobalStore(state => state.donkin.isOpen);
+	const tToken = useTranslations('token');
+	const params = useParams<{ chain: string; token: string }>();
+	const queryResult = useQueryToken(params.token);
+	const querySmartWalletCount = useQueryTokenSmartWallet(params.token, {
+		refetchInterval: 60_000 * 5,
+	});
+
 	const diff = useMemo(() => {
 		if (!queryResult.data?.created_at) {
 			return '-';
@@ -359,16 +406,8 @@ const Detail = ({ simplify = false }: { simplify?: boolean }) => {
 		return `${dayjs().diff(base, 'hours')}h`;
 	}, [queryResult.data?.created_at]);
 
-	const headTitle = useMemo(() => {
-		const isPositiveChange = isPositiveNumber(queryPrice.data?.price_change_24h);
-		const isNegativeChange = isNegativeNumber(queryPrice.data?.price_change_24h);
-		const updownSymbol = isPositiveChange ? '↑' : isNegativeChange ? '↓' : '';
-		return `${queryResult.data?.symbol} ${updownSymbol} $${formatSmallNumber(queryPrice.data?.price ?? 0)}`;
-	}, [queryResult.data?.symbol, queryPrice.data?.price_change_24h, queryPrice.data?.price]);
-
 	return (
 		<>
-			<Head title={headTitle} />
 			<div className="w-full h-full flex flex-col">
 				<div className={cn('flex flex-col gap-6 w-full')}>
 					<div
@@ -389,11 +428,7 @@ const Detail = ({ simplify = false }: { simplify?: boolean }) => {
 							<div className="flex items-center gap-5 justify-between lg:justify-start w-full lg:w-fit">
 								<Header data={queryResult.data} isLoading={queryResult.isLoading} />
 								<Divider orientation="vertical" className="h-4 hidden lg:block" />
-								<MetaInfo
-									price={queryPrice.data?.price ?? 0}
-									change={queryPrice.data?.price_change_24h ?? 0}
-									isPending={queryPrice.isLoading}
-								/>
+								<MetaInfo symbol={queryResult.data?.symbol ?? ''} />
 							</div>
 							<span className="flex items-center gap-3">
 								<p className="text-success text-[12px] font-normal">{diff}</p>
@@ -470,30 +505,7 @@ const Detail = ({ simplify = false }: { simplify?: boolean }) => {
 						<DateFilter />
 						<Marker />
 					</section>
-					{ohlcv.isLoading || isKolAlertsLoading || isTransactionsLoading ? (
-						<div className="flex items-center justify-center w-full h-[55dvh]">
-							<Spinner />
-						</div>
-					) : (
-						<Candlestick
-							meta={{
-								price: queryResult.data?.price ?? 0,
-								change: queryResult.data?.change ?? 0,
-								address: params.token,
-							}}
-							query={{
-								type: searchParams.interval,
-								time_from: timeFrom,
-								time_to: currentUnix.current,
-							}}
-							data={ohlcvData}
-							updateData={updateData}
-							isPending={ohlcv.isLoading || isKolAlertsLoading || isTransactionsLoading}
-							isMetaPending={queryResult.isLoading}
-							kolAlerts={kolAlerts}
-							transactions={transactions}
-						/>
-					)}
+					<Chart refetchInterval={60_000} />
 				</div>
 			</div>
 		</>
