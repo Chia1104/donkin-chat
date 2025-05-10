@@ -177,6 +177,7 @@ const { ChatStoreProvider, useChatStore, ChatStoreContext, creator } = defineCha
 									.post('api/v1/ai/chat/token_info', {
 										json: {
 											token: args.token,
+											lang: locale,
 										},
 									})
 									.json<AIResponseData<{ conv_id: string; token: string; msg_id: string }>>();
@@ -193,6 +194,7 @@ const { ChatStoreProvider, useChatStore, ChatStoreContext, creator } = defineCha
 									.post('api/v1/ai/chat/token_trends', {
 										json: {
 											token: args.token,
+											lang: locale,
 										},
 									})
 									.json<AIResponseData<{ conv_id: string; token: string; msg_id: string }>>();
@@ -211,6 +213,7 @@ const { ChatStoreProvider, useChatStore, ChatStoreContext, creator } = defineCha
 											token_address: args.token_address,
 											start_time: args.start_time,
 											end_time: args.end_time,
+											lang: locale,
 										},
 									})
 									.json<AIResponseData<{ conv_id: string; token: string; msg_id: string }>>();
@@ -229,6 +232,7 @@ const { ChatStoreProvider, useChatStore, ChatStoreContext, creator } = defineCha
 											token_address: args.token_address,
 											start_time: args.start_time,
 											end_time: args.end_time,
+											lang: locale,
 										},
 									})
 									.json<AIResponseData<{ conv_id: string; token: string; msg_id: string }>>();
